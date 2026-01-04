@@ -6,7 +6,7 @@ import H2HSection from "@/components/fixture-details/H2HSection";
 import LastFiveMatches from "@/components/fixture-details/LastFiveMatches";
 import Events from "@/components/fixture-details/Events";
 import Standings from "@/components/fixture-details/Standings";
-import Odds from "@/components/fixture-details/Odds";
+// import Odds from "@/components/fixture-details/Odds";
 import TeamDisplay from "@/components/fixture-details/TeamDisplay";
 import LeagueHeader from "@/components/fixture-details/LeagueHeader";
 import Lineups from "@/components/fixture-details/Lineups";
@@ -35,16 +35,14 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
 
     const [activeTab, setActiveTab] = useState("events");
 
-    const tabs = [
-        { id: "events", label: "Events" },
-        { id: "lineups", label: "Lineups" },
-        { id: "injuries", label: "Injuries" },
-        { id: "h2h", label: "H2H" },
-        { id: "last5", label: "Last 5" },
-        { id: "standings", label: "Standings" },
-        { id: "odds", label: "Odds" },
-        { id: "stats", label: "Stats" },
-    ];
+    { id: "events", label: "Events" },
+    { id: "stats", label: "Stats" },
+    { id: "lineups", label: "Lineups" },
+    { id: "injuries", label: "Injuries" },
+    { id: "h2h", label: "H2H" },
+    { id: "last5", label: "Last 5" },
+    { id: "standings", label: "Standings" },
+    // Odds tab removed
 
     const renderContent = () => {
         switch (activeTab) {
@@ -75,8 +73,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 );
             case "standings":
                 return <Standings standings={data.standings} />;
-            case "odds":
-                return <Odds odds={data.odds} />;
+            // case "odds": return <Odds ... />;
             default:
                 return null;
         }

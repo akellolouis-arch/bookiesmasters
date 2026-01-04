@@ -6,7 +6,9 @@ import League from "../models/League.js";       // your saved leagues
 import Fixture from "../models/Fixture.js";     // unified fixture model
 import { fetchInjuries } from "./enrichmentService.js";
 import { updateStandings } from "./fetch_standings.js";
+import { updateStandings } from "./fetch_standings.js";
 import { updateTopScorers } from "./fetchTopScorers.js";
+import { cleanupOldFixtures } from "./cleanupService.js";
 
 dotenv.config();
 
@@ -232,6 +234,9 @@ export async function updateDailyFixtures() {
     // 7️⃣ Update Top Scorers
     console.log("⚽ Updating Top Scorers...");
     await updateTopScorers(false);
+
+    // 7.5️⃣ CLEANUP OLD DATA
+    await cleanupOldFixtures();
 
     // 8️⃣ SAVE COMPLETION TIME
     // SystemConfig is already imported at top of function
