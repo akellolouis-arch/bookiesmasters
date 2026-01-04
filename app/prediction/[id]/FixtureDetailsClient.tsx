@@ -35,14 +35,16 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
 
     const [activeTab, setActiveTab] = useState("events");
 
-    { id: "events", label: "Events" },
-    { id: "stats", label: "Stats" },
-    { id: "lineups", label: "Lineups" },
-    { id: "injuries", label: "Injuries" },
-    { id: "h2h", label: "H2H" },
-    { id: "last5", label: "Last 5" },
-    { id: "standings", label: "Standings" },
-    // Odds tab removed
+    const tabs = [
+        { id: "events", label: "Events" },
+        { id: "stats", label: "Stats" },
+        { id: "lineups", label: "Lineups" },
+        { id: "injuries", label: "Injuries" },
+        { id: "h2h", label: "H2H" },
+        { id: "last5", label: "Last 5" },
+        { id: "standings", label: "Standings" },
+        // Odds tab removed
+    ];
 
     const renderContent = () => {
         switch (activeTab) {
