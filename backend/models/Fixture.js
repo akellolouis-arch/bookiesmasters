@@ -30,7 +30,8 @@ const FixtureSchema = new mongoose.Schema(
 -------------------------------------------------- */
 
 // 1️⃣ Unique lookup for updates
-FixtureSchema.index({ fixtureId: 1 }, { unique: true });
+// 1️⃣ Unique lookup for updates
+// FixtureSchema.index({ fixtureId: 1 }, { unique: true });  <-- Handled by schema definition
 
 // 2️⃣ Index on API-Football's nested fixture.id
 FixtureSchema.index({ "fixture.fixture.id": 1 });

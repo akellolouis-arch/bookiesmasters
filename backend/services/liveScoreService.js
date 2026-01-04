@@ -15,9 +15,33 @@ let lastLogTime = 0;
 
 export async function pollLiveScores() {
     try {
-        // STEP 1: Get currently LIVE matches from our DB
-        // We track what we THINK is live.
-        const LIVE_STATUSES = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE"];
+        // STEP 1: Smart-Check Database
+        // Do we even HAVE any matches that *should* be live right now?
+        // Criteria:
+        // 1. Status is already LIVE (1H, 2H, etc.)
+        // 2. Status is NS (Not Started) but StartTime is NOW or in the past (late start?)
+        // 3. Status is NS and StartTime is in the next 10 mins (about to start)
+        const now = new Date();
+        const tenMinsFromNow = new Date(now.getTime() + 10 * 60000);
+
+        const possibleLiveMatches = await Fixture.countDocuments({
+            $or: [
+                { "fixture.fixture.status.short": { $in: ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"] } },
+                {
+                    "fixture.fixture.status.short": "NS",
+                    "fixture.fixture.date": { $lte: tenMinsFromNow.toISOString() }
+                }
+            ]
+        });
+
+        if (possibleLiveMatches === 0) {
+            // console.log("💤 [LivePoll] No active matches scheduled. Sleeping...");
+            return;
+        }
+
+        // STEP 2: Proceed to Fetch
+        // Get currently LIVE matches from our DB tracking
+        const LIVE_STATUSES = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"];
         const localLiveMatches = await Fixture.find({
             "fixture.fixture.status.short": { $in: LIVE_STATUSES }
         }).select("fixtureId");
@@ -47,6 +71,30 @@ export async function pollLiveScores() {
                 headers: { "x-apisports-key": API_KEY }
             });
             recoveryFixtures = recoveryRes.data.response;
+
+            // SAFETY CHECK:
+            // If we asked for specific IDs but the API returned NOTHING for them, 
+            // it means they are effectively dead/gone. We must assume they are Finished (FT) 
+            // to stop the "Zombie Loop" of trying to fetch them forever.
+            const foundIds = new Set(recoveryFixtures.map(f => f.fixture.id));
+            const stillMissingIds = disappearedIds.filter(id => !foundIds.has(id));
+
+            if (stillMissingIds.length > 0) {
+                console.log(`💀 [LivePoll] Force-closing ${stillMissingIds.length} zombie matches that vanished from API.`);
+
+                // Force update these to FT in database
+                await Fixture.updateMany(
+                    { fixtureId: { $in: stillMissingIds } },
+                    {
+                        $set: {
+                            "fixture.fixture.status.short": "FT",
+                            "fixture.fixture.status.long": "Match Finished (Forced)",
+                            "livescore.status.short": "FT",
+                            lastLiveUpdate: new Date()
+                        }
+                    }
+                );
+            }
         }
 
         // STEP 4: Merge Lists & Update
@@ -54,11 +102,11 @@ export async function pollLiveScores() {
 
         if (allUpdates.length === 0) return;
 
-        // Log occasionally
-        const now = Date.now();
-        if (now - lastLogTime > 60000 * 5) {
-            console.log(`📡 [LivePoll] Updating ${apiLiveFixtures.length} live + ${recoveryFixtures.length} finished matches.`);
-            lastLogTime = now;
+        // Log occasionally (only when active)
+        const timestamp = Date.now();
+        if (timestamp - lastLogTime > 60000 * 5) {
+            console.log(`📡 [LivePoll] Active! Updating ${apiLiveFixtures.length} live + ${recoveryFixtures.length} finished matches.`);
+            lastLogTime = timestamp;
         }
 
         const bulkOps = allUpdates.map(apiFixture => ({
