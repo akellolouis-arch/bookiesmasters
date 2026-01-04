@@ -15,8 +15,9 @@ export async function pollMatchStatistics() {
         // 1. Find currently LIVE matches in DB
         const LIVE_STATUSES = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE"];
         const liveMatches = await Fixture.find({
-            "fixture.fixture.status.short": { $in: LIVE_STATUSES }
-        }).select("fixtureId fixture.teams.home.name fixture.teams.away.name");
+            "fixture.fixture.status.short": { $in: LIVE_STATUSES },
+            "statsUnavailable": { $ne: true } // Exclude marked matches
+        }).select("fixtureId fixture.teams.home.name fixture.teams.away.name fixture.fixture.status.elapsed");
 
         if (liveMatches.length === 0) return;
 
@@ -43,6 +44,17 @@ export async function pollMatchStatistics() {
                         { $set: { statistics: statsData } }
                     );
                     // console.log(`   ✅ Stats updated: ${match.fixture.teams.home.name} vs ${match.fixture.teams.away.name}`);
+                } else {
+                    // If no stats returned, check if we should give up
+                    // Give it 15 minutes grace period
+                    if (match.fixture.fixture.status.elapsed > 15) {
+                        console.log(`   ⛔ No stats available for ${match.fixture.teams.home.name} vs ${match.fixture.teams.away.name} (Elapsed: ${match.fixture.fixture.status.elapsed}'). Stopping poll.`);
+
+                        await Fixture.updateOne(
+                            { fixtureId: match.fixtureId },
+                            { $set: { statsUnavailable: true } }
+                        );
+                    }
                 }
 
             } catch (innerErr) {
@@ -59,7 +71,7 @@ export async function pollMatchStatistics() {
 }
 
 export function startStatsPoller() {
-    console.log("🚀 Live Statistics Poller Started (Every 60s)");
+    console.log("🚀 Live Statistics Poller Started (Every 5 mins)");
 
     // Run immediately
     pollMatchStatistics();

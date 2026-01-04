@@ -3,11 +3,11 @@ import { fetchLineups, fetchInjuries } from "./enrichmentService.js";
 
 // Configuration
 const POLLING_INTERVAL = 5 * 60 * 1000; // 5 minutes
-const LOOKAHEAD_MINUTES = 45; // Look for games starting in next 45 mins (User said 30, adding buffer)
+const LOOKAHEAD_MINUTES = 30; // Look for games starting in next 30 mins
 
 export async function pollLineupsForUpcoming() {
     try {
-        console.log("🕵️ Lineup Poller: Checking for upcoming matches...");
+        console.log("🕵️ Lineup Poller: Checking for upcoming (or just started) matches...");
 
         const now = new Date();
         const lookahead = new Date(now.getTime() + LOOKAHEAD_MINUTES * 60000);
@@ -28,9 +28,10 @@ export async function pollLineupsForUpcoming() {
                                 $lte: lookahead.toISOString()
                             }
                         },
-                        // Live: In progress queries
+                        // Live: In progress queries (only poll during first 6 mins to catch late lineups)
                         {
-                            "fixture.fixture.status.short": { $in: LIVE_STATUSES }
+                            "fixture.fixture.status.short": { $in: ["1H"] },
+                            "fixture.fixture.status.elapsed": { $lte: 6 }
                         }
                     ]
                 },
