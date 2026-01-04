@@ -6,7 +6,7 @@ import League from "../models/League.js";       // your saved leagues
 import Fixture from "../models/Fixture.js";     // unified fixture model
 import { fetchInjuries } from "./enrichmentService.js";
 import { updateStandings } from "./fetch_standings.js";
-import { updateStandings } from "./fetch_standings.js";
+// Duplicate removed
 import { updateTopScorers } from "./fetchTopScorers.js";
 import { cleanupOldFixtures } from "./cleanupService.js";
 
