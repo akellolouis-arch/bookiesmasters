@@ -149,23 +149,23 @@ export async function updateDailyFixtures() {
     // 0. CHECK LAST RUN TO PREVENT RESTART-BURNOUT
     // Every time server restarts, this runs. If we restart 5 times, we burn 5x requests.
     // Solution: Check DB.
-    
+
     // Dynamic import to avoid circular dep issues at top level if any
     const SystemConfig = (await import("../models/SystemConfig.js")).default;
-    
+
     const lastRunConfig = await SystemConfig.findOne({ key: "lastDailyUpdate" });
     const now = new Date();
-    
+
     if (lastRunConfig && lastRunConfig.value) {
-        const lastRun = new Date(lastRunConfig.value);
-        const hoursCheck = 18; // Only allow run if > 18 hours have passed
-        const msSinceLast = now - lastRun;
-        
-        if (msSinceLast < hoursCheck * 60 * 60 * 1000) {
-            console.log(`⏳ Daily Update already ran at ${lastRun.toISOString()}. Skipping to save API quota.`);
-            console.log(`   (Next run allowed after ${hoursCheck} hours)`);
-            return;
-        }
+      const lastRun = new Date(lastRunConfig.value);
+      const hoursCheck = 18; // Only allow run if > 18 hours have passed
+      const msSinceLast = now - lastRun;
+
+      if (msSinceLast < hoursCheck * 60 * 60 * 1000) {
+        console.log(`⏳ Daily Update already ran at ${lastRun.toISOString()}. Skipping to save API quota.`);
+        console.log(`   (Next run allowed after ${hoursCheck} hours)`);
+        return;
+      }
     }
 
     // 1. Load saved leagues
@@ -234,11 +234,11 @@ export async function updateDailyFixtures() {
     await updateTopScorers(false);
 
     // 8️⃣ SAVE COMPLETION TIME
-    const SystemConfig = (await import("../models/SystemConfig.js")).default;
+    // SystemConfig is already imported at top of function
     await SystemConfig.findOneAndUpdate(
-        { key: "lastDailyUpdate" },
-        { value: new Date() },
-        { upsert: true }
+      { key: "lastDailyUpdate" },
+      { value: new Date() },
+      { upsert: true }
     );
 
     console.log("\n🎉 FULL DAILY UPDATE COMPLETED");
