@@ -13,6 +13,7 @@ import { startStatsPoller } from "./services/statsPollingService.js";
 import { startStandingsPoller } from "./services/standingsPollingService.js";
 
 import leagueRoutes from "./routes/leagueRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
 
 
 dotenv.config();
@@ -61,6 +62,7 @@ mongoose
 // ---------------------------------------------
 app.use("/api/fixtures", fixtureRoutes);
 app.use("/api/leagues", leagueRoutes);
+app.use("/api/pay", paymentRoutes);
 
 
 // Test route
