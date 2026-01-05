@@ -6,7 +6,23 @@ import AuthProvider from "@/components/AuthProvider";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-// ... imports ...
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  title: "BookiesMasters",
+  description: "Free football predictions, fixtures, events, odds, livescores & insights",
+  icons: {
+    icon: '/icon.png',
+  },
+};
 
 export default function RootLayout({
   children,
