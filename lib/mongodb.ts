@@ -1,6 +1,10 @@
 // lib/mongodb.ts
 import { MongoClient } from "mongodb";
 
+declare global {
+    var _mongoClientPromise: Promise<MongoClient> | undefined;
+}
+
 if (!process.env.MONGO_URI) {
     throw new Error('Invalid/Missing environment variable: "MONGO_URI"');
 }
