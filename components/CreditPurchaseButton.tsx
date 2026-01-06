@@ -41,8 +41,8 @@ export default function CreditPurchaseButton({ pack, email, onSuccess }: CreditP
         setStarted(true); // Show verify button
 
         // Try auto-handling (which seems to fail in some envs)
-        // @ts-ignore
-        initializePayment(
+        const init = initializePayment as any;
+        init(
             (res: any) => { onSuccess(res.reference, pack.credits); },
             () => { console.log("Closed"); }
         );
