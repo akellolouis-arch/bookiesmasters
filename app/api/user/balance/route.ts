@@ -27,8 +27,8 @@ export async function GET() {
             unlockedTips: user.unlockedTips || []
         });
 
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error fetching balance:", error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error: error.message || "Unknown error" }, { status: 500 });
     }
 }
