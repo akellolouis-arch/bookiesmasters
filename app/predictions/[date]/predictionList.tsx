@@ -33,6 +33,8 @@ export interface FixtureCardProps {
   homeTeam: Team;
   awayTeam: Team;
   odds: Odds;
+  isVip?: boolean;
+  creditCost?: number;
 }
 
 export interface LeagueGroup {

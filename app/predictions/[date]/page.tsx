@@ -36,6 +36,8 @@ interface BackendMatch {
     away: string | null;
   };
   league: BackendLeague;
+  isVip?: boolean;
+  creditCost?: number;
 }
 
 interface BackendFixture {

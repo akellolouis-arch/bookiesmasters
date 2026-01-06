@@ -20,7 +20,13 @@ const FixtureSchema = new mongoose.Schema(
 
     // Live-only data
     livescore: { type: Object, default: null },
-    lastLiveUpdate: { type: Date, default: null }
+    lastLiveUpdate: { type: Date, default: null },
+
+    // VIP Settings
+    isVip: { type: Boolean, default: false },
+    creditCost: { type: Number, default: 0 },
+    customOdds: { type: String, default: null },
+
   },
   { timestamps: true, strict: false }
 );

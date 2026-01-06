@@ -113,6 +113,10 @@ export function formatFixtureCard(fixtureDoc) {
       name: fx.teams.away.name,
       logo: fx.teams.away.logo
     },
-    odds
+    odds,
+    isVip: fixtureDoc.isVip || false,
+    creditCost: fixtureDoc.creditCost || 0,
+    customOdds: fixtureDoc.customOdds,
+    prediction: fixtureDoc.prediction,
   };
 }

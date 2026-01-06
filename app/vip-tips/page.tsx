@@ -2,12 +2,25 @@
 
 import React, { useState } from "react";
 import { useSession, signIn } from "next-auth/react";
-import { Lock, Crown, Loader2, CheckCircle } from "lucide-react";
-import PricingModal from "@/components/PricingModal";
+import dynamic from "next/dynamic";
+import { Crown, Loader2, Coins, CheckCircle } from "lucide-react";
+import UserWallet from "@/components/UserWallet";
 
-export default function VipTipsPage() {
+// Dynamic import with SSR disabled to prevent "window is not defined" error
+const CreditPurchaseButton = dynamic(
+    () => import("@/components/CreditPurchaseButton"),
+    { ssr: false, loading: () => <button className="w-full py-3 bg-gray-600 rounded-lg animate-pulse">Loading...</button> }
+);
+
+export default function BuyCreditsPage() {
     const { data: session, status } = useSession();
-    const [showPricing, setShowPricing] = useState(false);
+
+    // Hardcoded credit packs for now (Step 1)
+    const packs = [
+        { credits: 100, price: 10, label: "Starter Pack", popular: false },
+        { credits: 500, price: 40, label: "Pro Pack", popular: true, bonus: "Save $10" },
+        { credits: 1000, price: 75, label: "Expert Pack", popular: false, bonus: "Stationary + Save $25" },
+    ];
 
     if (status === "loading") {
         return (
@@ -17,14 +30,13 @@ export default function VipTipsPage() {
         );
     }
 
-    // 1. Not Logged In
     if (!session) {
         return (
             <div className="min-h-screen bg-[#121212] flex flex-col items-center justify-center p-4 text-center">
-                <Lock className="w-16 h-16 text-gray-500 mb-4" />
-                <h1 className="text-3xl font-bold text-white mb-2">VIP Access Required</h1>
+                <Coins className="w-16 h-16 text-yellow-500 mb-4" />
+                <h1 className="text-3xl font-bold text-white mb-2">Buy Credits</h1>
                 <p className="text-gray-400 mb-8 max-w-md">
-                    Sign in to access high-confidence predictions and professional insights.
+                    Sign in to purchase credits and unlock premium predictions.
                 </p>
                 <button
                     onClick={() => signIn("google")}
@@ -36,76 +48,98 @@ export default function VipTipsPage() {
         );
     }
 
-    // 2. Logged In but NOT VIP
-    // @ts-ignore - isVip is added in auth.ts
-    if (!session.user?.isVip) {
-        return (
-            <div className="min-h-screen bg-[#121212] flex flex-col items-center justify-center p-4 text-center relative overflow-hidden">
-                {/* Background visual effect */}
-                <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-                    <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-yellow-500 rounded-full blur-[128px]" />
-                </div>
+    const handleSuccess = async (reference: string, credits: number) => {
+        try {
+            const res = await fetch("/api/paystack/verify", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ reference, planCredits: credits }),
+            });
+            const data = await res.json();
+            if (data.success) {
+                alert("Payment Successful! Credits added.");
+                window.location.reload();
+            } else {
+                alert("Payment Verification Failed: " + data.error);
+            }
+        } catch (err) {
+            alert("Error verifying payment");
+        }
+    };
 
-                <div className="z-10 bg-[#1e1e1e] border border-yellow-500/20 p-8 rounded-2xl max-w-lg w-full shadow-2xl">
-                    <Crown className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
-                    <h1 className="text-3xl font-bold text-white mb-2">Upgrade to VIP</h1>
-                    <p className="text-gray-400 mb-6">
-                        Unlock our daily high-confidence tips, injury reports, and advanced stats.
-                    </p>
 
-                    <div className="space-y-4 mb-8 text-left">
-                        <div className="flex items-center gap-3 text-gray-300">
-                            <CheckCircle className="text-green-500 w-5 h-5" /> <span>Daily 90%+ Confidence Tips</span>
-                        </div>
-                        <div className="flex items-center gap-3 text-gray-300">
-                            <CheckCircle className="text-green-500 w-5 h-5" /> <span>Instant Lineup Notifications</span>
-                        </div>
-                        <div className="flex items-center gap-3 text-gray-300">
-                            <CheckCircle className="text-green-500 w-5 h-5" /> <span>Full H2H & Form Analysis</span>
-                        </div>
-                    </div>
-
-                    <button
-                        onClick={() => setShowPricing(true)}
-                        className="w-full py-4 bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-black font-bold rounded-xl transition transform hover:scale-[1.02] shadow-lg shadow-yellow-500/20"
-                    >
-                        Unlock Now for $9.99/mo
-                    </button>
-                </div>
-
-                <PricingModal isOpen={showPricing} onClose={() => setShowPricing(false)} />
-            </div>
-        );
-    }
-
-    // 3. VIP ACCESS GRANTED
     return (
         <div className="min-h-screen bg-[#121212] p-4 md:p-8">
-            <div className="max-w-4xl mx-auto">
-                <div className="flex items-center justify-between mb-8">
+            <div className="max-w-5xl mx-auto">
+                {/* Header */}
+                <div className="flex items-center justify-between mb-12">
                     <div>
-                        <h1 className="text-3xl font-bold text-white flex items-center gap-2">
-                            <Crown className="fill-yellow-500 text-yellow-500" /> VIP Predictions
+                        <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+                            <Crown className="text-yellow-500 fill-yellow-500" />
+                            Get VIP Credits
                         </h1>
-                        <p className="text-gray-400">Exclusive high-confidence tips for today.</p>
+                        <p className="text-gray-400 mt-1">Unlock high-confidence tips instantly.</p>
                     </div>
-                    <div className="px-4 py-1 bg-yellow-500/10 border border-yellow-500/20 rounded-full text-yellow-500 text-sm font-medium">
-                        Status: Active
+                    <div className="hidden md:block">
+                        <UserWallet />
                     </div>
                 </div>
 
-                {/* CONTENT AREA */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Placeholder for TIPS */}
-                    <div className="bg-[#1e1e1e] border border-white/5 rounded-xl p-6 flex flex-col items-center justify-center text-center h-64 col-span-full">
-                        <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-4">
-                            <Loader2 className="w-8 h-8 text-gray-500" />
+                {/* Packs Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {packs.map((pack) => (
+                        <div
+                            key={pack.credits}
+                            className={`relative bg-[#1e1e1e] border rounded-2xl p-6 flex flex-col items-center text-center transition hover:scale-105 ${pack.popular ? "border-yellow-500 shadow-xl shadow-yellow-500/10" : "border-white/10"
+                                }`}
+                        >
+                            {pack.popular && (
+                                <div className="absolute top-0 right-0 bg-yellow-500 text-black text-xs font-bold px-3 py-1 rounded-bl-xl rounded-tr-xl">
+                                    MOST POPULAR
+                                </div>
+                            )}
+
+                            <div className="w-16 h-16 bg-yellow-500/10 rounded-full flex items-center justify-center mb-4 text-yellow-500">
+                                <Coins className="w-8 h-8" />
+                            </div>
+
+                            <h3 className="text-xl font-bold text-white">{pack.label}</h3>
+                            <div className="text-4xl font-bold text-white mt-2 mb-1">
+                                ${pack.price}
+                            </div>
+                            <p className="text-yellow-500 font-medium mb-6">
+                                {pack.credits} Credits
+                            </p>
+
+                            {pack.bonus && (
+                                <div className="mb-6 px-3 py-1 bg-green-500/20 text-green-400 text-xs rounded-full border border-green-500/30">
+                                    {pack.bonus}
+                                </div>
+                            )}
+
+                            <ul className="text-left space-y-3 mb-8 w-full px-4">
+                                <li className="flex items-center gap-2 text-sm text-gray-300">
+                                    <CheckCircle className="w-4 h-4 text-green-500" /> Instant Delivery
+                                </li>
+                                <li className="flex items-center gap-2 text-sm text-gray-300">
+                                    <CheckCircle className="w-4 h-4 text-green-500" /> No Expiry Date
+                                </li>
+                                <li className="flex items-center gap-2 text-sm text-gray-300">
+                                    <CheckCircle className="w-4 h-4 text-green-500" /> Unlock Any Tip
+                                </li>
+                            </ul>
+
+                            <CreditPurchaseButton
+                                pack={pack}
+                                email={session.user?.email || ""}
+                                onSuccess={handleSuccess}
+                            />
                         </div>
-                        <h3 className="text-xl font-semibold text-white mb-2">No VIP Tips Yet Today</h3>
-                        <p className="text-gray-500 max-w-sm">
-                            Our analysts are currently finalizing the predictions for today's matches. Check back in a few hours.
-                        </p>
-                    </div>
+                    ))}
+                </div>
+
+                <div className="mt-12 text-center text-gray-500 text-sm">
+                    <p>Secure payments powered by Paystack. Credits are non-refundable once used.</p>
                 </div>
             </div>
         </div>

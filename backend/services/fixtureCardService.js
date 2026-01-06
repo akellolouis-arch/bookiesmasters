@@ -30,6 +30,22 @@ export async function getFixturesGroupedByLeague(date) {
     {
       $match: matchFilter
     },
+    // 🔥 JOIN WITH VIP FIXTURES
+    {
+      $lookup: {
+        from: "vipfixtures", // Lowercase plural of model name
+        localField: "fixtureId",
+        foreignField: "fixtureId",
+        as: "vipData"
+      }
+    },
+    // Unwind checking for existence
+    {
+      $unwind: {
+        path: "$vipData",
+        preserveNullAndEmptyArrays: true
+      }
+    },
     {
       $sort: { "fixture.league.id": 1, "fixture.fixture.date": 1 }
     },
@@ -48,8 +64,13 @@ export async function getFixturesGroupedByLeague(date) {
 
         "livescore": 1,
         "fixtureId": 1,
-        // 🔥 KEY OPTIMIZATION: Filter 'odds' array in-situ
-        // We want odds[0].bets, filtered where name="Match Winner"
+
+        // MERGE VIP DATA (Override defaults)
+        "isVip": { $ifNull: ["$vipData.isVip", false] },
+        "creditCost": { $ifNull: ["$vipData.creditCost", 0] },
+        "prediction": { $ifNull: ["$vipData.prediction", "$prediction"] },
+        "customOdds": "$vipData.customOdds",
+
         "odds": {
           $map: {
             input: { $slice: ["$odds", 1] }, // Take 1st bookmaker
@@ -206,6 +227,8 @@ export async function getLiveFixtures() {
       "fixture.status": 1,
       "livescore": 1,
       "fixtureId": 1,
+      "isVip": 1,
+      "creditCost": 1,
       "odds": {
         $map: {
           input: { $slice: ["$odds", 1] },
