@@ -27,6 +27,8 @@ export interface FixtureCardProps {
   score: string | null;
   prediction?: string | null;
   customOdds?: string | null;
+  isVip?: boolean;
+  creditCost?: number;
 }
 
 export default function FixtureCard({
