@@ -1,6 +1,7 @@
 import { handlers } from "@/auth"
+import { NextRequest } from "next/server"
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
     try {
         console.log("DEBUG: GET /api/auth hit");
         return await handlers.GET(req);
@@ -10,7 +11,7 @@ export async function GET(req: Request) {
     }
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
         console.log("DEBUG: POST /api/auth hit");
         return await handlers.POST(req);
