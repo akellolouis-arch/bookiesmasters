@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import Fixture from "./models/Fixture.js";
 
-dotenv.config();
+dotenv.config({ path: "backend/.env" });
+dotenv.config(); // Fallback
 
 const API_KEY = process.env.API_KEY;
 const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/bookiesmasters";
