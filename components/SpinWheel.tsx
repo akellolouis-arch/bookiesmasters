@@ -5,11 +5,11 @@ import { Loader2, Sparkles, Gift } from "lucide-react";
 
 // Matches backend PRIZES
 const PRIZES = [
-    { label: "10 CR", value: 10, color: "#9ca3af", text: "#000" },
+    { label: "40 CR", value: 40, color: "#9ca3af", text: "#000" }, // Was 10
     { label: "20 CR", value: 20, color: "#60a5fa", text: "#fff" },
     { label: "50 CR", value: 50, color: "#a855f7", text: "#fff" },
     { label: "100 CR", value: 100, color: "#eab308", text: "#000" },
-    { label: "JACKPOT", value: 500, color: "#ef4444", text: "#fff" }
+    { label: "30 CR", value: 30, color: "#ef4444", text: "#fff" } // Was Jackpot (500)
 ];
 
 interface SpinWheelProps {

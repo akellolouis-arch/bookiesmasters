@@ -19,6 +19,7 @@ const UserSchema = new mongoose.Schema({
 
     // Credits System
     credits: { type: Number, default: 0 },
+    creditsExpiry: { type: Date }, // Expiry for current credits
     unlockedTips: [{ type: String }], // Array of Fixture IDs or Tip IDs
     lastSpinTime: { type: Date }, // Track last daily spin
     purchaseHistory: [{

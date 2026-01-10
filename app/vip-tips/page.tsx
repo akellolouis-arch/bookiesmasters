@@ -68,7 +68,7 @@ export default function BuyCreditsPage() {
                     />
 
                     <p className="text-center text-gray-500 text-sm mt-8">
-                        Come back every 20 hours for a new chance to win up to 500 Credits!
+                        Come back every 60 minutes for a new chance to win up to 100 Credits!
                     </p>
                 </div>
 

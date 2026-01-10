@@ -2,18 +2,19 @@ import User from "../models/User.js";
 
 // COOLDOWN: 24 Hours in milliseconds
 // const SPIN_COOLDOWN = 24 * 60 * 60 * 1000;
-const SPIN_COOLDOWN = 20 * 60 * 60 * 1000; // Let's simplify to 20h so "next day" is easier
+// COOLDOWN: 60 Minutes (1 Hour)
+const SPIN_COOLDOWN = 60 * 60 * 1000;
 
 /**
  * Prize Configuration
  * Probability is weight based.
  */
 const PRIZES = [
-    { label: "10 CR", value: 10, weight: 50, color: "#9ca3af" }, // Common
-    { label: "20 CR", value: 20, weight: 30, color: "#60a5fa" }, // Good
-    { label: "50 CR", value: 50, weight: 15, color: "#a855f7" }, // Rare
-    { label: "100 CR", value: 100, weight: 4.9, color: "#eab308" }, // Epic
-    { label: "JACKPOT", value: 500, weight: 0.1, color: "#ef4444" } // Legendary
+    { label: "40 CR", value: 40, weight: 50, color: "#9ca3af" }, // Was 10
+    { label: "20 CR", value: 20, weight: 30, color: "#60a5fa" },
+    { label: "50 CR", value: 50, weight: 15, color: "#a855f7" },
+    { label: "100 CR", value: 100, weight: 4.9, color: "#eab308" },
+    { label: "30 CR", value: 30, weight: 0.1, color: "#ef4444" } // Was Jackpot (500)
 ];
 
 // Helper: Pick random prize based on weights
@@ -78,8 +79,14 @@ export const spinWheel = async (req, res) => {
         const prize = pickPrize();
 
         // 3. Update User
+        // If existing credits have expired, zero them out first
+        if (user.creditsExpiry && now > user.creditsExpiry) {
+            user.credits = 0;
+        }
+
         user.credits += prize.value;
         user.lastSpinTime = now;
+        user.creditsExpiry = new Date(now.getTime() + SPIN_COOLDOWN); // Valid for 60m
 
         // Log transaction (optional: recycle purchaseHistory or make new field)
         // Using purchaseHistory for audit even though it's free
@@ -92,7 +99,7 @@ export const spinWheel = async (req, res) => {
 
         await user.save();
 
-        console.log(`🎰 SPIN: ${email} won ${prize.value} credits!`);
+        console.log(`🎰 SPIN: ${email} won ${prize.value} credits! Verify expiry: ${user.creditsExpiry}`);
 
         return res.json({
             success: true,
