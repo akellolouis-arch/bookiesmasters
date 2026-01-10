@@ -53,7 +53,8 @@ export default function SpinWheel({ email, onWin }: SpinWheelProps) {
 
     const fetchStatus = async () => {
         try {
-            const res = await fetch(`/api/user/spin/status?email=${email}`);
+            const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+            const res = await fetch(`${baseUrl}/api/user/spin/status?email=${email}`);
             const data = await res.json();
             setCanSpin(data.canSpin);
             if (data.nextSpinTime) {
@@ -74,7 +75,8 @@ export default function SpinWheel({ email, onWin }: SpinWheelProps) {
 
         // 1. Call API to get result first (Deterministic Spin)
         try {
-            const res = await fetch("/api/user/spin", {
+            const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+            const res = await fetch(`${baseUrl}/api/user/spin`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email })
