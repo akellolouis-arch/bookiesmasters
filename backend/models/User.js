@@ -13,14 +13,20 @@ const UserSchema = new mongoose.Schema({
     paystackCustomerCode: { type: String }, // For Paystack users
     paystackAuthCode: { type: String },     // For recurring charges
 
+    // Intasend Fields
+    intasendId: { type: String },           // Intasend Customer ID (if applicable)
+    intasendRef: { type: String },          // Last transaction ref
+
     // Credits System
     credits: { type: Number, default: 0 },
     unlockedTips: [{ type: String }], // Array of Fixture IDs or Tip IDs
+    lastSpinTime: { type: Date }, // Track last daily spin
     purchaseHistory: [{
         amount: Number, // Credits bought
         cost: Number,   // Money paid
         date: { type: Date, default: Date.now },
-        providerRef: String // Paystack Reference
+        providerRef: String, // Paystack/Intasend Reference
+        provider: { type: String, default: 'paystack' } // 'paystack' or 'intasend'
     }],
 
 

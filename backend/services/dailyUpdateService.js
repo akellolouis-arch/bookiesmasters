@@ -196,7 +196,7 @@ export async function updateDailyFixtures() {
       const bets = await fetchOdds(fixtureId);
 
       // 4️⃣ injuries (Weekly Forecast)
-      const injuryReport = await fetchInjuries(fixtureId);
+      let injuryReport = await fetchInjuries(fixtureId);
 
       // 5️⃣ PRESERVE DATA LOGIC
       // Check if we already have this fixture and if it has valid events
@@ -207,6 +207,14 @@ export async function updateDailyFixtures() {
         if (!f.events || f.events.length === 0) {
           console.log(`🛡️ Preserving ${existingDoc.fixture.events.length} existing events for fixture ${fixtureId}`);
           f.events = existingDoc.fixture.events;
+        }
+      }
+
+      // 5.1️⃣ PRESERVE INJURIES LOGIC
+      if (existingDoc && existingDoc.injuries && existingDoc.injuries.length > 0) {
+        if (!injuryReport || injuryReport.length === 0) {
+          console.log(`🛡️ Preserving ${existingDoc.injuries.length} existing injuries for fixture ${fixtureId}`);
+          injuryReport = existingDoc.injuries;
         }
       }
 
