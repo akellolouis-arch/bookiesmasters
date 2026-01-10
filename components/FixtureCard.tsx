@@ -182,7 +182,7 @@ export default function FixtureCard({
         <div className="w-full bg-[#181818] border border-t-0 border-yellow-500/20 rounded-b-xl p-2 flex items-center justify-between px-4 animate-in fade-in">
           <div className="flex items-center gap-2 text-yellow-500">
             <Lock className="w-4 h-4" />
-            <span className="text-xs font-bold">VIP Tip</span>
+            <span className="text-xs font-bold">Tip</span>
           </div>
 
           <button
