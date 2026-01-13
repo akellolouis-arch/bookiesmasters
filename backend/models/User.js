@@ -6,28 +6,19 @@ const UserSchema = new mongoose.Schema({
     image: String,
     emailVerified: Date,
 
-    // Custom VIP Fields
+    // Custom VIP Fields (Simplified)
     isVip: { type: Boolean, default: false },
     vipExpiry: { type: Date },
-    stripeCustomerId: { type: String },
-    paystackCustomerCode: { type: String }, // For Paystack users
-    paystackAuthCode: { type: String },     // For recurring charges
 
-    // Intasend Fields
-    intasendId: { type: String },           // Intasend Customer ID (if applicable)
-    intasendRef: { type: String },          // Last transaction ref
+    // Unlocked Content
+    unlockedTips: [{ type: String }], // Array of Fixture IDs
 
-    // Credits System
-    credits: { type: Number, default: 0 },
-    creditsExpiry: { type: Date }, // Expiry for current credits
-    unlockedTips: [{ type: String }], // Array of Fixture IDs or Tip IDs
-    lastSpinTime: { type: Date }, // Track last daily spin
+    // Transaction History
     purchaseHistory: [{
-        amount: Number, // Credits bought
-        cost: Number,   // Money paid
+        amount: Number, // KSH Paid
         date: { type: Date, default: Date.now },
-        providerRef: String, // Paystack/Intasend Reference
-        provider: { type: String, default: 'paystack' } // 'paystack' or 'intasend'
+        providerRef: String, // Transaction Code
+        provider: { type: String, default: 'mpesa' }
     }],
 
 

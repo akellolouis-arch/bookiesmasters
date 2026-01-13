@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Menu, X } from "lucide-react";
 import logo from "@/public/logo.png";
-import UserWallet from "./UserWallet";
+
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -47,7 +47,7 @@ export default function Navbar() {
           >
             VIP Access
           </Link>
-          <UserWallet />
+
         </div>
 
         {/* Mobile Toggle */}
@@ -82,9 +82,7 @@ export default function Navbar() {
             >
               VIP Access
             </Link>
-            <div className="pt-2">
-              <UserWallet />
-            </div>
+
           </div>
         </div>
       )

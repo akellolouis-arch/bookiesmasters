@@ -37,15 +37,19 @@ export default function PurchasePage() {
     useEffect(() => {
         if (!id) return;
         const fetchFixture = async () => {
+            console.log("DEBUG: Fetching fixture for ID:", id);
             try {
                 const res = await fetch(`/api/fixtures/${id}`);
                 const data = await res.json();
+                console.log("DEBUG: Fixture Fetch Response:", data);
                 if (data.success) {
                     setFixture(data.data);
                     setAmount(String(data.data.creditCost || 500));
+                } else {
+                    console.error("DEBUG: Fetch success false:", data.message);
                 }
             } catch (err) {
-                console.error(err);
+                console.error("DEBUG: Fetch error:", err);
             } finally {
                 setLoading(false);
             }

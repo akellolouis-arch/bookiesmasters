@@ -77,11 +77,7 @@ export const approvePayment = async (req, res) => {
             }
             console.log(`🔓 Unlocked Fixture ${request.fixtureId} for ${user.email}`);
         } else {
-            // Fallback: Add credits if no fixtureId (Legacy or Bulk)
-            // But User said "no more buying credits". 
-            // We'll keep this as a failsafe or convert KSH to Credits?
-            // Let's just log it.
-            console.log("⚠️ Approved general payment without fixture ID");
+            console.log("⚠️ Approved payment without specific fixture ID (Legacy/General donation?)");
         }
 
         user.purchaseHistory.push({

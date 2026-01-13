@@ -1,13 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { useSession, signIn } from "next-auth/react";
-import { Crown, Loader2, Coins } from "lucide-react";
-import UserWallet from "@/components/UserWallet";
-// import SpinWheel from "@/components/SpinWheel"; // Deleted
-import PaymentForm from "@/components/PaymentForm";
+import { Crown, Loader2, LockOpen } from "lucide-react";
 
-export default function BuyCreditsPage() {
+export default function VipCenterPage() {
     const { data: session, status } = useSession();
 
     if (status === "loading") {
@@ -21,10 +18,10 @@ export default function BuyCreditsPage() {
     if (!session) {
         return (
             <div className="min-h-screen bg-[#121212] flex flex-col items-center justify-center p-4 text-center">
-                <Coins className="w-16 h-16 text-yellow-500 mb-4" />
-                <h1 className="text-3xl font-bold text-white mb-2">Login to Buy Credits</h1>
+                <Crown className="w-16 h-16 text-yellow-500 mb-4" />
+                <h1 className="text-3xl font-bold text-white mb-2">VIP Center</h1>
                 <p className="text-gray-400 mb-8 max-w-md">
-                    Sign in to purchase credits securely and unlock VIP tips.
+                    Sign in to manage and view your unlocked tips.
                 </p>
                 <button
                     onClick={() => signIn("google")}
@@ -46,16 +43,18 @@ export default function BuyCreditsPage() {
                             <Crown className="text-yellow-500 fill-yellow-500" />
                             VIP Center
                         </h1>
-                        <p className="text-gray-400 mt-1">Unlock winning predictions directly from the fixtures page.</p>
-                    </div>
-                    <div className="hidden md:block">
-                        <UserWallet />
+                        <p className="text-gray-400 mt-1">Your premium predictions hub.</p>
                     </div>
                 </div>
 
                 {/* Main Content Area */}
                 <div className="bg-[#1e1e1e]/50 rounded-3xl p-8 border border-white/5 text-center">
-                    <p className="text-gray-400">Go to any key match and click the 🔒 to purchase the tip.</p>
+                    <LockOpen className="w-12 h-12 text-green-500 mx-auto mb-4" />
+                    <h2 className="text-xl font-bold text-white mb-2">How to Use</h2>
+                    <p className="text-gray-400">
+                        Go to any key match on the homepage or predictions list and click the 🔒 to unlock the specific tip relative to that match.
+                        <br />Once paid and approved, the tip will be instantly visible on the match card.
+                    </p>
                 </div>
 
             </div>
