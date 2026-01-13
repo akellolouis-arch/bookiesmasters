@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { Crown, Loader2, Coins } from "lucide-react";
