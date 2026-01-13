@@ -39,7 +39,8 @@ export default function PurchasePage() {
         const fetchFixture = async () => {
             console.log("DEBUG: Fetching fixture for ID:", id);
             try {
-                const res = await fetch(`/api/fixtures/${id}`);
+                const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+                const res = await fetch(`${baseUrl}/api/fixtures/${id}`);
                 const data = await res.json();
                 console.log("DEBUG: Fixture Fetch Response:", data);
                 if (data.success) {
@@ -69,7 +70,8 @@ export default function PurchasePage() {
         e.preventDefault();
         setSubmitting(true);
         try {
-            const res = await fetch("/api/payment/request", {
+            const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+            const res = await fetch(`${baseUrl}/api/payment/request`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
