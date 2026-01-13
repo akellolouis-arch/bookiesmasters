@@ -1,10 +1,9 @@
-"use client";
-
 import React, { useState } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { Crown, Loader2, Coins } from "lucide-react";
 import UserWallet from "@/components/UserWallet";
-import SpinWheel from "@/components/SpinWheel";
+// import SpinWheel from "@/components/SpinWheel"; // Deleted
+import PaymentForm from "@/components/PaymentForm";
 
 export default function BuyCreditsPage() {
     const { data: session, status } = useSession();
@@ -21,9 +20,9 @@ export default function BuyCreditsPage() {
         return (
             <div className="min-h-screen bg-[#121212] flex flex-col items-center justify-center p-4 text-center">
                 <Coins className="w-16 h-16 text-yellow-500 mb-4" />
-                <h1 className="text-3xl font-bold text-white mb-2">Login to Spin!</h1>
+                <h1 className="text-3xl font-bold text-white mb-2">Login to Buy Credits</h1>
                 <p className="text-gray-400 mb-8 max-w-md">
-                    Sign in to use the daily lucky spin and win free credits.
+                    Sign in to purchase credits securely and unlock VIP tips.
                 </p>
                 <button
                     onClick={() => signIn("google")}
@@ -35,12 +34,6 @@ export default function BuyCreditsPage() {
         );
     }
 
-    const handleWin = (amount: number) => {
-        // Optionally trigger a global confetti or update wallet via context if needed.
-        // A reload ensures header wallet updates too.
-        setTimeout(() => window.location.reload(), 3500);
-    };
-
     return (
         <div className="min-h-screen bg-[#121212] p-4 md:p-8">
             <div className="max-w-4xl mx-auto">
@@ -49,27 +42,18 @@ export default function BuyCreditsPage() {
                     <div>
                         <h1 className="text-3xl font-bold text-white flex items-center gap-3">
                             <Crown className="text-yellow-500 fill-yellow-500" />
-                            Daily Lucky Spin
+                            VIP Center
                         </h1>
-                        <p className="text-gray-400 mt-1">Spin the wheel every day to earn FREE credits.</p>
+                        <p className="text-gray-400 mt-1">Unlock winning predictions directly from the fixtures page.</p>
                     </div>
                     <div className="hidden md:block">
                         <UserWallet />
                     </div>
                 </div>
 
-                {/* Spin Wheel Area */}
-                <div className="bg-[#1e1e1e] border border-white/10 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-yellow-500 to-transparent opacity-50"></div>
-
-                    <SpinWheel
-                        email={session.user?.email || ""}
-                        onWin={handleWin}
-                    />
-
-                    <p className="text-center text-gray-500 text-sm mt-8">
-                        Come back every 60 minutes for a new chance to win up to 100 Credits!
-                    </p>
+                {/* Main Content Area */}
+                <div className="bg-[#1e1e1e]/50 rounded-3xl p-8 border border-white/5 text-center">
+                    <p className="text-gray-400">Go to any key match and click the 🔒 to purchase the tip.</p>
                 </div>
 
             </div>

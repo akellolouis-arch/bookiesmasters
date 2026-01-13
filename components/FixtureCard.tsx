@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Lock } from "lucide-react";
-import { useSession } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import { useState } from "react";
 
 export interface Odds {
@@ -95,42 +95,15 @@ export default function FixtureCard({
 
   const isUnlocked = !isVip || justUnlocked || unlockedTips.includes(String(fixtureId));
 
-  const handleUnlock = async (e: React.MouseEvent) => {
-    e.preventDefault(); // prevent navigation
+  const handleUnlock = (e: React.MouseEvent) => {
+    e.preventDefault();
     if (!session) {
-      // route to login
-      window.location.href = "/login";
+      // User requirement: Redirect to Google Sign On directly
+      signIn("google", { callbackUrl: `/purchase/${fixtureId}` });
       return;
     }
-
-    if (userCredits < creditCost) {
-      alert("Insufficient credits! Please top up.");
-      return;
-    }
-
-    if (!confirm(`Unlock this tip for ${creditCost} Credits?`)) return;
-
-    setUnlocking(true);
-    try {
-      const res = await fetch("/api/tips/unlock", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fixtureId }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        // Update session in background to refresh balance
-        await update();
-        // Instantly reveal tip
-        setJustUnlocked(true);
-      } else {
-        alert(data.error || "Failed to unlock");
-      }
-    } catch (err) {
-      alert("Error unlocking tip");
-    } finally {
-      setUnlocking(false);
-    }
+    // Redirect to Purchase Page
+    window.location.href = `/purchase/${fixtureId}`;
   };
 
 
@@ -190,7 +163,7 @@ export default function FixtureCard({
             disabled={unlocking}
             className="px-4 py-1.5 bg-yellow-500 hover:bg-yellow-400 text-black font-bold text-xs rounded transition flex items-center gap-2"
           >
-            {unlocking ? "Unlocking..." : `unlock ${customOdds || '2.00'} odds for ${creditCost}credits`}
+            {unlocking ? "Redirecting..." : (customOdds ? `Unlock ${customOdds} Odds for KSH ${creditCost || 500}` : `Unlock VIP Tip for KSH ${creditCost || 500}`)}
           </button>
         </div>
       )}
