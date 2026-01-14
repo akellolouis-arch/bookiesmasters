@@ -49,11 +49,11 @@ mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("✅ MongoDB connected");
-    // startLiveService(); // 🚀 Start the global 60s poller (Scores + Events)
-    // startLineupPoller(); // 🕵️ Start targeted lineup poller
-    // startStatsPoller();  // 📊 Start statistics poller
-    // startStandingsPoller(); // 🏆 Start active standings poller
-    // startDailyScheduler(); // ⏰ Start daily fixture update
+    startLiveService(); // 🚀 Start the global 60s poller (Scores + Events)
+    startLineupPoller(); // 🕵️ Start targeted lineup poller
+    startStatsPoller();  // 📊 Start statistics poller
+    startStandingsPoller(); // 🏆 Start active standings poller
+    startDailyScheduler(); // ⏰ Start daily fixture update
   })
   .catch((err) => console.error("❌ MongoDB connection error:", err.message));
 

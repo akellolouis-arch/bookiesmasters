@@ -11,7 +11,7 @@ const FixtureSchema = new mongoose.Schema(
     prediction: { type: Object, default: null },
     h2h: { type: Array, default: [] },
     odds: { type: Array, default: [] },
-    odds: { type: Array, default: [] },
+
 
     // Rich Data
     lineups: { type: Array, default: [] },
