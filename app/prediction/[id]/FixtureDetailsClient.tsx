@@ -60,14 +60,8 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
 
     const renderContent = () => {
         switch (activeTab) {
-            case "prediction":
-                return (
-                    <PredictionDisplay
-                        advice={data.apiPrediction?.advice || null}
-                        tip={data.tip}
-                        winner={data.apiPrediction?.winner || null}
-                    />
-                );
+            // case "prediction":
+            // removed
             case "events":
                 return <Events events={data.events} homeTeamId={data.homeTeam.id} awayTeamId={data.awayTeam.id} />;
             case "lineups":
