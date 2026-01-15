@@ -41,12 +41,6 @@ export default function Navbar() {
               {link.name}
             </Link>
           ))}
-          <Link
-            href="/vip-tips"
-            className="px-4 py-2 bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-black font-bold rounded-lg transition transform hover:scale-105"
-          >
-            VIP Access
-          </Link>
 
         </div>
 
@@ -75,13 +69,6 @@ export default function Navbar() {
                 {link.name}
               </Link>
             ))}
-            <Link
-              href="/vip-tips"
-              className="text-left text-yellow-500 font-bold hover:text-yellow-400 transition"
-              onClick={() => setMenuOpen(false)}
-            >
-              VIP Access
-            </Link>
 
           </div>
         </div>
