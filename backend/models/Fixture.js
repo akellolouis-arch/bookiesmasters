@@ -22,6 +22,9 @@ const FixtureSchema = new mongoose.Schema(
     livescore: { type: Object, default: null },
     lastLiveUpdate: { type: Date, default: null },
 
+    // Custom Prediction / Manual Override
+    customPrediction: { type: String, default: null }, // e.g. "Over 2.5", "1X"
+
     // VIP Settings
     isVip: { type: Boolean, default: false },
     creditCost: { type: Number, default: 0 },

@@ -41,6 +41,33 @@ export const getFixtureById = async (fixtureId) => {
         // Prepare Response Object matching frontend expectations
         // Logic adapted from prev/helpers/predictionMerger.js
 
+        // 🧠 PREDICTION LOGIC
+        // Priority: customPrediction > API Logic > null
+        let calculatedTip = null;
+
+        if (fixtureDoc.customPrediction) {
+            calculatedTip = fixtureDoc.customPrediction;
+        } else if (predictionData) {
+            const { win_or_draw, winner } = predictionData;
+            const homeName = matchData.teams.home.name;
+
+            if (win_or_draw === true) {
+                // Double Chance
+                if (winner && winner.name === homeName) {
+                    calculatedTip = "1X";
+                } else {
+                    calculatedTip = "X2";
+                }
+            } else {
+                // Single Choice
+                if (winner && winner.name === homeName) {
+                    calculatedTip = "1";
+                } else {
+                    calculatedTip = "2";
+                }
+            }
+        }
+
         // 🔥 LIVE DATA CHECK
         const live = fixtureDoc.livescore;
 
@@ -89,8 +116,9 @@ export const getFixtureById = async (fixtureId) => {
             status: currentStatus.short || "NS",
             venue: matchData.fixture.venue?.name || "Unknown venue",
 
-            // Predictions (optional, kept if needed later or for reference)
-            tip: predictionData?.predictions?.advice || "N/A",
+            // Predictions (Standard + API Data)
+            tip: calculatedTip || "N/A", // Calculated 1X/X2/1/2 or Manual Override
+            apiPrediction: predictionData || null, // Full API object for Details page (Advice, %)
 
             homeTeam: {
                 id: matchData.teams.home.id,
@@ -135,6 +163,8 @@ export const getFixtureById = async (fixtureId) => {
         // Add standings to response
         response.standings = standingsDoc ? standingsDoc.standings : [];
 
+        // REMOVE VIP OVERRIDES - We now use standard predictions for everyone
+        /*
         // MERGE VIP DATA
         if (vipDoc) {
             response.isVip = true;
@@ -145,6 +175,8 @@ export const getFixtureById = async (fixtureId) => {
         } else {
             response.isVip = false;
         }
+        */
+        response.isVip = false; // Force VIP off for safety during transition
 
         return response;
 

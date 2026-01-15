@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import dbConnect from '@/lib/mongoose';
-import VipFixture from '@/backend/models/VipFixture';
+import Fixture from '@/backend/models/Fixture';
+// import VipFixture from '@/backend/models/VipFixture'; // 🚫 No longer using VIP model
 
 export async function POST(req: Request) {
     try {
@@ -11,7 +12,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const { fixtureId, prediction, odds, isVip, creditCost } = await req.json();
+        const { fixtureId, prediction, odds } = await req.json();
 
         if (!fixtureId) {
             return NextResponse.json({ error: 'Fixture ID is required' }, { status: 400 });
@@ -19,29 +20,26 @@ export async function POST(req: Request) {
 
         await dbConnect();
 
-        // If not VIP, remove from VIP collection
-        if (!isVip) {
-            const deleted = await VipFixture.findOneAndDelete({ fixtureId });
-            return NextResponse.json({ success: true, status: 'removed', fixture: deleted });
-        }
-
-        const updatedVipFixture = await VipFixture.findOneAndUpdate(
-            { fixtureId: fixtureId },
+        // Update the main Fixture document with the custom prediction (manual tip)
+        const updatedFixture = await Fixture.findOneAndUpdate(
+            { fixtureId: Number(fixtureId) },
             {
                 $set: {
-                    prediction,
-                    customOdds: odds,
-                    isVip: true,
-                    creditCost: Number(creditCost)
+                    customPrediction: prediction || null, // Allow clearing it
+                    customOdds: odds // Optional: store manual odds if needed on main doc
                 }
             },
-            { new: true, upsert: true } // Create if not exists
+            { new: true }
         );
 
-        return NextResponse.json({ success: true, fixture: updatedVipFixture });
+        if (!updatedFixture) {
+            return NextResponse.json({ error: 'Fixture not found' }, { status: 404 });
+        }
+
+        return NextResponse.json({ success: true, fixture: updatedFixture });
 
     } catch (error) {
-        console.error("Error updating VIP match:", error);
+        console.error("Error updating match override:", error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }

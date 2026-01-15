@@ -86,11 +86,20 @@ export default function AdminMatchesPage() {
                                             <div className="font-bold text-lg">
                                                 {match.homeTeam.name} vs {match.awayTeam.name}
                                             </div>
-                                            {match.isVip && (
-                                                <div className="inline-flex items-center gap-1 bg-yellow-500/20 text-yellow-500 text-xs px-2 py-1 rounded mt-1">
-                                                    <Lock className="w-3 h-3" /> VIP ({match.creditCost} CR)
-                                                </div>
-                                            )}
+
+                                            {/* Show current tip if exists */}
+                                            <div className="flex gap-2 mt-1">
+                                                {match.tip && match.tip !== "N/A" && (
+                                                    <span className="inline-flex items-center gap-1 bg-green-900 text-green-400 text-xs px-2 py-1 rounded">
+                                                        Tip: {match.tip}
+                                                    </span>
+                                                )}
+                                                {match.customOdds && (
+                                                    <span className="inline-flex items-center gap-1 bg-blue-900 text-blue-400 text-xs px-2 py-1 rounded">
+                                                        Odds: {match.customOdds}
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
 
                                         {/* Edit Controls */}
@@ -98,7 +107,7 @@ export default function AdminMatchesPage() {
                                             onClick={() => setEditingMatch(match)}
                                             className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded font-bold text-sm"
                                         >
-                                            Edit Prediction
+                                            Edit Tip
                                         </button>
                                     </div>
                                 ))}
@@ -122,37 +131,30 @@ export default function AdminMatchesPage() {
                                 handleSave(editingMatch.fixtureId, {
                                     prediction: formData.get("prediction"),
                                     odds: formData.get("odds"),
-                                    isVip: formData.get("isVip") === "on",
-                                    creditCost: Number(formData.get("creditCost")),
+                                    // Remove VIP fields
                                 });
                             }}
                             className="space-y-4"
                         >
                             <div>
-                                <label className="block text-sm mb-1">Our Prediction</label>
-                                <input name="prediction" defaultValue={editingMatch.prediction} className="w-full bg-black border border-gray-600 rounded p-2" required />
+                                <label className="block text-sm mb-1 text-yellow-400">Manual Tip Override</label>
+                                <p className="text-xs text-gray-500 mb-2">Leave empty to use automatic API prediction (1/X/2)</p>
+                                <input
+                                    name="prediction"
+                                    defaultValue={editingMatch.tip === "N/A" ? "" : editingMatch.tip}
+                                    placeholder="e.g. Over 2.5, GG, 1X"
+                                    className="w-full bg-black border border-gray-600 rounded p-2"
+                                />
                             </div>
                             <div>
-                                <label className="block text-sm mb-1">Odds</label>
-                                <input name="odds" defaultValue={editingMatch.odds} className="w-full bg-black border border-gray-600 rounded p-2" step="0.01" type="number" required />
-                            </div>
-
-                            <div className="flex items-center gap-3 py-2 border-t border-gray-700 mt-4">
-                                <input type="checkbox" name="isVip" id="isVip" defaultChecked={editingMatch.isVip} className="w-5 h-5" />
-                                <label htmlFor="isVip" className="font-bold text-yellow-500 flex items-center gap-2">
-                                    <Lock className="w-4 h-4" /> Make this a VIP Tip?
-                                </label>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm mb-1">Credit Cost</label>
-                                <input name="creditCost" type="number" defaultValue={editingMatch.creditCost || 20} className="w-full bg-black border border-gray-600 rounded p-2" />
+                                <label className="block text-sm mb-1">Odds (Optional)</label>
+                                <input name="odds" defaultValue={editingMatch.customOdds || ""} className="w-full bg-black border border-gray-600 rounded p-2" step="0.01" type="number" />
                             </div>
 
                             <div className="flex gap-2 pt-4">
                                 <button type="button" onClick={() => setEditingMatch(null)} className="flex-1 py-2 bg-gray-600 rounded">Cancel</button>
-                                <button type="submit" className="flex-1 py-2 bg-yellow-500 text-black font-bold rounded flex items-center justify-center gap-2">
-                                    <Save className="w-4 h-4" /> Save Changes
+                                <button type="submit" className="flex-1 py-2 bg-green-600 text-white font-bold rounded flex items-center justify-center gap-2">
+                                    <Save className="w-4 h-4" /> Save Tip
                                 </button>
                             </div>
                         </form>

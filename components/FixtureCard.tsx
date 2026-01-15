@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Lock } from "lucide-react";
-import { useSession, signIn } from "next-auth/react";
-import { useState } from "react";
+// import { Lock } from "lucide-react";
+// import { useSession, signIn } from "next-auth/react";
+// import { useState } from "react";
 
 export interface Odds {
   home: string | null;
@@ -25,10 +25,10 @@ export interface FixtureCardProps {
   awayTeam: Team;
   odds: Odds;
   score: string | null;
-  prediction?: string | null;
-  customOdds?: string | null;
-  isVip?: boolean;
-  creditCost?: number;
+  prediction?: string | null; // This is now the TIP (1, X, 1X, Over 2.5 etc)
+  // customOdds?: string | null; // We can use this if we want to show manual odds
+  // isVip?: boolean; // REMOVED
+  // creditCost?: number; // REMOVED
 }
 
 export default function FixtureCard({
@@ -38,10 +38,7 @@ export default function FixtureCard({
   awayTeam,
   odds,
   score,
-  isVip = false,
-  creditCost = 0,
-  prediction,
-  customOdds
+  prediction, // This is the TIP
 }: FixtureCardProps) {
   const isLive = status.includes("'") || status === "HT" || status === "Live";
 
@@ -77,41 +74,14 @@ export default function FixtureCard({
 
 
   // -------------------------
-  // VIP LOGIC
+  // VIP LOGIC REMOVED
   // -------------------------
-
-
-  // We need to check if user has unlocked this tip.
-  // We can use useSession() here.
-  // We can use useSession() here.
-  const { data: session, update } = useSession();
-  // @ts-ignore
-  const unlockedTips = session?.user?.unlockedTips || [];
-  // @ts-ignore
-  const userCredits = session?.user?.credits || 0;
-
-  const [unlocking, setUnlocking] = useState(false);
-  const [justUnlocked, setJustUnlocked] = useState(false);
-
-  const isUnlocked = !isVip || justUnlocked || unlockedTips.includes(String(fixtureId));
-
-  const handleUnlock = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (!session) {
-      // User requirement: Redirect to Google Sign On directly
-      signIn("google", { callbackUrl: `/purchase/${fixtureId}` });
-      return;
-    }
-    // Redirect to Purchase Page
-    window.location.href = `/purchase/${fixtureId}`;
-  };
-
 
   return (
     <div className="relative group max-w-xl mx-auto mb-3">
       {/* Main Card Content - Clickable (Details Page) */}
       <Link href={`/prediction/${fixtureId}`}
-        className={`block bg-[#1F1F1F] rounded-t-xl ${isVip ? 'rounded-b-none' : 'rounded-b-xl'} shadow-sm hover:shadow-md hover:bg-[#2a2a2a] transition flex items-center justify-evenly p-3 border-l-4 border-r border-t border-b border-r-white/5 border-t-white/5 border-b-white/5 ${isLive ? "border-l-red-500" : "border-l-transparent"}`}
+        className={`block bg-[#1F1F1F] rounded-xl shadow-sm hover:shadow-md hover:bg-[#2a2a2a] transition flex items-center justify-evenly p-3 border-l-4 border-r border-t border-b border-r-white/5 border-t-white/5 border-b-white/5 ${isLive ? "border-l-red-500" : "border-l-transparent"}`}
       >
         {/* STATUS */}
         <div className="w-[45px] sm:w-[50px] text-left pl-1">
@@ -139,47 +109,25 @@ export default function FixtureCard({
           <span className={`text-xs ${getOddsColor(odds.away, [odds.home, odds.draw, odds.away])}`}>{odds.away ?? "-"}</span>
         </div>
 
-        {/* SCORE */}
+        {/* SCORE / TIP */}
         <div className={`text-right font-bold text-xs flex flex-col justify-center items-center w-[35px] sm:w-[45px] gap-1 ${isLive ? "text-red-500" : "text-gray-200"}`}>
           {score ? (
             <>
               <span>{score.split(" - ")[0]}</span>
               <span>{score.split(" - ")[1]}</span>
             </>
-          ) : null}
+          ) : (
+            /* Show TIP if score not available (NS) */
+            prediction && prediction !== "N/A" ? (
+              <span className="bg-green-900/80 text-green-400 px-1.5 py-1 rounded text-[10px] w-full text-center truncate border border-green-500/20">
+                {prediction}
+              </span>
+            ) : null
+          )}
         </div>
       </Link>
 
-      {/* VIP FOOTER: LOCKED */}
-      {!isUnlocked && isVip && (
-        <div className="w-full bg-[#181818] border border-t-0 border-yellow-500/20 rounded-b-xl p-2 flex items-center justify-between px-4 animate-in fade-in">
-          <div className="flex items-center gap-2 text-yellow-500">
-            <Lock className="w-4 h-4" />
-            <span className="text-xs font-bold">Tip</span>
-          </div>
-
-          <button
-            onClick={handleUnlock}
-            disabled={unlocking}
-            className="px-4 py-1.5 bg-yellow-500 hover:bg-yellow-400 text-black font-bold text-xs rounded transition flex items-center gap-2"
-          >
-            {unlocking ? "Redirecting..." : (customOdds ? `Unlock ${customOdds} Odds for KSH ${creditCost || 500}` : `Unlock VIP Tip for KSH ${creditCost || 500}`)}
-          </button>
-        </div>
-      )}
-
-      {/* VIP FOOTER: UNLOCKED (SHOW PREDICTION) */}
-      {isUnlocked && isVip && (
-        <div className="w-full bg-green-900/20 border border-t-0 border-green-500/30 rounded-b-xl p-2 flex items-center justify-between px-4 animate-in fade-in">
-          <div className="flex items-center gap-2 text-green-400">
-            <span className="text-xs font-bold">Odds: {customOdds || '2.00'}</span>
-          </div>
-
-          <div className="text-green-400 font-bold text-xs flex items-center gap-2">
-            Prediction: {prediction || "Available in Details"}
-          </div>
-        </div>
-      )}
+      {/* Remove VIP Footer Sections */}
     </div>
   );
 }
