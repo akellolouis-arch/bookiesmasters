@@ -4,7 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Menu, X } from "lucide-react";
-import logo from "@/public/logo.png";
+// import logo from "@/public/logo.png"; 
+// Changing to icon only as per request
+import logo from "@/public/bookiesmasters_icon_only.png";
 
 
 export default function Navbar() {
@@ -25,7 +27,7 @@ export default function Navbar() {
           <Image
             src={logo}
             alt="BookiesMasters Logo"
-            className="w-auto h-[32px] md:h-[40px] object-contain"
+            className="w-auto h-[35px] md:h-[45px] object-contain" // Adjusted height for square icon
             priority
           />
         </Link>
