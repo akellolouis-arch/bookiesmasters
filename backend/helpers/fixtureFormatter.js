@@ -93,6 +93,37 @@ export function formatFixtureCard(fixtureDoc) {
     }
   }
 
+  // -----------------------------
+  // PREDICTION HANDLING
+  // -----------------------------
+  let tip = "N/A";
+  const pred = fixtureDoc.prediction;
+
+  if (typeof pred === "string") {
+    // It's a manual override or pre-calculated string
+    tip = pred;
+  } else if (pred && typeof pred === "object") {
+    // It's a raw API-Football prediction object
+    const { win_or_draw, winner } = pred;
+    const homeName = fx.teams.home.name;
+
+    if (win_or_draw === true) {
+      // Double Chance
+      if (winner && winner.name === homeName) {
+        tip = "1X";
+      } else {
+        tip = "X2";
+      }
+    } else {
+      // Single Choice
+      if (winner && winner.name === homeName) {
+        tip = "1";
+      } else {
+        tip = "2";
+      }
+    }
+  }
+
   return {
     fixtureId: fixtureDoc.fixtureId,
     status: displayStatus,
@@ -114,9 +145,9 @@ export function formatFixtureCard(fixtureDoc) {
       logo: fx.teams.away.logo
     },
     odds,
-    isVip: fixtureDoc.isVip || false,
-    creditCost: fixtureDoc.creditCost || 0,
+    isVip: false, // Force false
+    creditCost: 0,
     customOdds: fixtureDoc.customOdds,
-    prediction: fixtureDoc.prediction,
+    prediction: tip, // Always return a string
   };
 }

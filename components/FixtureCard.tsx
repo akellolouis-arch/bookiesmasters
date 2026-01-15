@@ -72,62 +72,105 @@ export default function FixtureCard({
 
 
 
+  // helper function to validate tip
+  function getTipStatus(tip: string, scoreString: string | null, status: string): "WIN" | "LOSS" | "PENDING" {
+    if (!scoreString || status === "NS") return "PENDING";
 
-  // -------------------------
-  // VIP LOGIC REMOVED
-  // -------------------------
+    // Parse score "1 - 2"
+    const parts = scoreString.split(" - ");
+    if (parts.length !== 2) return "PENDING";
+    const h = parseInt(parts[0]);
+    const a = parseInt(parts[1]);
+
+    // Normalize tip
+    const t = tip.trim().toUpperCase();
+
+    if (t === "1") return h > a ? "WIN" : "LOSS";
+    if (t === "2") return a > h ? "WIN" : "LOSS";
+    if (t === "X") return h === a ? "WIN" : "LOSS";
+    if (t === "1X") return h >= a ? "WIN" : "LOSS";
+    if (t === "X2") return a >= h ? "WIN" : "LOSS";
+    if (t === "12") return h !== a ? "WIN" : "LOSS";
+
+    // Basic Over/Under Support
+    if (t.startsWith("OVER")) {
+      const line = parseFloat(t.split(" ")[1]);
+      if (!isNaN(line)) return (h + a) > line ? "WIN" : "LOSS";
+    }
+    if (t.startsWith("UNDER")) {
+      const line = parseFloat(t.split(" ")[1]);
+      if (!isNaN(line)) return (h + a) < line ? "WIN" : "LOSS";
+    }
+
+    return "PENDING"; // default if unknown format
+  }
+
+  const tipStatus = (prediction && prediction !== "N/A")
+    ? getTipStatus(prediction, score, status)
+    : "PENDING";
+
+  let tipColor = "text-orange-300"; // Pale Orange (Pending)
+  if (tipStatus === "WIN") tipColor = "text-green-500";
+  if (tipStatus === "LOSS") tipColor = "text-red-500";
 
   return (
     <div className="relative group max-w-xl mx-auto mb-3">
       {/* Main Card Content - Clickable (Details Page) */}
       <Link href={`/prediction/${fixtureId}`}
-        className={`block bg-[#1F1F1F] rounded-xl shadow-sm hover:shadow-md hover:bg-[#2a2a2a] transition flex items-center justify-evenly p-3 border-l-4 border-r border-t border-b border-r-white/5 border-t-white/5 border-b-white/5 ${isLive ? "border-l-red-500" : "border-l-transparent"}`}
+        className={`block bg-[#1F1F1F] rounded-xl shadow-sm hover:shadow-md hover:bg-[#2a2a2a] transition flex items-center justify-between p-2 sm:p-3 border-l-4 border-r border-t border-b border-r-white/5 border-t-white/5 border-b-white/5 ${isLive ? "border-l-red-500" : "border-l-transparent"} gap-2`}
       >
         {/* STATUS */}
-        <div className="w-[45px] sm:w-[50px] text-left pl-1">
+        <div className="w-[40px] sm:w-[50px] text-left shrink-0">
           <p className={`text-[10px] sm:text-xs leading-none font-bold ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
             {status}
           </p>
         </div>
 
         {/* TEAMS */}
-        <div className="flex flex-col items-start text-left mx-2 w-[140px] sm:w-[180px] gap-1">
-          <div className="flex items-center gap-2">
-            <Image src={homeTeam.logo} alt={homeTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain" unoptimized />
-            <span className="font-medium text-gray-200 text-xs truncate">{homeTeam.name}</span>
+        <div className="flex flex-col items-start text-left flex-1 min-w-0 gap-1">
+          <div className="flex items-center gap-1.5 w-full">
+            <Image src={homeTeam.logo} alt={homeTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
+            <span className="font-medium text-gray-200 text-[11px] sm:text-xs truncate w-full">{homeTeam.name}</span>
           </div>
-          <div className="flex items-center gap-2">
-            <Image src={awayTeam.logo} alt={awayTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain" unoptimized />
-            <span className="font-medium text-gray-200 text-xs truncate">{awayTeam.name}</span>
+          <div className="flex items-center gap-1.5 w-full">
+            <Image src={awayTeam.logo} alt={awayTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
+            <span className="font-medium text-gray-200 text-[11px] sm:text-xs truncate w-full">{awayTeam.name}</span>
           </div>
         </div>
 
         {/* ODDS / LOCKED STATE */}
-        <div className={`flex flex-row justify-between w-[100px] sm:w-[130px] ${isLive ? "animate-pulse" : ""}`}>
-          <span className={`text-xs ${getOddsColor(odds.home, [odds.home, odds.draw, odds.away])}`}>{odds.home ?? "-"}</span>
-          <span className={`text-xs ${getOddsColor(odds.draw, [odds.home, odds.draw, odds.away])}`}>{odds.draw ?? "-"}</span>
-          <span className={`text-xs ${getOddsColor(odds.away, [odds.home, odds.draw, odds.away])}`}>{odds.away ?? "-"}</span>
+        <div className={`flex flex-row justify-between w-[90px] sm:w-[130px] shrink-0 ${isLive ? "animate-pulse" : ""}`}>
+          <span className={`text-[10px] sm:text-xs ${getOddsColor(odds.home, [odds.home, odds.draw, odds.away])}`}>{odds.home ?? "-"}</span>
+          <span className={`text-[10px] sm:text-xs ${getOddsColor(odds.draw, [odds.home, odds.draw, odds.away])}`}>{odds.draw ?? "-"}</span>
+          <span className={`text-[10px] sm:text-xs ${getOddsColor(odds.away, [odds.home, odds.draw, odds.away])}`}>{odds.away ?? "-"}</span>
         </div>
 
-        {/* SCORE / TIP */}
-        <div className={`text-right font-bold text-xs flex flex-col justify-center items-center w-[35px] sm:w-[45px] gap-1 ${isLive ? "text-red-500" : "text-gray-200"}`}>
-          {score ? (
-            <>
-              <span>{score.split(" - ")[0]}</span>
-              <span>{score.split(" - ")[1]}</span>
-            </>
-          ) : (
-            /* Show TIP if score not available (NS) */
-            prediction && prediction !== "N/A" ? (
-              <span className="bg-green-900/80 text-green-400 px-1.5 py-1 rounded text-[10px] w-full text-center truncate border border-green-500/20">
+        {/* SCORE & TIP SECTION */}
+        <div className="flex items-center gap-2 w-[60px] sm:w-[75px] justify-end shrink-0">
+
+          {/* VERTICAL SCORES */}
+          <div className={`flex flex-col gap-1 items-end justify-center font-bold text-[11px] sm:text-xs leading-none ${isLive ? "text-red-500" : "text-gray-200"}`}>
+            {score ? (
+              <>
+                <span className="h-3.5 flex items-center">{score.split(" - ")[0]}</span>
+                <span className="h-3.5 flex items-center">{score.split(" - ")[1]}</span>
+              </>
+            ) : (
+              /* Empty spacer to keep alignment if needed, or just nothing as requested */
+              null
+            )}
+          </div>
+
+          {/* TIP - Side by side */}
+          {prediction && prediction !== "N/A" && (
+            <div className="flex items-center justify-center">
+              <span className={`text-[10px] sm:text-xs font-bold uppercase tracking-widest px-1.5 py-1 rounded bg-white/5 border border-white/10 ${tipColor}`}>
                 {prediction}
               </span>
-            ) : null
+            </div>
           )}
         </div>
       </Link>
-
-      {/* Remove VIP Footer Sections */}
     </div>
   );
 }

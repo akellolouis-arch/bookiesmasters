@@ -66,10 +66,10 @@ export async function getFixturesGroupedByLeague(date) {
         "fixtureId": 1,
 
         // MERGE VIP DATA (Override defaults)
-        "isVip": { $ifNull: ["$vipData.isVip", false] },
-        "creditCost": { $ifNull: ["$vipData.creditCost", 0] },
-        "prediction": { $ifNull: ["$vipData.prediction", "$prediction"] },
-        "customOdds": "$vipData.customOdds",
+        "isVip": { $literal: false }, // Force False
+        "creditCost": { $literal: 0 },
+        "prediction": { $ifNull: ["$customPrediction", "$prediction"] },
+        "customOdds": "$customOdds",
 
         "odds": {
           $map: {

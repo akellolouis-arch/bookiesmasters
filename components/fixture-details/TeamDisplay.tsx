@@ -19,6 +19,7 @@ interface TeamDisplayProps {
     venue?: string;
     date: string; // ISO date string
     score?: { home: number | null; away: number | null };
+    tip?: string | null;
 }
 
 const TeamDisplay: React.FC<TeamDisplayProps> = ({
@@ -28,10 +29,46 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
     displayDate,
     venue,
     score,
+    tip,
 }) => {
     // Check if match is live/active to apply red color
     const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE"].includes(status);
     const isFinished = ["FT", "AET", "PEN"].includes(status);
+
+    // Tip Validation Logic (Matches FixtureCard)
+    const getTipStatus = (tVal: string) => {
+        if (!score || score.home === null || score.away === null || status === "NS") return "PENDING";
+
+        const h = Number(score.home);
+        const a = Number(score.away);
+        const t = tVal.trim().toUpperCase();
+
+        if (t === "1") return h > a ? "WIN" : "LOSS";
+        if (t === "2") return a > h ? "WIN" : "LOSS";
+        if (t === "X") return h === a ? "WIN" : "LOSS";
+        if (t === "1X") return h >= a ? "WIN" : "LOSS";
+        if (t === "X2") return a >= h ? "WIN" : "LOSS";
+        if (t === "12") return h !== a ? "WIN" : "LOSS";
+
+        // Basic Over/Under Support
+        if (t.startsWith("OVER")) {
+            const line = parseFloat(t.split(" ")[1]);
+            if (!isNaN(line)) return (h + a) > line ? "WIN" : "LOSS";
+        }
+        if (t.startsWith("UNDER")) {
+            const line = parseFloat(t.split(" ")[1]);
+            if (!isNaN(line)) return (h + a) < line ? "WIN" : "LOSS";
+        }
+
+        return "PENDING";
+    };
+
+    let tipColorClass = "text-orange-400 bg-orange-900/20 border-orange-500/20";
+    if (tip && tip !== "N/A") {
+        const s = getTipStatus(tip);
+        if (s === "WIN") tipColorClass = "text-green-400 bg-green-900/40 border-green-500/20";
+        if (s === "LOSS") tipColorClass = "text-red-400 bg-red-900/20 border-red-500/20";
+    }
 
     const renderFormBars = (forms: { result: string; color: string }[]) => {
         if (!forms || !Array.isArray(forms) || forms.length === 0) return null;
@@ -75,6 +112,14 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
 
                 {/* Center - Score/Time */}
                 <div className="flex flex-col items-center justify-center text-center">
+
+                    {/* TIP Display - Above Score/Time */}
+                    {tip && tip !== "N/A" && (
+                        <div className={`mb-2 border px-3 py-1 rounded text-xs font-bold uppercase tracking-wider animate-in fade-in slide-in-from-top-1 ${tipColorClass}`}>
+                            Tip: {tip}
+                        </div>
+                    )}
+
                     {score ? (
                         <div className="flex flex-col items-center">
                             {/* Score */}
@@ -88,8 +133,10 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                             </div>
                         </div>
                     ) : (
-                        <div className="text-sm font-bold text-gray-400">
-                            {displayDate}
+                        <div className="flex flex-col items-center">
+                            <div className="text-sm font-bold text-gray-400">
+                                {displayDate}
+                            </div>
                         </div>
                     )}
                 </div>

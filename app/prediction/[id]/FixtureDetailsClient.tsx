@@ -12,7 +12,7 @@ import LeagueHeader from "@/components/fixture-details/LeagueHeader";
 import Lineups from "@/components/fixture-details/Lineups";
 import Injuries from "@/components/fixture-details/Injuries";
 import Statistics from "@/components/fixture-details/Statistics";
-import PredictionDisplay from "@/components/fixture-details/PredictionDisplay";
+// import PredictionDisplay from "@/components/fixture-details/PredictionDisplay";
 
 
 interface FixtureDetailsClientProps {
@@ -38,17 +38,17 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
     );
     const router = useRouter();
     // const { data: session, update } = useSession();
-    const [activeTab, setActiveTab] = useState("prediction"); // Default to prediction
+    const [activeTab, setActiveTab] = useState("events"); // Default to events
     // const [unlocking, setUnlocking] = useState(false);
     // const [justUnlocked, setJustUnlocked] = useState(false);
 
     // VIP Logic REMOVED
 
     // Check if we have prediction info to show the tab
-    const hasPrediction = data.tip && data.tip !== "N/A" || data.apiPrediction;
+    // const hasPrediction = data.tip && data.tip !== "N/A" || data.apiPrediction;
 
     const tabs = [
-        ...(hasPrediction ? [{ id: "prediction", label: "Prediction" }] : []),
+        // ...(hasPrediction ? [{ id: "prediction", label: "Prediction" }] : []), // Removed
         { id: "events", label: "Events" },
         { id: "stats", label: "Stats" },
         { id: "lineups", label: "Lineups" },
@@ -113,7 +113,18 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                     venue={data.venue}
                     date={data.date}
                     score={data.score}
+                    tip={data.tip}
                 />
+
+                {/* ADVICE DISPLAY (Below Team Display) */}
+                {data.apiPrediction?.advice && (
+                    <div className="flex justify-center -mt-2 mb-4 animate-in fade-in slide-in-from-top-2">
+                        <div className="text-center bg-[#1e1e1e]/50 border-b border-white/5 py-2 px-4 rounded-xl">
+                            <div className="text-[10px] text-gray-500 uppercase tracking-widest mb-0.5">Prediction Advice</div>
+                            <div className="text-sm text-gray-200 font-medium italic">"{data.apiPrediction.advice}"</div>
+                        </div>
+                    </div>
+                )}
 
                 {/* VIP SECTION REMOVED */}
 
