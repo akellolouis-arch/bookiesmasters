@@ -27,7 +27,7 @@ export default function Navbar() {
           <Image
             src={logo}
             alt="BookiesMasters Logo"
-            className="w-auto h-[35px] md:h-[45px] object-contain" // Adjusted height for square icon
+            className="w-auto h-[45px] md:h-[45px] object-contain" // Adjusted height for square icon
             priority
           />
         </Link>
