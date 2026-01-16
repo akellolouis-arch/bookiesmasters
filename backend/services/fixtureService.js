@@ -1,5 +1,4 @@
 import Fixture from "../models/Fixture.js";
-import VipFixture from "../models/VipFixture.js";
 import Standing from "../models/Standing.js";
 import { calculateTeamForm } from "../helpers/formCalculator.js";
 
@@ -151,9 +150,6 @@ export const getFixtureById = async (fixtureId) => {
             statistics: fixtureDoc.statistics || [],
         };
 
-        // Fetch VipFixture Data (Safe separate query)
-        const vipDoc = await VipFixture.findOne({ fixtureId: fixtureIdNum }).lean();
-
         // Fetch Standings
         const standingsDoc = await Standing.findOne({
             "league.id": matchData.league.id,
@@ -163,20 +159,8 @@ export const getFixtureById = async (fixtureId) => {
         // Add standings to response
         response.standings = standingsDoc ? standingsDoc.standings : [];
 
-        // REMOVE VIP OVERRIDES - We now use standard predictions for everyone
-        /*
-        // MERGE VIP DATA
-        if (vipDoc) {
-            response.isVip = true;
-            response.creditCost = vipDoc.creditCost || 0;
-            response.prediction = vipDoc.prediction; // Override standard prediction
-            response.customOdds = vipDoc.customOdds;
-            response.tip = vipDoc.prediction; // Ensure tip field reflects VIP prediction
-        } else {
-            response.isVip = false;
-        }
-        */
-        response.isVip = false; // Force VIP off for safety during transition
+        // No VIP logic anymore
+        response.isVip = false;
 
         return response;
 
