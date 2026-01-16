@@ -60,8 +60,8 @@ export default function DateNavigator({ date }: Props) {
         <Link
           href="/live"
           className={`shrink-0 w-12 h-10 rounded-lg flex flex-col items-center justify-center text-[10px] font-bold transition-colors border ${isLivePage
-              ? "bg-red-600/10 border-red-600 text-red-500 animate-pulse"
-              : "bg-[#1F1F1F] border-white/5 text-gray-400 hover:text-white"
+            ? "bg-red-600/10 border-red-600 text-red-500 animate-pulse"
+            : "bg-[#1F1F1F] border-white/5 text-gray-400 hover:text-white"
             }`}
         >
           <span className="w-2 h-2 rounded-full bg-current mb-0.5 animate-pulse" />
@@ -85,10 +85,10 @@ export default function DateNavigator({ date }: Props) {
                 onClick={() => handleDateClick(d)}
                 data-active={isActive}
                 className={`shrink-0 flex flex-col items-center justify-center w-[50px] py-1.5 rounded-lg border transition-all ${isActive
-                    ? "bg-[#63FF79] border-[#63FF79] text-black shadow-lg shadow-[#63FF79]/20"
-                    : isToday
-                      ? "bg-white/10 border-white/20 text-white"
-                      : "bg-[#1F1F1F] border-white/5 text-gray-500 hover:bg-[#252525] hover:text-gray-300"
+                  ? "bg-[#63FF79] border-[#63FF79] text-black shadow-lg shadow-[#63FF79]/20"
+                  : isToday
+                    ? "bg-white/10 border-white/20 text-white"
+                    : "bg-[#1F1F1F] border-white/5 text-gray-500 hover:bg-[#252525] hover:text-gray-300"
                   }`}
               >
                 <span className="text-[10px] font-bold uppercase leading-tight">{dayName}</span>
