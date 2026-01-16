@@ -52,7 +52,7 @@ export default function Navbar() {
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle Menu"
         >
-          {menuOpen ? <X size={20} strokeWidth={4} /> : <Menu width={34} height={18} strokeWidth={4} preserveAspectRatio="none" />}
+          {menuOpen ? <X size={20} strokeWidth={4} /> : <Menu width={32} height={18} strokeWidth={4} preserveAspectRatio="none" />}
         </button>
 
       </div>
