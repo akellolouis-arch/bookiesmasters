@@ -5,8 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Menu, X } from "lucide-react";
 // import logo from "@/public/logo.png"; 
-// Changing to icon only as per request
-import logo from "@/public/bookiesmasters_icon_only.png";
+// Use the new transparent enhanced version
+import logo from "@/public/bookiesmasters_transparent_v2.png";
 
 
 export default function Navbar() {
