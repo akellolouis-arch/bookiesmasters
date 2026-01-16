@@ -57,17 +57,17 @@ export default function DateNavigator({ date }: Props) {
 
   return (
     <div className="max-w-[100vw] bg-black border-y border-white/5 mx-auto">
-      <div className="max-w-7xl mx-auto flex items-center gap-1 md:gap-3 px-2 py-2">
+      <div className="max-w-7xl mx-auto flex items-center gap-1 md:gap-3 px-2 py-1.5">
 
         {/* LEFT: LIVE button */}
         <Link
           href="/live"
-          className={`shrink-0 w-12 h-10 rounded-lg flex flex-col items-center justify-center text-[10px] font-bold transition-colors border ${isLivePage
+          className={`shrink-0 w-12 h-8 rounded-md flex flex-col items-center justify-center text-[9px] font-bold transition-colors border ${isLivePage
             ? "bg-red-600/10 border-red-600 text-red-500 animate-pulse"
             : "bg-[#1F1F1F] border-white/5 text-gray-400 hover:text-white"
             }`}
         >
-          <span className="w-2 h-2 rounded-full bg-current mb-0.5 animate-pulse" />
+          <span className="w-1.5 h-1.5 rounded-full bg-current mb-0.5 animate-pulse" />
           LIVE
         </Link>
 
@@ -87,15 +87,15 @@ export default function DateNavigator({ date }: Props) {
                 key={i}
                 onClick={() => handleDateClick(d)}
                 data-active={isActive}
-                className={`shrink-0 flex flex-col items-center justify-center w-[50px] py-1.5 rounded-lg border transition-all ${isActive
+                className={`shrink-0 flex flex-col items-center justify-center w-[45px] h-8 rounded-md border transition-all ${isActive
                   ? "bg-[#63FF79] border-[#63FF79] text-black shadow-lg shadow-[#63FF79]/20"
                   : isToday
                     ? "bg-white/10 border-white/20 text-white"
                     : "bg-[#1F1F1F] border-white/5 text-gray-500 hover:bg-[#252525] hover:text-gray-300"
                   }`}
               >
-                <span className="text-[10px] font-bold uppercase leading-tight">{dayName}</span>
-                <span className="text-[10px] font-medium leading-tight opacity-90">{dateStr}</span>
+                <span className="text-[9px] font-bold uppercase leading-tight">{dayName}</span>
+                <span className="text-[9px] font-medium leading-tight opacity-90">{dateStr}</span>
               </button>
             );
           })}
@@ -103,9 +103,9 @@ export default function DateNavigator({ date }: Props) {
 
         {/* RIGHT: Search button */}
         <button
-          className="shrink-0 w-10 h-10 bg-[#1F1F1F] text-white rounded-lg border border-white/5 flex items-center justify-center hover:bg-[#2F2F2F] transition-colors"
+          className="shrink-0 w-8 h-8 bg-[#1F1F1F] text-white rounded-md border border-white/5 flex items-center justify-center hover:bg-[#2F2F2F] transition-colors"
         >
-          <Search size={16} />
+          <Search size={14} />
         </button>
       </div>
 
