@@ -5,6 +5,7 @@ import "./globals.css";
 
 import AuthProvider from "@/components/AuthProvider";
 import Navbar from "@/components/Navbar";
+import TopLeaguesRibbon from "@/components/TopLeaguesRibbon";
 import Footer from "@/components/Footer";
 
 const geistSans = Geist({
@@ -89,6 +90,7 @@ export default function RootLayout({
 
         <AuthProvider>
           <Navbar />
+          <TopLeaguesRibbon />
           <main className="min-h-screen">{children}</main>
           <Footer />
         </AuthProvider>
