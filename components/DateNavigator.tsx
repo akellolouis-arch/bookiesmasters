@@ -18,12 +18,15 @@ export default function DateNavigator({ date }: Props) {
   const [year, month, day] = date.split("-").map(Number);
   const currentDate = new Date(year, month - 1, day); // Local midnight
 
-  // Generate range: 7 days before to 7 days after
+  // Fixed reference to Today (Client Time) to prevent window shifting
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Generate fixed range: 14 days total (-6 to +7)
   const dates = [];
-  const range = 7;
-  for (let i = -range; i <= range; i++) {
-    const d = new Date(currentDate);
-    d.setDate(currentDate.getDate() + i);
+  for (let i = -6; i <= 7; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
     dates.push(d);
   }
 

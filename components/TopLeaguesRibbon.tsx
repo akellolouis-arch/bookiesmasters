@@ -28,9 +28,9 @@ export default function TopLeaguesRibbon() {
                             <Link
                                 key={league.id}
                                 href={`/league/${league.id}`}
-                                className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-all whitespace-nowrap border ${isActive
-                                        ? "bg-[#63FF79]/10 border-[#63FF79]/50 text-[#63FF79]"
-                                        : "bg-[#252525] border-transparent text-gray-400 hover:bg-[#333] hover:text-gray-200"
+                                className={`shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-full transition-all whitespace-nowrap border ${isActive
+                                    ? "bg-[#63FF79]/10 border-[#63FF79]/50 text-[#63FF79]"
+                                    : "bg-[#252525] border-transparent text-gray-400 hover:bg-[#333] hover:text-gray-200"
                                     }`}
                             >
                                 <img
