@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { PRIMARY_AFFILIATE } from "@/data/affiliates";
 // import { Lock } from "lucide-react";
 // import { useSession, signIn } from "next-auth/react";
 // import { useState } from "react";
@@ -115,81 +114,63 @@ export default function FixtureCard({
   if (tipStatus === "LOSS") tipColor = "text-red-500";
 
   return (
-    <div className="max-w-xl mx-auto mb-3">
-      <div className={`relative flex items-stretch bg-[#1F1F1F] rounded-xl shadow-sm hover:shadow-md transition border border-white/5 overflow-hidden group ${isLive ? "border-l-4 border-l-red-500" : ""}`}>
+    <div className="relative group max-w-xl mx-auto mb-3">
+      {/* Main Card Content - Clickable (Details Page) */}
+      <Link href={`/prediction/${fixtureId}`}
+        className={`block bg-[#1F1F1F] rounded-xl shadow-sm hover:shadow-md hover:bg-[#2a2a2a] transition flex items-center justify-between p-2 sm:p-3 border-l-4 border-r border-t border-b border-r-white/5 border-t-white/5 border-b-white/5 ${isLive ? "border-l-red-500" : "border-l-transparent"} gap-2`}
+      >
+        {/* STATUS */}
+        <div className="w-[40px] sm:w-[50px] text-left shrink-0">
+          <p className={`text-[10px] sm:text-xs leading-none font-bold ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
+            {status}
+          </p>
+        </div>
 
-        {/* Main Clickable Content -> Details Page */}
-        <Link
-          href={`/prediction/${fixtureId}`}
-          className="flex-1 flex items-center justify-between p-2 sm:p-3 gap-2 min-w-0"
-        >
-          {/* STATUS */}
-          <div className="w-[40px] sm:w-[50px] text-left shrink-0">
-            <p className={`text-[10px] sm:text-xs leading-none font-bold ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
-              {status}
-            </p>
+        {/* TEAMS */}
+        <div className="flex flex-col items-start text-left flex-1 min-w-0 gap-1">
+          <div className="flex items-center gap-1.5 w-full">
+            <Image src={homeTeam.logo} alt={homeTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
+            <span className="font-medium text-gray-200 text-[11px] sm:text-xs truncate w-full">{homeTeam.name}</span>
           </div>
-
-          {/* TEAMS */}
-          <div className="flex flex-col items-start text-left flex-1 min-w-0 gap-1">
-            <div className="flex items-center gap-1.5 w-full">
-              <Image src={homeTeam.logo} alt={homeTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
-              <span className="font-medium text-gray-200 text-[11px] sm:text-xs truncate w-full">{homeTeam.name}</span>
-            </div>
-            <div className="flex items-center gap-1.5 w-full">
-              <Image src={awayTeam.logo} alt={awayTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
-              <span className="font-medium text-gray-200 text-[11px] sm:text-xs truncate w-full">{awayTeam.name}</span>
-            </div>
+          <div className="flex items-center gap-1.5 w-full">
+            <Image src={awayTeam.logo} alt={awayTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
+            <span className="font-medium text-gray-200 text-[11px] sm:text-xs truncate w-full">{awayTeam.name}</span>
           </div>
+        </div>
 
-          {/* ODDS (Hidden on very small screens if needed, or kept compact) */}
-          <div className={`hidden xs:flex flex-row justify-between w-[80px] shrink-0 ${isLive ? "animate-pulse" : ""}`}>
-            {/* Simplified Odds Display */}
-            <div className="flex flex-col items-center">
-              <span className="text-[9px] text-gray-500">1</span>
-              <span className={`text-[10px] ${getOddsColor(odds.home, [odds.home, odds.draw, odds.away])}`}>{odds.home ?? "-"}</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <span className="text-[9px] text-gray-500">X</span>
-              <span className={`text-[10px] ${getOddsColor(odds.draw, [odds.home, odds.draw, odds.away])}`}>{odds.draw ?? "-"}</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <span className="text-[9px] text-gray-500">2</span>
-              <span className={`text-[10px] ${getOddsColor(odds.away, [odds.home, odds.draw, odds.away])}`}>{odds.away ?? "-"}</span>
-            </div>
-          </div>
+        {/* ODDS / LOCKED STATE */}
+        <div className={`flex flex-row justify-between w-[90px] sm:w-[130px] shrink-0 ${isLive ? "animate-pulse" : ""}`}>
+          <span className={`text-[10px] sm:text-xs ${getOddsColor(odds.home, [odds.home, odds.draw, odds.away])}`}>{odds.home ?? "-"}</span>
+          <span className={`text-[10px] sm:text-xs ${getOddsColor(odds.draw, [odds.home, odds.draw, odds.away])}`}>{odds.draw ?? "-"}</span>
+          <span className={`text-[10px] sm:text-xs ${getOddsColor(odds.away, [odds.home, odds.draw, odds.away])}`}>{odds.away ?? "-"}</span>
+        </div>
 
-          {/* SCORE / TIP */}
-          <div className="flex flex-col items-end gap-1 shrink-0 w-[50px]">
-            {/* Score */}
-            <div className={`font-bold text-[11px] ${isLive ? "text-red-500" : "text-gray-200"}`}>
-              {score || "-"}
-            </div>
-            {/* Wrapper for Tip */}
-            {prediction && prediction !== "N/A" && (
-              <span className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-white/5 ${tipColor}`}>
-                {prediction}
-              </span>
+        {/* SCORE & TIP SECTION */}
+        <div className="flex items-center gap-2 w-[60px] sm:w-[75px] justify-end shrink-0">
+
+          {/* VERTICAL SCORES */}
+          <div className={`flex flex-col gap-1 items-end justify-center font-bold text-[11px] sm:text-xs leading-none ${isLive ? "text-red-500" : "text-gray-200"}`}>
+            {score ? (
+              <>
+                <span className="h-3.5 flex items-center">{score.split(" - ")[0]}</span>
+                <span className="h-3.5 flex items-center">{score.split(" - ")[1]}</span>
+              </>
+            ) : (
+              /* Empty spacer to keep alignment if needed, or just nothing as requested */
+              null
             )}
           </div>
-        </Link>
 
-        {/* Affiliate "BET" Button (Right Side Strip) */}
-        <a
-          href={PRIMARY_AFFILIATE.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`shrink-0 w-[40px] sm:w-[50px] flex flex-col items-center justify-center gap-0.5 ${PRIMARY_AFFILIATE.color || "bg-blue-600"} hover:brightness-110 transition-all cursor-pointer`}
-        >
-          <span className="text-[8px] sm:text-[9px] font-bold text-white uppercase -rotate-90 whitespace-nowrap">
-            {PRIMARY_AFFILIATE.name}
-          </span>
-          <span className="text-[10px] sm:text-[12px] text-white">
-            ↗
-          </span>
-        </a>
-
-      </div>
+          {/* TIP - Side by side */}
+          {prediction && prediction !== "N/A" && (
+            <div className="flex items-center justify-center">
+              <span className={`text-[10px] sm:text-xs font-bold uppercase tracking-widest px-1.5 py-1 rounded bg-white/5 border border-white/10 ${tipColor}`}>
+                {prediction}
+              </span>
+            </div>
+          )}
+        </div>
+      </Link>
     </div>
   );
 }
