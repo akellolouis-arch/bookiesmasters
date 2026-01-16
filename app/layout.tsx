@@ -70,6 +70,23 @@ export default function RootLayout({
           />
         </noscript>
 
+        {/* Organization Schema for Google Knowledge Graph */}
+        <Script id="org-schema" type="application/ld+json">
+          {`
+            {
+              "@context": "https://schema.org",
+              "@type": "SportsOrganization",
+              "name": "BookiesMasters",
+              "url": "https://bookiesmasters.com",
+              "logo": "https://bookiesmasters.com/bookiesmasters_text_v2.png",
+              "sameAs": [
+                "https://facebook.com/bookiesmasters",
+                "https://twitter.com/bookiesmasters"
+              ]
+            }
+          `}
+        </Script>
+
         <AuthProvider>
           <Navbar />
           <main className="min-h-screen">{children}</main>

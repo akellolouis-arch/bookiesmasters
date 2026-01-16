@@ -48,7 +48,6 @@ export default function LeagueExplorer() {
         <div className="w-full max-w-xl mx-auto bg-transparent">
 
             {/* League Selector (Tabs) */}
-            {/* League Selector (Tabs) */}
             <div className="flex overflow-x-auto p-1 gap-1 scrollbar-hide bg-[#1F1F1F] rounded-t-xl border border-white/5 border-b-0">
                 {LEAGUES.map((league) => (
                     <button
@@ -65,6 +64,13 @@ export default function LeagueExplorer() {
                         </span>
                     </button>
                 ))}
+            </div>
+
+            {/* SEO Link to Active League Page */}
+            <div className="bg-[#1F1F1F] px-4 py-1 border-x border-white/5 flex justify-end">
+                <a href={`/league/${activeLeague}`} className="text-[10px] text-blue-400 hover:text-blue-300 hover:underline flex items-center gap-1">
+                    Visit {LEAGUES.find(l => l.id === activeLeague)?.name} Page &rarr;
+                </a>
             </div>
 
             {/* Content Tabs (Standings | Scorers | Fixtures) */}
