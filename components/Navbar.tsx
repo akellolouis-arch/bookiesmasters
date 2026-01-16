@@ -48,7 +48,7 @@ export default function Navbar() {
 
         {/* Mobile Toggle */}
         <button
-          className="md:hidden text-white hover:text-gray-300 font-bold"
+          className="md:hidden text-[#00FF96] hover:text-[#00CC78] font-bold"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle Menu"
         >
