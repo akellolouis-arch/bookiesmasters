@@ -13,7 +13,7 @@ import Lineups from "@/components/fixture-details/Lineups";
 import Injuries from "@/components/fixture-details/Injuries";
 import Statistics from "@/components/fixture-details/Statistics";
 // import PredictionDisplay from "@/components/fixture-details/PredictionDisplay";
-import MatchConditions from "@/components/fixture-details/MatchConditions";
+// import PredictionDisplay from "@/components/fixture-details/PredictionDisplay";
 
 
 interface FixtureDetailsClientProps {
@@ -111,9 +111,6 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                     tip={data.tip}
                 />
 
-
-                {/* MATCH CONDITIONS WIDGET */}
-                <MatchConditions conditions={data.conditions} />
 
                 {/* ADVICE DISPLAY (Below Team Display) */}
                 {data.apiPrediction?.advice && (
