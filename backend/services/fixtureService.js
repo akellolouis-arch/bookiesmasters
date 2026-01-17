@@ -1,6 +1,9 @@
 import Fixture from "../models/Fixture.js";
 import Standing from "../models/Standing.js";
 import { calculateTeamForm } from "../helpers/formCalculator.js";
+import { getCoordinatesForCity, calculateDistance } from "./LocationService.js";
+import { getMatchWeather } from "./WeatherService.js";
+import Team from "../models/Team.js";
 
 export const getFixtureById = async (fixtureId) => {
     try {
@@ -158,6 +161,62 @@ export const getFixtureById = async (fixtureId) => {
 
         // Add standings to response
         response.standings = standingsDoc ? standingsDoc.standings : [];
+
+        // --- MATCH CONDITIONS LOGIC ---
+        // Best effort: Do not fail request if this fails
+        try {
+            const venueCity = matchData.fixture.venue?.city;
+            let conditions = {
+                weather: null,
+                distance: null,
+                venueCity
+            };
+
+            if (venueCity) {
+                // 1. Get Venue Coordinates
+                // Note: In a real prod env, we should cache this city->coord map in DB to save API calls
+                const venueCoords = await getCoordinatesForCity(venueCity);
+
+                if (venueCoords) {
+                    // 2. Fetch Weather
+                    conditions.weather = await getMatchWeather(venueCoords.lat, venueCoords.lon, matchData.fixture.date);
+
+                    // 3. Calculate Distance for Away Team
+                    // Try to find Away Team details
+                    let awayTeamDoc = await Team.findOne({ teamId: matchData.teams.away.id });
+                    let awayCoords = awayTeamDoc?.coordinates;
+
+                    // If missing coordinates, try to fetch via Stadium Name or City Name
+                    if (!awayCoords) {
+                        // Attempt 1: Try searching "Team Name stadium" (e.g. "Arsenal stadium")
+                        const query = `${matchData.teams.away.name} stadium`;
+                        const fetchedCoords = await getCoordinatesForCity(query);
+
+                        if (fetchedCoords) {
+                            awayCoords = fetchedCoords;
+                            // Cache it
+                            await Team.findOneAndUpdate(
+                                { teamId: matchData.teams.away.id },
+                                {
+                                    teamId: matchData.teams.away.id,
+                                    name: matchData.teams.away.name,
+                                    coordinates: awayCoords
+                                },
+                                { upsert: true }
+                            );
+                        }
+                    }
+
+                    if (venueCoords && awayCoords) {
+                        conditions.distance = calculateDistance(venueCoords.lat, venueCoords.lon, awayCoords.lat, awayCoords.lon);
+                    }
+                }
+            }
+            response.conditions = conditions;
+        } catch (err) {
+            console.error("⚠️ Error calculating match conditions:", err.message);
+            response.conditions = null;
+        }
 
         // No VIP logic anymore
         response.isVip = false;
