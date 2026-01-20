@@ -2,6 +2,10 @@ import Fixture from "../models/Fixture.js";
 import Standing from "../models/Standing.js";
 import { calculateTeamForm } from "../helpers/formCalculator.js";
 
+
+
+console.log("✅ FixtureService Loaded with AllMatches Logic");
+
 export const getFixtureById = async (fixtureId) => {
     try {
         const fixtureIdNum = Number(fixtureId);
@@ -23,6 +27,12 @@ export const getFixtureById = async (fixtureId) => {
         const matchData = fixtureDoc.fixture;
         const predictionData = fixtureDoc.prediction; // Embedded prediction
 
+        // Safety Check: Ensure critical data exists
+        if (!matchData || !matchData.teams || !matchData.league) {
+            console.log("❌ Fixture missing critical data (teams/league)");
+            return null;
+        }
+
         // Use the root 'h2h' field as requested, which stores the H2H data from API
         const h2hData = fixtureDoc.h2h || [];
 
@@ -31,10 +41,15 @@ export const getFixtureById = async (fixtureId) => {
         let awayData = { form: [], last5Matches: [] };
 
         try {
-            homeData = await calculateTeamForm(matchData.teams.home.id) || homeData;
-            awayData = await calculateTeamForm(matchData.teams.away.id) || awayData;
+            // Parallel execution for improvements
+            [homeData, awayData] = await Promise.all([
+                calculateTeamForm(matchData.teams.home.id).catch((e) => { console.error("Home Form Error:", e); return homeData; }),
+                calculateTeamForm(matchData.teams.away.id).catch((e) => { console.error("Away Form Error:", e); return awayData; })
+            ]);
+
         } catch (err) {
             // Continue with empty form data
+            console.error("Error fetching ancillary stats:", err);
         }
 
         // Prepare Response Object matching frontend expectations
@@ -71,8 +86,8 @@ export const getFixtureById = async (fixtureId) => {
         const live = fixtureDoc.livescore;
 
         // Priority: Use Live data if available
-        const currentStatus = live?.status || matchData.fixture.status;
-        const currentGoals = live?.goals || matchData.goals;
+        const currentStatus = live?.status || matchData.fixture?.status || { short: "NS", elapsed: null };
+        const currentGoals = live?.goals || matchData.goals || { home: null, away: null };
 
         const isFinished = ["FT", "AET", "PEN"].includes(currentStatus.short);
         const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE"].includes(currentStatus.short);
@@ -86,12 +101,13 @@ export const getFixtureById = async (fixtureId) => {
             displayDate = currentStatus.elapsed ? `${currentStatus.elapsed}'` : "Live";
         } else {
             // Not started
-            displayDate = new Date(matchData.fixture.date).toLocaleString("en-GB", {
+            const fDate = matchData.fixture?.date;
+            displayDate = fDate ? new Date(fDate).toLocaleString("en-GB", {
                 weekday: "short",
                 hour: "2-digit",
                 minute: "2-digit",
                 timeZone: "Africa/Nairobi",
-            });
+            }) : "TBD";
         }
 
         // Format Score
@@ -119,12 +135,16 @@ export const getFixtureById = async (fixtureId) => {
             tip: calculatedTip || "N/A", // Calculated 1X/X2/1/2 or Manual Override
             apiPrediction: predictionData || null, // Full API object for Details page (Advice, %)
 
+            // DEBUG: Log counts
+            // console.log(`[FixtureService] Home Matches: ${homeData.allMatches?.length}, Away Matches: ${awayData.allMatches?.length}`);
+
             homeTeam: {
                 id: matchData.teams.home.id,
                 name: matchData.teams.home.name,
                 logo: matchData.teams.home.logo,
                 form: homeData.form,
                 last5Matches: homeData.last5Matches,
+                allMatches: homeData.allMatches || [], // Full history (20)
             },
 
             awayTeam: {
@@ -133,7 +153,10 @@ export const getFixtureById = async (fixtureId) => {
                 logo: matchData.teams.away.logo,
                 form: awayData.form,
                 last5Matches: awayData.last5Matches,
+                allMatches: awayData.allMatches || [], // Full history (20)
             },
+
+
 
             h2h: h2hData,
 
@@ -149,6 +172,8 @@ export const getFixtureById = async (fixtureId) => {
             injuries: fixtureDoc.injuries || [],
             statistics: fixtureDoc.statistics || [],
         };
+
+
 
         // Fetch Standings
         const standingsDoc = await Standing.findOne({

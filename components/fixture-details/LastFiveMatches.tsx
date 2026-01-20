@@ -1,6 +1,6 @@
 
-import React from "react";
-import Image from "next/image";
+import React, { useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 interface LastMatch {
     date: string;
@@ -14,14 +14,27 @@ interface LastMatch {
 interface LastFiveMatchesProps {
     teamLogo?: string;
     teamName: string;
-    matches: LastMatch[];
+    matches: LastMatch[]; // Now contains 20 matches
 }
 
 const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, matches }) => {
-    if (!matches || matches.length === 0) return null;
+    const [showAll, setShowAll] = useState(false);
+
+    if (!matches || matches.length === 0) {
+        return (
+            <div className="mb-6 max-w-3xl mx-auto bg-[#1F1F1F] p-4 rounded-xl shadow-sm border border-white/5 text-center">
+                <div className="text-gray-500 text-xs uppercase tracking-widest mb-2">{teamName}</div>
+                <div className="text-sm text-gray-400">No match history available</div>
+            </div>
+        );
+    }
+
+    // Determine matches to show: first 5 or all
+    const visibleMatches = showAll ? matches : matches.slice(0, 5);
+    const hasMore = matches.length > 5;
 
     return (
-        <div className="mb-6 max-w-3xl mx-auto bg-[#1F1F1F] p-4 rounded-xl shadow-sm border border-white/5">
+        <div className="mb-6 max-w-3xl mx-auto bg-[#1F1F1F] p-4 rounded-xl shadow-sm border border-white/5 animate-in fade-in duration-500">
             {/* 🏆 Title + Team Logo centered */}
             <div className="flex flex-col items-start mb-4 border-b border-white/5 pb-2">
                 <div className="flex items-center justify-start gap-2">
@@ -40,7 +53,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
 
             {/* 🏟️ Matches List */}
             <div className="flex flex-col gap-2">
-                {matches.map((m, i) => {
+                {visibleMatches.map((m, i) => {
                     const matchDate = new Date(m.date).toLocaleDateString("en-US", {
                         month: "2-digit",
                         day: "2-digit",
@@ -53,7 +66,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                             className="grid grid-cols-[auto_1fr_auto_1fr] md:grid-cols-4 items-center bg-white/5 hover:bg-white/10 p-2 rounded text-sm transition-colors border border-transparent hover:border-white/5"
                         >
                             {/* 1️⃣ Date */}
-                            <div className="truncate text-gray-500 text-xs mr-2">{matchDate}</div>
+                            <div className="truncate text-gray-500 text-xs mr-2 w-16 text-center">{matchDate}</div>
 
                             {/* 2️⃣ Home Team */}
                             <div className="flex items-center justify-end gap-2 pr-3 min-w-0">
@@ -84,6 +97,24 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                     );
                 })}
             </div>
+
+            {/* Show More Button */}
+            {hasMore && (
+                <button
+                    onClick={() => setShowAll(!showAll)}
+                    className="w-full mt-3 py-2 text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 rounded-lg flex items-center justify-center gap-1 transition-all"
+                >
+                    {showAll ? (
+                        <>
+                            Show Less <ChevronUp size={14} />
+                        </>
+                    ) : (
+                        <>
+                            Show More ({matches.length - 5}) <ChevronDown size={14} />
+                        </>
+                    )}
+                </button>
+            )}
         </div>
     );
 };

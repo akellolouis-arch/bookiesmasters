@@ -11,12 +11,14 @@ export const calculateTeamForm = async (teamId) => {
         "fixture.fixture.status.short": "FT", // Only completed matches
     })
         .sort({ "fixture.fixture.date": -1 }) // Sort by nested date
-        .limit(5);
+        .limit(20); // Fetch 20 for "Show More" functionality
+
+    console.log(`[FormCalc] Found ${fixtures.length} matches for team ${teamId}`);
 
     const form = [];
-    const last5Matches = [];
+    const allMatches = [];
 
-    fixtures.forEach((doc) => {
+    fixtures.forEach((doc, index) => {
         // Access nested data
         const match = doc.fixture;
 
@@ -40,11 +42,13 @@ export const calculateTeamForm = async (teamId) => {
             color = "#f97316"; // orange-500
         }
 
-        // Store result for form summary
-        form.push({ result, color });
+        // Store result for form summary (ONLY for first 5)
+        if (index < 5) {
+            form.push({ result, color });
+        }
 
-        // Store detailed last 5 match info
-        last5Matches.push({
+        // Store detailed match info
+        allMatches.push({
             date: match.fixture.date,
             homeTeam: {
                 id: match.teams.home.id,
@@ -66,5 +70,16 @@ export const calculateTeamForm = async (teamId) => {
         });
     });
 
-    return { form, last5Matches };
+    console.log(`[FormCalc] Processed ${allMatches.length} valid matches for team ${teamId}`);
+
+    // Valid check: form is strictly last 5
+    // last5Matches property is kept for backward compatibility if needed, 
+    // or we can update service to use 'allMatches'. 
+    // Let's return both to be safe: 'last5Matches' (sliced) and 'allMatches' (full)
+
+    return {
+        form,
+        last5Matches: allMatches.slice(0, 5),
+        allMatches
+    };
 };

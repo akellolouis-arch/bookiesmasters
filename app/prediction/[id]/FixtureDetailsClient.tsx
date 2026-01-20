@@ -12,6 +12,7 @@ import LeagueHeader from "@/components/fixture-details/LeagueHeader";
 import Lineups from "@/components/fixture-details/Lineups";
 import Injuries from "@/components/fixture-details/Injuries";
 import Statistics from "@/components/fixture-details/Statistics";
+
 // import PredictionDisplay from "@/components/fixture-details/PredictionDisplay";
 // import PredictionDisplay from "@/components/fixture-details/PredictionDisplay";
 
@@ -79,12 +80,14 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                         <LastFiveMatches
                             teamName={data.homeTeam.name}
                             teamLogo={data.homeTeam.logo}
-                            matches={data.homeTeam.last5Matches}
+                            matches={data.homeTeam.allMatches || data.homeTeam.last5Matches}
                         />
+                        {/* DEBUG: */}
+                        <div className="text-xs text-red-500 hidden">Matches: {data.homeTeam.allMatches?.length} / {data.homeTeam.last5Matches?.length}</div>
                         <LastFiveMatches
                             teamName={data.awayTeam.name}
                             teamLogo={data.awayTeam.logo}
-                            matches={data.awayTeam.last5Matches}
+                            matches={data.awayTeam.allMatches || data.awayTeam.last5Matches}
                         />
                     </div>
                 );
@@ -112,6 +115,8 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 />
 
 
+
+
                 {/* ADVICE DISPLAY (Below Team Display) */}
                 {data.apiPrediction?.advice && (
                     <div className="flex justify-center -mt-2 mb-4 animate-in fade-in slide-in-from-top-2">
@@ -127,6 +132,8 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 <Tabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
 
                 {renderContent()}
+
+
 
             </div>
         </div>
