@@ -20,8 +20,8 @@ export default function TopLeaguesRibbon() {
 
     return (
         <div className="w-full bg-[#181818] border-b border-white/5 py-2">
-            <div className="max-w-3xl mx-auto px-2 md:px-8">
-                <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide no-scrollbar">
+            <div className="max-w-7xl mx-auto px-2 md:px-8">
+                <div className="flex items-center gap-3 overflow-x-auto md:overflow-visible md:flex-wrap md:justify-center scrollbar-hide no-scrollbar">
                     {TOP_LEAGUES.map((league) => {
                         const isActive = pathname === `/league/${league.id}`;
                         return (
