@@ -74,7 +74,7 @@ export default function DateNavigator({ date }: Props) {
         {/* CENTER: SCROLLABLE DATES */}
         <div
           ref={scrollContainerRef}
-          className="flex-1 overflow-x-auto flex items-center gap-1.5 pb-2"
+          className="flex-1 overflow-x-auto flex items-center gap-1.5 scrollbar-hide no-scrollbar px-1"
         >
           {dates.map((d, i) => {
             const isToday = new Date().toDateString() === d.toDateString();
@@ -108,6 +108,16 @@ export default function DateNavigator({ date }: Props) {
           <Search size={14} />
         </button>
       </div>
+
+      <style jsx>{`
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </div>
   );
 }
