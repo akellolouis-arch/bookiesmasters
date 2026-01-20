@@ -85,13 +85,13 @@ export default function RootLayout({
             t.src=v;s=b.getElementsByTagName(e)[0];
             s.parentNode.insertBefore(t,s)}(window, document,'script',
             'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', '690641200151405');
+            fbq('init', '2023042194913574');
             fbq('track', 'PageView');
           `}
         </Script>
         <noscript>
           <img height="1" width="1" style={{ display: 'none' }}
-            src="https://www.facebook.com/tr?id=690641200151405&ev=PageView&noscript=1"
+            src="https://www.facebook.com/tr?id=2023042194913574&ev=PageView&noscript=1"
           />
         </noscript>
 
