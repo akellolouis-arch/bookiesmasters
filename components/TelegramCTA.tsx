@@ -1,39 +1,48 @@
-
 "use client";
 
-import React from "react";
-import { Send } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Send, X } from "lucide-react";
 
 export default function TelegramCTA() {
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        // Minor delay for smooth entrance
+        const timer = setTimeout(() => setIsVisible(true), 1000);
+        return () => clearTimeout(timer);
+    }, []);
+
+    if (!isVisible) return null;
+
     return (
-        <div className="w-full bg-[#1e1e1e] border-t border-white/5 py-8 mt-12">
-            <div className="max-w-4xl mx-auto px-4">
-                <div className="bg-gradient-to-r from-blue-600 to-blue-500 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden shadow-lg group">
+        <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-8 md:bottom-8 z-[100] max-w-sm">
+            <div className="bg-gradient-to-r from-blue-600 to-blue-500 rounded-2xl p-4 shadow-2xl flex items-center justify-between gap-4 relative overflow-hidden group border border-white/10">
 
-                    {/* Background Pattern */}
-                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay" />
-                    <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-3xl group-hover:bg-white/20 transition-all duration-700" />
+                {/* Close Button */}
+                <button
+                    onClick={() => setIsVisible(false)}
+                    className="absolute top-2 right-2 text-blue-200 hover:text-white transition-colors"
+                >
+                    <X size={16} />
+                </button>
 
-                    <div className="relative z-10 text-center md:text-left">
-                        <h3 className="text-xl md:text-2xl font-bold text-white mb-2 flex items-center justify-center md:justify-start gap-2">
-                            <Send className="w-6 h-6 md:w-8 md:h-8" />
-                            Join Our Telegram Channel
-                        </h3>
-                        <p className="text-blue-100 text-sm md:text-base max-w-md">
-                            Get free daily tips, live in-play bets, and exclusive jackpot analysis directly to your phone.
-                        </p>
-                    </div>
-
-                    <a
-                        href="https://t.me/bookiesm" // Update with actual channel link
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="relative z-10 bg-white text-blue-600 font-bold py-3 px-8 rounded-full shadow-lg hover:bg-blue-50 hover:text-blue-700 transform hover:scale-105 transition-all duration-300 flex items-center gap-2"
-                    >
-                        <span>Join Now</span>
-                        <Send size={16} className="-rotate-45" />
-                    </a>
+                {/* Content */}
+                <div className="flex flex-col gap-1 z-10 pr-6">
+                    <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                        <Send size={16} className="text-white" />
+                        Join Our Telegram Channel
+                    </h3>
                 </div>
+
+                {/* Button */}
+                <a
+                    href="https://t.me/bookiesm"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-white text-blue-600 text-xs font-bold py-2 px-4 rounded-full shadow hover:bg-blue-50 hover:text-blue-700 transition-transform active:scale-95 flex items-center gap-1 z-10 whitespace-nowrap"
+                >
+                    Join
+                </a>
             </div>
         </div>
     );
