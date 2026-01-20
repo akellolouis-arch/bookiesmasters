@@ -40,12 +40,12 @@ function CallbackContent() {
                     <div className="flex flex-col items-center animate-in fade-in zoom-in duration-300">
                         <CheckCircle className="w-16 h-16 text-green-500 mb-4" />
                         <h2 className="text-2xl font-bold text-white">Payment Successful!</h2>
-                        <p className="text-gray-400 mt-2 mb-6">You are now a VIP Member.</p>
+                        <p className="text-gray-400 mt-2 mb-6">Payment verified.</p>
                         <Link
                             href="/predictions"
                             className="px-6 py-3 bg-green-600 hover:bg-green-500 text-white font-bold rounded-lg transition width-full"
                         >
-                            Go to VIP Predictions
+                            Go to Predictions
                         </Link>
                     </div>
                 )}

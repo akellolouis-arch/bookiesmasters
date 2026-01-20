@@ -36,8 +36,7 @@ interface BackendMatch {
     away: string | null;
   };
   league: BackendLeague;
-  isVip?: boolean;
-  creditCost?: number;
+
 }
 
 interface BackendFixture {
@@ -78,6 +77,26 @@ export async function generateStaticParams() {
   return dates.map((date) => ({
     date: date,
   }));
+}
+
+// ---------------------
+// DYNAMIC METADATA
+// ---------------------
+export async function generateMetadata({ params }: { params: Promise<{ date?: string }> }) {
+  const resolvedParams = await params;
+  const date = resolvedParams.date || new Date().toLocaleDateString("en-CA", { timeZone: "Africa/Nairobi" });
+
+  // Validate date string
+  const d = new Date(date);
+  const isValidDate = !isNaN(d.getTime());
+  const readableDate = isValidDate
+    ? d.toLocaleDateString("en-US", { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+    : date;
+
+  return {
+    title: `Football Predictions for ${readableDate} | BookiesMasters`,
+    description: `Get free betting tips, odds, and livescores for matches on ${readableDate}.`,
+  };
 }
 
 // ---------------------

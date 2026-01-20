@@ -85,7 +85,7 @@ export default function PurchasePage() {
 
             if (res.ok) {
                 alert("Payment Submitted! Pending verification.");
-                router.push("/vip-tips");
+                router.push("/predictions");
             } else {
                 alert(data.error || "Failed");
             }
@@ -105,7 +105,7 @@ export default function PurchasePage() {
             <div className="max-w-md mx-auto">
                 {/* Header Match Info */}
                 <div className="text-center mb-8">
-                    <h1 className="text-xl font-bold mb-4 text-yellow-500">Unlock VIP Prediction</h1>
+                    <h1 className="text-xl font-bold mb-4 text-yellow-500">Unlock Prediction</h1>
                     <div className="flex items-center justify-center gap-6 bg-[#1e1e1e] p-6 rounded-2xl border border-white/10 shadow-lg">
                         <div className="flex flex-col items-center w-1/3">
                             <div className="relative w-12 h-12 mb-2">

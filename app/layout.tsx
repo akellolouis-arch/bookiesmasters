@@ -22,7 +22,30 @@ export const metadata: Metadata = {
   title: "BookiesMasters",
   description: "Free football predictions, fixtures, events, odds, livescores & insights",
   icons: {
-    icon: '/icon.png',
+    icon: '/bookiesmasters_logo_circle.png',
+  },
+  openGraph: {
+    title: "BookiesMasters | Premier Football Predictions",
+    description: "Get free football predictions, live scores, and expert insights for all major leagues.",
+    url: "https://bookiesmasters.com",
+    siteName: "BookiesMasters",
+    images: [
+      {
+        url: "/bookiesmasters_social_cover.png",
+        width: 1200,
+        height: 630,
+        alt: "BookiesMasters Social Cover",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "BookiesMasters",
+    description: "Free football predictions, fixtures, events, odds, livescores & insights",
+    images: ["/bookiesmasters_social_cover.png"],
+    creator: "@bookiesmasters",
   },
 };
 

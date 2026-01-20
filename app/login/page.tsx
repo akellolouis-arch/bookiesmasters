@@ -12,13 +12,13 @@ export default function LoginPage() {
                         <ShieldCheck size={48} className="text-teal-400" />
                     </div>
                     <h1 className="text-2xl font-bold text-white">Welcome Back</h1>
-                    <p className="text-sm text-gray-400">Sign in to access VIP predictions</p>
+                    <p className="text-sm text-gray-400">Sign in to access predictions</p>
                 </div>
 
                 <form
                     action={async () => {
                         "use server"
-                        await signIn("google", { redirectTo: "/vip-tips" })
+                        await signIn("google", { redirectTo: "/predictions" })
                     }}
                 >
                     <button

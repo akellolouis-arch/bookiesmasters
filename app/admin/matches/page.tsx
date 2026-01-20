@@ -53,7 +53,7 @@ export default function AdminMatchesPage() {
 
     return (
         <div className="min-h-screen bg-[#121212] text-white p-8">
-            <h1 className="text-3xl font-bold mb-8 text-yellow-500">Admin: Manage VIP Tips</h1>
+            <h1 className="text-3xl font-bold mb-8 text-yellow-500">Admin: Manage Matches</h1>
 
             {/* Date Selector */}
             <div className="mb-6">
