@@ -57,7 +57,7 @@ export default function DateNavigator({ date }: Props) {
 
   return (
     <div className="max-w-[100vw] bg-black border-y border-white/5 mx-auto">
-      <div className="max-w-7xl mx-auto flex items-center gap-1 md:gap-3 px-2 py-1.5">
+      <div className="max-w-3xl mx-auto flex items-center gap-1 md:gap-3 px-2 py-1.5">
 
         {/* LEFT: LIVE button */}
         <Link
