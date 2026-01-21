@@ -117,6 +117,17 @@ export default function FixtureCard({
     <div className="relative group max-w-xl mx-auto mb-3">
       {/* Main Card Content - Clickable (Details Page) */}
       <Link href={`/prediction/${fixtureId}`}
+        onClick={() => {
+          // Track ViewContent on click
+          if (typeof window !== 'undefined' && (window as any).fbq) {
+            (window as any).fbq('track', 'ViewContent', {
+              content_name: `${homeTeam.name} vs ${awayTeam.name}`,
+              content_category: 'Prediction',
+              content_ids: [fixtureId],
+              content_type: 'product'
+            });
+          }
+        }}
         className={`block bg-[#1F1F1F] rounded-xl shadow-sm hover:shadow-md hover:bg-[#2a2a2a] transition flex items-center justify-between p-2 sm:p-3 border-l-4 border-r border-t border-b border-r-white/5 border-t-white/5 border-b-white/5 ${isLive ? "border-l-red-500" : "border-l-transparent"} gap-2`}
       >
         {/* STATUS */}

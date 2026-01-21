@@ -51,6 +51,15 @@ export default function TelegramCTA() {
                         href="https://t.me/bookiesm"
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={() => {
+                            // Track Lead on click
+                            if (typeof window !== 'undefined' && (window as any).fbq) {
+                                (window as any).fbq('track', 'Lead', {
+                                    content_name: 'Telegram Join',
+                                    content_category: 'Social'
+                                });
+                            }
+                        }}
                         className="bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-bold py-1.5 px-6 rounded-sm shadow transition-colors flex items-center gap-2 whitespace-nowrap"
                     >
                         <span>JOIN NOW</span>
