@@ -140,12 +140,24 @@ export default function FixtureCard({
         {/* TEAMS */}
         <div className="flex flex-col items-start text-left flex-1 min-w-0 gap-1">
           <div className="flex items-center gap-1.5 w-full">
-            <Image src={homeTeam.logo} alt={homeTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
-            <span className="font-medium text-gray-200 text-[11px] sm:text-xs truncate w-full">{homeTeam.name}</span>
+            <Link
+              href={`/team/${homeTeam.id}?name=${encodeURIComponent(homeTeam.name)}&logo=${encodeURIComponent(homeTeam.logo)}`}
+              onClick={(e) => e.stopPropagation()} // Prevent triggering the main card link
+              className="flex items-center gap-1.5 hover:text-orange-400 transition-colors max-w-full overflow-hidden"
+            >
+              <Image src={homeTeam.logo} alt={homeTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
+              <span className="font-medium text-[11px] sm:text-xs truncate">{homeTeam.name}</span>
+            </Link>
           </div>
           <div className="flex items-center gap-1.5 w-full">
-            <Image src={awayTeam.logo} alt={awayTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
-            <span className="font-medium text-gray-200 text-[11px] sm:text-xs truncate w-full">{awayTeam.name}</span>
+            <Link
+              href={`/team/${awayTeam.id}?name=${encodeURIComponent(awayTeam.name)}&logo=${encodeURIComponent(awayTeam.logo)}`}
+              onClick={(e) => e.stopPropagation()} // Prevent triggering the main card link
+              className="flex items-center gap-1.5 hover:text-orange-400 transition-colors max-w-full overflow-hidden"
+            >
+              <Image src={awayTeam.logo} alt={awayTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
+              <span className="font-medium text-[11px] sm:text-xs truncate">{awayTeam.name}</span>
+            </Link>
           </div>
         </div>
 
