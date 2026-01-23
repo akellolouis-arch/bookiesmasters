@@ -12,11 +12,34 @@ import { ArrowLeft } from "lucide-react";
 // But since this is a clean page, let's try to fetch team info or just display what we have.
 // Wait, getTeamTransfers returns a list. We can extract the team name/logo from one of the transfers where teamId matches.
 
-export default async function TeamPage({ params, searchParams }) {
-    const { id } = await params;
-    const { name, logo } = await searchParams; // Allow passing basic info via URL for speed
 
-    const transfers = await getTeamTransfers(id);
+
+interface PageProps {
+    params: Promise<{ id: string }>;
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+// Minimal type for transfer object to avoid implicit any
+interface Transfer {
+    teams: {
+        in: { id: number; name: string; logo: string };
+        out: { id: number; name: string; logo: string };
+    };
+    player: { id: number; name: string };
+    date: string;
+    type: string;
+}
+
+export default async function TeamPage({ params, searchParams }: PageProps) {
+
+    const { id } = await params;
+    const resolvedSearchParams = await searchParams;
+
+    const name = typeof resolvedSearchParams.name === 'string' ? resolvedSearchParams.name : undefined;
+    const logo = typeof resolvedSearchParams.logo === 'string' ? resolvedSearchParams.logo : undefined;
+
+    // Cast the untyped service response
+    const transfers = (await getTeamTransfers(id)) as Transfer[];
 
     // Fallback for name/logo if not in URL
     let teamName = name || "Team Details";

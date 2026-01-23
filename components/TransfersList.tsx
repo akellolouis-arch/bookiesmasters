@@ -2,7 +2,24 @@
 import Image from "next/image";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 
-export default function TransfersList({ transfers, currentTeamId }) {
+
+interface Transfer {
+    teams: {
+        in: { id: number; name: string; logo: string };
+        out: { id: number; name: string; logo: string };
+    };
+    player: { id: number; name: string };
+    date: string;
+    type: string;
+}
+
+interface TransfersListProps {
+    transfers: Transfer[];
+    currentTeamId: number;
+}
+
+export default function TransfersList({ transfers, currentTeamId }: TransfersListProps) {
+
     if (!transfers || transfers.length === 0) {
         return (
             <div className="p-8 text-center text-neutral-400">
