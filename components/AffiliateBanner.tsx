@@ -25,40 +25,41 @@ export default function AffiliateBanner() {
     if (!isVisible) return null;
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-blue-900 to-blue-700 text-white p-3 z-50 border-t border-blue-500 shadow-lg animate-in slide-in-from-bottom duration-500">
-            <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
+        <div className="fixed bottom-0 left-0 right-0 bg-[#0F2D52] text-white p-3 z-50 border-t-2 border-[#54a7ff] shadow-[0_-4px_20px_rgba(0,0,0,0.5)] animate-in slide-in-from-bottom duration-500">
+            <div className="max-w-4xl mx-auto flex items-center justify-between gap-3 sm:gap-6">
 
                 {/* Left Text */}
                 <div className="flex-1">
-                    <p className="font-bold text-sm sm:text-base text-yellow-400 uppercase tracking-wide">
-                        200% Welcome Bonus!
-                    </p>
-                    <p className="text-xs sm:text-sm text-blue-100">
-                        Get up to 20,000 KES on your first deposit.
+                    <div className="flex items-center gap-2 mb-0.5">
+                        <span className="font-black text-lg sm:text-xl text-[#01a0ff] drop-shadow-sm italic">
+                            1XBET
+                        </span>
+                        <span className="hidden sm:inline-block bg-[#fb0] text-[#0F2D52] text-[10px] font-bold px-1.5 rounded-sm uppercase tracking-wide">
+                            Special Offer
+                        </span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-gray-200 leading-tight">
+                        Register now & get <span className="text-[#fb0] font-bold">200% Bonus</span> (up to 20,000 KES).
                     </p>
                 </div>
 
                 {/* Promo Code Action */}
-                <div className="flex items-center gap-2 bg-blue-950/50 rounded-lg p-1 pr-3 border border-blue-400/30">
-                    <div className="bg-yellow-500 text-black font-extrabold text-sm px-2 py-1 rounded">
-                        {PROMO_CODE}
+                <div className="flex flex-col items-end gap-1">
+                    <span className="hidden sm:block text-[10px] text-gray-400 uppercase tracking-wider font-semibold mr-1">
+                        Use Promo Code
+                    </span>
+                    <div className="flex items-center gap-2 bg-[#0b223f] rounded px-1 py-1 border border-[#1e4e8a]">
+                        <div className="text-white font-mono font-bold text-sm tracking-widest px-2">
+                            {PROMO_CODE}
+                        </div>
+                        <button
+                            onClick={handleCopy}
+                            className="bg-[#3dad07] hover:bg-[#349606] text-white text-xs font-bold py-1.5 px-3 rounded transition-colors flex items-center gap-1.5 shadow-sm"
+                        >
+                            {copied ? <Check size={14} /> : <Copy size={14} />}
+                            {copied ? "COPIED" : "COPY"}
+                        </button>
                     </div>
-                    <button
-                        onClick={handleCopy}
-                        className="flex items-center gap-1.5 text-xs font-semibold hover:text-yellow-300 transition-colors"
-                    >
-                        {copied ? (
-                            <>
-                                <Check size={14} className="text-green-400" />
-                                <span className="text-green-400">Copied</span>
-                            </>
-                        ) : (
-                            <>
-                                <Copy size={14} />
-                                <span>Copy Code</span>
-                            </>
-                        )}
-                    </button>
                 </div>
 
                 {/* Close Button */}
