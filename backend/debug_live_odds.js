@@ -14,20 +14,14 @@ async function debugLiveOdds() {
         // Find matches that are supposedly live
         const liveMatches = await Fixture.find({
             "fixture.fixture.status.short": { $in: ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"] }
-        }).select("fixtureId fixture.fixture.status.short liveOdds odds");
+        }).select("fixtureId fixture.teams.home.name fixture.teams.away.name fixture.fixture.status.short liveOdds odds");
 
         console.log(`🔎 Found ${liveMatches.length} live matches in DB.`);
 
-        if (liveMatches.length === 0) {
-            console.log("No live matches found to check.");
-            // Optional: Check if there are ANY matches today to ensure DB isn't empty
-            const today = new Date().toISOString().split('T')[0];
-            const count = await Fixture.countDocuments({ "fixture.fixture.date": { $regex: today } });
-            console.log(`(Total matches for today: ${count})`);
-        }
-
         for (const m of liveMatches) {
-            console.log(`\n⚽ Match ${m.fixtureId} [${m.fixture.fixture.status.short}]`);
+            const home = m.fixture?.teams?.home?.name || "Unknown";
+            const away = m.fixture?.teams?.away?.name || "Unknown";
+            console.log(`\n⚽ [${m.fixtureId}] ${home} vs ${away} [${m.fixture.fixture.status.short}]`);
 
             if (m.liveOdds && m.liveOdds.length > 0) {
                 console.log("   ✅ Has Live Odds:", JSON.stringify(m.liveOdds[0].markets, null, 2));

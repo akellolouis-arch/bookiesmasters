@@ -167,8 +167,8 @@ export async function pollLiveOdds() {
             headers: { "x-apisports-key": API_KEY }
         });
 
+        const allLiveOdds = response.data.response || [];
         // console.log(`📡 [LiveOdds] API returned ${allLiveOdds.length} fixtures with odds.`);
-        // console.log(`📡 [LiveOdds] FETCHED ${allLiveOdds.length} items from API.`);
 
         // 3. Update DB
         const bulkOps = allLiveOdds.map(item => {
@@ -183,8 +183,8 @@ export async function pollLiveOdds() {
                             // Store exactly in the same structure as pre-match 'odds' for compatibility
                             liveOdds: [{
                                 bookmaker: "Live Odds", // Generic label as we don't know exact source in mixed response
-                                markets: item.odds.filter(m => m.id === 1 || m.name === "Match Winner").map(m => ({
-                                    id: 1,
+                                markets: item.odds.filter(m => [1, 59].includes(m.id) || ["Match Winner", "Fulltime Result"].includes(m.name)).map(m => ({
+                                    id: 1, // Standardize ID to 1 for frontend consistency
                                     name: "Match Winner",
                                     values: m.values // API Live Odds structure is already compatible
                                 }))
