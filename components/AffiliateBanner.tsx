@@ -39,7 +39,7 @@ export default function AffiliateBanner() {
                         </span>
                     </div>
                     <p className="text-[10px] sm:text-sm text-gray-200 leading-tight">
-                        Register now & get <span className="text-[#fb0] font-bold">200% Bonus</span>. use promocode
+                        Register now & get <span className="text-[#fb0] font-bold">200% Bonus</span>. use <span className="text-[#fb0] font-bold">PROMOCODE</span>
                     </p>
                 </div>
 

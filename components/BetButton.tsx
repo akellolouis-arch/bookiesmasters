@@ -52,8 +52,8 @@ export default function BetButton({ teamName, odds }: BetButtonProps) {
                 <>
                     {/* Left: Promo Code */}
                     <div className="flex flex-col items-start leading-none shrink-0">
-                        <span className="text-[8px] sm:text-[9px] text-[#fb0] font-black uppercase tracking-widest mb-0.5 animate-pulse">
-                            PROMOCODE
+                        <span className="text-[8px] sm:text-sm text-[#fb0] font-black uppercase tracking-widest mb-0.5 animate-pulse">
+                            ✨ PROMOCODE ✨
                         </span>
                         <span className="text-white font-bold text-xs sm:text-sm tracking-wider font-mono">
                             {PROMO_CODE}
