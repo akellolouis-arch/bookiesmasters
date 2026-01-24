@@ -132,6 +132,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 <div className="flex flex-col items-center gap-3 mb-6">
                     <BetButton
                         teamName={data.homeTeam.name}
+                        isLive={["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(data.status) || data.status.includes("'")}
                         odds={
                             // 1. Try Live Odds first
                             (data.liveOdds && data.liveOdds.length > 0 && data.liveOdds[0].markets && data.liveOdds[0].markets.length > 0)

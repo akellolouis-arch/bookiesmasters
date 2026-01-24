@@ -167,17 +167,12 @@ export default function FixtureCard({
         </div>
 
         {/* ODDS / LOCKED STATE */}
-        <div className={`flex flex-col items-center justify-center shrink-0 ${isLive ? "gap-0.5" : ""}`}>
+        <div className={`flex flex-col items-center justify-center shrink-0`}>
           <div className={`flex flex-row justify-between w-[90px] sm:w-[130px] shrink-0 ${isLive ? "text-white" : ""}`}>
             <span className={`text-[10px] sm:text-xs font-bold leading-none ${getOddsColor(effectiveOdds.home, [effectiveOdds.home, effectiveOdds.draw, effectiveOdds.away])}`}>{effectiveOdds.home ?? "-"}</span>
             <span className={`text-[10px] sm:text-xs font-bold leading-none ${getOddsColor(effectiveOdds.draw, [effectiveOdds.home, effectiveOdds.draw, effectiveOdds.away])}`}>{effectiveOdds.draw ?? "-"}</span>
             <span className={`text-[10px] sm:text-xs font-bold leading-none ${getOddsColor(effectiveOdds.away, [effectiveOdds.home, effectiveOdds.draw, effectiveOdds.away])}`}>{effectiveOdds.away ?? "-"}</span>
           </div>
-          {isLive && (
-            <span className="text-[8px] text-red-500 font-extrabold uppercase tracking-widest animate-pulse leading-none">
-              LIVE ODDS
-            </span>
-          )}
         </div>
 
         {/* SCORE & TIP SECTION */}
