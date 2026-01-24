@@ -113,7 +113,7 @@ async function fetchOdds(fixtureId) {
     const res = await api.get(`/odds`, {
       params: {
         fixture: fixtureId,
-        bookmaker: 8   // Bet365
+        bookmaker: 11   // 1xBet
       }
     });
 

@@ -45,10 +45,12 @@ export default function BetButton({ teamName }: { teamName?: string }) {
                 </>
             ) : (
                 <>
-                    <span className="text-yellow-400 font-extrabold uppercase hidden sm:inline">{PROMO_CODE}</span>
-                    <span className="sm:hidden">BET</span>
-                    <span className="w-px h-3 bg-white/20 mx-1" />
-                    <span>{teamName ? "BET" : "BET NOW"}</span>
+                    <div className="flex flex-col items-center leading-none mr-2">
+                        <span className="text-[9px] text-[#fb0] font-black uppercase tracking-widest mb-0.5 animate-pulse">USE CODE</span>
+                        <span className="text-white font-bold text-xs tracking-wider">{PROMO_CODE}</span>
+                    </div>
+                    <span className="w-px h-6 bg-white/20 mx-1" />
+                    <span className="font-bold text-sm">BET 1XBET</span>
                     <ExternalLink size={12} className="opacity-70" />
                 </>
             )}
