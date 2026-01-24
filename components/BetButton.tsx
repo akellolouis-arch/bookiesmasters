@@ -6,7 +6,7 @@ import { Copy, Check, ExternalLink } from "lucide-react";
 export default function BetButton({ teamName }: { teamName?: string }) {
     const [copied, setCopied] = useState(false);
     const PROMO_CODE = "BKMS254";
-    const AFFILIATE_LINK = "https://refpa7921972.top/L?tag=d_3862629m_1573c_&site=3862629&ad=1573";
+    const AFFILIATE_LINK = "https://1xbet.com/en/user/registration"; // Global link. The Promo Code is the primary tracker.
 
     const handleClick = (e: React.MouseEvent) => {
         e.preventDefault();
