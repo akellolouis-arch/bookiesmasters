@@ -2,6 +2,7 @@ import PredictionsList from "@/app/predictions/[date]/predictionList";
 import DateNavigator from "@/components/DateNavigator";
 import LeagueExplorer from "@/components/home/LeagueExplorer";
 
+
 // Force dynamic rendering (SSR)
 export const dynamic = "force-dynamic";
 
@@ -50,6 +51,7 @@ export default async function LivePage() {
             <div className="max-w-xl mx-auto mt-4 mb-2 px-2">
                 <PredictionsList initialData={initialData} date="live" />
             </div>
+
 
             <div className="mt-1 mb-12">
                 <LeagueExplorer />
