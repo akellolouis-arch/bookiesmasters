@@ -1,6 +1,6 @@
 import PredictionsList from "./predictionList";
 import DateNavigator from "@/components/DateNavigator";
-import LeagueExplorer from "@/components/home/LeagueExplorer";
+
 
 
 
@@ -155,9 +155,7 @@ export default async function PredictionsPage({
 
       <PredictionsList initialData={initialData} date={date} />
 
-      <div className="mt-1 mb-12">
-        <LeagueExplorer />
-      </div>
+
     </>
   );
 }
