@@ -4,6 +4,8 @@ import useSWR from "swr";
 import Image from "next/image";
 import Link from "next/link";
 import FixtureCard from "@/components/FixtureCard";
+import Loader from "@/components/Loader";
+import { useState, useEffect } from "react";
 
 // ------------------------------
 // TYPES BASED ON YOUR BACKEND RESPONSE
@@ -110,6 +112,17 @@ export default function PredictionsList({
       // Case 2: Fallback/Initial Data (Already Flattened: f.name)
       return f;
     });
+  }
+
+  // FIX: Prevent "shambolic" display on initial load by waiting for mount
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <Loader />;
   }
 
   return (

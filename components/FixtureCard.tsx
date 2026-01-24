@@ -99,7 +99,7 @@ export default function FixtureCard({
   if (tipStatus === "LOSS") tipColor = "text-red-500";
 
   // Determine effective odds (Live vs Pre-match)
-  let effectiveOdds = odds;
+  let effectiveOdds = odds || { home: null, draw: null, away: null };
 
   if (isLive && liveOdds && liveOdds.length > 0) {
     const market = liveOdds[0]?.markets?.find((m: any) => m.name === "Match Winner" || m.id === 1);
@@ -167,40 +167,39 @@ export default function FixtureCard({
         </div>
 
         {/* ODDS / LOCKED STATE */}
-        <div className={`flex flex-col items-center justify-center shrink-0`}>
-          <div className={`flex flex-row justify-between w-[90px] sm:w-[130px] shrink-0 ${isLive ? "text-white" : ""}`}>
-            <span className={`text-[10px] sm:text-xs font-bold leading-none ${getOddsColor(effectiveOdds.home, [effectiveOdds.home, effectiveOdds.draw, effectiveOdds.away])}`}>{effectiveOdds.home ?? "-"}</span>
-            <span className={`text-[10px] sm:text-xs font-bold leading-none ${getOddsColor(effectiveOdds.draw, [effectiveOdds.home, effectiveOdds.draw, effectiveOdds.away])}`}>{effectiveOdds.draw ?? "-"}</span>
-            <span className={`text-[10px] sm:text-xs font-bold leading-none ${getOddsColor(effectiveOdds.away, [effectiveOdds.home, effectiveOdds.draw, effectiveOdds.away])}`}>{effectiveOdds.away ?? "-"}</span>
-          </div>
+        <div className={`flex flex-row justify-between w-[90px] sm:w-[130px] shrink-0 ${isLive ? "text-white" : ""}`}>
+          <span className={`text-[10px] sm:text-xs font-bold leading-none ${getOddsColor(effectiveOdds?.home, [effectiveOdds?.home, effectiveOdds?.draw, effectiveOdds?.away])}`}>{effectiveOdds?.home ?? "-"}</span>
+          <span className={`text-[10px] sm:text-xs font-bold leading-none ${getOddsColor(effectiveOdds?.draw, [effectiveOdds?.home, effectiveOdds?.draw, effectiveOdds?.away])}`}>{effectiveOdds?.draw ?? "-"}</span>
+          <span className={`text-[10px] sm:text-xs font-bold leading-none ${getOddsColor(effectiveOdds?.away, [effectiveOdds?.home, effectiveOdds?.draw, effectiveOdds?.away])}`}>{effectiveOdds?.away ?? "-"}</span>
         </div>
-
-        {/* SCORE & TIP SECTION */}
-        <div className="flex items-center gap-2 w-[60px] sm:w-[75px] justify-end shrink-0">
-
-          {/* VERTICAL SCORES */}
-          <div className={`flex flex-col gap-1 items-end justify-center font-bold text-[11px] sm:text-xs leading-none ${isLive ? "text-red-500" : "text-gray-200"}`}>
-            {score ? (
-              <>
-                <span className="h-3.5 flex items-center">{score.split(" - ")[0]}</span>
-                <span className="h-3.5 flex items-center">{score.split(" - ")[1]}</span>
-              </>
-            ) : (
-              /* Empty spacer to keep alignment if needed, or just nothing as requested */
-              null
-            )}
-          </div>
-
-          {/* TIP - Side by side */}
-          {prediction && prediction !== "N/A" && (
-            <div className="flex items-center justify-center">
-              <span className={`text-[10px] sm:text-xs font-bold uppercase tracking-widest px-1.5 py-1 rounded bg-white/5 border border-white/10 ${tipColor}`}>
-                {prediction}
-              </span>
-            </div>
-          )}
-        </div>
-      </Link>
     </div>
+
+        {/* SCORE & TIP SECTION */ }
+  <div className="flex items-center gap-2 w-[60px] sm:w-[75px] justify-end shrink-0">
+
+    {/* VERTICAL SCORES */}
+    <div className={`flex flex-col gap-1 items-end justify-center font-bold text-[11px] sm:text-xs leading-none ${isLive ? "text-red-500" : "text-gray-200"}`}>
+      {score ? (
+        <>
+          <span className="h-3.5 flex items-center">{score.split(" - ")[0]}</span>
+          <span className="h-3.5 flex items-center">{score.split(" - ")[1]}</span>
+        </>
+      ) : (
+        /* Empty spacer to keep alignment if needed, or just nothing as requested */
+        null
+      )}
+    </div>
+
+    {/* TIP - Side by side */}
+    {prediction && prediction !== "N/A" && (
+      <div className="flex items-center justify-center">
+        <span className={`text-[10px] sm:text-xs font-bold uppercase tracking-widest px-1.5 py-1 rounded bg-white/5 border border-white/10 ${tipColor}`}>
+          {prediction}
+        </span>
+      </div>
+    )}
+  </div>
+      </Link >
+    </div >
   );
 }
