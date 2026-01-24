@@ -29,34 +29,34 @@ export default function AffiliateBanner() {
             <div className="max-w-4xl mx-auto flex items-center justify-between gap-3 sm:gap-6">
 
                 {/* Left Text */}
-                <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-0.5">
-                        <span className="font-black text-lg sm:text-xl text-[#01a0ff] drop-shadow-sm italic">
+                <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
+                        <span className="font-black text-lg sm:text-xl text-[#01a0ff] drop-shadow-sm italic leading-none">
                             1XBET
                         </span>
-                        <span className="bg-[#fb0] text-[#0F2D52] text-[10px] font-bold px-1.5 rounded-sm uppercase tracking-wide animate-pulse">
+                        <span className="bg-[#fb0] text-[#0F2D52] text-[9px] font-bold px-1 rounded-sm uppercase tracking-wide animate-pulse whitespace-nowrap">
                             Special Offer
                         </span>
                     </div>
-                    <p className="text-xs sm:text-sm text-gray-200 leading-tight">
+                    <p className="text-[10px] sm:text-sm text-gray-200 leading-tight">
                         Register now & get <span className="text-[#fb0] font-bold">200% Bonus</span>. use promocode
                     </p>
                 </div>
 
                 {/* Promo Code Action */}
-                <div className="flex flex-col items-end gap-0.5">
+                <div className="flex flex-col items-end gap-0.5 shrink-0">
                     <span className="animate-pulse text-xs sm:text-sm text-[#fb0] uppercase tracking-widest font-black mr-1 drop-shadow-sm">
                         ✨ PROMOCODE ✨
                     </span>
-                    <div className="flex items-center gap-1.5 bg-[#0b223f] rounded px-1 py-0.5 border border-[#1e4e8a]">
-                        <div className="text-white font-mono font-bold text-xs tracking-widest px-1.5">
+                    <div className="flex items-center gap-1 bg-[#0b223f] rounded px-1 py-0.5 border border-[#1e4e8a]">
+                        <div className="text-white font-mono font-bold text-[10px] tracking-widest px-1">
                             {PROMO_CODE}
                         </div>
                         <button
                             onClick={handleCopy}
-                            className="bg-[#3dad07] hover:bg-[#349606] text-white text-[10px] font-bold py-1 px-2 rounded transition-colors flex items-center gap-1 shadow-sm"
+                            className="bg-[#3dad07] hover:bg-[#349606] text-white text-[9px] font-bold py-0.5 px-1.5 rounded transition-colors flex items-center gap-1 shadow-sm"
                         >
-                            {copied ? <Check size={12} /> : <Copy size={12} />}
+                            {copied ? <Check size={10} /> : <Copy size={10} />}
                             {copied ? "COPIED" : "COPY"}
                         </button>
                     </div>
