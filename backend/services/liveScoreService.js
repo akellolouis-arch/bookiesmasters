@@ -157,41 +157,52 @@ export async function pollLiveOdds() {
             "fixture.fixture.status.short": { $in: ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"] }
         });
 
-        if (liveCount === 0) return; // No live matches, save API calls
+        if (liveCount === 0) return; // Optimize: No live matches, save API calls
 
-        // 2. Fetch Live Odds from API (Bookmaker 11 = 1xBet)
+        // 2. Fetch Live Odds from API (Generic / All Bookmakers)
+        // Note: Filtering by 1xBet (11) often returns 0 live items. 
+        // We fetch ALL and will use whatever is primary (usually Bet365 or similar in API response)
         const response = await axios.get(`${BASE_URL}/odds/live`, {
-            params: { bookmaker: 11 }, // 1xBet
+            // params: { bookmaker: 11 }, // DISABLED to ensure we get data
             headers: { "x-apisports-key": API_KEY }
         });
 
-        const allLiveOdds = response.data.response || [];
-
-        if (allLiveOdds.length === 0) return;
+        // console.log(`📡 [LiveOdds] API returned ${allLiveOdds.length} fixtures with odds.`);
+        // console.log(`📡 [LiveOdds] FETCHED ${allLiveOdds.length} items from API.`);
 
         // 3. Update DB
-        const bulkOps = allLiveOdds.map(item => ({
-            updateOne: {
-                filter: { fixtureId: item.fixture.id },
-                update: {
-                    $set: {
-                        // Store exactly in the same structure as pre-match 'odds' for compatibility
-                        liveOdds: [{
-                            bookmaker: "1xBet", // Hardcoded for display
-                            markets: item.odds.filter(m => m.id === 1 || m.name === "Match Winner").map(m => ({
-                                id: 1,
-                                name: "Match Winner",
-                                values: m.values // API Live Odds structure is already compatible {value: "Home", odd: "1.50"}
-                            }))
-                        }]
+        const bulkOps = allLiveOdds.map(item => {
+            // Debug: check for specific ID matches if needed
+            // if (item.fixture.id === 1469637) console.log("FOUND 1469637 in API odds!");
+
+            return {
+                updateOne: {
+                    filter: { fixtureId: item.fixture.id },
+                    update: {
+                        $set: {
+                            // Store exactly in the same structure as pre-match 'odds' for compatibility
+                            liveOdds: [{
+                                bookmaker: "Live Odds", // Generic label as we don't know exact source in mixed response
+                                markets: item.odds.filter(m => m.id === 1 || m.name === "Match Winner").map(m => ({
+                                    id: 1,
+                                    name: "Match Winner",
+                                    values: m.values // API Live Odds structure is already compatible
+                                }))
+                            }]
+                        }
                     }
                 }
-            }
-        }));
+            };
+        });
 
         if (bulkOps.length > 0) {
-            await Fixture.bulkWrite(bulkOps, { ordered: false });
-            // console.log(`⚡ [LiveOdds] Updated odds for ${bulkOps.length} matches.`);
+            const res = await Fixture.bulkWrite(bulkOps, { ordered: false });
+            if (res.modifiedCount > 0) {
+                console.log(`⚡ [LiveOdds] Updated live odds for ${res.modifiedCount} matches.`);
+            } else {
+                // If 0 modified, it means API returned odds for games NOT in our DB, or data didn't change
+                // console.log(`⚡ [LiveOdds] Ops run but ${res.modifiedCount} modified (likely no ID match).`);
+            }
         }
 
     } catch (err) {
