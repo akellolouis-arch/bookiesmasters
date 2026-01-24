@@ -202,7 +202,7 @@ export async function pollLiveOdds() {
 // Start the polling loop
 export function startLiveService() {
     console.log("🚀 Live Score Service Started");
-    console.log("   👉 Scores: Every 60s");
+    console.log("   👉 Scores: Every 5s");
     console.log("   👉 Odds:   Every 30s");
 
     // Run immediately
@@ -210,6 +210,6 @@ export function startLiveService() {
     pollLiveOdds();
 
     // Schedule
-    setInterval(pollLiveScores, 60000); // 60s for Scores
+    setInterval(pollLiveScores, 5000); // 5s for Scores
     setInterval(pollLiveOdds, 30000);   // 30s for Odds
 }
