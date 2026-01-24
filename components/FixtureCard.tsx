@@ -39,24 +39,20 @@ export default function FixtureCard({
   prediction, // This is the TIP
   liveOdds,
 }: FixtureCardProps) {
-  const isLive = status.includes("'") || status === "HT" || status === "Live";
+  // FIX: Robust Live Status Check
+  const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(status) || status.includes("'");
 
-  // helper function
+  // helper function (Aligned with BetButton.tsx)
   function getOddsColor(
     value: string | null,
     allOdds: (string | null)[]
   ): string {
     if (!value) return "text-gray-400";
+    const num = parseFloat(value);
+    if (isNaN(num)) return "text-[#fb0]";
 
     // Convert all odds to numbers, ignore nulls
-    const nums = allOdds.map(o => (o ? Number(o) : NaN)).filter(n => !isNaN(n));
-    const num = Number(value);
-
-    if (nums.every(n => n === num)) {
-      // All odds are the same
-      return "text-orange-400";
-    }
-
+    const nums = allOdds.map(o => (o ? parseFloat(o) : NaN)).filter(n => !isNaN(n));
     const max = Math.max(...nums);
     const min = Math.min(...nums);
 
@@ -64,34 +60,25 @@ export default function FixtureCard({
     const countMax = nums.filter(n => n === max).length;
     const countMin = nums.filter(n => n === min).length;
 
-    if (num === min && countMin === 1) return "text-green-600"; // lowest unique → green
-    if (num === max && countMax === 1) return "text-red-600";   // highest unique → red
-    return "text-orange-400"; // second highest OR tied values → orange
+    if (num === min && countMin === 1) return "text-green-400"; // lowest unique → green 
+    if (num === max && countMax === 1) return "text-red-400";   // highest unique → red
+    return "text-[#fb0]"; // middle/tie → orange/gold
   }
 
-
-
-  // helper function to validate tip
+  // ... (getTipStatus remains the same) ...
   function getTipStatus(tip: string, scoreString: string | null, status: string): "WIN" | "LOSS" | "PENDING" {
     if (!scoreString || status === "NS") return "PENDING";
-
-    // Parse score "1 - 2"
     const parts = scoreString.split(" - ");
     if (parts.length !== 2) return "PENDING";
     const h = parseInt(parts[0]);
     const a = parseInt(parts[1]);
-
-    // Normalize tip
     const t = tip.trim().toUpperCase();
-
     if (t === "1") return h > a ? "WIN" : "LOSS";
     if (t === "2") return a > h ? "WIN" : "LOSS";
     if (t === "X") return h === a ? "WIN" : "LOSS";
     if (t === "1X") return h >= a ? "WIN" : "LOSS";
     if (t === "X2") return a >= h ? "WIN" : "LOSS";
     if (t === "12") return h !== a ? "WIN" : "LOSS";
-
-    // Basic Over/Under Support
     if (t.startsWith("OVER")) {
       const line = parseFloat(t.split(" ")[1]);
       if (!isNaN(line)) return (h + a) > line ? "WIN" : "LOSS";
@@ -100,8 +87,7 @@ export default function FixtureCard({
       const line = parseFloat(t.split(" ")[1]);
       if (!isNaN(line)) return (h + a) < line ? "WIN" : "LOSS";
     }
-
-    return "PENDING"; // default if unknown format
+    return "PENDING";
   }
 
   const tipStatus = (prediction && prediction !== "N/A")
@@ -181,10 +167,17 @@ export default function FixtureCard({
         </div>
 
         {/* ODDS / LOCKED STATE */}
-        <div className={`flex flex-row justify-between w-[90px] sm:w-[130px] shrink-0 ${isLive ? "animate-pulse" : ""}`}>
-          <span className={`text-[10px] sm:text-xs ${getOddsColor(effectiveOdds.home, [effectiveOdds.home, effectiveOdds.draw, effectiveOdds.away])}`}>{effectiveOdds.home ?? "-"}</span>
-          <span className={`text-[10px] sm:text-xs ${getOddsColor(effectiveOdds.draw, [effectiveOdds.home, effectiveOdds.draw, effectiveOdds.away])}`}>{effectiveOdds.draw ?? "-"}</span>
-          <span className={`text-[10px] sm:text-xs ${getOddsColor(effectiveOdds.away, [effectiveOdds.home, effectiveOdds.draw, effectiveOdds.away])}`}>{effectiveOdds.away ?? "-"}</span>
+        <div className={`flex flex-col items-center justify-center shrink-0 ${isLive ? "gap-0.5" : ""}`}>
+          <div className={`flex flex-row justify-between w-[90px] sm:w-[130px] shrink-0 ${isLive ? "text-white" : ""}`}>
+            <span className={`text-[10px] sm:text-xs font-bold leading-none ${getOddsColor(effectiveOdds.home, [effectiveOdds.home, effectiveOdds.draw, effectiveOdds.away])}`}>{effectiveOdds.home ?? "-"}</span>
+            <span className={`text-[10px] sm:text-xs font-bold leading-none ${getOddsColor(effectiveOdds.draw, [effectiveOdds.home, effectiveOdds.draw, effectiveOdds.away])}`}>{effectiveOdds.draw ?? "-"}</span>
+            <span className={`text-[10px] sm:text-xs font-bold leading-none ${getOddsColor(effectiveOdds.away, [effectiveOdds.home, effectiveOdds.draw, effectiveOdds.away])}`}>{effectiveOdds.away ?? "-"}</span>
+          </div>
+          {isLive && (
+            <span className="text-[8px] text-red-500 font-extrabold uppercase tracking-widest animate-pulse leading-none">
+              LIVE ODDS
+            </span>
+          )}
         </div>
 
         {/* SCORE & TIP SECTION */}

@@ -3,12 +3,29 @@
 import { useState } from "react";
 import { Copy, Check, ExternalLink } from "lucide-react";
 
+// Helper for odds color
+function getOddsColor(value: string, allOdds: { value: string; odd: string }[]): string {
+    const num = parseFloat(value);
+    if (isNaN(num)) return "text-[#fb0]";
+
+    const nums = allOdds.map(o => parseFloat(o.odd)).filter(n => !isNaN(n));
+    const max = Math.max(...nums);
+    const min = Math.min(...nums);
+    const countMax = nums.filter(n => n === max).length;
+    const countMin = nums.filter(n => n === min).length;
+
+    if (num === min && countMin === 1) return "text-green-400"; // Lowest -> Green
+    if (num === max && countMax === 1) return "text-red-400";   // Highest -> Red
+    return "text-[#fb0]"; // Middle -> Orange/Gold
+}
+
 interface BetButtonProps {
     teamName?: string;
     odds?: { value: string; odd: string }[];
+    isLive?: boolean; // NEW PROP
 }
 
-export default function BetButton({ teamName, odds }: BetButtonProps) {
+export default function BetButton({ teamName, odds, isLive = false }: BetButtonProps) {
     const [copied, setCopied] = useState(false);
     const PROMO_CODE = "BKMS254";
     const AFFILIATE_LINK = "https://1xbet.com/en/user/registration";
@@ -53,9 +70,16 @@ export default function BetButton({ teamName, odds }: BetButtonProps) {
                 </div>
 
                 {/* Middle: CTA */}
-                <div className="flex items-center gap-1 shrink-0">
-                    <span className="w-px h-6 bg-white/10 mx-1 hidden sm:block" />
-                    <span className="font-bold text-xs sm:text-sm whitespace-nowrap">BET 1XBET</span>
+                <div className="flex flex-col items-center justify-center shrink-0">
+                    <div className="flex items-center gap-1">
+                        <span className="w-px h-6 bg-white/10 mx-1 hidden sm:block" />
+                        <span className="font-bold text-xs sm:text-sm whitespace-nowrap">BET 1XBET</span>
+                    </div>
+                    {isLive && (
+                        <span className="text-[8px] text-red-500 font-extrabold uppercase tracking-widest animate-pulse leading-none -mt-0.5">
+                            LIVE ODDS
+                        </span>
+                    )}
                 </div>
 
                 {/* Right: Odds */}
@@ -66,7 +90,7 @@ export default function BetButton({ teamName, odds }: BetButtonProps) {
                                 <span className="text-[8px] text-gray-400 font-bold leading-none mb-0.5">
                                     {o.value === "Home" ? "1" : o.value === "Draw" ? "X" : "2"}
                                 </span>
-                                <span className="text-[#fb0] font-bold text-[10px] sm:text-xs leading-none">
+                                <span className={`font-bold text-[10px] sm:text-xs leading-none ${getOddsColor(o.odd, odds)}`}>
                                     {o.odd}
                                 </span>
                             </div>
