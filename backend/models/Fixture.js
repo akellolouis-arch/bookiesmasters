@@ -20,6 +20,7 @@ const FixtureSchema = new mongoose.Schema(
 
     // Live-only data
     livescore: { type: Object, default: null },
+    liveOdds: { type: Array, default: null }, // ⚡ Ephemeral live odds
     lastLiveUpdate: { type: Date, default: null },
 
     // Custom Prediction / Manual Override

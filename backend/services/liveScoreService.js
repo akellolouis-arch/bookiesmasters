@@ -100,19 +100,18 @@ export async function pollLiveScores() {
         // STEP 4: Merge Lists & Update
         const allUpdates = [...apiLiveFixtures, ...recoveryFixtures];
 
-        if (allUpdates.length === 0) return;
+        if (allUpdates.length > 0) {
+            // Log occasionally (only when active)
+            const timestamp = Date.now();
+            if (timestamp - lastLogTime > 60000 * 5) {
+                console.log(`📡 [LivePoll] Active! Updating ${apiLiveFixtures.length} live + ${recoveryFixtures.length} finished matches.`);
+                lastLogTime = timestamp;
+            }
 
-        // Log occasionally (only when active)
-        const timestamp = Date.now();
-        if (timestamp - lastLogTime > 60000 * 5) {
-            console.log(`📡 [LivePoll] Active! Updating ${apiLiveFixtures.length} live + ${recoveryFixtures.length} finished matches.`);
-            lastLogTime = timestamp;
-        }
+            const bulkOps = allUpdates.map(apiFixture => {
+                const isFinished = ["FT", "AET", "PEN"].includes(apiFixture.fixture.status.short);
 
-        const bulkOps = allUpdates.map(apiFixture => ({
-            updateOne: {
-                filter: { fixtureId: apiFixture.fixture.id },
-                update: {
+                const updateDoc = {
                     $set: {
                         "fixture.fixture": apiFixture.fixture,
                         "fixture.goals": apiFixture.goals,
@@ -127,11 +126,21 @@ export async function pollLiveScores() {
                         },
                         lastLiveUpdate: new Date()
                     }
-                }
-            }
-        }));
+                };
 
-        if (bulkOps.length > 0) {
+                // 🧹 CLEANUP: If match is finished, delete liveOdds
+                if (isFinished) {
+                    updateDoc.$unset = { liveOdds: 1 };
+                }
+
+                return {
+                    updateOne: {
+                        filter: { fixtureId: apiFixture.fixture.id },
+                        update: updateDoc
+                    }
+                };
+            });
+
             await Fixture.bulkWrite(bulkOps, { ordered: false });
         }
 
@@ -140,13 +149,67 @@ export async function pollLiveScores() {
     }
 }
 
-// Start the polling loop (runs every 60 seconds)
+// ⚡ LIVE ODDS POLLER (Every 30s)
+export async function pollLiveOdds() {
+    try {
+        // 1. Check if there are any LIVE matches in our DB
+        const liveCount = await Fixture.countDocuments({
+            "fixture.fixture.status.short": { $in: ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"] }
+        });
+
+        if (liveCount === 0) return; // No live matches, save API calls
+
+        // 2. Fetch Live Odds from API (Bookmaker 11 = 1xBet)
+        const response = await axios.get(`${BASE_URL}/odds/live`, {
+            params: { bookmaker: 11 }, // 1xBet
+            headers: { "x-apisports-key": API_KEY }
+        });
+
+        const allLiveOdds = response.data.response || [];
+
+        if (allLiveOdds.length === 0) return;
+
+        // 3. Update DB
+        const bulkOps = allLiveOdds.map(item => ({
+            updateOne: {
+                filter: { fixtureId: item.fixture.id },
+                update: {
+                    $set: {
+                        // Store exactly in the same structure as pre-match 'odds' for compatibility
+                        liveOdds: [{
+                            bookmaker: "1xBet", // Hardcoded for display
+                            markets: item.odds.filter(m => m.id === 1 || m.name === "Match Winner").map(m => ({
+                                id: 1,
+                                name: "Match Winner",
+                                values: m.values // API Live Odds structure is already compatible {value: "Home", odd: "1.50"}
+                            }))
+                        }]
+                    }
+                }
+            }
+        }));
+
+        if (bulkOps.length > 0) {
+            await Fixture.bulkWrite(bulkOps, { ordered: false });
+            // console.log(`⚡ [LiveOdds] Updated odds for ${bulkOps.length} matches.`);
+        }
+
+    } catch (err) {
+        console.error("❌ [LiveOdds] Error:", err.message);
+    }
+}
+
+// Start the polling loop
 export function startLiveService() {
-    console.log("🚀 Live Score Service Started (Polling every 60s)");
+    console.log("🚀 Live Score Service Started");
+    console.log("   👉 Scores: Every 60s");
+    console.log("   👉 Odds:   Every 30s");
 
-    // Run immediately on start
+    // Run immediately
     pollLiveScores();
+    pollLiveOdds();
 
-    // Then interval
-    setInterval(pollLiveScores, 5000);
+    // Schedule
+    setInterval(pollLiveScores, 60000); // 60s for Scores
+    setInterval(pollLiveOdds, 30000);   // 30s for Odds
 }

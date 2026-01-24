@@ -132,9 +132,16 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 <div className="flex flex-col items-center gap-3 mb-6">
                     <BetButton
                         teamName={data.homeTeam.name}
-                        odds={data.odds && data.odds.length > 0 && data.odds[0].markets && data.odds[0].markets.length > 0
-                            ? data.odds[0].markets[0].values
-                            : undefined}
+                        odds={
+                            // 1. Try Live Odds first
+                            (data.liveOdds && data.liveOdds.length > 0 && data.liveOdds[0].markets && data.liveOdds[0].markets.length > 0)
+                                ? data.liveOdds[0].markets[0].values
+                                :
+                                // 2. Fallback to pre-match odds
+                                (data.odds && data.odds.length > 0 && data.odds[0].markets && data.odds[0].markets.length > 0)
+                                    ? data.odds[0].markets[0].values
+                                    : undefined
+                        }
                     />
                 </div>
 

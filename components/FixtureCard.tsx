@@ -25,10 +25,8 @@ export interface FixtureCardProps {
   awayTeam: Team;
   odds: Odds;
   score: string | null;
-  prediction?: string | null; // This is now the TIP (1, X, 1X, Over 2.5 etc)
-  // customOdds?: string | null; // We can use this if we want to show manual odds
-  // isVip?: boolean; // REMOVED
-  // creditCost?: number; // REMOVED
+  prediction?: string | null; // This is the TIP
+  liveOdds?: any; // NEW: Ephemeral live odds
 }
 
 export default function FixtureCard({
@@ -39,6 +37,7 @@ export default function FixtureCard({
   odds,
   score,
   prediction, // This is the TIP
+  liveOdds,
 }: FixtureCardProps) {
   const isLive = status.includes("'") || status === "HT" || status === "Live";
 
@@ -113,6 +112,26 @@ export default function FixtureCard({
   if (tipStatus === "WIN") tipColor = "text-green-500";
   if (tipStatus === "LOSS") tipColor = "text-red-500";
 
+  // Determine effective odds (Live vs Pre-match)
+  let effectiveOdds = odds;
+
+  if (isLive && liveOdds && liveOdds.length > 0) {
+    const market = liveOdds[0]?.markets?.find((m: any) => m.name === "Match Winner" || m.id === 1);
+    if (market && market.values) {
+      const homeVal = market.values.find((v: any) => v.value === "Home")?.odd;
+      const drawVal = market.values.find((v: any) => v.value === "Draw")?.odd;
+      const awayVal = market.values.find((v: any) => v.value === "Away")?.odd;
+
+      if (homeVal && awayVal) {
+        effectiveOdds = {
+          home: homeVal,
+          draw: drawVal || "-",
+          away: awayVal
+        };
+      }
+    }
+  }
+
   return (
     <div className="relative group max-w-xl mx-auto mb-3">
       {/* Main Card Content - Clickable (Details Page) */}
@@ -163,9 +182,9 @@ export default function FixtureCard({
 
         {/* ODDS / LOCKED STATE */}
         <div className={`flex flex-row justify-between w-[90px] sm:w-[130px] shrink-0 ${isLive ? "animate-pulse" : ""}`}>
-          <span className={`text-[10px] sm:text-xs ${getOddsColor(odds.home, [odds.home, odds.draw, odds.away])}`}>{odds.home ?? "-"}</span>
-          <span className={`text-[10px] sm:text-xs ${getOddsColor(odds.draw, [odds.home, odds.draw, odds.away])}`}>{odds.draw ?? "-"}</span>
-          <span className={`text-[10px] sm:text-xs ${getOddsColor(odds.away, [odds.home, odds.draw, odds.away])}`}>{odds.away ?? "-"}</span>
+          <span className={`text-[10px] sm:text-xs ${getOddsColor(effectiveOdds.home, [effectiveOdds.home, effectiveOdds.draw, effectiveOdds.away])}`}>{effectiveOdds.home ?? "-"}</span>
+          <span className={`text-[10px] sm:text-xs ${getOddsColor(effectiveOdds.draw, [effectiveOdds.home, effectiveOdds.draw, effectiveOdds.away])}`}>{effectiveOdds.draw ?? "-"}</span>
+          <span className={`text-[10px] sm:text-xs ${getOddsColor(effectiveOdds.away, [effectiveOdds.home, effectiveOdds.draw, effectiveOdds.away])}`}>{effectiveOdds.away ?? "-"}</span>
         </div>
 
         {/* SCORE & TIP SECTION */}
