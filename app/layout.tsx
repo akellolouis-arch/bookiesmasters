@@ -8,6 +8,7 @@ import Navbar from "@/components/Navbar";
 import TopLeaguesRibbon from "@/components/TopLeaguesRibbon";
 import Footer from "@/components/Footer";
 import TelegramCTA from "@/components/TelegramCTA";
+import AffiliateBanner from "@/components/AffiliateBanner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -118,6 +119,7 @@ export default function RootLayout({
           <main className="min-h-screen">{children}</main>
           <Footer />
           <TelegramCTA />
+          <AffiliateBanner />
         </AuthProvider>
       </body>
     </html>

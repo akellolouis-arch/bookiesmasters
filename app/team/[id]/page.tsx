@@ -4,6 +4,7 @@ import TransfersList from "@/components/TransfersList";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import BetButton from "@/components/BetButton";
 
 // For now, we only have transfer data. 
 // Ideally we would also have getTeamDetails(id) to fetch logo/name separately if not passed,
@@ -78,7 +79,8 @@ export default async function TeamPage({ params, searchParams }: PageProps) {
                         />
                     </div>
                     <h2 className="text-2xl font-bold text-center">{teamName}</h2>
-                    <p className="text-neutral-400 text-sm mt-1">ID: {id}</p>
+                    <p className="text-neutral-400 text-sm mt-1 mb-4">ID: {id}</p>
+                    <BetButton teamName={teamName} />
                 </div>
 
                 {/* Transfers Section */}

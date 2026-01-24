@@ -12,6 +12,7 @@ import LeagueHeader from "@/components/fixture-details/LeagueHeader";
 import Lineups from "@/components/fixture-details/Lineups";
 import Injuries from "@/components/fixture-details/Injuries";
 import Statistics from "@/components/fixture-details/Statistics";
+import BetButton from "@/components/BetButton";
 
 // import PredictionDisplay from "@/components/fixture-details/PredictionDisplay";
 // import PredictionDisplay from "@/components/fixture-details/PredictionDisplay";
@@ -126,6 +127,11 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                         </div>
                     </div>
                 )}
+
+                {/* AFFILIATE CALL TO ACTION */}
+                <div className="flex justify-center mb-6">
+                    <BetButton teamName={data.homeTeam.name} />
+                </div>
 
                 {/* VIP SECTION REMOVED */}
 
