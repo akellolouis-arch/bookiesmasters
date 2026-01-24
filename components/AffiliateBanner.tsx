@@ -29,7 +29,10 @@ export default function AffiliateBanner() {
 
     return (
         <>
-            <div className="fixed bottom-0 left-0 right-0 bg-[#0F2D52] text-white p-3 z-[40] border-t-2 border-[#54a7ff] shadow-[0_-4px_20px_rgba(0,0,0,0.5)] animate-in slide-in-from-bottom duration-500">
+            <div
+                onClick={handleCopy}
+                className="fixed bottom-0 left-0 right-0 bg-[#0F2D52] text-white p-3 z-[40] border-t-2 border-[#54a7ff] shadow-[0_-4px_20px_rgba(0,0,0,0.5)] animate-in slide-in-from-bottom duration-500 cursor-pointer hover:bg-[#153b6a] transition-colors"
+            >
                 <div className="max-w-4xl mx-auto flex items-center justify-between gap-3 sm:gap-6">
 
                     {/* Left Text */}
@@ -57,7 +60,6 @@ export default function AffiliateBanner() {
                                 {PROMO_CODE}
                             </div>
                             <button
-                                onClick={handleCopy}
                                 className="bg-[#3dad07] hover:bg-[#349606] text-white text-[9px] font-bold py-0.5 px-1.5 rounded transition-colors flex items-center gap-1 shadow-sm"
                             >
                                 {copied ? <Check size={10} /> : <Copy size={10} />}
@@ -68,8 +70,11 @@ export default function AffiliateBanner() {
 
                     {/* Close Button */}
                     <button
-                        onClick={() => setIsVisible(false)}
-                        className="text-blue-300 hover:text-white transition-colors"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setIsVisible(false);
+                        }}
+                        className="text-blue-300 hover:text-white transition-colors p-1 hover:bg-white/10 rounded-full"
                     >
                         <X size={20} />
                     </button>
