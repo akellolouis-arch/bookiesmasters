@@ -42,9 +42,11 @@ export default function BetButton({ teamName, odds }: BetButtonProps) {
             <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 pointer-events-none" />
 
             {copied ? (
-                <div className="flex items-center justify-center w-full gap-2 py-1">
-                    <Check size={16} className="text-green-400" />
-                    <span className="text-green-400 font-bold">Code Copied! Redirecting...</span>
+                <div className="flex items-center justify-center w-full gap-2 py-1 bg-[#23a516] absolute inset-0 text-white animate-in zoom-in-50 duration-300">
+                    <Check size={18} className="text-white shrink-0" />
+                    <span className="font-black text-[10px] sm:text-xs uppercase tracking-tight leading-none text-center">
+                        Code Copied! Use it to register & get 200% Bonus!
+                    </span>
                 </div>
             ) : (
                 <>

@@ -117,8 +117,8 @@ export default function RootLayout({
           <Navbar />
           <TopLeaguesRibbon />
           <main className="min-h-screen">{children}</main>
-          <Footer />
           <TelegramCTA />
+          <Footer />
           <AffiliateBanner />
         </AuthProvider>
       </body>
