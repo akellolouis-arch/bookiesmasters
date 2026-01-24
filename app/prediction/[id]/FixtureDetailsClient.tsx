@@ -129,8 +129,22 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 )}
 
                 {/* AFFILIATE CALL TO ACTION */}
-                <div className="flex justify-center mb-6">
+                <div className="flex flex-col items-center gap-3 mb-6">
                     <BetButton teamName={data.homeTeam.name} />
+
+                    {/* ODDS DISPLAY */}
+                    {data.odds && data.odds.length > 0 && data.odds[0].markets && data.odds[0].markets.length > 0 && (
+                        <div className="flex gap-2">
+                            {data.odds[0].markets[0].values.map((v: any, idx: number) => (
+                                <div key={idx} className="bg-[#1a1a1a] border border-white/10 rounded px-3 py-1 text-center min-w-[50px]">
+                                    <div className="text-[10px] text-gray-500 font-bold mb-0.5">
+                                        {v.value === "Home" ? "1" : v.value === "Draw" ? "X" : "2"}
+                                    </div>
+                                    <div className="text-sm font-bold text-white">{v.odd}</div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 {/* VIP SECTION REMOVED */}

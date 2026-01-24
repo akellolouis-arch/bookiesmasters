@@ -34,19 +34,19 @@ export default function AffiliateBanner() {
                         <span className="font-black text-lg sm:text-xl text-[#01a0ff] drop-shadow-sm italic">
                             1XBET
                         </span>
-                        <span className="hidden sm:inline-block bg-[#fb0] text-[#0F2D52] text-[10px] font-bold px-1.5 rounded-sm uppercase tracking-wide">
+                        <span className="bg-[#fb0] text-[#0F2D52] text-[10px] font-bold px-1.5 rounded-sm uppercase tracking-wide animate-pulse">
                             Special Offer
                         </span>
                     </div>
                     <p className="text-xs sm:text-sm text-gray-200 leading-tight">
-                        Register now & get <span className="text-[#fb0] font-bold">200% Bonus</span> (up to 20,000 KES).
+                        Register now & get <span className="text-[#fb0] font-bold">200% Bonus</span>. use promocode
                     </p>
                 </div>
 
                 {/* Promo Code Action */}
                 <div className="flex flex-col items-end gap-1">
-                    <span className="hidden sm:block text-[10px] text-gray-400 uppercase tracking-wider font-semibold mr-1">
-                        Use Promo Code
+                    <span className="animate-pulse text-[10px] text-[#fb0] uppercase tracking-widest font-black mr-1 drop-shadow-sm">
+                        ✨ PROMOCODE ✨
                     </span>
                     <div className="flex items-center gap-2 bg-[#0b223f] rounded px-1 py-1 border border-[#1e4e8a]">
                         <div className="text-white font-mono font-bold text-sm tracking-widest px-2">
