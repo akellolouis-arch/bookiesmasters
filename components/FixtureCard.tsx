@@ -151,7 +151,7 @@ export default function FixtureCard({
               className="flex items-center gap-1.5 hover:text-orange-400 transition-colors max-w-full overflow-hidden"
             >
               <Image src={homeTeam.logo} alt={homeTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
-              <span className="font-medium text-[11px] sm:text-xs truncate">{homeTeam.name}</span>
+              <span className="font-medium text-[11px] sm:text-xs truncate text-white">{homeTeam.name}</span>
             </Link>
           </div>
           <div className="flex items-center gap-1.5 w-full">
@@ -161,7 +161,7 @@ export default function FixtureCard({
               className="flex items-center gap-1.5 hover:text-orange-400 transition-colors max-w-full overflow-hidden"
             >
               <Image src={awayTeam.logo} alt={awayTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
-              <span className="font-medium text-[11px] sm:text-xs truncate">{awayTeam.name}</span>
+              <span className="font-medium text-[11px] sm:text-xs truncate text-white">{awayTeam.name}</span>
             </Link>
           </div>
         </div>

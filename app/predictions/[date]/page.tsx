@@ -4,7 +4,8 @@ import LeagueExplorer from "@/components/home/LeagueExplorer";
 
 
 
-export const dynamic = "force-dynamic"; // SSR: Always fetch fresh data on server
+export const revalidate = 30; // Cache for 30 seconds (ISR)
+export const dynamicParams = true; // Allow generating pages for new dates
 
 // ---------------------
 // Backend Types
@@ -123,7 +124,7 @@ export default async function PredictionsPage({
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/fixtures/cards?date=${date}`,
-      { cache: "no-store" } // NEVER cache this request. Always fetch fresh from backend.
+      { next: { revalidate: 30 } } // Cache at the Data Cache level for 30s
     );
 
     if (!res.ok) {
