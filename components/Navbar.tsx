@@ -11,7 +11,7 @@ import logo from "@/public/bookiesmasters_text_v2.png";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  // Pricing modal is now handled in /vip-tips page
+
 
 
   const links = [
