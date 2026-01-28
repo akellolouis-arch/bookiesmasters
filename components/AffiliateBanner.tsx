@@ -7,12 +7,7 @@ export default function AffiliateBanner() {
     const [isVisible, setIsVisible] = useState(true);
     const [copied, setCopied] = useState(false);
     const PROMO_CODE = "BKMS254";
-    const REGISTER_URL = "https://refpa7921972.top/L?tag=d_3862629m_1573c_&site=3862629&ad=1573"; // Replace with your actual affiliate link if you have one, otherwise just promo code usage is often manual for users on the site. 
-    // IMPORTANT: User only gave promo code. I will assume a generic 1xbet link or just rely on the code. 
-    // Usually affiliates have a specific link. I'll use a placeholder or ask, but for now just the code functionality.
-    // Wait, the user didn't provide a link, only said "that is 1xbet's promocode".
-    // A generic 1xBet link is fine if the code is what tracks, but usually the link also tracks.
-    // I'll stick to just the code copy for now, or a generic homepage link.
+    const REGISTER_URL = "https://reffpa.com/L?tag=d_5148910m_97c_telegram&site=5148910&ad=97&r=registration";
 
     const handleCopy = () => {
         navigator.clipboard.writeText(PROMO_CODE);
@@ -20,8 +15,7 @@ export default function AffiliateBanner() {
     };
 
     const handleContinue = () => {
-        // window.open(REGISTER_URL, "_blank"); // If we had a specific link
-        window.open("https://1xbet.com/en/user/registration", "_blank");
+        window.open(REGISTER_URL, "_blank");
         setCopied(false);
     };
 
