@@ -43,7 +43,7 @@ export default function AffiliateBanner() {
                             </span>
                         </div>
                         <p className="text-[10px] sm:text-xs text-blue-100 leading-tight">
-                            Daily <span className="font-bold text-white">Sure Bets</span> & <span className="font-bold text-white">Live Updates</span>
+                            Daily <span className="font-bold text-white">Bets</span> & <span className="font-bold text-white">Live Updates</span>
                         </p>
                     </div>
                 </div>
