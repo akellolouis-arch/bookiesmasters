@@ -3,7 +3,7 @@ import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-import AuthProvider from "@/components/AuthProvider";
+
 import Navbar from "@/components/Navbar";
 import TopLeaguesRibbon from "@/components/TopLeaguesRibbon";
 import Footer from "@/components/Footer";
@@ -113,14 +113,12 @@ export default function RootLayout({
           `}
         </Script>
 
-        <AuthProvider>
-          <Navbar />
-          <TopLeaguesRibbon />
-          <main className="min-h-screen">{children}</main>
+        <Navbar />
+        <TopLeaguesRibbon />
+        <main className="min-h-screen">{children}</main>
 
-          <Footer />
-          <AffiliateBanner />
-        </AuthProvider>
+        <Footer />
+        <AffiliateBanner />
       </body>
     </html>
   );
