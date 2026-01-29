@@ -9,6 +9,13 @@ export default function AffiliateBanner() {
     const TELEGRAM_LINK = "https://t.me/bookiesm";
 
     const handleJoin = () => {
+        // Meta Pixel Track
+        if (typeof window !== 'undefined' && (window as any).fbq) {
+            (window as any).fbq('track', 'Lead', {
+                content_name: 'Sticky Telegram Banner',
+                content_category: 'Social'
+            });
+        }
         window.open(TELEGRAM_LINK, "_blank");
     };
 

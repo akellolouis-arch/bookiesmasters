@@ -33,6 +33,16 @@ export default function BetButton({ teamName, odds, isLive = false }: BetButtonP
     const handleClick = (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
+
+        // Meta Pixel Track
+        if (typeof window !== 'undefined' && (window as any).fbq) {
+            (window as any).fbq('track', 'Lead', {
+                content_name: 'Bet Button Click',
+                content_category: 'Affiliate',
+                content_type: 'product'
+            });
+        }
+
         window.open(AFFILIATE_LINK, "_blank");
     };
 
