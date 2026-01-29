@@ -1,5 +1,6 @@
 import React from 'react';
 import FixtureCard, { FixtureCardProps } from '@/components/FixtureCard';
+import AdBanner from '@/components/AdBanner';
 
 interface LeagueFixturesProps {
     fixtures: FixtureCardProps[];
@@ -12,8 +13,11 @@ const LeagueFixtures: React.FC<LeagueFixturesProps> = ({ fixtures }) => {
 
     return (
         <div className="space-y-2">
-            {fixtures.map((fixture) => (
-                <FixtureCard key={fixture.fixtureId} {...fixture} />
+            {fixtures.map((fixture, index) => (
+                <React.Fragment key={fixture.fixtureId}>
+                    <FixtureCard {...fixture} />
+                    {index === 5 && <AdBanner />}
+                </React.Fragment>
             ))}
         </div>
     );
