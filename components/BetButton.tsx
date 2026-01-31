@@ -42,16 +42,16 @@ export default function BetButton({ teamName, odds, isLive = false }: BetButtonP
             onClick={handleClick}
             className={`
             group relative overflow-hidden rounded-lg px-2 py-1.5 
-            bg-[#1F1F1F] hover:bg-[#2F2F2F] border border-white/5 hover:border-white/10
+            border border-white/5 hover:border-white/10
             shadow-sm hover:shadow-md transition-all duration-300
-            flex items-center justify-center gap-2 w-full sm:w-auto
+            flex items-center justify-center gap-2 w-full sm:w-full lg:max-w-3xl mx-auto
           `}
         >
             {/* Odds Display Only */}
             {odds && odds.length > 0 ? (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center justify-between w-full min-w-[120px] px-2">
                     {odds.map((o, i) => (
-                        <div key={i} className="flex flex-col items-center min-w-[30px] px-1">
+                        <div key={i} className="flex flex-col items-center flex-1">
                             <span className="text-[9px] text-gray-500 font-bold leading-none mb-1">
                                 {o.value === "Home" ? "1" : o.value === "Draw" ? "X" : "2"}
                             </span>
