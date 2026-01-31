@@ -50,6 +50,15 @@ export default function BetButton({ teamName, odds, isLive = false }: BetButtonP
             {/* Odds Display Only */}
             {odds && odds.length > 0 ? (
                 <div className="flex items-center justify-between w-full min-w-[120px] px-2">
+                    <div className="flex items-center gap-1.5 mr-2 sm:mr-4 shrink-0">
+                        <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                        </span>
+                        <span className="text-[10px] font-black text-white tracking-widest whitespace-nowrap">
+                            LIVE ODDS
+                        </span>
+                    </div>
                     {odds.map((o, i) => (
                         <div key={i} className="flex flex-col items-center flex-1">
                             <span className="text-[9px] text-gray-500 font-bold leading-none mb-1">
