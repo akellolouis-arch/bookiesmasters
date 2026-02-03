@@ -2,6 +2,7 @@ import React from 'react';
 import FixtureCard, { FixtureCardProps } from '@/components/FixtureCard';
 import AdBanner from '@/components/AdBanner';
 
+
 interface LeagueFixturesProps {
     fixtures: FixtureCardProps[];
 }
@@ -17,6 +18,7 @@ const LeagueFixtures: React.FC<LeagueFixturesProps> = ({ fixtures }) => {
                 <React.Fragment key={fixture.fixtureId}>
                     <FixtureCard {...fixture} />
                     {index === 5 && <AdBanner />}
+
                 </React.Fragment>
             ))}
         </div>

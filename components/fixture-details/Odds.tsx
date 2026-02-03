@@ -16,14 +16,6 @@ interface Bookmaker {
     markets: Market[];
 }
 
-import AffiliateButton from "./AffiliateButton";
-
-// Placeholder affiliate links - YOU SHOULD REPLACE THESE WITH REAL ONES
-const BOOKMAKER_LINKS: Record<string, string> = {
-    "Bet365": "https://www.bet365.com/",
-    "1xBet": "https://1xbet.com/",
-    "Unibet": "https://www.unibet.com/"
-};
 
 interface OddsProps {
     odds: Bookmaker[];
@@ -34,16 +26,12 @@ const Odds: React.FC<OddsProps> = ({ odds }) => {
         return (
             <div className="text-center p-8 text-gray-500 bg-[#1F1F1F] rounded-xl border border-white/5">
                 <p className="text-sm">No markets available</p>
-                <div className="mt-4">
-                    <AffiliateButton bookmakerName="Bet365" link="https://www.bet365.com/" />
-                </div>
             </div>
         );
     }
 
     // We focus on the first bookmaker (usually Bet365)
     const bookmakerData = odds[0];
-    const affiliateLink = BOOKMAKER_LINKS[bookmakerData.bookmaker] || "https://www.bet365.com/";
 
     // Helper to determine grid columns based on number of outcomes
     const getGridClass = (valuesCount: number) => {
@@ -54,10 +42,7 @@ const Odds: React.FC<OddsProps> = ({ odds }) => {
 
     return (
         <div className="space-y-4">
-            <AffiliateButton
-                bookmakerName={bookmakerData.bookmaker}
-                link={affiliateLink}
-            />
+
 
             {bookmakerData.markets.map((market) => (
                 <div key={market.id} className="bg-[#1F1F1F] rounded-xl overflow-hidden border border-white/5">

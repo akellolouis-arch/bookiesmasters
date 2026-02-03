@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { X, Send, ExternalLink } from "lucide-react";
 
-export default function AffiliateBanner() {
+export default function TelegramBanner() {
     const [isVisible, setIsVisible] = useState(true);
 
     const TELEGRAM_LINK = "https://t.me/bookiesm";

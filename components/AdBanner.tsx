@@ -1,19 +1,26 @@
+"use client";
+
 import React from 'react';
 
-const AdBanner = () => {
+export default function AdBanner() {
     return (
-        <div className="w-full max-w-xl mx-auto mb-3 overflow-hidden rounded-xl bg-[#1F1F1F] border border-white/5 shadow-sm">
-            <iframe
-                scrolling='no'
-                frameBorder='0'
-                style={{ padding: '0px', margin: '0px', border: '0px', borderStyle: 'none' }}
-                width='100%'
-                height='100'
-                src="https://refbanners.com/I?tag=d_5148910m_145959c_&site=5148910&ad=145959"
-                title="Sponsor"
-            ></iframe>
+        <div className="w-full max-w-2xl mx-auto my-6 px-4">
+            <div className="bg-[#1a1a1a] border border-dashed border-[#333] rounded-lg p-6 flex flex-col items-center justify-center text-center">
+                <span className="text-gray-500 text-xs font-mono uppercase tracking-widest mb-2">
+                    Advertisement
+                </span>
+
+                {/* 
+                    PASTE YOUR AD NETWORK CODE HERE 
+                    Example: <script ...></script> 
+                */}
+                <div className="w-full h-[100px] bg-[#222] rounded flex items-center justify-center">
+                    <span className="text-gray-600 text-sm">
+                        Ad Space (Place Script Here)
+                    </span>
+                </div>
+
+            </div>
         </div>
     );
-};
-
-export default AdBanner;
+}

@@ -11,7 +11,8 @@ router.get("/cards", fetchFixtureCardsByDate);
 router.get("/live", fetchLiveFixtureCards);
 
 // public endpoint for fixture details
-import { getFixtureDetails } from "../controllers/fixtureDetailController.js";
+import { getFixtureDetails, overridePrediction } from "../controllers/fixtureDetailController.js";
 router.get("/:id", getFixtureDetails);
+router.post("/override", overridePrediction);
 
 export default router;
