@@ -86,8 +86,15 @@ export const getFixtureById = async (fixtureId) => {
         const live = fixtureDoc.livescore;
 
         // Priority: Use Live data if available
-        const currentStatus = live?.status || matchData.fixture?.status || { short: "NS", elapsed: null };
-        const currentGoals = live?.goals || matchData.goals || { home: null, away: null };
+        let currentStatus = live?.status || matchData.fixture?.status || { short: "NS", elapsed: null };
+        let currentGoals = live?.goals || matchData.goals || { home: null, away: null };
+
+        // 🛡️ SAFETY FIX: If main status is "NS" (Not Started) or "TBD", IGNORE any stale livescore data
+        // This prevents future games from showing as "HT" or "FT" due to bad caching
+        if (matchData.fixture?.status?.short === "NS" || matchData.fixture?.status?.short === "TBD") {
+            currentStatus = matchData.fixture.status;
+            currentGoals = { home: null, away: null };
+        }
 
         const isFinished = ["FT", "AET", "PEN"].includes(currentStatus.short);
         const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE"].includes(currentStatus.short);
