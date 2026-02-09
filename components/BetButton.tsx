@@ -46,82 +46,40 @@ export default function BetButton({ teamName, odds, isLive = false }: BetButtonP
             border-t border-yellow-300/40 border-b border-orange-700/50
             shadow-[0_0_15px_rgba(249,115,22,0.4)] hover:shadow-[0_0_25px_rgba(249,115,22,0.6)]
             transition-all duration-300 transform hover:scale-[1.01] active:scale-[0.98]
-            mt-2 mb-4
+            mt-1 mb-2
             `}
         >
             {/* Shimmer/Pulse Effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:animate-[shimmer_1.5s_infinite]" />
             <div className="absolute inset-0 bg-white/5 animate-pulse" />
 
-            <div className="relative flex flex-col justify-center px-4 py-3">
+            <div className="relative flex items-center justify-between px-3 py-2">
 
-                {/* Main CTA Section */}
-                <div className="flex items-center justify-between w-full mb-2">
-                    {/* Left: Icon & Text */}
-                    <div className="flex items-center gap-3">
-                        <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-inner">
-                            <Trophy className="w-5 h-5 text-yellow-100 drop-shadow-md" />
-                        </div>
-                        <div className="flex flex-col items-start text-left">
-                            <div className="flex items-center gap-1.5">
-                                <span className="text-[10px] font-extrabold text-white bg-red-600 px-1.5 py-0.5 rounded shadow-sm animate-pulse">
-                                    VIP
-                                </span>
-                                <span className="text-[10px] font-bold text-orange-100 uppercase tracking-widest">
-                                    HIGH ODDS
-                                </span>
-                            </div>
-                            <span className="text-white font-black text-lg sm:text-xl italic leading-none drop-shadow-sm mt-0.5">
-                                UNLOCK 3+ ODDS
+                {/* Left: Icon & Text */}
+                <div className="flex items-center gap-3">
+                    <div className="bg-white/20 p-1.5 rounded-lg backdrop-blur-sm border border-white/10 shadow-inner">
+                        <Trophy className="w-4 h-4 text-yellow-100 drop-shadow-md" />
+                    </div>
+                    <div className="flex flex-col items-start text-left">
+                        <div className="flex items-center gap-1.5">
+                            <span className="text-[9px] font-extrabold text-white bg-red-600 px-1 py-px rounded shadow-sm animate-pulse">
+                                VIP
+                            </span>
+                            <span className="text-[9px] font-bold text-orange-100 uppercase tracking-widest leading-none">
+                                HIGH ODDS
                             </span>
                         </div>
-                    </div>
-
-                    {/* Right: Action Button */}
-                    <div className="flex items-center gap-1.5 bg-black/30 hover:bg-black/40 px-3 py-2 rounded-lg border border-white/10 transition-colors">
-                        <span className="text-xs font-bold text-white uppercase">JOIN</span>
-                        <ExternalLink className="w-3.5 h-3.5 text-white" />
+                        <span className="text-white font-black text-base italic leading-none drop-shadow-sm mt-0.5">
+                            UNLOCK 3+ ODDS
+                        </span>
                     </div>
                 </div>
 
-                {/* Divider */}
-                <div className="w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent my-1" />
-
-                {/* Odds Preview (Teaser) */}
-                {odds && odds.length > 0 ? (
-                    <div className="flex justify-between items-center w-full px-1">
-                        <div className="flex items-center gap-1.5">
-                            {isLive && (
-                                <span className="flex h-2 w-2 relative">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                                </span>
-                            )}
-                            <span className="text-[10px] text-orange-100 font-medium tracking-wide">
-                                {isLive ? "LIVE NOW" : "TODAY'S INSIDER PICK"}
-                            </span>
-                        </div>
-
-                        <div className="flex gap-2.5">
-                            {odds.map((o, i) => (
-                                <div key={i} className="flex flex-col items-center leading-none">
-                                    <span className="text-[9px] text-white/70 font-bold mb-0.5">
-                                        {o.value === "Home" ? "1" : o.value === "Draw" ? "X" : "2"}
-                                    </span>
-                                    <span className={`text-xs font-black ${getOddsColor(o.odd, odds)} drop-shadow-sm`}>
-                                        {o.odd}
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                ) : (
-                    <div className="flex justify-center w-full">
-                        <span className="text-[10px] text-orange-100 font-medium">
-                            Join for Daily Wins
-                        </span>
-                    </div>
-                )}
+                {/* Right: Action Button */}
+                <div className="flex items-center gap-1.5 bg-black/30 hover:bg-black/40 px-3 py-1.5 rounded-lg border border-white/10 transition-colors">
+                    <span className="text-[10px] font-bold text-white uppercase">JOIN</span>
+                    <ExternalLink className="w-3 h-3 text-white" />
+                </div>
 
             </div>
         </button>
