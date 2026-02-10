@@ -26,8 +26,8 @@ export default function TelegramBanner() {
             onClick={handleJoin}
             className="fixed bottom-0 left-0 right-0 z-[50] cursor-pointer animate-in slide-in-from-bottom duration-500"
         >
-            {/* Main Gradient Banner */}
-            <div className="bg-gradient-to-r from-orange-600 via-orange-500 to-yellow-500 shadow-[0_-4px_25px_rgba(249,115,22,0.4)] border-t border-yellow-300/30">
+            {/* Main Gradient Banner - GREEN THEME */}
+            <div className="bg-gradient-to-r from-green-700 via-green-600 to-emerald-500 shadow-[0_-4px_25px_rgba(22,163,74,0.4)] border-t border-green-400/30">
 
                 {/* Pulse Effect Overlay */}
                 <div className="absolute inset-0 bg-white/5 animate-pulse pointer-events-none" />
@@ -37,14 +37,14 @@ export default function TelegramBanner() {
                     {/* Left: Icon & Strong Text */}
                     <div className="flex-1 min-w-0 flex items-center gap-2.5">
                         <div className="bg-white/20 p-1.5 rounded-lg backdrop-blur-sm border border-white/10 shadow-inner shrink-0">
-                            <Trophy className="w-4 h-4 text-yellow-100 drop-shadow-md" />
+                            <Trophy className="w-4 h-4 text-green-100 drop-shadow-md" />
                         </div>
                         <div className="flex flex-col justify-center">
                             <div className="flex items-center gap-1.5 mb-0.5">
                                 <span className="bg-red-600 text-white text-[9px] font-extrabold px-1 py-px rounded shadow-sm animate-pulse">
                                     VIP
                                 </span>
-                                <span className="text-[9px] font-bold text-orange-100 uppercase tracking-widest leading-none">
+                                <span className="text-[9px] font-bold text-green-100 uppercase tracking-widest leading-none">
                                     HIGHSTAKE ODDS
                                 </span>
                             </div>
@@ -68,7 +68,7 @@ export default function TelegramBanner() {
                             e.stopPropagation();
                             setIsVisible(false);
                         }}
-                        className="absolute top-1 right-1 p-1 text-orange-200 hover:text-white hover:bg-white/10 rounded-full transition-colors"
+                        className="absolute top-1 right-1 p-1 text-green-200 hover:text-white hover:bg-white/10 rounded-full transition-colors"
                     >
                         <X size={12} />
                     </button>
