@@ -14,9 +14,9 @@ function getOddsColor(value: string, allOdds: { value: string; odd: string }[]):
     const countMax = nums.filter(n => n === max).length;
     const countMin = nums.filter(n => n === min).length;
 
-    if (num === min && countMin === 1) return "text-green-300"; // Lowest -> Green
-    if (num === max && countMax === 1) return "text-red-300";   // Highest -> Red
-    return "text-yellow-200"; // Middle -> Orange/Gold
+    if (num === min && countMin === 1) return "text-green-400"; // Low -> Green
+    if (num === max && countMax === 1) return "text-red-400";   // High -> Red
+    return "text-yellow-400"; // Mid -> Yellow
 }
 
 interface BetButtonProps {
@@ -31,8 +31,6 @@ export default function BetButton({ teamName, odds, isLive = false }: BetButtonP
     const handleClick = (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
-
-        // Track Click (Optional: Add Pixel event here later)
         window.open(TELEGRAM_LINK, "_blank");
     };
 
@@ -40,48 +38,44 @@ export default function BetButton({ teamName, odds, isLive = false }: BetButtonP
         <button
             onClick={handleClick}
             className={`
-            group relative overflow-hidden rounded-xl w-full sm:w-full lg:max-w-3xl mx-auto
-            bg-gradient-to-r from-orange-600 via-orange-500 to-yellow-500
-            hover:from-orange-500 hover:to-yellow-400
-            border-t border-yellow-300/40 border-b border-orange-700/50
-            shadow-[0_0_15px_rgba(249,115,22,0.4)] hover:shadow-[0_0_25px_rgba(249,115,22,0.6)]
-            transition-all duration-300 transform hover:scale-[1.01] active:scale-[0.98]
+            group relative overflow-hidden rounded-lg px-2 py-1.5 
+            border border-white/10 hover:border-white/20
+            bg-[#1a1a1a] hover:bg-[#252525]
+            shadow-sm hover:shadow-md transition-all duration-300
+            flex items-center justify-center gap-2 w-full sm:w-full lg:max-w-3xl mx-auto
             mt-1 mb-2
-            `}
+          `}
         >
-            {/* Shimmer/Pulse Effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:animate-[shimmer_1.5s_infinite]" />
-            <div className="absolute inset-0 bg-white/5 animate-pulse" />
-
-            <div className="relative flex items-center justify-between px-3 py-2">
-
-                {/* Left: Icon & Text */}
-                <div className="flex items-center gap-3">
-                    <div className="bg-white/20 p-1.5 rounded-lg backdrop-blur-sm border border-white/10 shadow-inner">
-                        <Trophy className="w-4 h-4 text-yellow-100 drop-shadow-md" />
-                    </div>
-                    <div className="flex flex-col items-start text-left">
-                        <div className="flex items-center gap-1.5">
-                            <span className="text-[9px] font-extrabold text-white bg-red-600 px-1 py-px rounded shadow-sm animate-pulse">
-                                VIP
+            {/* Odds Display Only */}
+            {odds && odds.length > 0 ? (
+                <div className="flex items-center justify-between w-full min-w-[120px] px-2">
+                    {isLive && (
+                        <div className="flex items-center gap-1.5 mr-2 sm:mr-4 shrink-0">
+                            <span className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
                             </span>
-                            <span className="text-[9px] font-bold text-orange-100 uppercase tracking-widest leading-none">
-                                HIGH ODDS
+                            <span className="text-[10px] font-bold text-red-500 tracking-widest whitespace-nowrap animate-pulse">
+                                LIVE
                             </span>
                         </div>
-                        <span className="text-white font-black text-base italic leading-none drop-shadow-sm mt-0.5">
-                            UNLOCK 3+ ODDS
-                        </span>
-                    </div>
+                    )}
+                    {odds.map((o, i) => (
+                        <div key={i} className="flex flex-col items-center flex-1">
+                            <span className="text-[9px] text-gray-400 font-bold leading-none mb-1">
+                                {o.value === "Home" ? "1" : o.value === "Draw" ? "X" : "2"}
+                            </span>
+                            <span className={`font-bold text-xs sm:text-xs leading-none ${getOddsColor(o.odd, odds)}`}>
+                                {o.odd}
+                            </span>
+                        </div>
+                    ))}
                 </div>
-
-                {/* Right: Action Button */}
-                <div className="flex items-center gap-1.5 bg-black/30 hover:bg-black/40 px-3 py-1.5 rounded-lg border border-white/10 transition-colors">
-                    <span className="text-[10px] font-bold text-white uppercase">JOIN</span>
-                    <ExternalLink className="w-3 h-3 text-white" />
-                </div>
-
-            </div>
+            ) : (
+                <span className="text-xs text-gray-400 font-medium flex items-center gap-1">
+                    View Odds <ExternalLink size={12} />
+                </span>
+            )}
         </button>
     );
 }

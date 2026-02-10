@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, Send, ExternalLink } from "lucide-react";
+import { X, Send, ExternalLink, Trophy } from "lucide-react";
 
 export default function TelegramBanner() {
     const [isVisible, setIsVisible] = useState(true);
@@ -24,51 +24,56 @@ export default function TelegramBanner() {
     return (
         <div
             onClick={handleJoin}
-            className="fixed bottom-0 left-0 right-0 bg-[#0088cc] text-white p-2 z-[40] border-t-2 border-[#54a7ff] shadow-[0_-4px_20px_rgba(0,0,0,0.3)] animate-in slide-in-from-bottom duration-500 cursor-pointer hover:bg-[#0077b5] transition-colors"
+            className="fixed bottom-0 left-0 right-0 z-[50] cursor-pointer animate-in slide-in-from-bottom duration-500"
         >
-            <div className="max-w-4xl mx-auto flex items-center justify-between gap-3 sm:gap-6">
+            {/* Main Gradient Banner */}
+            <div className="bg-gradient-to-r from-orange-600 via-orange-500 to-yellow-500 shadow-[0_-4px_25px_rgba(249,115,22,0.4)] border-t border-yellow-300/30">
 
-                {/* Left Text */}
-                <div className="flex-1 min-w-0 flex items-center gap-3">
-                    <div className="bg-white/20 p-1.5 rounded-full shrink-0">
-                        <Send size={20} className="text-white" />
-                    </div>
-                    <div>
-                        <div className="flex items-center gap-2 mb-0.5">
-                            <span className="font-black text-base sm:text-lg text-white drop-shadow-sm leading-none">
-                                TELEGRAM
-                            </span>
-                            <span className="bg-white text-[#0088cc] text-[8px] font-bold px-1 rounded-sm uppercase tracking-wide animate-pulse whitespace-nowrap">
-                                FREE TIPS
+                {/* Pulse Effect Overlay */}
+                <div className="absolute inset-0 bg-white/5 animate-pulse pointer-events-none" />
+
+                <div className="max-w-4xl mx-auto flex items-center justify-between px-4 py-3 sm:px-6 relative">
+
+                    {/* Left: Icon & Strong Text */}
+                    <div className="flex-1 min-w-0 flex items-center gap-3">
+                        <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-inner shrink-0">
+                            <Trophy className="w-5 h-5 text-yellow-100 drop-shadow-md" />
+                        </div>
+                        <div className="flex flex-col">
+                            <div className="flex items-center gap-2 mb-0.5">
+                                <span className="bg-red-600 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded shadow-sm animate-pulse">
+                                    VIP
+                                </span>
+                                <span className="text-[10px] font-bold text-orange-100 uppercase tracking-widest leading-none">
+                                    HIGH ODDS
+                                </span>
+                            </div>
+                            <span className="text-white font-black text-lg sm:text-xl italic leading-none drop-shadow-sm">
+                                UNLOCK 3+ ODDS
                             </span>
                         </div>
-                        <p className="text-[10px] sm:text-xs text-blue-100 leading-tight">
-                            Daily <span className="font-bold text-white">Bets</span> & <span className="font-bold text-white">Live Updates</span>
-                        </p>
                     </div>
-                </div>
 
-                {/* Action Button */}
-                <div className="shrink-0 flex items-center">
+                    {/* Right: CTA Button */}
+                    <div className="shrink-0 pl-3">
+                        <button className="bg-black/30 hover:bg-black/40 text-white font-bold py-2 px-4 rounded-lg border border-white/20 shadow-lg flex items-center gap-2 transition-transform active:scale-95">
+                            <span className="text-xs sm:text-sm uppercase tracking-wide">JOIN NOW</span>
+                            <ExternalLink size={14} className="text-yellow-300" />
+                        </button>
+                    </div>
+
+                    {/* Close Button (Moved to top-right corner of banner) */}
                     <button
-                        className="bg-white text-[#0088cc] hover:bg-gray-100 font-bold py-1.5 px-3 rounded-lg text-xs sm:text-sm shadow-md transition-transform active:scale-95 flex items-center gap-1.5 whitespace-nowrap"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setIsVisible(false);
+                        }}
+                        className="absolute top-1 right-1 p-1.5 text-orange-200 hover:text-white hover:bg-white/10 rounded-full transition-colors"
                     >
-                        <span>JOIN NOW</span>
-                        <ExternalLink size={14} />
+                        <X size={14} />
                     </button>
+
                 </div>
-
-                {/* Close Button */}
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        setIsVisible(false);
-                    }}
-                    className="absolute top-1.5 right-1.5 sm:static text-blue-200 hover:text-white transition-colors p-1 hover:bg-white/10 rounded-full"
-                >
-                    <X size={16} />
-                </button>
-
             </div>
         </div>
     );
