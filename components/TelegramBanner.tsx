@@ -32,6 +32,24 @@ export default function TelegramBanner() {
                 {/* Pulse Effect Overlay */}
                 <div className="absolute inset-0 bg-white/5 animate-pulse pointer-events-none" />
 
+                {/* Confetti / Celebration Decoration */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30">
+                    {/* CSS-based Confetti Particles */}
+                    <div className="absolute top-[-2px] left-[10%] text-yellow-300 transform rotate-12 animate-pulse">✦</div>
+                    <div className="absolute top-[20%] left-[85%] text-yellow-300 transform -rotate-12 animate-ping">✦</div>
+                    <div className="absolute top-[40%] left-[50%] text-white/50 transform rotate-45 text-xs">●</div>
+                    <div className="absolute bottom-[10%] left-[20%] text-emerald-200 transform -rotate-45 text-xs">■</div>
+                    <div className="absolute top-[10%] right-[10%] text-red-200 transform rotate-12 text-xs">▲</div>
+
+                    {/* SVG Sparkles */}
+                    <svg className="absolute top-1 left-4 w-6 h-6 text-yellow-400 opacity-60 animate-spin-slow" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                    </svg>
+                    <svg className="absolute bottom-1 right-20 w-4 h-4 text-white opacity-40 animate-bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                        <path d="M5 3v4M3 5h4M6 17v4M4 19h4M13 3l3.293 3.293M16.293 3L13 6.293M6 6l3.293 3.293M9.293 6L6 9.293" />
+                    </svg>
+                </div>
+
                 <div className="max-w-4xl mx-auto flex items-center justify-between px-3 py-1.5 sm:px-4 relative">
 
                     {/* Left: Icon & Strong Text */}
