@@ -30,6 +30,50 @@ export async function getFixturesGroupedByLeague(date) {
     {
       $match: matchFilter
     },
+    // ⚡ OPTIMIZATION: Project ONLY what is needed EARLY to reduce memory usage during Sort/Lookup
+    {
+      $project: {
+        fixtureId: 1,
+        "fixture.id": 1,
+        "fixture.name": 1,
+        "fixture.logo": 1,
+        "fixture.country": 1,
+        "fixture.fixture": 1,
+        "fixture.league": 1,
+        "fixture.teams": 1,
+        "fixture.goals": 1,
+        "fixture.score": 1,
+        "fixture.status": 1,
+        "livescore": 1,
+        "prediction": 1,
+        "customPrediction": 1,
+        customOdds: 1,
+        // ⚡ OPTIMIZATION: Slice Odds immediately! Do not carry 50 bookmakers through pipeline.
+        odds: {
+          $map: {
+            input: { $slice: ["$odds", 1] }, // Take ONLY the 1st bookmaker (usually enough)
+            as: "bookmaker",
+            in: {
+              id: "$$bookmaker.id",
+              name: "$$bookmaker.name",
+              logo: "$$bookmaker.logo",
+              markets: {
+                $filter: {
+                  input: "$$bookmaker.markets",
+                  as: "market",
+                  cond: {
+                    $or: [
+                      { $eq: ["$$market.name", "Match Winner"] },
+                      { $eq: ["$$market.id", 1] }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     // 🔥 JOIN WITH VIP FIXTURES
     {
       $lookup: {

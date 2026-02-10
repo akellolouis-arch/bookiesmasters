@@ -222,12 +222,16 @@ export async function updateDailyFixtures() {
       await Fixture.findOneAndUpdate(
         { fixtureId: fixtureId },
         {
-          fixtureId: fixtureId,
-          fixture: f,
-          prediction,
-          h2h,
-          odds: bets,
-          injuries: injuryReport
+          $set: {
+            fixtureId: fixtureId,
+            fixture: f,
+            prediction,
+            h2h,
+            odds: bets,
+            injuries: injuryReport
+          },
+          // 🧹 Ensure we clear any stale live data (if match is truly live, liveScoreService will restore it in 5s)
+          $unset: { livescore: 1, liveOdds: 1 }
         },
         { upsert: true }
       );
