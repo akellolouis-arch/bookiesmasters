@@ -58,7 +58,7 @@ export default function TelegramBanner() {
                     <div className="shrink-0 pl-2">
                         <button className="bg-black/30 hover:bg-black/40 text-white font-bold py-1.5 px-3 rounded-lg border border-white/20 shadow-lg flex items-center gap-2 transition-transform active:scale-95">
                             <span className="text-[10px] sm:text-xs uppercase tracking-wide">JOIN NOW</span>
-                            <Send size={14} className="text-white transform -rotate-45 translate-x-0.5 translate-y-[-1px]" />
+                            <Send size={14} className="text-[#0088cc] transform -rotate-45 translate-x-0.5 translate-y-[-1px]" />
                         </button>
                     </div>
 
