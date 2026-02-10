@@ -41,15 +41,15 @@ export default function TelegramBanner() {
                         </div>
                         <div className="flex flex-col justify-center">
                             <div className="flex items-center gap-1.5 mb-0.5">
-                                <span className="bg-red-600 text-white text-[9px] font-extrabold px-1 py-px rounded shadow-sm animate-pulse">
+                                <span className="bg-red-600 text-white text-[10px] font-extrabold px-1.5 py-0.5 rounded shadow-sm animate-pulse">
                                     VIP
                                 </span>
                                 <span className="text-[9px] font-bold text-green-100 uppercase tracking-widest leading-none">
                                     HIGHSTAKE ODDS
                                 </span>
                             </div>
-                            <span className="text-white font-black text-base italic leading-none drop-shadow-sm">
-                                UNLOCK 3+ ODDS
+                            <span className="text-white font-medium text-sm sm:text-base italic leading-none drop-shadow-sm">
+                                unlock 3+ odds
                             </span>
                         </div>
                     </div>
