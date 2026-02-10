@@ -32,33 +32,33 @@ export default function TelegramBanner() {
                 {/* Pulse Effect Overlay */}
                 <div className="absolute inset-0 bg-white/5 animate-pulse pointer-events-none" />
 
-                <div className="max-w-4xl mx-auto flex items-center justify-between px-4 py-3 sm:px-6 relative">
+                <div className="max-w-4xl mx-auto flex items-center justify-between px-3 py-1.5 sm:px-4 relative">
 
                     {/* Left: Icon & Strong Text */}
-                    <div className="flex-1 min-w-0 flex items-center gap-3">
-                        <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-inner shrink-0">
-                            <Trophy className="w-5 h-5 text-yellow-100 drop-shadow-md" />
+                    <div className="flex-1 min-w-0 flex items-center gap-2.5">
+                        <div className="bg-white/20 p-1.5 rounded-lg backdrop-blur-sm border border-white/10 shadow-inner shrink-0">
+                            <Trophy className="w-4 h-4 text-yellow-100 drop-shadow-md" />
                         </div>
-                        <div className="flex flex-col">
-                            <div className="flex items-center gap-2 mb-0.5">
-                                <span className="bg-red-600 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded shadow-sm animate-pulse">
+                        <div className="flex flex-col justify-center">
+                            <div className="flex items-center gap-1.5 mb-0.5">
+                                <span className="bg-red-600 text-white text-[9px] font-extrabold px-1 py-px rounded shadow-sm animate-pulse">
                                     VIP
                                 </span>
-                                <span className="text-[10px] font-bold text-orange-100 uppercase tracking-widest leading-none">
-                                    HIGH ODDS
+                                <span className="text-[9px] font-bold text-orange-100 uppercase tracking-widest leading-none">
+                                    HIGHSTAKE ODDS
                                 </span>
                             </div>
-                            <span className="text-white font-black text-lg sm:text-xl italic leading-none drop-shadow-sm">
+                            <span className="text-white font-black text-base italic leading-none drop-shadow-sm">
                                 UNLOCK 3+ ODDS
                             </span>
                         </div>
                     </div>
 
                     {/* Right: CTA Button */}
-                    <div className="shrink-0 pl-3">
-                        <button className="bg-black/30 hover:bg-black/40 text-white font-bold py-2 px-4 rounded-lg border border-white/20 shadow-lg flex items-center gap-2 transition-transform active:scale-95">
-                            <span className="text-xs sm:text-sm uppercase tracking-wide">JOIN NOW</span>
-                            <ExternalLink size={14} className="text-yellow-300" />
+                    <div className="shrink-0 pl-2">
+                        <button className="bg-black/30 hover:bg-black/40 text-white font-bold py-1.5 px-3 rounded-lg border border-white/20 shadow-lg flex items-center gap-2 transition-transform active:scale-95">
+                            <span className="text-[10px] sm:text-xs uppercase tracking-wide">JOIN NOW</span>
+                            <Send size={14} className="text-white transform -rotate-45 translate-x-0.5 translate-y-[-1px]" />
                         </button>
                     </div>
 
@@ -68,9 +68,9 @@ export default function TelegramBanner() {
                             e.stopPropagation();
                             setIsVisible(false);
                         }}
-                        className="absolute top-1 right-1 p-1.5 text-orange-200 hover:text-white hover:bg-white/10 rounded-full transition-colors"
+                        className="absolute top-1 right-1 p-1 text-orange-200 hover:text-white hover:bg-white/10 rounded-full transition-colors"
                     >
-                        <X size={14} />
+                        <X size={12} />
                     </button>
 
                 </div>
