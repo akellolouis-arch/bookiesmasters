@@ -87,12 +87,16 @@ export default function RootLayout({
             s.parentNode.insertBefore(t,s)}(window, document,'script',
             'https://connect.facebook.net/en_US/fbevents.js');
             fbq('init', '1926768254607264');
+            fbq('init', '4231012747229353'); // Secondary Pixel
             fbq('track', 'PageView');
           `}
         </Script>
         <noscript>
           <img height="1" width="1" style={{ display: 'none' }}
             src="https://www.facebook.com/tr?id=1926768254607264&ev=PageView&noscript=1"
+          />
+          <img height="1" width="1" style={{ display: 'none' }}
+            src="https://www.facebook.com/tr?id=4231012747229353&ev=PageView&noscript=1"
           />
         </noscript>
 
