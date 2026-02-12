@@ -73,7 +73,10 @@ export default function TelegramBanner() {
                     {/* Right: CTA Button */}
                     <div className="shrink-0 pl-2 mr-6 sm:mr-0"> {/* Added margin-right for mobile to avoid X overlap if needed, though X is absolute */}
                         <button className="bg-black/30 hover:bg-black/50 text-white font-bold py-1.5 px-3.5 rounded-lg border border-white/30 shadow-lg flex items-center gap-2 transition-all active:scale-95 group">
-                            <span className="text-[10px] sm:text-xs uppercase tracking-wide group-hover:text-yellow-200 transition-colors">JOIN NOW <span className="text-yellow-400">FREE</span></span>
+                            <div className="flex flex-col items-start leading-none">
+                                <span className="text-[10px] sm:text-xs uppercase tracking-wide group-hover:text-yellow-200 transition-colors">JOIN TELEGRAM</span>
+                                <span className="text-[8px] sm:text-[10px] text-yellow-400 font-black tracking-wider">FREE</span>
+                            </div>
                             <Send size={14} className="text-[#0088cc] transform -rotate-45 translate-x-0.5 translate-y-[-1px] drop-shadow-sm" />
                         </button>
                     </div>
