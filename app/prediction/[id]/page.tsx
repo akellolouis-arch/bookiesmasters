@@ -97,5 +97,70 @@ export default async function FixtureDetailPage({
         notFound();
     }
 
-    return <FixtureDetailsClient data={data} />;
+    // JSON-LD Structured Data for Google (SportsEvent)
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "SportsEvent",
+        "name": `${data.homeTeam.name} vs ${data.awayTeam.name}`,
+        "startDate": data.date,
+        "location": {
+            "@type": "Place",
+            "name": data.venue || "Stadium"
+        },
+        "homeTeam": {
+            "@type": "SportsTeam",
+            "name": data.homeTeam.name,
+            "logo": data.homeTeam.logo
+        },
+        "awayTeam": {
+            "@type": "SportsTeam",
+            "name": data.awayTeam.name,
+            "logo": data.awayTeam.logo
+        },
+        "description": `Prediction for ${data.homeTeam.name} vs ${data.awayTeam.name} in ${data.league}. Tip: ${data.tip || "Check analysis"}`
+    };
+
+    return (
+        <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
+            <FixtureDetailsClient data={data} />
+        </>
+    );
+}
+
+// --------------------------------------------------------------------------
+// GENERATE METADATA (SEO Title & Description)
+// --------------------------------------------------------------------------
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const data = await getFixture(id);
+
+    if (!data) {
+        return {
+            title: "Fixture Not Found | BookiesMasters",
+        };
+    }
+
+    const title = `${data.homeTeam.name} vs ${data.awayTeam.name} Prediction | BookiesMasters`;
+    const description = `Football betting tips for ${data.homeTeam.name} vs ${data.awayTeam.name} (${data.league}). Free analysis, H2H stats, and predictions.`;
+
+    return {
+        title,
+        description,
+        openGraph: {
+            title,
+            description,
+            images: [
+                {
+                    url: "https://bookiesmasters.com/match_poster.png", // Fallback, could be dynamic
+                    width: 1200,
+                    height: 630,
+                    alt: `${data.homeTeam.name} vs ${data.awayTeam.name}`,
+                },
+            ],
+        },
+    };
 }

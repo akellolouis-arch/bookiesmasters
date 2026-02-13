@@ -1,25 +1,12 @@
 import { MetadataRoute } from 'next';
+import dbConnect from '@/lib/mongoose';
+import Fixture from '@/backend/models/Fixture';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = 'https://bookiesmasters.com';
 
-    // Dynamic dates: yesterday, today, tomorrow
-    const dates = [];
-    const now = new Date();
-    for (let i = -1; i <= 7; i++) { // Generate for a whole week ahead
-        const d = new Date(now);
-        d.setDate(d.getDate() + i);
-        dates.push(d.toLocaleDateString("en-CA", { timeZone: "Africa/Nairobi" }));
-    }
-
-    const predictionUrls = dates.map((date) => ({
-        url: `${baseUrl}/predictions/${date}`,
-        lastModified: new Date(),
-        changeFrequency: 'hourly' as const,
-        priority: 0.8,
-    }));
-
-    return [
+    // 1. Static Routes
+    const staticRoutes: MetadataRoute.Sitemap = [
         {
             url: baseUrl,
             lastModified: new Date(),
@@ -32,6 +19,53 @@ export default function sitemap(): MetadataRoute.Sitemap {
             changeFrequency: 'daily',
             priority: 0.9,
         },
-        ...predictionUrls,
     ];
+
+    // 2. Dynamic Dates (next 7 days)
+    const dates = [];
+    const now = new Date();
+    for (let i = 0; i <= 7; i++) {
+        const d = new Date(now);
+        d.setDate(d.getDate() + i);
+        dates.push(d.toLocaleDateString("en-CA", { timeZone: "Africa/Nairobi" }));
+    }
+
+    const dateRoutes: MetadataRoute.Sitemap = dates.map((date) => ({
+        url: `${baseUrl}/predictions/${date}`,
+        lastModified: new Date(),
+        changeFrequency: 'hourly',
+        priority: 0.8,
+    }));
+
+    // 3. specific Matches (Fetch from DB)
+    let matchRoutes: MetadataRoute.Sitemap = [];
+    try {
+        await dbConnect();
+
+        // Fetch active matches for next 2 days to keep sitemap manageable but relevant
+        // (Google crawls frequent pages, we don't need 3000 matches in sitemap, just the important upcoming ones)
+        const future = new Date();
+        future.setDate(future.getDate() + 3); // next 3 days
+        const past = new Date();
+        past.setHours(past.getHours() - 24); // Keep recent results for 24h
+
+        const fixtures = await Fixture.find({
+            "fixture.date": { $gte: past.toISOString(), $lte: future.toISOString() }
+        })
+            .select("fixtureId updatedAt")
+            .limit(2000) // Safety limit
+            .lean();
+
+        matchRoutes = fixtures.map((f: any) => ({
+            url: `${baseUrl}/prediction/${f.fixtureId}`,
+            lastModified: f.updatedAt || new Date(),
+            changeFrequency: 'hourly',
+            priority: 0.7,
+        }));
+
+    } catch (error) {
+        console.error("Sitemap generation error:", error);
+    }
+
+    return [...staticRoutes, ...dateRoutes, ...matchRoutes];
 }
