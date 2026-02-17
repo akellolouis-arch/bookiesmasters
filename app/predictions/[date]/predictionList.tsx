@@ -80,10 +80,11 @@ export default function PredictionsList({
     apiUrl,
     fetcher,
     {
-      refreshInterval: date === "live" ? 5000 : 15000, // Faster refresh for live matches (5s vs 15s)
+      refreshInterval: 0, // DISABLED polling to save resources
       fallbackData: { fixtures: initialData },
       revalidateOnFocus: false,
-      dedupingInterval: 1000,
+      revalidateOnReconnect: false,
+      dedupingInterval: 60000,
     }
   );
 
