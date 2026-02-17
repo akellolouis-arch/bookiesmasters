@@ -11,6 +11,7 @@ import { startLineupPoller } from "./services/lineupPollingService.js";
 import { startDailyScheduler } from "./services/dailyUpdateService.js";
 import { startStatsPoller } from "./services/statsPollingService.js";
 import { startStandingsPoller } from "./services/standingsPollingService.js";
+import { startScorePoller } from "./services/scorePollingService.js";
 
 import leagueRoutes from "./routes/leagueRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
@@ -52,6 +53,7 @@ mongoose
     // startLiveService(); // 🚀 Start the global 60s poller (Scores + Events)
     // startLineupPoller(); // 🕵️ DISABLED to save API quota
     // startStatsPoller();  // 📊 DISABLED to save API quota
+    startScorePoller();     // ⚽ Enabled: Light polling for FT updates
     startStandingsPoller(); // 🏆 Start active standings poller
     startDailyScheduler(); // ⏰ Start daily fixture update
   })
