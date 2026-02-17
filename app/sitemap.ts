@@ -2,6 +2,8 @@ import { MetadataRoute } from 'next';
 import dbConnect from '@/lib/mongoose';
 import Fixture from '@/backend/models/Fixture';
 
+export const dynamic = 'force-dynamic';
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = 'https://bookiesmasters.com';
 
