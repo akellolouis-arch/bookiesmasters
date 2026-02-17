@@ -1,6 +1,6 @@
 // routes/fixtureRoutes.js
 import express from "express";
-import { fetchFixtureCardsByDate, fetchLiveFixtureCards } from "../controllers/fixtureCardController.js";
+import { fetchFixtureCardsByDate } from "../controllers/fixtureCardController.js";
 
 const router = express.Router();
 
@@ -8,7 +8,8 @@ const router = express.Router();
 router.get("/cards", fetchFixtureCardsByDate);
 
 // public endpoint for LIVE matches
-router.get("/live", fetchLiveFixtureCards);
+// public endpoint for LIVE matches - REMOVED
+// router.get("/live", fetchLiveFixtureCards);
 
 // public endpoint for fixture details
 import { getFixtureDetails, overridePrediction } from "../controllers/fixtureDetailController.js";

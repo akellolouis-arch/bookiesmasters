@@ -1,4 +1,4 @@
-import { getFixturesGroupedByLeague, getLiveFixtures } from "../services/fixtureCardService.js";
+import { getFixturesGroupedByLeague } from "../services/fixtureCardService.js";
 
 export async function fetchFixtureCardsByDate(req, res) {
   try {
@@ -23,21 +23,4 @@ export async function fetchFixtureCardsByDate(req, res) {
   }
 }
 
-export async function fetchLiveFixtureCards(req, res) {
-  try {
-    const fixtures = await getLiveFixtures();
 
-    // Calculate total leagues
-    const totalLeagues = fixtures.length;
-
-    // Since frontend expects 'date' in response for PredictionsList props, we can pass dummy date
-    res.json({
-      date: "live",
-      totalLeagues,
-      fixtures
-    });
-  } catch (err) {
-    console.error("❌ Error fetching live fixtures:", err);
-    res.status(500).json({ error: "Server error" });
-  }
-}

@@ -30,15 +30,9 @@ import useSWR from "swr";
 const fetcher = (url: string) => fetch(url).then((res) => res.json().then(json => json.data));
 
 const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initialData }) => {
-    const { data } = useSWR(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/fixtures/${initialData.fixtureId}`,
-        fetcher,
-        {
-            fallbackData: initialData,
-            refreshInterval: 1000,
-            revalidateOnFocus: false,
-        }
-    );
+    // Live Polling Disabled
+    // const { data } = useSWR(...)
+    const data = initialData; // Use initial data only
     const router = useRouter();
     // const { data: session, update } = useSession();
     const [activeTab, setActiveTab] = useState("events"); // Default to events
@@ -134,14 +128,10 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                         teamName={data.homeTeam.name}
                         isLive={["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(data.status) || data.status.includes("'")}
                         odds={
-                            // 1. Try Live Odds first
-                            (data.liveOdds && data.liveOdds.length > 0 && data.liveOdds[0].markets && data.liveOdds[0].markets.length > 0)
-                                ? data.liveOdds[0].markets[0].values
-                                :
-                                // 2. Fallback to pre-match odds
-                                (data.odds && data.odds.length > 0 && data.odds[0].markets && data.odds[0].markets.length > 0)
-                                    ? data.odds[0].markets[0].values
-                                    : undefined
+                            // 2. Fallback to pre-match odds (Default now)
+                            (data.odds && data.odds.length > 0 && data.odds[0].markets && data.odds[0].markets.length > 0)
+                                ? data.odds[0].markets[0].values
+                                : undefined
                         }
                     />
                 </div>

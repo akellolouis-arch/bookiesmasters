@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 import cors from "cors";         // ⭐ IMPORTANT
 import fixtureRoutes from "./routes/fixtureRoutes.js";
 // import "./services/live.js"; // <-- DISABLED OLD SERVICE
-import { startLiveService } from "./services/liveScoreService.js";
+// import { startLiveService } from "./services/liveScoreService.js";
 
 import { startLineupPoller } from "./services/lineupPollingService.js";
 import { startDailyScheduler } from "./services/dailyUpdateService.js";
@@ -49,7 +49,7 @@ mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("✅ MongoDB connected");
-    startLiveService(); // 🚀 Start the global 60s poller (Scores + Events)
+    // startLiveService(); // 🚀 Start the global 60s poller (Scores + Events)
     startLineupPoller(); // 🕵️ Start targeted lineup poller
     startStatsPoller();  // 📊 Start statistics poller
     startStandingsPoller(); // 🏆 Start active standings poller
