@@ -13,8 +13,9 @@ let clientPromise: Promise<MongoClient>;
 
 if (!process.env.MONGO_URI) {
     // In build environment (Netlify) without secrets, this allows the file to load.
-    // The promise will reject if anyone tries to use it.
-    clientPromise = Promise.reject(new Error('Invalid/Missing environment variable: "MONGO_URI"'));
+    // The promise will resolve to null, which will throw inside the route handler's try/catch
+    // when accessed (e.g. `client.db()`). This avoids "Unhandled Promise Rejection" crashes.
+    clientPromise = Promise.resolve(null as unknown as MongoClient);
 } else {
     if (process.env.NODE_ENV === "development") {
         // In development mode, use a global variable so that the value
