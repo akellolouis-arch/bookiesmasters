@@ -4,14 +4,14 @@ import React, { useState } from "react";
 import Tabs from "@/components/Tabs";
 import H2HSection from "@/components/fixture-details/H2HSection";
 import LastFiveMatches from "@/components/fixture-details/LastFiveMatches";
-import Events from "@/components/fixture-details/Events";
+// import Events from "@/components/fixture-details/Events";
 import Standings from "@/components/fixture-details/Standings";
 // import Odds from "@/components/fixture-details/Odds";
 import TeamDisplay from "@/components/fixture-details/TeamDisplay";
 import LeagueHeader from "@/components/fixture-details/LeagueHeader";
-import Lineups from "@/components/fixture-details/Lineups";
+// import Lineups from "@/components/fixture-details/Lineups";
 import Injuries from "@/components/fixture-details/Injuries";
-import Statistics from "@/components/fixture-details/Statistics";
+// import Statistics from "@/components/fixture-details/Statistics";
 import BetButton from "@/components/BetButton";
 
 // import PredictionDisplay from "@/components/fixture-details/PredictionDisplay";
@@ -35,7 +35,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
     const data = initialData; // Use initial data only
     const router = useRouter();
     // const { data: session, update } = useSession();
-    const [activeTab, setActiveTab] = useState("events"); // Default to events
+    const [activeTab, setActiveTab] = useState("h2h"); // Default to H2H
     // const [unlocking, setUnlocking] = useState(false);
     // const [justUnlocked, setJustUnlocked] = useState(false);
 
@@ -46,9 +46,9 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
 
     const tabs = [
         // ...(hasPrediction ? [{ id: "prediction", label: "Prediction" }] : []), // Removed
-        { id: "events", label: "Events" },
-        { id: "stats", label: "Stats" },
-        { id: "lineups", label: "Lineups" },
+        // { id: "events", label: "Events" }, // REMOVED
+        // { id: "stats", label: "Stats" }, // REMOVED
+        // { id: "lineups", label: "Lineups" }, // REMOVED
         { id: "injuries", label: "Injuries" },
         { id: "h2h", label: "H2H" },
         { id: "last5", label: "Last 5" },
@@ -59,14 +59,14 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
         switch (activeTab) {
             // case "prediction":
             // removed
-            case "events":
-                return <Events events={data.events} homeTeamId={data.homeTeam.id} awayTeamId={data.awayTeam.id} />;
-            case "lineups":
-                return <Lineups lineups={data.lineups} />;
+            // case "events":
+            //     return <Events events={data.events} homeTeamId={data.homeTeam.id} awayTeamId={data.awayTeam.id} />;
+            // case "lineups":
+            //     return <Lineups lineups={data.lineups} />;
             case "injuries":
                 return <Injuries injuries={data.injuries} />;
-            case "stats":
-                return <Statistics stats={data.statistics} />;
+            // case "stats":
+            //     return <Statistics stats={data.statistics} />;
             case "h2h":
                 return <H2HSection h2h={data.h2h} />;
             case "last5":
