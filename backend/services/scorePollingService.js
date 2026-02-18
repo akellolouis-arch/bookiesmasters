@@ -10,70 +10,57 @@ dotenv.config({ path: path.resolve(__dirname, "../.env") });
 const API_KEY = process.env.API_KEY;
 const BASE_URL = "https://v3.football.api-sports.io";
 
-// Poll every 5 minutes
-const POLL_INTERVAL = 5 * 60 * 1000;
+// Poll every 1 minute
+const POLL_INTERVAL = 1 * 60 * 1000;
 
 export async function pollActiveMatchScores() {
     try {
-        console.log("⚽ Score Poller: Checking for active/recent matches...");
+        console.log("⚽ Score Poller: Fetching all matches for TODAY...");
 
         const now = new Date();
-        const fourHoursAgo = new Date(now.getTime() - 4 * 60 * 60 * 1000);
+        const dateString = now.toISOString().split('T')[0]; // YYYY-MM-DD
 
-        // Terminating Statuses (We don't need to poll these)
-        const FINISHED_STATUSES = ["FT", "AET", "PEN", "PST", "CANC", "ABD", "AWD", "WO"];
+        // 1. Fetch ALL matches for today from API-Football
+        const res = await axios.get(`${BASE_URL}/fixtures`, {
+            params: { date: dateString },
+            headers: { "x-apisports-key": API_KEY }
+        });
 
-        // Query: Matches that started in the last 4 hours AND are not finished
-        const targets = await Fixture.find({
-            "fixture.fixture.date": { $gte: fourHoursAgo.toISOString(), $lte: now.toISOString() },
-            "fixture.fixture.status.short": { $nin: FINISHED_STATUSES }
-        }).select("fixtureId");
-
-        if (targets.length === 0) {
-            // console.log("   ✅ No active matches to poll.");
+        const allTodayFixtures = res.data.response;
+        if (!allTodayFixtures || allTodayFixtures.length === 0) {
+            console.log("   ⚠️ No matches found for today (API returned 0).");
             return;
         }
 
-        console.log(`   🎯 Found ${targets.length} active matches. syncing scores...`);
+        console.log(`   📡 Received ${allTodayFixtures.length} matches from API. filtering for updates...`);
 
-        // Batch IDs (max 20 per call for safety, though API allows more)
-        const batchSize = 10;
-        for (let i = 0; i < targets.length; i += batchSize) {
-            const batch = targets.slice(i, i + batchSize);
-            const ids = batch.map(f => f.fixtureId).join("-");
+        // 2. Prepare Bulk Operations
+        // We only want to update matches that ALREADY EXIST in our DB.
+        // We do NOT want to insert new matches blindly (unless that's desired, but usually we stick to our selected leagues).
+        // The most efficient way is to try to update them all. If a fixtureId doesn't exist, it won't trigger an update.
 
-            try {
-                const res = await axios.get(`${BASE_URL}/fixtures`, {
-                    params: { ids: ids },
-                    headers: { "x-apisports-key": API_KEY }
-                });
-
-                const updates = res.data.response;
-                if (!updates) continue;
-
-                for (const update of updates) {
-                    // Update Status & Score in DB
-                    await Fixture.updateOne(
-                        { fixtureId: update.fixture.id },
-                        {
-                            $set: {
-                                "fixture.fixture.status": update.fixture.status,
-                                "fixture.goals": update.goals,
-                                "fixture.score": update.score,
-                                // Also update root-level fields if we use them for sorting/filtering
-                                "status": update.fixture.status.short
-                            }
-                        }
-                    );
+        const bulkOps = allTodayFixtures.map((match) => ({
+            updateOne: {
+                filter: { fixtureId: match.fixture.id },
+                update: {
+                    $set: {
+                        "fixture.fixture.status": match.fixture.status,
+                        "fixture.goals": match.goals,
+                        "fixture.score": match.score,
+                        "status": match.fixture.status.short,
+                        "fixture.events": match.events, // Keep events updated too if provided
+                        "livescore": match.score,  // Ensure livescore field is synced
+                        "lastLiveUpdate": new Date()
+                    }
                 }
-                console.log(`      ✅ Updated batch of ${updates.length} scores.`);
-
-            } catch (err) {
-                console.error(`      ❌ Error fetching batch:`, err.message);
             }
+        }));
 
-            // Tiny delay between batches
-            await new Promise(r => setTimeout(r, 1000));
+        if (bulkOps.length > 0) {
+            const result = await Fixture.bulkWrite(bulkOps, { ordered: false });
+            console.log(`      ✅ Bulk Update Result: Match output: ${result.matchCount}, Modified: ${result.modifiedCount}`);
+        } else {
+            console.log("      ℹ️ No bulk operations to perform.");
         }
 
     } catch (err) {
@@ -82,7 +69,7 @@ export async function pollActiveMatchScores() {
 }
 
 export function startScorePoller() {
-    console.log(`🚀 Score Poller Started (Every ${POLL_INTERVAL / 60000} mins)`);
+    console.log(`🚀 Score Poller Started (Every ${POLL_INTERVAL / 60000} min)`);
     pollActiveMatchScores(); // Run immediately
     setInterval(pollActiveMatchScores, POLL_INTERVAL);
 }
