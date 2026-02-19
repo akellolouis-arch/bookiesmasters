@@ -10,7 +10,7 @@ import fixtureRoutes from "./routes/fixtureRoutes.js";
 import { startLineupPoller } from "./services/lineupPollingService.js";
 import { startDailyScheduler } from "./services/dailyUpdateService.js";
 import { startStatsPoller } from "./services/statsPollingService.js";
-import { startStandingsPoller } from "./services/standingsPollingService.js";
+// import { startStandingsPoller } from "./services/standingsPollingService.js";
 import { startScorePoller } from "./services/scorePollingService.js";
 
 import leagueRoutes from "./routes/leagueRoutes.js";
@@ -54,7 +54,7 @@ mongoose
     // startLineupPoller(); // 🕵️ DISABLED to save API quota
     // startStatsPoller();  // 📊 DISABLED to save API quota
     startScorePoller();     // ⚽ Enabled: Light polling for FT updates
-    startStandingsPoller(); // 🏆 Start active standings poller
+    // startStandingsPoller(); // 🏆 DISABLED: Standings handled by dailyUpdateService
     startDailyScheduler(); // ⏰ Start daily fixture update
   })
   .catch((err) => console.error("❌ MongoDB connection error:", err.message));
