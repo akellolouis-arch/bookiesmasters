@@ -19,6 +19,7 @@ export async function pollActiveMatchScores() {
 
         const now = new Date();
         const dateString = now.toISOString().split('T')[0]; // YYYY-MM-DD
+        const startOfToday = new Date(dateString); // 00:00:00 UTC
 
         // 1. Fetch ALL matches for today from API-Football
         const res = await axios.get(`${BASE_URL}/fixtures`, {
@@ -26,20 +27,45 @@ export async function pollActiveMatchScores() {
             headers: { "x-apisports-key": API_KEY }
         });
 
-        const allTodayFixtures = res.data.response;
-        if (!allTodayFixtures || allTodayFixtures.length === 0) {
-            console.log("   ⚠️ No matches found for today (API returned 0).");
+        const allTodayFixtures = res.data.response || [];
+        console.log(`   📡 Received ${allTodayFixtures.length} matches for Today (${dateString}).`);
+
+        // 2. RECOVERY: Find "Stuck" Live Matches from Previous Days
+        // (Matches that started yesterday but are still marked live in DB, likely crossing midnight)
+        const LIVE_STATUSES = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"];
+
+        const stuckMatches = await Fixture.find({
+            "fixture.fixture.status.short": { $in: LIVE_STATUSES },
+            "fixture.fixture.date": { $lt: startOfToday.toISOString() }
+        }).select("fixtureId");
+
+        let recoveryFixtures = [];
+        if (stuckMatches.length > 0) {
+            console.log(`   🚑 Found ${stuckMatches.length} stuck matches from previous days. Fetching updates...`);
+            const ids = stuckMatches.map(m => m.fixtureId).join("-");
+
+            try {
+                const recoveryRes = await axios.get(`${BASE_URL}/fixtures`, {
+                    params: { ids: ids },
+                    headers: { "x-apisports-key": API_KEY }
+                });
+                recoveryFixtures = recoveryRes.data.response || [];
+                console.log(`      ✅ Fetched ${recoveryFixtures.length} recovery updates.`);
+            } catch (err) {
+                console.error(`      ❌ Error fetching recovery matches:`, err.message);
+            }
+        }
+
+        // 3. Merge & Update
+        // Combine today's matches + recovery matches
+        const allUpdates = [...allTodayFixtures, ...recoveryFixtures];
+
+        if (allUpdates.length === 0) {
+            console.log("   ℹ️ No updates to process.");
             return;
         }
 
-        console.log(`   📡 Received ${allTodayFixtures.length} matches from API. filtering for updates...`);
-
-        // 2. Prepare Bulk Operations
-        // We only want to update matches that ALREADY EXIST in our DB.
-        // We do NOT want to insert new matches blindly (unless that's desired, but usually we stick to our selected leagues).
-        // The most efficient way is to try to update them all. If a fixtureId doesn't exist, it won't trigger an update.
-
-        const bulkOps = allTodayFixtures.map((match) => ({
+        const bulkOps = allUpdates.map((match) => ({
             updateOne: {
                 filter: { fixtureId: match.fixture.id },
                 update: {
@@ -48,8 +74,8 @@ export async function pollActiveMatchScores() {
                         "fixture.goals": match.goals,
                         "fixture.score": match.score,
                         "status": match.fixture.status.short,
-                        "fixture.events": match.events, // Keep events updated too if provided
-                        "livescore": match.score,  // Ensure livescore field is synced
+                        "fixture.events": match.events,
+                        "livescore": match.score,
                         "lastLiveUpdate": new Date()
                     }
                 }
@@ -59,8 +85,6 @@ export async function pollActiveMatchScores() {
         if (bulkOps.length > 0) {
             const result = await Fixture.bulkWrite(bulkOps, { ordered: false });
             console.log(`      ✅ Bulk Update Result: Match output: ${result.matchCount}, Modified: ${result.modifiedCount}`);
-        } else {
-            console.log("      ℹ️ No bulk operations to perform.");
         }
 
     } catch (err) {
