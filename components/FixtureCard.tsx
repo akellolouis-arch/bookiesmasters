@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 // import { Lock } from "lucide-react";
 // import { useSession, signIn } from "next-auth/react";
 // import { useState } from "react";
@@ -39,6 +40,8 @@ export default function FixtureCard({
   prediction, // This is the TIP
   liveOdds,
 }: FixtureCardProps) {
+  const router = useRouter();
+
   // FIX: Robust Live Status Check
   const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(status) || status.includes("'");
 
@@ -121,7 +124,7 @@ export default function FixtureCard({
   return (
     <div className="relative group max-w-xl mx-auto mb-3">
       {/* Main Card Content - Clickable (Details Page) */}
-      <Link href={`/prediction/${fixtureId}`}
+      <div
         onClick={() => {
           // Track ViewContent on click
           if (typeof window !== 'undefined' && (window as any).fbq) {
@@ -132,8 +135,9 @@ export default function FixtureCard({
               content_type: 'product'
             });
           }
+          router.push(`/prediction/${fixtureId}`);
         }}
-        className={`block bg-[#1F1F1F] rounded-xl shadow-sm hover:shadow-md hover:bg-[#2a2a2a] transition flex items-center justify-between p-2 sm:p-3 border-l-4 border-r border-t border-b border-r-white/5 border-t-white/5 border-b-white/5 ${isLive ? "border-l-red-500" : "border-l-transparent"} gap-2`}
+        className={`cursor-pointer block bg-[#1F1F1F] rounded-xl shadow-sm hover:shadow-md hover:bg-[#2a2a2a] transition flex items-center justify-between p-2 sm:p-3 border-l-4 border-r border-t border-b border-r-white/5 border-t-white/5 border-b-white/5 ${isLive ? "border-l-red-500" : "border-l-transparent"} gap-2`}
       >
         {/* STATUS */}
         <div className="w-[40px] sm:w-[50px] text-left shrink-0">
@@ -199,7 +203,7 @@ export default function FixtureCard({
             </div>
           )}
         </div>
-      </Link >
+      </div >
     </div >
   );
 }
