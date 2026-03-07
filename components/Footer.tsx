@@ -67,7 +67,7 @@ export default function Footer() {
 
         {/* Betting Sites */}
         <div className="space-y-2">
-          <h5 className="text-sm font-bold text-white tracking-wider">betting sites</h5>
+          <h5 className="text-sm font-bold text-white tracking-wider">Betting sites</h5>
           <ul className="text-xs space-y-1">
             <li>
               <a href="#" target="_blank" rel="noopener noreferrer" className="hover:text-teal-400 transition-colors">
@@ -94,7 +94,7 @@ export default function Footer() {
       </div>
 
       {/* Footer bottom */}
-      <div className="text-center text-gray-600 text-[10px] mt-5 pt-4 border-t border-white/5 uppercase tracking-widest">
+      <div className="text-center text-gray-600 text-[10px] mt-5 pt-4 border-t border-white/5 tracking-widest">
         © {new Date().getFullYear()} Bookiesmasters. All rights reserved.
       </div>
     </footer>
