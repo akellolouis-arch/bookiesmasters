@@ -5,14 +5,14 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-[#1F1F1F] text-gray-400 md:justify-center px-4 py-6 border-t border-white/5">
+    <footer className="bg-[#1F1F1F] text-gray-400 md:justify-center px-4 py-4 md:py-6 border-t border-white/5">
       {/* Main section */}
-      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 md:text-center">
+      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-5 md:gap-8 md:text-center">
 
 
         {/* Brand */}
         <div className="space-y-2">
-          <h5 className="text-sm font-bold text-white tracking-wider">bookiesmasters</h5>
+          <h5 className="text-sm font-bold text-white tracking-wider">Bookiesmasters</h5>
           <p className="text-xs leading-relaxed text-gray-400">
             Get guided football predictions, fixtures, odds, events, livescores and insights powered by data — all in one place.
           </p>
@@ -20,17 +20,10 @@ export default function Footer() {
 
         {/* Contact + Socials */}
         <div className="space-y-2">
-          <h5 className="text-sm font-bold text-white tracking-wider">stay connected</h5>
+          <h5 className="text-sm font-bold text-white tracking-wider">Stay connected</h5>
           <p className="text-xs text-gray-400">
             Have questions? Reach us anytime.
           </p>
-
-          <a
-            href="mailto:support@bookiesmasters.com"
-            className="flex items-center text-teal-400 hover:text-teal-300 text-xs md:justify-center transition-colors"
-          >
-            <Mail size={14} className="mr-2" /> support@bookiesmasters.com
-          </a>
 
           <div className="flex space-x-4 mt-2 md:justify-center">
             <a href="#" className="text-gray-400 hover:text-white transition-colors">
@@ -47,7 +40,7 @@ export default function Footer() {
 
         {/* Quick Links */}
         <div className="space-y-2">
-          <h5 className="text-sm font-bold text-white tracking-wider">quick links</h5>
+          <h5 className="text-sm font-bold text-white tracking-wider">Quick links</h5>
           <ul className="text-xs space-y-1">
             <li>
               <Link href="/terms-of-service" className="hover:text-teal-400 transition-colors">
@@ -101,7 +94,7 @@ export default function Footer() {
       </div>
 
       {/* Footer bottom */}
-      <div className="text-center text-gray-600 text-[10px] mt-8 pt-4 border-t border-white/5 uppercase tracking-widest">
+      <div className="text-center text-gray-600 text-[10px] mt-5 pt-4 border-t border-white/5 uppercase tracking-widest">
         © {new Date().getFullYear()} Bookiesmasters. All rights reserved.
       </div>
     </footer>
