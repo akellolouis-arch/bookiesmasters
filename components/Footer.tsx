@@ -7,12 +7,12 @@ export default function Footer() {
   return (
     <footer className="bg-[#1F1F1F] text-gray-400 md:justify-center px-4 py-6 border-t border-white/5">
       {/* Main section */}
-      <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 md:text-center">
+      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 md:text-center">
 
 
         {/* Brand */}
         <div className="space-y-2">
-          <h5 className="text-sm font-bold text-white uppercase tracking-wider">Bookiesmasters</h5>
+          <h5 className="text-sm font-bold text-white tracking-wider">bookiesmasters</h5>
           <p className="text-xs leading-relaxed text-gray-400">
             Get guided football predictions, fixtures, odds, events, livescores and insights powered by data — all in one place.
           </p>
@@ -20,7 +20,7 @@ export default function Footer() {
 
         {/* Contact + Socials */}
         <div className="space-y-2">
-          <h5 className="text-sm font-bold text-white uppercase tracking-wider">Stay connected</h5>
+          <h5 className="text-sm font-bold text-white tracking-wider">stay connected</h5>
           <p className="text-xs text-gray-400">
             Have questions? Reach us anytime.
           </p>
@@ -47,7 +47,7 @@ export default function Footer() {
 
         {/* Quick Links */}
         <div className="space-y-2">
-          <h5 className="text-sm font-bold text-white uppercase tracking-wider">Quick links</h5>
+          <h5 className="text-sm font-bold text-white tracking-wider">quick links</h5>
           <ul className="text-xs space-y-1">
             <li>
               <Link href="/terms-of-service" className="hover:text-teal-400 transition-colors">
@@ -68,6 +68,33 @@ export default function Footer() {
               <Link href="/about" className="hover:text-teal-400 transition-colors">
                 About Us
               </Link>
+            </li>
+          </ul>
+        </div>
+
+        {/* Betting Sites */}
+        <div className="space-y-2">
+          <h5 className="text-sm font-bold text-white tracking-wider">betting sites</h5>
+          <ul className="text-xs space-y-1">
+            <li>
+              <a href="#" target="_blank" rel="noopener noreferrer" className="hover:text-teal-400 transition-colors">
+                Betway
+              </a>
+            </li>
+            <li>
+              <a href="#" target="_blank" rel="noopener noreferrer" className="hover:text-teal-400 transition-colors">
+                1xBet
+              </a>
+            </li>
+            <li>
+              <a href="#" target="_blank" rel="noopener noreferrer" className="hover:text-teal-400 transition-colors">
+                Bet365
+              </a>
+            </li>
+            <li>
+              <a href="#" target="_blank" rel="noopener noreferrer" className="hover:text-teal-400 transition-colors">
+                22Bet
+              </a>
             </li>
           </ul>
         </div>
