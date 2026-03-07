@@ -160,7 +160,7 @@ export async function updateDailyFixtures() {
 
     if (lastRunConfig && lastRunConfig.value) {
       const lastRun = new Date(lastRunConfig.value);
-      const hoursCheck = 18; // Only allow run if > 18 hours have passed
+      const hoursCheck = 12; // Only allow run if > 12 hours have passed
       const msSinceLast = now - lastRun;
 
       if (msSinceLast < hoursCheck * 60 * 60 * 1000) {
