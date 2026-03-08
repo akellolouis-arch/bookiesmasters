@@ -218,6 +218,14 @@ export async function updateDailyFixtures() {
         }
       }
 
+      // 5.2️⃣ PRESERVE ODDS LOGIC (So finished matches keep their pre-match odds)
+      if (existingDoc && existingDoc.odds && existingDoc.odds.length > 0) {
+        if (!bets || bets.length === 0) {
+          console.log(`🛡️ Preserving existing odds for fixture ${fixtureId}`);
+          bets = existingDoc.odds;
+        }
+      }
+
       // 6️⃣ save/update in Mongo
       await Fixture.findOneAndUpdate(
         { fixtureId: fixtureId },
