@@ -110,18 +110,18 @@ async function fetchPrediction(fixtureId) {
 --------------------------------------------- */
 async function fetchOdds(fixtureId) {
   try {
-    // Attempt 1xBet (11)
+    // Attempt Bet365 (8)
     let res = await api.get(`/odds`, {
-      params: { fixture: fixtureId, bookmaker: 11 }
+      params: { fixture: fixtureId, bookmaker: 8 }
     });
 
     let odds = res.data?.response?.[0];
 
-    // If 1xBet doesn't have odds (e.g., MLS fixtures), fallback to Bet365 (8)
+    // If Bet365 doesn't have odds, fallback to 1xBet (11)
     if (!odds || !odds.bookmakers || odds.bookmakers.length === 0) {
-      console.log(`   🔄 1xBet odds missing for ${fixtureId}, falling back to Bet365...`);
+      console.log(`   🔄 Bet365 odds missing for ${fixtureId}, falling back to 1xBet...`);
       res = await api.get(`/odds`, {
-        params: { fixture: fixtureId, bookmaker: 8 }
+        params: { fixture: fixtureId, bookmaker: 11 }
       });
       odds = res.data?.response?.[0];
     }
