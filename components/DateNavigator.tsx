@@ -89,9 +89,7 @@ export default function DateNavigator({ date }: Props) {
                 data-active={isActive}
                 className={`shrink-0 flex flex-col items-center justify-center w-[45px] h-8 rounded-md border transition-all ${isActive
                   ? "bg-white/20 border-transparent text-white shadow-lg shadow-white/10"
-                  : isToday
-                    ? "bg-white/10 border-white/20 text-white"
-                    : "bg-[#1F1F1F] border-white/5 text-gray-500 hover:bg-[#252525] hover:text-gray-300"
+                  : "bg-[#1F1F1F] border-white/5 text-gray-500 hover:bg-[#252525] hover:text-gray-300"
                   }`}
               >
                 <span className="text-[9px] font-bold uppercase leading-tight">{dayName}</span>
