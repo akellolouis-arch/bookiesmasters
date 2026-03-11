@@ -88,7 +88,7 @@ export default function DateNavigator({ date }: Props) {
                 onClick={() => handleDateClick(d)}
                 data-active={isActive}
                 className={`shrink-0 flex flex-col items-center justify-center w-[45px] h-8 rounded-md border transition-all ${isActive
-                  ? "bg-[#63FF79] border-[#63FF79] text-black shadow-lg shadow-[#63FF79]/20"
+                  ? "bg-white/20 border-white text-white shadow-lg shadow-white/10"
                   : isToday
                     ? "bg-white/10 border-white/20 text-white"
                     : "bg-[#1F1F1F] border-white/5 text-gray-500 hover:bg-[#252525] hover:text-gray-300"
