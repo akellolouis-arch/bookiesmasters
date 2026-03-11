@@ -70,23 +70,8 @@ export default function Footer() {
           <h5 className="text-sm font-bold text-white tracking-wider">Betting sites</h5>
           <ul className="text-xs space-y-1">
             <li>
-              <a href="#" target="_blank" rel="noopener noreferrer" className="hover:text-teal-400 transition-colors">
-                Betway
-              </a>
-            </li>
-            <li>
-              <a href="#" target="_blank" rel="noopener noreferrer" className="hover:text-teal-400 transition-colors">
+              <a href="https://reffpa.com/L?tag=d_5148910m_97c_telegram&site=5148910&ad=97&r=registration" target="_blank" rel="noopener noreferrer" className="hover:text-teal-400 transition-colors">
                 1xBet
-              </a>
-            </li>
-            <li>
-              <a href="#" target="_blank" rel="noopener noreferrer" className="hover:text-teal-400 transition-colors">
-                Bet365
-              </a>
-            </li>
-            <li>
-              <a href="#" target="_blank" rel="noopener noreferrer" className="hover:text-teal-400 transition-colors">
-                22Bet
               </a>
             </li>
           </ul>
