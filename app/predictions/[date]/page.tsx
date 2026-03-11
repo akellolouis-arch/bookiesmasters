@@ -140,13 +140,22 @@ export default async function PredictionsPage({
 
   // If we successfully got data, map it. Otherwise initialData remains []
   if (backendData && backendData.fixtures) {
-    initialData = backendData.fixtures.map((f) => ({
-      id: f.league.id,
-      name: f.league.name,
-      logo: f.league.logo,
-      country: f.league.country,
-      matches: f.matches,
-    }));
+    initialData = backendData.fixtures
+      .map((f) => ({
+        id: f.league.id,
+        name: f.league.name,
+        logo: f.league.logo,
+        country: f.league.country,
+        matches: f.matches.filter((match) => {
+          // If odds object doesn't exist, hide it
+          if (!match.odds) return false;
+          // If all three base odds are missing, hide it
+          if (!match.odds.home && !match.odds.draw && !match.odds.away) return false;
+          return true;
+        }),
+      }))
+      // Filter out leagues that now have 0 matches
+      .filter((league) => league.matches.length > 0);
   }
 
   return (

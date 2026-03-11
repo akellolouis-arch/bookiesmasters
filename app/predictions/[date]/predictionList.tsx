@@ -115,6 +115,21 @@ export default function PredictionsList({
     });
   }
 
+  // NEW LOGIC: Filter out matches that do not have valid odds
+  safeData = safeData
+    .map((league) => ({
+      ...league,
+      matches: league.matches.filter((match) => {
+        // If odds object doesn't exist, hide it
+        if (!match.odds) return false;
+        // If all three base odds are missing, hide it
+        if (!match.odds.home && !match.odds.draw && !match.odds.away) return false;
+        return true;
+      }),
+    }))
+    // Optional: Filter out leagues that now have 0 matches after removing odds-less fixtures
+    .filter((league) => league.matches.length > 0);
+
   // FIX: Prevent "shambolic" display on initial load by waiting for mount
   const [mounted, setMounted] = useState(false);
 
