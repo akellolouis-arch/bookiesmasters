@@ -7,7 +7,7 @@ import Fixture from "../models/Fixture.js";     // unified fixture model
 import { fetchInjuries } from "./enrichmentService.js";
 import { updateStandings } from "./fetch_standings.js";
 // Duplicate removed
-import { updateTopScorers } from "./fetchTopScorers.js";
+
 import { cleanupOldFixtures } from "./cleanupService.js";
 
 dotenv.config();
@@ -168,7 +168,7 @@ export async function updateDailyFixtures() {
 
     if (lastRunConfig && lastRunConfig.value) {
       const lastRun = new Date(lastRunConfig.value);
-      const hoursCheck = 12; // Only allow run if > 12 hours have passed
+      const hoursCheck = 18; // Only allow run if > 18 hours have passed
       const msSinceLast = now - lastRun;
 
       if (msSinceLast < hoursCheck * 60 * 60 * 1000) {
@@ -259,9 +259,7 @@ export async function updateDailyFixtures() {
     console.log("📊 Updating Standings...");
     await updateStandings(false);
 
-    // 7️⃣ Update Top Scorers
-    console.log("⚽ Updating Top Scorers...");
-    await updateTopScorers(false);
+
 
     // 7.5️⃣ CLEANUP OLD DATA
     await cleanupOldFixtures();

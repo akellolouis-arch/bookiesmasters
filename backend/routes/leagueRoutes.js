@@ -1,14 +1,13 @@
 // routes/leagueRoutes.js
 import express from "express";
-import { getLeagues, getTopScorers, getStandings, getFixtures } from "../controllers/leagueController.js";
+import { getLeagues, getStandings, getFixtures } from "../controllers/leagueController.js";
 
 const router = express.Router();
 
 // GET /api/leagues
 router.get("/", getLeagues);
 
-// GET /api/leagues/:id/topscorers
-router.get("/:id/topscorers", getTopScorers);
+
 
 // GET /api/leagues/:id/standings
 router.get("/:id/standings", getStandings);

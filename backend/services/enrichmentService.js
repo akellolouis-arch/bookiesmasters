@@ -11,18 +11,6 @@ const api = axios.create({
     headers: { "x-apisports-key": process.env.API_KEY }
 });
 
-export async function fetchLineups(fixtureId) {
-    try {
-        console.log(`📡 Fetching Lineups for fixture ${fixtureId}...`);
-        const res = await api.get("/fixtures/lineups", {
-            params: { fixture: fixtureId }
-        });
-        return res.data.response || [];
-    } catch (err) {
-        console.error(`❌ Error fetching lineups for ${fixtureId}:`, err.message);
-        return [];
-    }
-}
 
 export async function fetchInjuries(fixtureId) {
     try {

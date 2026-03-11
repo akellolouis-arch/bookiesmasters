@@ -15,7 +15,31 @@ const POLL_INTERVAL = 2 * 60 * 1000;
 
 export async function pollLiveScores() {
     try {
-        console.log("⚡ Live Score Poller: Fetching global LIVE matches...");
+        console.log("⚡ Live Score Poller: Checking for active or impending matches...");
+
+        // --- OPTIMIZATION: Only poll if we have matches LIVE right now, OR starting in the next 5 mins
+        const now = new Date();
+        const fiveMinsFromNow = new Date(now.getTime() + 5 * 60 * 1000);
+
+        const LIVE_STATUSES = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"];
+
+        // Query our DB: Are any of OUR saved matches currently live, OR starting in the next 5 mins?
+        const activeOrImpendingMatches = await Fixture.find({
+            $or: [
+                { "fixture.fixture.status.short": { $in: LIVE_STATUSES } },
+                {
+                    "fixture.fixture.status.short": "NS",
+                    "fixture.fixture.date": { $lte: fiveMinsFromNow.toISOString() }
+                }
+            ]
+        }).select("fixtureId").lean();
+
+        if (activeOrImpendingMatches.length === 0) {
+            console.log("   🛌 No local matches live or starting within 5 mins. Sleeping...");
+            return;
+        }
+
+        console.log(`   🔥 Found ${activeOrImpendingMatches.length} local matches active/starting! Polling API...`);
 
         // 1. Fetch ALL live matches in the world right now from API (1 request, hugely efficient)
         const res = await axios.get(`${BASE_URL}/fixtures`, {
@@ -34,28 +58,45 @@ export async function pollLiveScores() {
         console.log(`   🎯 API reports ${apiFixtures.length} active live matches... mapping to database.`);
 
         // 2. Build the bulk update operations for everything currently live
-        const bulkOps = apiFixtures.map((match) => ({
-            updateOne: {
-                filter: { fixtureId: match.fixture.id },
-                update: {
-                    $set: {
-                        "fixture.fixture.status": match.fixture.status,
-                        "fixture.goals": match.goals,
-                        "fixture.score": match.score,
-                        "status": match.fixture.status.short, // redundant cache field
-                        "fixture.events": match.events,
-                        "livescore": match.score,
-                        "lastLiveUpdate": new Date()
+        const bulkOps = apiFixtures.map((match) => {
+            // OPTIMIZATION: User requested ONLY goal events and NO assist provider.
+            const goalEventsOnly = match.events
+                ? match.events
+                    .filter(e => e.type === "Goal")
+                    .map(e => ({
+                        time: e.time,
+                        team: e.team,
+                        player: e.player,
+                        type: e.type,
+                        detail: e.detail,
+                        comments: e.comments
+                        // 'assist' is intentionally omitted here
+                    }))
+                : [];
+
+            return {
+                updateOne: {
+                    filter: { fixtureId: match.fixture.id },
+                    update: {
+                        $set: {
+                            "fixture.fixture.status": match.fixture.status,
+                            "fixture.goals": match.goals,
+                            "fixture.score": match.score,
+                            "status": match.fixture.status.short, // redundant cache field
+                            "fixture.events": goalEventsOnly, // Save ONLY goals without assists
+                            "livescore": match.score,
+                            "lastLiveUpdate": new Date()
+                        }
                     }
                 }
-            }
-        }));
+            };
+        });
 
         // 3. Find matches that WERE live in our DB, but just finished (dropped off live=all)
-        const LIVE_STATUSES = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"];
+        // We already have `activeOrImpendingMatches`, let's just filter it to those that WERE live.
         const localLiveMatches = await Fixture.find({
             "fixture.fixture.status.short": { $in: LIVE_STATUSES }
-        }).select("fixtureId");
+        }).select("fixtureId").lean();
 
         const localLiveIds = localLiveMatches.map(m => m.fixtureId);
         const finishedIds = localLiveIds.filter(id => !apiLiveIds.includes(id));
@@ -76,6 +117,20 @@ export async function pollLiveScores() {
                 const finalFixtures = finishRes.data.response || [];
 
                 finalFixtures.forEach(match => {
+                    const goalEventsOnly = match.events
+                        ? match.events
+                            .filter(e => e.type === "Goal")
+                            .map(e => ({
+                                time: e.time,
+                                team: e.team,
+                                player: e.player,
+                                type: e.type,
+                                detail: e.detail,
+                                comments: e.comments
+                                // 'assist' is intentionally omitted here
+                            }))
+                        : [];
+
                     bulkOps.push({
                         updateOne: {
                             filter: { fixtureId: match.fixture.id },
@@ -85,7 +140,7 @@ export async function pollLiveScores() {
                                     "fixture.goals": match.goals,
                                     "fixture.score": match.score,
                                     "status": match.fixture.status.short,
-                                    "fixture.events": match.events,
+                                    "fixture.events": goalEventsOnly,
                                     "livescore": match.score,
                                     "lastLiveUpdate": new Date()
                                 }

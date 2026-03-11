@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import useSWR from "swr";
 import Standings from "@/components/fixture-details/Standings";
-import TopScorers from "./TopScorers";
+
 import LeagueFixtures from "./LeagueFixtures";
 import Loader from "@/components/Loader";
 
@@ -21,7 +21,7 @@ const fetcher = (url: string) => fetch(url).then(res => res.json()).then(json =>
 
 export default function LeagueExplorer() {
     const [activeLeague, setActiveLeague] = useState(LEAGUES[0].id);
-    const [activeTab, setActiveTab] = useState<"fixtures" | "standings" | "topscorers">("standings");
+    const [activeTab, setActiveTab] = useState<"fixtures" | "standings">("standings");
 
     // Fetch Data based on active tab & league
     // We use different endpoints depending on the tab to save bandwidth
@@ -32,11 +32,7 @@ export default function LeagueExplorer() {
         fetcher
     );
 
-    // 2. Top Scorers
-    const { data: scorers } = useSWR(
-        activeTab === "topscorers" ? `${process.env.NEXT_PUBLIC_API_URL}/api/leagues/${activeLeague}/topscorers` : null,
-        fetcher
-    );
+
 
     // 3. Fixtures
     const { data: fixtures } = useSWR(
@@ -78,7 +74,7 @@ export default function LeagueExplorer() {
                 {[
                     { id: "standings", label: "Standings" },
                     { id: "fixtures", label: "Fixtures" },
-                    { id: "topscorers", label: "Top Scorers" },
+
                 ].map((tab) => (
                     <button
                         key={tab.id}
@@ -104,11 +100,7 @@ export default function LeagueExplorer() {
                     </div>
                 )}
 
-                {activeTab === "topscorers" && (
-                    <div className="pt-2 px-2 pb-4">
-                        {scorers?.players ? <TopScorers scorers={scorers.players} /> : <Loader />}
-                    </div>
-                )}
+
 
                 {activeTab === "fixtures" && (
                     <div className="pt-2 px-2 pb-4">

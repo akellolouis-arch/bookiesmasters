@@ -4,11 +4,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";         // ⭐ IMPORTANT
 import fixtureRoutes from "./routes/fixtureRoutes.js";
-import { startLiveService } from "./services/liveScoreService.js";
-import { startLiveOddsPoller } from "./services/liveOddsService.js";
-import { startLineupPoller } from "./services/lineupPollingService.js";
 import { startDailyScheduler } from "./services/dailyUpdateService.js";
-import { startStatsPoller } from "./services/statsPollingService.js";
 // import { startStandingsPoller } from "./services/standingsPollingService.js";
 
 import leagueRoutes from "./routes/leagueRoutes.js";
@@ -49,9 +45,6 @@ mongoose
   .then(() => {
     console.log("✅ MongoDB connected");
     startLiveService();     // 🚀 Start the 2m Live Scores poller
-    startLiveOddsPoller();  // 📈 Start the 3m In-Play Odds poller
-    startLineupPoller();    // 🕵️ Start 5m Lineup poller
-    startStatsPoller();     // 📊 Start 5m Stats poller
     // startStandingsPoller(); // 🏆 DISABLED: Standings handled by dailyUpdateService
     startDailyScheduler();  // ⏰ Start daily fixture update
   })

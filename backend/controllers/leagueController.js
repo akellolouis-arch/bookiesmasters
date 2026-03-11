@@ -1,5 +1,5 @@
 import League from "../models/League.js";
-import TopScorer from "../models/TopScorer.js";
+
 import Standing from "../models/Standing.js";
 import { getLeagueFixtures } from "../services/fixtureCardService.js";
 
@@ -25,22 +25,7 @@ export async function getLeagues(req, res) {
   }
 }
 
-// GET /api/leagues/:id/topscorers
-export async function getTopScorers(req, res) {
-  try {
-    const { id } = req.params;
-    const scorers = await TopScorer.findOne({ "league.id": Number(id) }).sort({ updatedAt: -1 }); // Get latest
 
-    if (!scorers) {
-      return res.status(404).json({ success: false, message: "No top scorers found for this league." });
-    }
-
-    res.json({ success: true, data: scorers });
-  } catch (err) {
-    console.error("❌ Error fetching top scorers:", err);
-    res.status(500).json({ error: "Server error" });
-  }
-}
 
 // GET /api/leagues/:id/standings
 export async function getStandings(req, res) {

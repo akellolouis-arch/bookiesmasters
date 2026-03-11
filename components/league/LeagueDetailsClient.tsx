@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import useSWR from "swr";
 import Standings from "@/components/fixture-details/Standings";
-import TopScorers from "@/components/home/LeagueExplorer/TopScorers";
+
 import LeagueFixtures from "@/components/home/LeagueExplorer/LeagueFixtures";
 import Link from "next/link";
 
@@ -18,7 +18,7 @@ interface LeagueDetailsClientProps {
 const fetcher = (url: string) => fetch(url).then(res => res.json()).then(json => json.data);
 
 export default function LeagueDetailsClient({ id, name, logo, country, embedded = false }: LeagueDetailsClientProps) {
-    const [activeTab, setActiveTab] = useState<"fixtures" | "standings" | "topscorers">("standings");
+    const [activeTab, setActiveTab] = useState<"fixtures" | "standings">("standings");
 
     // Fetch Data based on active tab
     // 1. Standings
@@ -27,11 +27,7 @@ export default function LeagueDetailsClient({ id, name, logo, country, embedded 
         fetcher
     );
 
-    // 2. Top Scorers
-    const { data: scorers, isLoading: isLoadingScorers } = useSWR(
-        activeTab === "topscorers" ? `${process.env.NEXT_PUBLIC_API_URL}/api/leagues/${id}/topscorers` : null,
-        fetcher
-    );
+
 
     // 3. Fixtures
     const { data: fixtures, isLoading: isLoadingFixtures } = useSWR(
@@ -87,7 +83,7 @@ export default function LeagueDetailsClient({ id, name, logo, country, embedded 
                     {[
                         { id: "standings", label: "Standings" },
                         { id: "fixtures", label: "Fixtures" },
-                        { id: "topscorers", label: "Top Scorers" },
+
                     ].map((tab) => (
                         <button
                             key={tab.id}
@@ -112,10 +108,7 @@ export default function LeagueDetailsClient({ id, name, logo, country, embedded 
                             standings?.standings ? <Standings standings={standings.standings} /> : <EmptyState msg="No standings available" />
                     )}
 
-                    {activeTab === "topscorers" && (
-                        isLoadingScorers ? <LoadingState /> :
-                            scorers?.players ? <TopScorers scorers={scorers.players} /> : <EmptyState msg="No top scorers data" />
-                    )}
+
 
                     {activeTab === "fixtures" && (
                         isLoadingFixtures ? <LoadingState /> :
