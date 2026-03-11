@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
-import Tabs from "@/components/Tabs";
+import React from "react";
 import H2HSection from "@/components/fixture-details/H2HSection";
 import LastFiveMatches from "@/components/fixture-details/LastFiveMatches";
 // import Events from "@/components/fixture-details/Events";
@@ -34,64 +33,6 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
     // const { data } = useSWR(...)
     const data = initialData; // Use initial data only
     const router = useRouter();
-    // const { data: session, update } = useSession();
-    const [activeTab, setActiveTab] = useState("h2h"); // Default to H2H
-    // const [unlocking, setUnlocking] = useState(false);
-    // const [justUnlocked, setJustUnlocked] = useState(false);
-
-    // VIP Logic REMOVED
-
-    // Check if we have prediction info to show the tab
-    // const hasPrediction = data.tip && data.tip !== "N/A" || data.apiPrediction;
-
-    const tabs = [
-        // ...(hasPrediction ? [{ id: "prediction", label: "Prediction" }] : []), // Removed
-        // { id: "events", label: "Events" }, // REMOVED
-        // { id: "stats", label: "Stats" }, // REMOVED
-        // { id: "lineups", label: "Lineups" }, // REMOVED
-        { id: "injuries", label: "Injuries" },
-        { id: "h2h", label: "H2H" },
-        { id: "last5", label: "Last 5" },
-        { id: "standings", label: "Standings" },
-    ];
-
-    const renderContent = () => {
-        switch (activeTab) {
-            // case "prediction":
-            // removed
-            // case "events":
-            //     return <Events events={data.events} homeTeamId={data.homeTeam.id} awayTeamId={data.awayTeam.id} />;
-            // case "lineups":
-            //     return <Lineups lineups={data.lineups} />;
-            case "injuries":
-                return <Injuries injuries={data.injuries} />;
-            // case "stats":
-            //     return <Statistics stats={data.statistics} />;
-            case "h2h":
-                return <H2HSection h2h={data.h2h} />;
-            case "last5":
-                return (
-                    <div className="space-y-6">
-                        <LastFiveMatches
-                            teamName={data.homeTeam.name}
-                            teamLogo={data.homeTeam.logo}
-                            matches={data.homeTeam.allMatches || data.homeTeam.last5Matches}
-                        />
-                        {/* DEBUG: */}
-                        <div className="text-xs text-red-500 hidden">Matches: {data.homeTeam.allMatches?.length} / {data.homeTeam.last5Matches?.length}</div>
-                        <LastFiveMatches
-                            teamName={data.awayTeam.name}
-                            teamLogo={data.awayTeam.logo}
-                            matches={data.awayTeam.allMatches || data.awayTeam.last5Matches}
-                        />
-                    </div>
-                );
-            case "standings":
-                return <Standings standings={data.standings} />;
-            default:
-                return null;
-        }
-    };
 
     return (
         <div className="min-h-screen bg-transparent text-white py-4 px-2">
@@ -138,9 +79,62 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
 
                 {/* VIP SECTION REMOVED */}
 
-                <Tabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
+                {/* VERTICAL CONTENT STACK (Replacing Tabs) */}
+                <div className="space-y-8 mt-6">
+                    {/* Injuries Section */}
+                    {data.injuries && data.injuries.length > 0 && (
+                        <div className="bg-[#1a1a1a] rounded-xl p-4 border border-white/5">
+                            <h3 className="text-sm font-bold text-white mb-4 uppercase tracking-wider flex items-center gap-2">
+                                <span className="w-1 h-4 bg-orange-500 rounded-full" />
+                                Match Injuries
+                            </h3>
+                            <Injuries injuries={data.injuries} />
+                        </div>
+                    )}
 
-                {renderContent()}
+                    {/* H2H Section */}
+                    {data.h2h && data.h2h.length > 0 && (
+                        <div className="bg-[#1a1a1a] rounded-xl p-4 border border-white/5">
+                            <h3 className="text-sm font-bold text-white mb-4 uppercase tracking-wider flex items-center gap-2">
+                                <span className="w-1 h-4 bg-orange-500 rounded-full" />
+                                Head to Head
+                            </h3>
+                            <H2HSection h2h={data.h2h} />
+                        </div>
+                    )}
+
+                    {/* Last 5 Matches (Form) */}
+                    <div className="bg-[#1a1a1a] rounded-xl p-4 border border-white/5">
+                        <h3 className="text-sm font-bold text-white mb-4 uppercase tracking-wider flex items-center gap-2">
+                            <span className="w-1 h-4 bg-orange-500 rounded-full" />
+                            Recent Form (Last 5)
+                        </h3>
+                        <div className="space-y-6">
+                            <LastFiveMatches
+                                teamName={data.homeTeam.name}
+                                teamLogo={data.homeTeam.logo}
+                                matches={data.homeTeam.allMatches || data.homeTeam.last5Matches}
+                            />
+                            <div className="text-xs text-red-500 hidden">Matches: {data.homeTeam.allMatches?.length} / {data.homeTeam.last5Matches?.length}</div>
+                            <LastFiveMatches
+                                teamName={data.awayTeam.name}
+                                teamLogo={data.awayTeam.logo}
+                                matches={data.awayTeam.allMatches || data.awayTeam.last5Matches}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Standings Section (LAST) */}
+                    {data.standings && data.standings.length > 0 && (
+                        <div className="bg-[#1a1a1a] rounded-xl p-4 border border-white/5">
+                            <h3 className="text-sm font-bold text-white mb-4 uppercase tracking-wider flex items-center gap-2">
+                                <span className="w-1 h-4 bg-orange-500 rounded-full" />
+                                League Standings
+                            </h3>
+                            <Standings standings={data.standings} />
+                        </div>
+                    )}
+                </div>
 
 
 
