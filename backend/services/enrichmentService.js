@@ -24,3 +24,16 @@ export async function fetchInjuries(fixtureId) {
         return [];
     }
 }
+
+export async function fetchInjuriesByLeague(leagueId, season) {
+    try {
+        console.log(`🚑 Fetching Injuries for league ${leagueId} season ${season}...`);
+        const res = await api.get("/injuries", {
+            params: { league: leagueId, season: season }
+        });
+        return res.data.response || [];
+    } catch (err) {
+        console.error(`❌ Error fetching injuries for league ${leagueId}:`, err.message);
+        return [];
+    }
+}

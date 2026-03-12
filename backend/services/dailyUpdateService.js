@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 
 import League from "../models/League.js";       // your saved leagues
 import Fixture from "../models/Fixture.js";     // unified fixture model
-import { fetchInjuries } from "./enrichmentService.js";
+import { fetchInjuries, fetchInjuriesByLeague } from "./enrichmentService.js";
 import { updateStandings } from "./fetch_standings.js";
 // Duplicate removed
 
@@ -194,9 +194,38 @@ export async function updateDailyFixtures() {
       return;
     }
 
+    // 2.5 Fetch all injuries for the required leagues in ONE go per league
+    const leagueSeasonMap = new Map();
+    for (const f of fixtures) {
+      if (!f.league || !f.league.id || !f.league.season) continue;
+      const key = `${f.league.id}-${f.league.season}`;
+      if (!leagueSeasonMap.has(key)) {
+        leagueSeasonMap.set(key, { leagueId: f.league.id, season: f.league.season });
+      }
+    }
+
+    const injuriesByFixture = {};
+    console.log(`🚑 Pulling all injuries for ${leagueSeasonMap.size} unique leagues...`);
+    for (const lg of leagueSeasonMap.values()) {
+      const leagueInjuries = await fetchInjuriesByLeague(lg.leagueId, lg.season);
+      for (const injury of leagueInjuries) {
+        if (!injury.fixture || !injury.fixture.id) continue;
+        const fixId = injury.fixture.id;
+        if (!injuriesByFixture[fixId]) {
+          injuriesByFixture[fixId] = [];
+        }
+        injuriesByFixture[fixId].push(injury);
+      }
+    }
+
     // 3. Process each fixture
+    let processedCount = 0;
     for (const f of fixtures) {
       const fixtureId = f.fixture.id;
+      processedCount++;
+      if (processedCount % 50 === 0) {
+        console.log(`   ⏳ Processing fixture ${processedCount} / ${fixtures.length}...`);
+      }
 
       // 1️⃣ predictions
       const { prediction, h2h } = await fetchPrediction(fixtureId);
@@ -205,7 +234,7 @@ export async function updateDailyFixtures() {
       const bets = await fetchOdds(fixtureId);
 
       // 4️⃣ injuries (Weekly Forecast)
-      let injuryReport = await fetchInjuries(fixtureId);
+      let injuryReport = injuriesByFixture[fixtureId] || [];
 
       // 5️⃣ PRESERVE DATA LOGIC
       // Check if we already have this fixture and if it has valid events
