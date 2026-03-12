@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import cors from "cors";         // ⭐ IMPORTANT
 import fixtureRoutes from "./routes/fixtureRoutes.js";
 import { startDailyScheduler } from "./services/dailyUpdateService.js";
+import { startLiveService } from "./services/liveScoreService.js";
 // import { startStandingsPoller } from "./services/standingsPollingService.js";
 
 import leagueRoutes from "./routes/leagueRoutes.js";

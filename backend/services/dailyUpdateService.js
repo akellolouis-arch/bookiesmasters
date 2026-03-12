@@ -51,7 +51,8 @@ async function getSavedLeagueIds() {
 async function fetchFixturesForDates(savedLeagueIds, daysAhead = 2) {
   let combined = [];
 
-  for (let day = 0; day <= daysAhead; day++) {
+  // Start from day = -1 to ensure we fetch yesterday's matches and capture missed FT results
+  for (let day = -1; day <= daysAhead; day++) {
     const date = getDatePlus(day);
     console.log(`📅 Fetching fixtures for ${date}`);
 

@@ -10,8 +10,8 @@ dotenv.config({ path: path.resolve(__dirname, "../.env") });
 const API_KEY = process.env.API_KEY;
 const BASE_URL = "https://v3.football.api-sports.io";
 
-// Poll every 2 minutes
-const POLL_INTERVAL = 2 * 60 * 1000;
+// Poll every 1 minute
+const POLL_INTERVAL = 1 * 60 * 1000;
 
 export async function pollLiveScores() {
     try {
@@ -99,7 +99,27 @@ export async function pollLiveScores() {
         }).select("fixtureId").lean();
 
         const localLiveIds = localLiveMatches.map(m => m.fixtureId);
-        const finishedIds = localLiveIds.filter(id => !apiLiveIds.includes(id));
+        let finishedIds = localLiveIds.filter(id => !apiLiveIds.includes(id));
+
+        // --- STUCK MATCH DETECTOR ---
+        // Find matches that are still "NS" in our DB, but kickoff was > 120 mins ago (they must be finished)
+        const twoHoursAgo = new Date(now.getTime() - 120 * 60 * 1000);
+        const fortyEightHoursAgo = new Date(now.getTime() - 48 * 60 * 60 * 1000); // Prevent querying ancient matches
+
+        const stuckMatches = await Fixture.find({
+            "fixture.fixture.status.short": "NS",
+            "fixture.fixture.date": {
+                $lte: twoHoursAgo.toISOString(),
+                $gte: fortyEightHoursAgo.toISOString()
+            }
+        }).select("fixtureId").lean();
+
+        if (stuckMatches.length > 0) {
+            console.log(`   🚨 Detected ${stuckMatches.length} matches stuck on 'NS' past 120 mins. Force-fetching final score.`);
+            const stuckIds = stuckMatches.map(m => m.fixtureId);
+            // Add stuck IDs to the finished IDs list so they are explicitly fetched
+            finishedIds = [...new Set([...finishedIds, ...stuckIds])];
+        }
 
         if (finishedIds.length > 0) {
             console.log(`   🏁 Found ${finishedIds.length} matches that just finished. Fetching final scores...`);
@@ -166,9 +186,18 @@ export async function pollLiveScores() {
     }
 }
 
-export function startLiveService() {
+export async function startLiveService() {
     console.log(`🚀 Live Score & Events Poller Started (Every ${POLL_INTERVAL / 60000} mins)`);
-    // Run immediately
-    pollLiveScores();
-    setInterval(pollLiveScores, POLL_INTERVAL);
+
+    // Recursive loop
+    while (true) {
+        try {
+            await pollLiveScores();
+            // Sleep for the interval before running again
+            await new Promise(resolve => setTimeout(resolve, POLL_INTERVAL));
+        } catch (err) {
+            console.error("❌ Poller crashed, restarting in 10s...", err.message);
+            await new Promise(resolve => setTimeout(resolve, 10000));
+        }
+    }
 }
