@@ -74,6 +74,11 @@ export default function Footer() {
                 1xBet
               </a>
             </li>
+            <li>
+              <a href="https://refpa3665.com/L?tag=d_2790675m_45415c_&site=2790675&ad=45415" target="_blank" rel="noopener noreferrer" className="hover:text-teal-400 transition-colors">
+                Melbet
+              </a>
+            </li>
           </ul>
         </div>
       </div>

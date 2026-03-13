@@ -186,11 +186,11 @@ export async function updateDailyFixtures() {
       return;
     }
 
-    // 2. Fetch fixtures for multiple days
-    const fixtures = await fetchFixturesForDates(savedLeagueIds, 7);
+    // 2. Fetch fixtures for multiple days (Reduced from 7 to 2 to save API quota)
+    const fixtures = await fetchFixturesForDates(savedLeagueIds, 2);
 
     if (fixtures.length === 0) {
-      console.log("⚠ No fixtures found for saved leagues between today and +7 days.");
+      console.log("⚠ No fixtures found for saved leagues between yesterday and +2 days.");
       return;
     }
 
@@ -227,23 +227,45 @@ export async function updateDailyFixtures() {
         console.log(`   ⏳ Processing fixture ${processedCount} / ${fixtures.length}...`);
       }
 
+      // Check if we already have this fixture
+      const existingDoc = await Fixture.findOne({ fixtureId: fixtureId }).lean();
+
+      // OPTIMIZATION: Skip prediction/odds fetch if match is finished
+      const isFinished = f.fixture?.status?.short && ["FT", "AET", "PEN"].includes(f.fixture.status.short);
+
+      let prediction = null;
+      let h2h = null;
+      let bets = [];
+
       // 1️⃣ predictions
-      const { prediction, h2h } = await fetchPrediction(fixtureId);
+      // If we already have a prediction object in the DB, OR if the match is finished, SKIP fetching it again.
+      if (existingDoc && existingDoc.prediction && Object.keys(existingDoc.prediction).length > 0) {
+        prediction = existingDoc.prediction;
+        h2h = existingDoc.h2h;
+      } else if (!isFinished) {
+        // Only fetch if missing AND match isn't finished
+        const predResult = await fetchPrediction(fixtureId);
+        prediction = predResult.prediction;
+        h2h = predResult.h2h;
+      }
 
       // 3️⃣ odds
-      const bets = await fetchOdds(fixtureId);
+      // We ALWAYS fetch fresh odds during the daily run (unless the match is finished)
+      // because odds fluctuate leading up to the match day.
+      if (!isFinished) {
+        bets = await fetchOdds(fixtureId);
+      } else if (existingDoc && existingDoc.odds && existingDoc.odds.length > 0) {
+        // If finished, just preserve whatever the final pre-match odds were
+        bets = existingDoc.odds;
+      }
 
       // 4️⃣ injuries (Weekly Forecast)
       let injuryReport = injuriesByFixture[fixtureId] || [];
 
       // 5️⃣ PRESERVE DATA LOGIC
-      // Check if we already have this fixture and if it has valid events
-      const existingDoc = await Fixture.findOne({ fixtureId: fixtureId }).lean();
-
       if (existingDoc && existingDoc.fixture && existingDoc.fixture.events && existingDoc.fixture.events.length > 0) {
         // If the NEW data 'f' has no events (or empty), keep the OLD events
         if (!f.events || f.events.length === 0) {
-          console.log(`🛡️ Preserving ${existingDoc.fixture.events.length} existing events for fixture ${fixtureId}`);
           f.events = existingDoc.fixture.events;
         }
       }
@@ -251,16 +273,7 @@ export async function updateDailyFixtures() {
       // 5.1️⃣ PRESERVE INJURIES LOGIC
       if (existingDoc && existingDoc.injuries && existingDoc.injuries.length > 0) {
         if (!injuryReport || injuryReport.length === 0) {
-          console.log(`🛡️ Preserving ${existingDoc.injuries.length} existing injuries for fixture ${fixtureId}`);
           injuryReport = existingDoc.injuries;
-        }
-      }
-
-      // 5.2️⃣ PRESERVE ODDS LOGIC (So finished matches keep their pre-match odds)
-      if (existingDoc && existingDoc.odds && existingDoc.odds.length > 0) {
-        if (!bets || bets.length === 0) {
-          console.log(`🛡️ Preserving existing odds for fixture ${fixtureId}`);
-          bets = existingDoc.odds;
         }
       }
 
@@ -294,8 +307,8 @@ export async function updateDailyFixtures() {
     // 7.5️⃣ CLEANUP OLD DATA
     await cleanupOldFixtures();
 
-    // 8️⃣ SAVE COMPLETION TIME
-    // SystemConfig is already imported at top of function
+    // 8️⃣ SAVE COMPLETION TIME (LOCK THE RUN UNTIL TOMORROW)
+    // Only happens if the *entire* loop finished successfully!
     await SystemConfig.findOneAndUpdate(
       { key: "lastDailyUpdate" },
       { value: new Date() },

@@ -22,9 +22,9 @@ export default function DateNavigator({ date }: Props) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // Generate fixed range: 14 days total (-6 to +7)
+  // Generate fixed range: 10 days total (-6 to +2)
   const dates = [];
-  for (let i = -6; i <= 7; i++) {
+  for (let i = -6; i <= 2; i++) {
     const d = new Date(today);
     d.setDate(today.getDate() + i);
     dates.push(d);
