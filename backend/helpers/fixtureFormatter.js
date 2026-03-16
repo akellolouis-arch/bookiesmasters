@@ -1,3 +1,5 @@
+import { getBestPickFromApiPrediction } from "./bestPickFromApiPrediction.js";
+
 export function formatFixtureCard(fixtureDoc) {
   const fx = fixtureDoc.fixture;
 
@@ -97,29 +99,37 @@ export function formatFixtureCard(fixtureDoc) {
   // PREDICTION HANDLING
   // -----------------------------
   let tip = "N/A";
+  let tipProbability = null;
   const pred = fixtureDoc.prediction;
 
   if (typeof pred === "string") {
     // It's a manual override or pre-calculated string
     tip = pred;
   } else if (pred && typeof pred === "object") {
-    // It's a raw API-Football prediction object
-    const { win_or_draw, winner } = pred;
-    const homeName = fx.teams.home.name;
-
-    if (win_or_draw === true) {
-      // Double Chance
-      if (winner && winner.name === homeName) {
-        tip = "1X";
-      } else {
-        tip = "X2";
-      }
+    // Prefer "highest probability among 1X2/BTTS/Ov1.5/Un3.5" when possible.
+    const best = getBestPickFromApiPrediction(pred);
+    if (best) {
+      tip = best.pick;
+      tipProbability = best.probability;
     } else {
-      // Single Choice
-      if (winner && winner.name === homeName) {
-        tip = "1";
+      // Fallback to legacy winner/win_or_draw logic
+      const { win_or_draw, winner } = pred;
+      const homeName = fx.teams.home.name;
+
+      if (win_or_draw === true) {
+        // Double Chance
+        if (winner && winner.name === homeName) {
+          tip = "1X";
+        } else {
+          tip = "X2";
+        }
       } else {
-        tip = "2";
+        // Single Choice
+        if (winner && winner.name === homeName) {
+          tip = "1";
+        } else {
+          tip = "2";
+        }
       }
     }
   }
@@ -149,5 +159,6 @@ export function formatFixtureCard(fixtureDoc) {
     creditCost: 0,
     customOdds: fixtureDoc.customOdds,
     prediction: tip, // Always return a string
+    predictionProbability: tipProbability, // 0..1 when available
   };
 }

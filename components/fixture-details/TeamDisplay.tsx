@@ -24,7 +24,10 @@ interface TeamDisplayProps {
         markets?: {
             over15?: { pick: string; probability: number };
             under35?: { pick: string; probability: number };
+            btts?: { pick: string; probability: number };
+            oneXtwo?: { home: number; draw: number; away: number };
         };
+        bestPick?: { market: string; pick: string; probability: number };
     } | null;
 }
 
@@ -130,6 +133,11 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                     {/* Goal Markets (Ov1.5 / Un3.5) */}
                     {goalPredictions?.markets && (
                         <div className="flex flex-wrap items-center justify-center gap-2 mb-2">
+                            {goalPredictions.bestPick && (
+                                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider px-2 py-1 rounded bg-orange-500/10 border border-orange-500/20 text-orange-200">
+                                    Best: {goalPredictions.bestPick.pick} {(goalPredictions.bestPick.probability * 100).toFixed(0)}%
+                                </span>
+                            )}
                             {goalPredictions.markets.over15 && (
                                 <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider px-2 py-1 rounded bg-white/5 border border-white/10 text-gray-200">
                                     Ov1.5 {(goalPredictions.markets.over15.probability * 100).toFixed(0)}%
@@ -140,6 +148,26 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                                     Un3.5 {(goalPredictions.markets.under35.probability * 100).toFixed(0)}%
                                 </span>
                             )}
+                            {goalPredictions.markets.btts && (
+                                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider px-2 py-1 rounded bg-white/5 border border-white/10 text-gray-200">
+                                    BTTS {(goalPredictions.markets.btts.probability * 100).toFixed(0)}%
+                                </span>
+                            )}
+                        </div>
+                    )}
+
+                    {/* 1X2 probabilities */}
+                    {goalPredictions?.markets?.oneXtwo && (
+                        <div className="flex items-center justify-center gap-2 mb-2">
+                            <span className="text-[10px] sm:text-xs font-bold px-2 py-1 rounded bg-white/5 border border-white/10 text-gray-200">
+                                1 {(goalPredictions.markets.oneXtwo.home * 100).toFixed(0)}%
+                            </span>
+                            <span className="text-[10px] sm:text-xs font-bold px-2 py-1 rounded bg-white/5 border border-white/10 text-gray-200">
+                                X {(goalPredictions.markets.oneXtwo.draw * 100).toFixed(0)}%
+                            </span>
+                            <span className="text-[10px] sm:text-xs font-bold px-2 py-1 rounded bg-white/5 border border-white/10 text-gray-200">
+                                2 {(goalPredictions.markets.oneXtwo.away * 100).toFixed(0)}%
+                            </span>
                         </div>
                     )}
 

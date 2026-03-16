@@ -21,7 +21,10 @@ type GoalPredictions = {
     markets?: {
         over15?: { pick: string; probability: number };
         under35?: { pick: string; probability: number };
+        btts?: { pick: string; probability: number };
+        oneXtwo?: { home: number; draw: number; away: number };
     };
+    bestPick?: { market: string; pick: string; probability: number };
 };
 
 type FixtureDetailsData = {
