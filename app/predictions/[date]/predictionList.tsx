@@ -20,6 +20,10 @@ export interface Odds {
   home: string | null;
   draw: string | null;
   away: string | null;
+  bttsYes?: string | null;
+  bttsNo?: string | null;
+  over15?: string | null;
+  under35?: string | null;
 }
 
 export interface FixtureCardProps {
@@ -35,7 +39,15 @@ export interface FixtureCardProps {
   homeTeam: Team;
   awayTeam: Team;
   odds: Odds;
-
+  prediction?: string | null;
+  predictionProbability?: number | null;
+  markets?: {
+    oneXtwo?: { home: number; draw: number; away: number } | null;
+    over15?: { pick: string; probability: number } | null;
+    under35?: { pick: string; probability: number } | null;
+    btts?: { pick: string; probability: number } | null;
+    bestPick?: { market: string; pick: string; probability: number } | null;
+  } | null;
 }
 
 export interface LeagueGroup {
@@ -115,19 +127,48 @@ export default function PredictionsList({
     });
   }
 
-  // NEW LOGIC: Filter out matches that do not have valid odds
+  // TAB STATE
+  const [activeTab, setActiveTab] = useState<"1X2" | "BTTS" | "OV15" | "UN35">("1X2");
+
+  // Thresholds per market (tune later)
+  const thresholds = {
+    "1X2": 0.55,
+    "BTTS": 0.6,
+    "OV15": 0.65,
+    "UN35": 0.75,
+  } as const;
+
+  // Filter by active tab using model probabilities; keep odds for display.
   safeData = safeData
-    .map((league) => ({
-      ...league,
-      matches: league.matches.filter((match) => {
-        // If odds object doesn't exist, hide it
-        if (!match.odds) return false;
-        // If all three base odds are missing, hide it
-        if (!match.odds.home && !match.odds.draw && !match.odds.away) return false;
-        return true;
-      }),
-    }))
-    // Optional: Filter out leagues that now have 0 matches after removing odds-less fixtures
+    .map((league) => {
+      const filteredMatches = league.matches.filter((match) => {
+        const markets = (match as any).markets;
+        if (!markets) return false;
+
+        if (activeTab === "BTTS") {
+          const p = markets.btts?.probability;
+          return typeof p === "number" && p >= thresholds.BTTS;
+        }
+
+        if (activeTab === "OV15") {
+          const p = markets.over15?.probability;
+          return typeof p === "number" && p >= thresholds.OV15;
+        }
+
+        if (activeTab === "UN35") {
+          const p = markets.under35?.probability;
+          return typeof p === "number" && p >= thresholds.UN35;
+        }
+
+        // 1X2
+        const oneXtwo = markets.oneXtwo;
+        if (!oneXtwo) return false;
+        const maxProb = Math.max(oneXtwo.home ?? 0, oneXtwo.draw ?? 0, oneXtwo.away ?? 0);
+        return maxProb >= thresholds["1X2"];
+      });
+
+      return { ...league, matches: filteredMatches };
+    })
     .filter((league) => league.matches.length > 0);
 
   // FIX: Prevent "shambolic" display on initial load by waiting for mount
@@ -148,6 +189,23 @@ export default function PredictionsList({
           No fixtures available for this date.
         </p>
       )}
+
+      {/* Tabs */}
+      <div className="flex justify-center gap-2 mb-3">
+        {(["1X2", "BTTS", "OV15", "UN35"] as const).map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`px-3 py-1 text-xs font-semibold rounded-full border ${
+              activeTab === tab
+                ? "bg-orange-500 text-white border-orange-500"
+                : "bg-transparent text-gray-300 border-white/10"
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
 
       {safeData.map((league, idx) => (
         <div key={league.id || idx}>
@@ -177,7 +235,7 @@ export default function PredictionsList({
 
           <div className="space-y-1">
             {league.matches.map((fixture) => (
-              <FixtureCard key={fixture.fixtureId} {...fixture} />
+              <FixtureCard key={fixture.fixtureId} activeTab={activeTab} {...(fixture as any)} />
             ))}
           </div>
         </div>

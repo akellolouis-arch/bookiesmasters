@@ -1,4 +1,4 @@
-import { getBestPickFromApiPrediction } from "./bestPickFromApiPrediction.js";
+import { getBestPickFromApiPrediction, getMarketsFromApiPrediction } from "./bestPickFromApiPrediction.js";
 
 export function formatFixtureCard(fixtureDoc) {
   const fx = fixtureDoc.fixture;
@@ -72,25 +72,44 @@ export function formatFixtureCard(fixtureDoc) {
   // -----------------------------
   // ODDS HANDLING
   // -----------------------------
-  let odds = { home: null, draw: null, away: null };
+  let odds = {
+    home: null,
+    draw: null,
+    away: null,
+    bttsYes: null,
+    bttsNo: null,
+    over15: null,
+    under35: null,
+  };
 
-  // ODDS HANDLING
-  // Always use Pre-match Odds (from fixtureDoc.odds) as requested
+  // Always use Pre-match Odds (from fixtureDoc.odds)
   if (fixtureDoc.odds && fixtureDoc.odds.length > 0) {
-    // The "odds" array is now filtered by aggregation to only have Match Winner
-    // We can assume the first bookmaker has the market we want
     const bookmaker = fixtureDoc.odds[0];
 
-    // Safety check just in case aggregation wasn't perfect or old data
     if (bookmaker && bookmaker.markets) {
       const matchWinner = bookmaker.markets.find(
         m => m.name && (m.name === "Match Winner" || m.id === 1)
       );
-
       if (matchWinner && matchWinner.values) {
         odds.home = matchWinner.values.find(v => v.value === "Home")?.odd || null;
         odds.draw = matchWinner.values.find(v => v.value === "Draw")?.odd || null;
         odds.away = matchWinner.values.find(v => v.value === "Away")?.odd || null;
+      }
+
+      const bttsMarket = bookmaker.markets.find(
+        m => m.name && (m.name === "Both Teams To Score" || m.name === "Both teams to score")
+      );
+      if (bttsMarket && bttsMarket.values) {
+        odds.bttsYes = bttsMarket.values.find(v => v.value === "Yes")?.odd || null;
+        odds.bttsNo = bttsMarket.values.find(v => v.value === "No")?.odd || null;
+      }
+
+      const ouMarket = bookmaker.markets.find(
+        m => m.name && (m.name === "Goals Over/Under" || m.name === "Over/Under")
+      );
+      if (ouMarket && ouMarket.values) {
+        odds.over15 = ouMarket.values.find(v => v.value === "Over 1.5")?.odd || null;
+        odds.under35 = ouMarket.values.find(v => v.value === "Under 3.5")?.odd || null;
       }
     }
   }
@@ -117,14 +136,12 @@ export function formatFixtureCard(fixtureDoc) {
       const homeName = fx.teams.home.name;
 
       if (win_or_draw === true) {
-        // Double Chance
         if (winner && winner.name === homeName) {
           tip = "1X";
         } else {
           tip = "X2";
         }
       } else {
-        // Single Choice
         if (winner && winner.name === homeName) {
           tip = "1";
         } else {
@@ -160,5 +177,6 @@ export function formatFixtureCard(fixtureDoc) {
     customOdds: fixtureDoc.customOdds,
     prediction: tip, // Always return a string
     predictionProbability: tipProbability, // 0..1 when available
+    markets: getMarketsFromApiPrediction(pred) || null,
   };
 }

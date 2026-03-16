@@ -82,38 +82,60 @@ function extractExpectedGoals(pred) {
   return { home: Math.max(0.05, h), away: Math.max(0.05, a) };
 }
 
-/**
- * Build a single "best pick" from the stored API-Football prediction object.
- * Returns null if we can't extract any probabilities.
- */
-export function getBestPickFromApiPrediction(pred) {
+export function getMarketsFromApiPrediction(pred) {
   if (!pred || typeof pred !== "object") return null;
 
-  const candidates = [];
-
   const probs1x2 = extract1x2Probs(pred);
+  const eg = extractExpectedGoals(pred);
+
+  let over15 = null;
+  let under35 = null;
+  let btts = null;
+
+  if (eg) {
+    const lambdaTotal = eg.home + eg.away;
+    const pOver15 = clamp01(1 - poissonCdf(1, lambdaTotal));
+    const pUnder35 = clamp01(poissonCdf(3, lambdaTotal));
+    const pBttsYes = clamp01(
+      1 - Math.exp(-eg.home) - Math.exp(-eg.away) + Math.exp(-(eg.home + eg.away))
+    );
+    over15 = { pick: "OV1.5", probability: pOver15 };
+    under35 = { pick: "UN3.5", probability: pUnder35 };
+    btts = { pick: "BTTS", probability: pBttsYes };
+  }
+
+  const candidates = [];
   if (probs1x2) {
     candidates.push({ market: "1X2", pick: "1", probability: probs1x2.home });
     candidates.push({ market: "1X2", pick: "X", probability: probs1x2.draw });
     candidates.push({ market: "1X2", pick: "2", probability: probs1x2.away });
   }
+  if (over15) candidates.push({ market: "OV15", pick: over15.pick, probability: over15.probability });
+  if (under35) candidates.push({ market: "UN35", pick: under35.pick, probability: under35.probability });
+  if (btts) candidates.push({ market: "BTTS", pick: btts.pick, probability: btts.probability });
 
-  const eg = extractExpectedGoals(pred);
-  if (eg) {
-    const lambdaTotal = eg.home + eg.away;
-    const pOver15 = clamp01(1 - poissonCdf(1, lambdaTotal));
-    const pUnder35 = clamp01(poissonCdf(3, lambdaTotal));
-    const pBttsYes = clamp01(1 - Math.exp(-eg.home) - Math.exp(-eg.away) + Math.exp(-(eg.home + eg.away)));
-
-    candidates.push({ market: "OV15", pick: "OV1.5", probability: pOver15 });
-    candidates.push({ market: "UN35", pick: "UN3.5", probability: pUnder35 });
-    candidates.push({ market: "BTTS", pick: "BTTS", probability: pBttsYes });
+  if (candidates.length === 0) {
+    return null;
   }
 
-  if (candidates.length === 0) return null;
-
-  // Pick the single highest-probability candidate.
   candidates.sort((a, b) => b.probability - a.probability);
-  return candidates[0];
+  const bestPick = candidates[0];
+
+  return {
+    oneXtwo: probs1x2 || null,
+    over15,
+    under35,
+    btts,
+    bestPick,
+  };
+}
+
+/**
+ * Build a single "best pick" from the stored API-Football prediction object.
+ * Returns null if we can't extract any probabilities.
+ */
+export function getBestPickFromApiPrediction(pred) {
+  const markets = getMarketsFromApiPrediction(pred);
+  return markets ? markets.bestPick : null;
 }
 

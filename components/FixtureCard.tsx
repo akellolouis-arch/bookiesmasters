@@ -11,6 +11,10 @@ export interface Odds {
   home: string | null;
   draw: string | null;
   away: string | null;
+  bttsYes?: string | null;
+  bttsNo?: string | null;
+  over15?: string | null;
+  under35?: string | null;
 }
 
 export interface Team {
@@ -28,6 +32,15 @@ export interface FixtureCardProps {
   score: string | null;
   prediction?: string | null; // This is the TIP
   liveOdds?: any; // NEW: Ephemeral live odds
+  predictionProbability?: number | null;
+  markets?: {
+    oneXtwo?: { home: number; draw: number; away: number } | null;
+    over15?: { pick: string; probability: number } | null;
+    under35?: { pick: string; probability: number } | null;
+    btts?: { pick: string; probability: number } | null;
+    bestPick?: { market: string; pick: string; probability: number } | null;
+  } | null;
+  activeTab?: "1X2" | "BTTS" | "OV15" | "UN35";
 }
 
 export default function FixtureCard({
@@ -39,6 +52,9 @@ export default function FixtureCard({
   score,
   prediction, // This is the TIP
   liveOdds,
+  predictionProbability,
+  markets,
+  activeTab = "1X2",
 }: FixtureCardProps) {
   const router = useRouter();
 
@@ -101,23 +117,38 @@ export default function FixtureCard({
   if (tipStatus === "WIN") tipColor = "text-green-500";
   if (tipStatus === "LOSS") tipColor = "text-red-500";
 
-  // Determine effective odds (Live vs Pre-match)
-  let effectiveOdds = odds || { home: null, draw: null, away: null };
+  const effectiveOdds = odds || { home: null, draw: null, away: null };
 
-  if (isLive && liveOdds && liveOdds.length > 0) {
-    const market = liveOdds[0]?.markets?.find((m: any) => m.name === "Match Winner" || m.id === 1);
-    if (market && market.values) {
-      const homeVal = market.values.find((v: any) => v.value === "Home")?.odd;
-      const drawVal = market.values.find((v: any) => v.value === "Draw")?.odd;
-      const awayVal = market.values.find((v: any) => v.value === "Away")?.odd;
+  // Decide which prediction / probability / odds to emphasize based on tab
+  let mainLabel = prediction || "N/A";
+  let mainProb: number | null = predictionProbability ?? null;
+  let secondaryOdds: string | null = null;
 
-      if (homeVal && awayVal) {
-        effectiveOdds = {
-          home: homeVal,
-          draw: drawVal || "-",
-          away: awayVal
-        };
-      }
+  if (markets) {
+    if (activeTab === "BTTS" && markets.btts) {
+      mainLabel = markets.btts.pick;
+      mainProb = markets.btts.probability;
+      secondaryOdds = odds.bttsYes ?? null;
+    } else if (activeTab === "OV15" && markets.over15) {
+      mainLabel = markets.over15.pick;
+      mainProb = markets.over15.probability;
+      secondaryOdds = odds.over15 ?? null;
+    } else if (activeTab === "UN35" && markets.under35) {
+      mainLabel = markets.under35.pick;
+      mainProb = markets.under35.probability;
+      secondaryOdds = odds.under35 ?? null;
+    } else if (activeTab === "1X2" && markets.oneXtwo) {
+      // Choose strongest 1X2 leg for label
+      const { home, draw, away } = markets.oneXtwo;
+      const max = Math.max(home ?? 0, draw ?? 0, away ?? 0);
+      if (max === home) mainLabel = "1";
+      else if (max === draw) mainLabel = "X";
+      else mainLabel = "2";
+      mainProb = max;
+      // Use match-winner odds line roughly associated with label
+      if (mainLabel === "1") secondaryOdds = odds.home ?? null;
+      else if (mainLabel === "X") secondaryOdds = odds.draw ?? null;
+      else secondaryOdds = odds.away ?? null;
     }
   }
 
@@ -170,12 +201,22 @@ export default function FixtureCard({
           </div>
         </div>
 
-        {/* ODDS / LOCKED STATE */}
-        <div className={`flex flex-row justify-between w-[90px] sm:w-[130px] shrink-0 ${isLive ? "text-white" : ""}`}>
-          <span className={`text-[10px] sm:text-xs font-bold leading-none ${getOddsColor(effectiveOdds?.home, [effectiveOdds?.home, effectiveOdds?.draw, effectiveOdds?.away])}`}>{effectiveOdds?.home ?? "-"}</span>
-          <span className={`text-[10px] sm:text-xs font-bold leading-none ${getOddsColor(effectiveOdds?.draw, [effectiveOdds?.home, effectiveOdds?.draw, effectiveOdds?.away])}`}>{effectiveOdds?.draw ?? "-"}</span>
-          <span className={`text-[10px] sm:text-xs font-bold leading-none ${getOddsColor(effectiveOdds?.away, [effectiveOdds?.home, effectiveOdds?.draw, effectiveOdds?.away])}`}>{effectiveOdds?.away ?? "-"}</span>
-        </div>
+          {/* PREDICTION SUMMARY + ODDS */}
+          <div className="flex flex-col items-end justify-center w-[90px] sm:w-[130px] shrink-0 text-right gap-1">
+            {markets?.bestPick && (
+              <span className="text-[9px] sm:text-[10px] font-semibold text-orange-300 uppercase tracking-wide">
+                {markets.bestPick.pick}{" "}
+                {typeof markets.bestPick.probability === "number"
+                  ? `${(markets.bestPick.probability * 100).toFixed(0)}%`
+                  : ""}
+              </span>
+            )}
+            {secondaryOdds && (
+              <span className="text-[9px] sm:text-[10px] text-gray-400">
+                Odds: {secondaryOdds}
+              </span>
+            )}
+          </div>
 
 
         {/* SCORE & TIP SECTION */}
@@ -195,10 +236,10 @@ export default function FixtureCard({
           </div>
 
           {/* TIP - Side by side */}
-          {prediction && prediction !== "N/A" && (
+          {mainLabel && mainLabel !== "N/A" && (
             <div className="flex items-center justify-center">
               <span className={`text-[10px] sm:text-xs font-bold uppercase tracking-widest px-1.5 py-1 rounded bg-white/5 border border-white/10 ${tipColor}`}>
-                {prediction}
+                {mainLabel}
               </span>
             </div>
           )}
