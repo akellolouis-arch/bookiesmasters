@@ -1,6 +1,7 @@
 import Fixture from "../models/Fixture.js";
 import Standing from "../models/Standing.js";
 import { calculateTeamForm } from "../helpers/formCalculator.js";
+import { predictGoalMarkets } from "../helpers/goalMarketPredictor.js";
 
 
 
@@ -141,6 +142,12 @@ export const getFixtureById = async (fixtureId) => {
             // Predictions (Standard + API Data)
             tip: calculatedTip || "N/A", // Calculated 1X/X2/1/2 or Manual Override
             apiPrediction: predictionData || null, // Full API object for Details page (Advice, %)
+            goalPredictions: predictGoalMarkets({
+                homeTeamId: matchData.teams.home.id,
+                awayTeamId: matchData.teams.away.id,
+                homeMatches: homeData.allMatches || homeData.last5Matches || [],
+                awayMatches: awayData.allMatches || awayData.last5Matches || [],
+            }),
 
             // DEBUG: Log counts
             // console.log(`[FixtureService] Home Matches: ${homeData.allMatches?.length}, Away Matches: ${awayData.allMatches?.length}`);

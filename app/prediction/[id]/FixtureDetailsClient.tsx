@@ -17,22 +17,44 @@ import BetButton from "@/components/BetButton";
 // import PredictionDisplay from "@/components/fixture-details/PredictionDisplay";
 
 
+type GoalPredictions = {
+    markets?: {
+        over15?: { pick: string; probability: number };
+        under35?: { pick: string; probability: number };
+    };
+};
+
+type FixtureDetailsData = {
+    fixtureId: number;
+    leagueId: number;
+    league: string;
+    leagueLogo: string;
+    country: string;
+    date: string;
+    displayDate: string;
+    status: string;
+    venue?: string;
+    score?: { home: number | null; away: number | null } | null;
+    tip?: string | null;
+    apiPrediction?: { advice?: string } | null;
+    odds?: any[];
+    liveOdds?: any[];
+    injuries?: any[];
+    h2h?: any[];
+    standings?: any[];
+    homeTeam: { id: number; name: string; logo: string; last5Matches?: any[]; allMatches?: any[] };
+    awayTeam: { id: number; name: string; logo: string; last5Matches?: any[]; allMatches?: any[] };
+    goalPredictions?: GoalPredictions | null;
+};
+
 interface FixtureDetailsClientProps {
-    data: any;
+    data: FixtureDetailsData;
 }
-
-import { useSession } from "next-auth/react";
-// import { Lock } from "lucide-react";
-import { useRouter } from "next/navigation";
-import useSWR from "swr";
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json().then(json => json.data));
 
 const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initialData }) => {
     // Live Polling Disabled
     // const { data } = useSWR(...)
     const data = initialData; // Use initial data only
-    const router = useRouter();
 
     return (
         <div className="min-h-screen bg-transparent text-white py-4 px-2">
@@ -48,6 +70,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                     date={data.date}
                     score={data.score}
                     tip={data.tip}
+                    goalPredictions={data.goalPredictions}
                 />
 
 
@@ -58,7 +81,9 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                     <div className="flex justify-center -mt-2 mb-4 animate-in fade-in slide-in-from-top-2">
                         <div className="text-center bg-[#1e1e1e]/50 border-b border-white/5 py-2 px-4 rounded-xl">
                             <div className="text-[10px] text-gray-500 uppercase tracking-widest mb-0.5">Prediction Advice</div>
-                            <div className="text-sm text-gray-200 font-medium italic">"{data.apiPrediction.advice}"</div>
+                            <div className="text-sm text-gray-200 font-medium italic">
+                                &quot;{data.apiPrediction.advice}&quot;
+                            </div>
                         </div>
                     </div>
                 )}

@@ -20,6 +20,12 @@ interface TeamDisplayProps {
     date: string; // ISO date string
     score?: { home: number | null; away: number | null };
     tip?: string | null;
+    goalPredictions?: {
+        markets?: {
+            over15?: { pick: string; probability: number };
+            under35?: { pick: string; probability: number };
+        };
+    } | null;
 }
 
 const TeamDisplay: React.FC<TeamDisplayProps> = ({
@@ -30,6 +36,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
     venue,
     score,
     tip,
+    goalPredictions,
 }) => {
     // Check if match is live/active to apply red color
     const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE"].includes(status);
@@ -117,6 +124,22 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                     {tip && tip !== "N/A" && (
                         <div className={`mb-2 border px-3 py-1 rounded text-xs font-bold uppercase tracking-wider animate-in fade-in slide-in-from-top-1 ${tipColorClass}`}>
                             Tip: {tip}
+                        </div>
+                    )}
+
+                    {/* Goal Markets (Ov1.5 / Un3.5) */}
+                    {goalPredictions?.markets && (
+                        <div className="flex flex-wrap items-center justify-center gap-2 mb-2">
+                            {goalPredictions.markets.over15 && (
+                                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider px-2 py-1 rounded bg-white/5 border border-white/10 text-gray-200">
+                                    Ov1.5 {(goalPredictions.markets.over15.probability * 100).toFixed(0)}%
+                                </span>
+                            )}
+                            {goalPredictions.markets.under35 && (
+                                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider px-2 py-1 rounded bg-white/5 border border-white/10 text-gray-200">
+                                    Un3.5 {(goalPredictions.markets.under35.probability * 100).toFixed(0)}%
+                                </span>
+                            )}
                         </div>
                     )}
 
