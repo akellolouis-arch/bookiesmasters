@@ -102,7 +102,7 @@ export async function pollLiveScores() {
         let finishedIds = localLiveIds.filter(id => !apiLiveIds.includes(id));
 
         // --- STUCK MATCH DETECTOR ---
-        // Find matches that are still "NS" in our DB, but kickoff was > 120 mins ago (they must be finished)
+        // 1) Find matches that are still "NS" in our DB, but kickoff was > 120 mins ago (they must be finished)
         const twoHoursAgo = new Date(now.getTime() - 120 * 60 * 1000);
         const fortyEightHoursAgo = new Date(now.getTime() - 48 * 60 * 60 * 1000); // Prevent querying ancient matches
 
@@ -119,6 +119,24 @@ export async function pollLiveScores() {
             const stuckIds = stuckMatches.map(m => m.fixtureId);
             // Add stuck IDs to the finished IDs list so they are explicitly fetched
             finishedIds = [...new Set([...finishedIds, ...stuckIds])];
+        }
+
+        // 2) Matches that are still LIVE/2H at 90' long after kickoff
+        // Some fixtures get stuck at 90' on the API. If kickoff was > 130 mins ago, force-fetch them as finished.
+        const twoHoursTenAgo = new Date(now.getTime() - 130 * 60 * 1000);
+        const stuckLiveMatches = await Fixture.find({
+            "fixture.fixture.status.short": { $in: LIVE_STATUSES },
+            "fixture.fixture.status.elapsed": { $gte: 90 },
+            "fixture.fixture.date": {
+                $lte: twoHoursTenAgo.toISOString(),
+                $gte: fortyEightHoursAgo.toISOString()
+            }
+        }).select("fixtureId").lean();
+
+        if (stuckLiveMatches.length > 0) {
+            console.log(`   🚨 Detected ${stuckLiveMatches.length} matches stuck LIVE at 90'+. Force-fetching final score.`);
+            const stuckLiveIds = stuckLiveMatches.map(m => m.fixtureId);
+            finishedIds = [...new Set([...finishedIds, ...stuckLiveIds])];
         }
 
         if (finishedIds.length > 0) {
@@ -150,6 +168,24 @@ export async function pollLiveScores() {
                                 // 'assist' is intentionally omitted here
                             }))
                         : [];
+
+                    // If API still reports a LIVE status long after kickoff, force-close it.
+                    const kickoff = new Date(match?.fixture?.date);
+                    const isVeryLate = kickoff.toISOString() <= twoHoursTenAgo.toISOString();
+                    const isStillLive = LIVE_STATUSES.includes(match?.fixture?.status?.short);
+                    if (isVeryLate && isStillLive && (match?.fixture?.status?.elapsed ?? 0) >= 90) {
+                        match.fixture.status = {
+                            ...match.fixture.status,
+                            long: "Match Finished",
+                            short: "FT",
+                            elapsed: 90,
+                            extra: null
+                        };
+                        // If fulltime score is missing but goals exist, fill it for UI.
+                        if (match?.score?.fulltime && (match.score.fulltime.home == null || match.score.fulltime.away == null)) {
+                            match.score.fulltime = { home: match.goals?.home ?? null, away: match.goals?.away ?? null };
+                        }
+                    }
 
                     bulkOps.push({
                         updateOne: {

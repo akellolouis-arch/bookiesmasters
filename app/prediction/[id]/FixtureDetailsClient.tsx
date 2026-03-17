@@ -17,16 +17,6 @@ import BetButton from "@/components/BetButton";
 // import PredictionDisplay from "@/components/fixture-details/PredictionDisplay";
 
 
-type GoalPredictions = {
-    markets?: {
-        over15?: { pick: string; probability: number };
-        under35?: { pick: string; probability: number };
-        btts?: { pick: string; probability: number };
-        oneXtwo?: { home: number; draw: number; away: number };
-    };
-    bestPick?: { market: string; pick: string; probability: number };
-};
-
 type FixtureDetailsData = {
     fixtureId: number;
     leagueId: number;
@@ -47,7 +37,6 @@ type FixtureDetailsData = {
     standings?: any[];
     homeTeam: { id: number; name: string; logo: string; last5Matches?: any[]; allMatches?: any[] };
     awayTeam: { id: number; name: string; logo: string; last5Matches?: any[]; allMatches?: any[] };
-    goalPredictions?: GoalPredictions | null;
 };
 
 interface FixtureDetailsClientProps {
@@ -73,7 +62,6 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                     date={data.date}
                     score={data.score}
                     tip={data.tip}
-                    goalPredictions={data.goalPredictions}
                 />
 
 
