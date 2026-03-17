@@ -26,6 +26,10 @@ async function run() {
         await mongoose.connect(MONGO_URI);
         console.log("✅ Connected to MongoDB");
 
+        console.log("🧹 Deleting all saved leagues...");
+        await League.deleteMany({});
+        console.log("✅ All leagues deleted.");
+
         console.log("🌍 Fetching ALL leagues from API-Football...");
         const res = await api.get("/leagues");
 
@@ -37,53 +41,38 @@ async function run() {
         const allLeagues = res.data.response || [];
         console.log(`📊 Found ${allLeagues.length} total leagues in the API.`);
 
-        const currentYear = new Date().getFullYear();
         let savedCount = 0;
         let skippedCount = 0;
 
-        console.log(`🔍 Filtering for leagues that support odds data in the ${currentYear} season...`);
+        console.log(`🔍 Filtering for leagues whose CURRENT season supports predictions + odds...`);
 
         for (const l of allLeagues) {
-            // Find the current or most recent season
-            const latestSeason = l.seasons.find(s => s.year === currentYear) || l.seasons[l.seasons.length - 1];
+            const currentSeason = Array.isArray(l.seasons) ? l.seasons.find(s => s.current === true) : null;
 
-            // Check if this latest season explicitly has BOTH odds coverage AND live event coverage
-            const hasOdds = latestSeason && latestSeason.coverage && latestSeason.coverage.odds === true;
-            const hasLiveScores = latestSeason && latestSeason.coverage && latestSeason.coverage.fixtures && latestSeason.coverage.fixtures.events === true;
+            const hasPredictions = currentSeason?.coverage?.predictions === true;
+            const hasOdds = currentSeason?.coverage?.odds === true;
 
-            if (hasOdds && hasLiveScores) {
-                // Save it to MongoDB
-                await League.findOneAndUpdate(
-                    { "league.id": l.league.id },
-                    {
-                        league: {
-                            id: l.league.id,
-                            name: l.league.name,
-                            type: l.league.type,
-                            logo: l.league.logo
-                        },
-                        country: {
-                            name: l.country.name,
-                            code: l.country.code,
-                            flag: l.country.flag
-                        },
-                        seasons: l.seasons, // Save full season array to match schema
-                        active: true,
-                        odds: true
-                    },
-                    { upsert: true, new: true }
-                );
-                savedCount++;
-            } else {
-                // If the league is already in our DB but shouldn't be anymore (e.g. no live scores), delete it.
-                await League.deleteOne({ "league.id": l.league.id });
+            if (!currentSeason || !hasPredictions || !hasOdds) {
                 skippedCount++;
+                continue;
             }
+
+            await League.create({
+                league: l.league,
+                country: l.country,
+                seasons: l.seasons,
+                active: true,
+                odds: true,
+                predictions: true,
+                season: currentSeason.year
+            });
+
+            savedCount++;
         }
 
         console.log(`\n🎉 Import Complete!`);
-        console.log(`✅ Saved/Updated: ${savedCount} leagues that support BOTH odds and live scores.`);
-        console.log(`⏭️ Skipped/Removed: ${skippedCount} leagues that DO NOT support both.`);
+        console.log(`✅ Saved: ${savedCount} leagues that support BOTH odds and predictions in current season.`);
+        console.log(`⏭️ Skipped: ${skippedCount} leagues that do not.`);
 
         process.exit(0);
     } catch (err) {
