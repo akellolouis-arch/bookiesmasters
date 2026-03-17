@@ -36,6 +36,17 @@ function getDatePlus(days) {
   return `${yyyy}-${mm}-${dd}`;
 }
 
+function toUtcDateOnly(dateTimeIso) {
+  if (!dateTimeIso) return null;
+  // API-Football fixture date is ISO; we compare by UTC calendar day.
+  const d = new Date(dateTimeIso);
+  if (Number.isNaN(d.getTime())) return null;
+  const yyyy = d.getUTCFullYear();
+  const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
+  const dd = String(d.getUTCDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+}
+
 /* ---------------------------------------------
    LOAD SAVED LEAGUES FROM MONGO
 --------------------------------------------- */
@@ -107,25 +118,16 @@ async function fetchPrediction(fixtureId) {
 }
 
 /* ---------------------------------------------
-   FETCH ODDS (FALLBACK LOGIC)
+   FETCH ODDS (1xBet ONLY)
 --------------------------------------------- */
 async function fetchOdds(fixtureId) {
   try {
-    // Attempt Bet365 (8)
+    // Use 1xBet (11) as the single source of odds
     let res = await api.get(`/odds`, {
-      params: { fixture: fixtureId, bookmaker: 8 }
+      params: { fixture: fixtureId, bookmaker: 11 }
     });
 
     let odds = res.data?.response?.[0];
-
-    // If Bet365 doesn't have odds, fallback to 1xBet (11)
-    if (!odds || !odds.bookmakers || odds.bookmakers.length === 0) {
-      console.log(`   🔄 Bet365 odds missing for ${fixtureId}, falling back to 1xBet...`);
-      res = await api.get(`/odds`, {
-        params: { fixture: fixtureId, bookmaker: 11 }
-      });
-      odds = res.data?.response?.[0];
-    }
 
     if (!odds || !odds.bookmakers) return [];
 
@@ -151,8 +153,10 @@ async function fetchOdds(fixtureId) {
 
 /* ---------------------------------------------
    MAIN: UPDATE DAILY FIXTURES
---------------------------------------------- */
-export async function updateDailyFixtures() {
+   - force: bypass last-run time check when true
+   - recordCompletion: whether to update lastDailyUpdate timestamp
+---------------------------------------------- */
+export async function updateDailyFixtures(force = false, recordCompletion = true) {
   try {
     // MongoDB should already be connected by server.js
     console.log("📡 Updating fixtures from today up to +7 days...\n");
@@ -167,9 +171,9 @@ export async function updateDailyFixtures() {
     const lastRunConfig = await SystemConfig.findOne({ key: "lastDailyUpdate" });
     const now = new Date();
 
-    if (lastRunConfig && lastRunConfig.value) {
+    if (!force && lastRunConfig && lastRunConfig.value) {
       const lastRun = new Date(lastRunConfig.value);
-      const hoursCheck = 18; // Only allow run if > 18 hours have passed
+      const hoursCheck = 24; // Only allow run if > 24 hours have passed
       const msSinceLast = now - lastRun;
 
       if (msSinceLast < hoursCheck * 60 * 60 * 1000) {
@@ -219,6 +223,10 @@ export async function updateDailyFixtures() {
     }
 
     // 3. Process each fixture
+    const backfillRecentFinished = process.env.BACKFILL_RECENT_FINISHED === "1";
+    const yesterdayDate = getDatePlus(-1);
+    const todayDate = getDatePlus(0);
+
     let processedCount = 0;
     for (const f of fixtures) {
       const fixtureId = f.fixture.id;
@@ -232,6 +240,9 @@ export async function updateDailyFixtures() {
 
       // OPTIMIZATION: Skip prediction/odds fetch if match is finished
       const isFinished = f.fixture?.status?.short && ["FT", "AET", "PEN"].includes(f.fixture.status.short);
+      const fixtureDateOnly = toUtcDateOnly(f.fixture?.date);
+      const isRecentFixture = fixtureDateOnly === yesterdayDate || fixtureDateOnly === todayDate;
+      const allowFetchForFinished = backfillRecentFinished && isRecentFixture;
 
       let prediction = null;
       let h2h = null;
@@ -242,21 +253,25 @@ export async function updateDailyFixtures() {
       if (existingDoc && existingDoc.prediction && Object.keys(existingDoc.prediction).length > 0) {
         prediction = existingDoc.prediction;
         h2h = existingDoc.h2h;
-      } else if (!isFinished) {
+      } else if (!isFinished || allowFetchForFinished) {
         // Only fetch if missing AND match isn't finished
+        // OR we're doing a one-off backfill for yesterday's finished fixtures
         const predResult = await fetchPrediction(fixtureId);
         prediction = predResult.prediction;
         h2h = predResult.h2h;
       }
 
-      // 3️⃣ odds
-      // We ALWAYS fetch fresh odds during the daily run (unless the match is finished)
-      // because odds fluctuate leading up to the match day.
+    // 3️⃣ odds
+    // We ALWAYS fetch fresh odds from 1xBet during the daily run (unless the match is finished)
+    // because odds fluctuate leading up to the match day.
       if (!isFinished) {
         bets = await fetchOdds(fixtureId);
       } else if (existingDoc && existingDoc.odds && existingDoc.odds.length > 0) {
         // If finished, just preserve whatever the final pre-match odds were
         bets = existingDoc.odds;
+      } else if (allowFetchForFinished) {
+        // One-off backfill for yesterday's finished fixtures
+        bets = await fetchOdds(fixtureId);
       }
 
       // 4️⃣ injuries (Weekly Forecast)
@@ -308,12 +323,14 @@ export async function updateDailyFixtures() {
     await cleanupOldFixtures();
 
     // 8️⃣ SAVE COMPLETION TIME (LOCK THE RUN UNTIL TOMORROW)
-    // Only happens if the *entire* loop finished successfully!
-    await SystemConfig.findOneAndUpdate(
-      { key: "lastDailyUpdate" },
-      { value: new Date() },
-      { upsert: true }
-    );
+    // Only happens if the *entire* loop finished successfully and recordCompletion is true
+    if (recordCompletion) {
+      await SystemConfig.findOneAndUpdate(
+        { key: "lastDailyUpdate" },
+        { value: new Date() },
+        { upsert: true }
+      );
+    }
 
     console.log("\n🎉 FULL DAILY UPDATE COMPLETED");
 
@@ -328,12 +345,12 @@ export function startDailyScheduler() {
   // Delay the first run by 5 minutes to allow server startup/health-checks to pass
   setTimeout(() => {
     console.log("⏰ Starting initial Daily Update...");
-    updateDailyFixtures();
+    updateDailyFixtures(false, true);
   }, 5 * 60 * 1000);
 
   // Then schedule the daily interval
   setInterval(() => {
-    updateDailyFixtures();
+    updateDailyFixtures(false, true);
   }, 24 * 60 * 60 * 1000);
 }
 
@@ -344,8 +361,12 @@ if (process.argv[1].includes("dailyUpdateService.js")) {
   const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/bookiesmasters";
   mongoose.connect(MONGO_URI)
     .then(() => {
-      console.log("🔌 Connected to MongoDB for manual run");
-      return updateDailyFixtures();
+      const backfillRecentFinished = process.env.BACKFILL_RECENT_FINISHED === "1";
+      console.log(
+        `🔌 Connected to MongoDB for manual run (FORCED, does not shift scheduled daily run)${backfillRecentFinished ? " + BACKFILL_RECENT_FINISHED" : ""}`
+      );
+      // force = true, recordCompletion = false
+      return updateDailyFixtures(true, false);
     })
     .then(() => {
       console.log("✅ Manual run complete");
