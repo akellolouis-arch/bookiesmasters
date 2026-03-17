@@ -1,4 +1,4 @@
-import { getBestPickFromApiPrediction, getMarketsFromApiPrediction } from "./bestPickFromApiPrediction.js";
+// API-Football prediction only (1, 2, 1X, X2) — no OV15/UN35/BTTS best-pick logic
 
 export function formatFixtureCard(fixtureDoc) {
   const fx = fixtureDoc.fixture;
@@ -115,39 +115,21 @@ export function formatFixtureCard(fixtureDoc) {
   }
 
   // -----------------------------
-  // PREDICTION HANDLING
+  // PREDICTION HANDLING — API-Football only (1, 2, 1X, X2)
   // -----------------------------
   let tip = "N/A";
-  let tipProbability = null;
   const pred = fixtureDoc.prediction;
 
   if (typeof pred === "string") {
-    // It's a manual override or pre-calculated string
     tip = pred;
   } else if (pred && typeof pred === "object") {
-    // Prefer "highest probability among 1X2/BTTS/Ov1.5/Un3.5" when possible.
-    const best = getBestPickFromApiPrediction(pred);
-    if (best) {
-      tip = best.pick;
-      tipProbability = best.probability;
-    } else {
-      // Fallback to legacy winner/win_or_draw logic
-      const { win_or_draw, winner } = pred;
-      const homeName = fx.teams.home.name;
+    const { win_or_draw, winner } = pred;
+    const homeName = fx.teams.home.name;
 
-      if (win_or_draw === true) {
-        if (winner && winner.name === homeName) {
-          tip = "1X";
-        } else {
-          tip = "X2";
-        }
-      } else {
-        if (winner && winner.name === homeName) {
-          tip = "1";
-        } else {
-          tip = "2";
-        }
-      }
+    if (win_or_draw === true) {
+      tip = winner && winner.name === homeName ? "1X" : "X2";
+    } else {
+      tip = winner && winner.name === homeName ? "1" : "2";
     }
   }
 
@@ -172,11 +154,9 @@ export function formatFixtureCard(fixtureDoc) {
       logo: fx.teams.away.logo
     },
     odds,
-    isVip: false, // Force false
+    isVip: false,
     creditCost: 0,
     customOdds: fixtureDoc.customOdds,
-    prediction: tip, // Always return a string
-    predictionProbability: tipProbability, // 0..1 when available
-    markets: getMarketsFromApiPrediction(pred) || null,
+    prediction: tip,
   };
 }

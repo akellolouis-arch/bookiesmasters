@@ -30,17 +30,8 @@ export interface FixtureCardProps {
   awayTeam: Team;
   odds: Odds;
   score: string | null;
-  prediction?: string | null; // This is the TIP
-  liveOdds?: any; // NEW: Ephemeral live odds
-  predictionProbability?: number | null;
-  markets?: {
-    oneXtwo?: { home: number; draw: number; away: number } | null;
-    over15?: { pick: string; probability: number } | null;
-    under35?: { pick: string; probability: number } | null;
-    btts?: { pick: string; probability: number } | null;
-    bestPick?: { market: string; pick: string; probability: number } | null;
-  } | null;
-  activeTab?: "1X2" | "BTTS" | "OV15" | "UN35";
+  prediction?: string | null;
+  liveOdds?: unknown;
 }
 
 export default function FixtureCard({
@@ -50,18 +41,12 @@ export default function FixtureCard({
   awayTeam,
   odds,
   score,
-  prediction, // This is the TIP
+  prediction,
   liveOdds,
-  predictionProbability,
-  markets,
-  activeTab = "1X2",
 }: FixtureCardProps) {
   const router = useRouter();
-
-  // FIX: Robust Live Status Check
   const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(status) || status.includes("'");
 
-  // helper function (Aligned with BetButton.tsx)
   function getOddsColor(
     value: string | null,
     allOdds: (string | null)[]
@@ -117,38 +102,19 @@ export default function FixtureCard({
   if (tipStatus === "WIN") tipColor = "text-green-500";
   if (tipStatus === "LOSS") tipColor = "text-red-500";
 
-  const effectiveOdds = odds || { home: null, draw: null, away: null };
-
-  // Decide which prediction / probability / odds to emphasize based on tab
-  let mainLabel = prediction || "N/A";
-  let mainProb: number | null = predictionProbability ?? null;
-  let secondaryOdds: string | null = null;
-
-  if (markets) {
-    if (activeTab === "BTTS" && markets.btts) {
-      mainLabel = markets.btts.pick;
-      mainProb = markets.btts.probability;
-      secondaryOdds = odds.bttsYes ?? null;
-    } else if (activeTab === "OV15" && markets.over15) {
-      mainLabel = markets.over15.pick;
-      mainProb = markets.over15.probability;
-      secondaryOdds = odds.over15 ?? null;
-    } else if (activeTab === "UN35" && markets.under35) {
-      mainLabel = markets.under35.pick;
-      mainProb = markets.under35.probability;
-      secondaryOdds = odds.under35 ?? null;
-    } else if (activeTab === "1X2" && markets.oneXtwo) {
-      // Choose strongest 1X2 leg for label
-      const { home, draw, away } = markets.oneXtwo;
-      const max = Math.max(home ?? 0, draw ?? 0, away ?? 0);
-      if (max === home) mainLabel = "1";
-      else if (max === draw) mainLabel = "X";
-      else mainLabel = "2";
-      mainProb = max;
-      // Use match-winner odds line roughly associated with label
-      if (mainLabel === "1") secondaryOdds = odds.home ?? null;
-      else if (mainLabel === "X") secondaryOdds = odds.draw ?? null;
-      else secondaryOdds = odds.away ?? null;
+  // Use live odds when available, else pre-match 1X2 odds
+  let effectiveOdds = odds || { home: null, draw: null, away: null };
+  if (isLive && liveOdds && Array.isArray(liveOdds) && liveOdds.length > 0) {
+    const market = (liveOdds[0] as { markets?: Array<{ name?: string; id?: number; values?: Array<{ value?: string; odd?: string }> }> })?.markets?.find(
+      (m: { name?: string; id?: number }) => m?.name === "Match Winner" || m?.id === 1
+    );
+    if (market?.values) {
+      const homeVal = market.values.find((v: { value?: string }) => v?.value === "Home")?.odd;
+      const drawVal = market.values.find((v: { value?: string }) => v?.value === "Draw")?.odd;
+      const awayVal = market.values.find((v: { value?: string }) => v?.value === "Away")?.odd;
+      if (homeVal != null && awayVal != null) {
+        effectiveOdds = { home: homeVal, draw: drawVal ?? null, away: awayVal };
+      }
     }
   }
 
@@ -201,45 +167,33 @@ export default function FixtureCard({
           </div>
         </div>
 
-          {/* PREDICTION SUMMARY + ODDS */}
-          <div className="flex flex-col items-end justify-center w-[90px] sm:w-[130px] shrink-0 text-right gap-1">
-            {markets?.bestPick && (
-              <span className="text-[9px] sm:text-[10px] font-semibold text-orange-300 uppercase tracking-wide">
-                {markets.bestPick.pick}{" "}
-                {typeof markets.bestPick.probability === "number"
-                  ? `${(markets.bestPick.probability * 100).toFixed(0)}%`
-                  : ""}
-              </span>
-            )}
-            {secondaryOdds && (
-              <span className="text-[9px] sm:text-[10px] text-gray-400">
-                Odds: {secondaryOdds}
-              </span>
-            )}
-          </div>
+        {/* 1X2 ODDS */}
+        <div className={`flex flex-row justify-between w-[90px] sm:w-[130px] shrink-0 ${isLive ? "text-white" : ""}`}>
+          <span className={`text-[10px] sm:text-xs font-bold leading-none ${getOddsColor(effectiveOdds?.home ?? null, [effectiveOdds?.home ?? null, effectiveOdds?.draw ?? null, effectiveOdds?.away ?? null])}`}>
+            {effectiveOdds?.home ?? "-"}
+          </span>
+          <span className={`text-[10px] sm:text-xs font-bold leading-none ${getOddsColor(effectiveOdds?.draw ?? null, [effectiveOdds?.home ?? null, effectiveOdds?.draw ?? null, effectiveOdds?.away ?? null])}`}>
+            {effectiveOdds?.draw ?? "-"}
+          </span>
+          <span className={`text-[10px] sm:text-xs font-bold leading-none ${getOddsColor(effectiveOdds?.away ?? null, [effectiveOdds?.home ?? null, effectiveOdds?.draw ?? null, effectiveOdds?.away ?? null])}`}>
+            {effectiveOdds?.away ?? "-"}
+          </span>
+        </div>
 
-
-        {/* SCORE & TIP SECTION */}
+        {/* SCORE & TIP */}
         <div className="flex items-center gap-2 w-[60px] sm:w-[75px] justify-end shrink-0">
-
-          {/* VERTICAL SCORES */}
           <div className={`flex flex-col gap-1 items-end justify-center font-bold text-[11px] sm:text-xs leading-none ${isLive ? "text-red-500" : "text-gray-200"}`}>
             {score ? (
               <>
                 <span className="h-3.5 flex items-center">{score.split(" - ")[0]}</span>
                 <span className="h-3.5 flex items-center">{score.split(" - ")[1]}</span>
               </>
-            ) : (
-              /* Empty spacer to keep alignment if needed, or just nothing as requested */
-              null
-            )}
+            ) : null}
           </div>
-
-          {/* TIP - Side by side */}
-          {mainLabel && mainLabel !== "N/A" && (
+          {prediction && prediction !== "N/A" && (
             <div className="flex items-center justify-center">
               <span className={`text-[10px] sm:text-xs font-bold uppercase tracking-widest px-1.5 py-1 rounded bg-white/5 border border-white/10 ${tipColor}`}>
-                {mainLabel}
+                {prediction}
               </span>
             </div>
           )}

@@ -30,24 +30,11 @@ export interface FixtureCardProps {
   fixtureId: number;
   status: string;
   score: string | null;
-  league: {
-    id: number;
-    name: string;
-    logo: string;
-    country: string;
-  };
+  league: { id: number; name: string; logo: string; country: string };
   homeTeam: Team;
   awayTeam: Team;
   odds: Odds;
   prediction?: string | null;
-  predictionProbability?: number | null;
-  markets?: {
-    oneXtwo?: { home: number; draw: number; away: number } | null;
-    over15?: { pick: string; probability: number } | null;
-    under35?: { pick: string; probability: number } | null;
-    btts?: { pick: string; probability: number } | null;
-    bestPick?: { market: string; pick: string; probability: number } | null;
-  } | null;
 }
 
 export interface LeagueGroup {
@@ -110,65 +97,31 @@ export default function PredictionsList({
   let safeData: LeagueGroup[] = initialData;
 
   if (Array.isArray(backendFixtures)) {
-    // Transform raw API response to match component state
-    safeData = backendFixtures.map((f: any) => {
-      // Case 1: API Data (Nested: f.league.name)
+    safeData = backendFixtures.map((f: { league?: { id: number; name: string; logo: string; country: string }; matches?: unknown[] }) => {
       if (f.league) {
         return {
           id: f.league.id,
           name: f.league.name,
           logo: f.league.logo,
           country: f.league.country,
-          matches: f.matches
+          matches: f.matches ?? []
         };
       }
-      // Case 2: Fallback/Initial Data (Already Flattened: f.name)
-      return f;
+      return f as LeagueGroup;
     });
   }
 
-  // TAB STATE
-  const [activeTab, setActiveTab] = useState<"1X2" | "BTTS" | "OV15" | "UN35">("1X2");
-
-  // Thresholds per market (tune later)
-  const thresholds = {
-    "1X2": 0.55,
-    "BTTS": 0.6,
-    "OV15": 0.65,
-    "UN35": 0.75,
-  } as const;
-
-  // Filter by active tab using model probabilities; keep odds for display.
+  // Show only fixtures that have at least one 1X2 odd (or are live/finished)
   safeData = safeData
-    .map((league) => {
-      const filteredMatches = league.matches.filter((match) => {
-        const markets = (match as any).markets;
-        if (!markets) return false;
-
-        if (activeTab === "BTTS") {
-          const p = markets.btts?.probability;
-          return typeof p === "number" && p >= thresholds.BTTS;
-        }
-
-        if (activeTab === "OV15") {
-          const p = markets.over15?.probability;
-          return typeof p === "number" && p >= thresholds.OV15;
-        }
-
-        if (activeTab === "UN35") {
-          const p = markets.under35?.probability;
-          return typeof p === "number" && p >= thresholds.UN35;
-        }
-
-        // 1X2
-        const oneXtwo = markets.oneXtwo;
-        if (!oneXtwo) return false;
-        const maxProb = Math.max(oneXtwo.home ?? 0, oneXtwo.draw ?? 0, oneXtwo.away ?? 0);
-        return maxProb >= thresholds["1X2"];
-      });
-
-      return { ...league, matches: filteredMatches };
-    })
+    .map((league) => ({
+      ...league,
+      matches: league.matches.filter((match: FixtureCardProps) => {
+        const o = match.odds;
+        if (!o) return false;
+        if (!o.home && !o.draw && !o.away) return false;
+        return true;
+      }),
+    }))
     .filter((league) => league.matches.length > 0);
 
   // FIX: Prevent "shambolic" display on initial load by waiting for mount
@@ -189,23 +142,6 @@ export default function PredictionsList({
           No fixtures available for this date.
         </p>
       )}
-
-      {/* Tabs */}
-      <div className="flex justify-center gap-2 mb-3">
-        {(["1X2", "BTTS", "OV15", "UN35"] as const).map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-3 py-1 text-xs font-semibold rounded-full border ${
-              activeTab === tab
-                ? "bg-orange-500 text-white border-orange-500"
-                : "bg-transparent text-gray-300 border-white/10"
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
 
       {safeData.map((league, idx) => (
         <div key={league.id || idx}>
@@ -235,7 +171,7 @@ export default function PredictionsList({
 
           <div className="space-y-1">
             {league.matches.map((fixture) => (
-              <FixtureCard key={fixture.fixtureId} activeTab={activeTab} {...(fixture as any)} />
+              <FixtureCard key={fixture.fixtureId} {...fixture} />
             ))}
           </div>
         </div>
