@@ -192,7 +192,9 @@ export default function FixtureCard({
           </div>
           {prediction && prediction !== "N/A" && (
             <div className="flex items-center justify-center">
-              <span className={`text-[10px] sm:text-xs font-bold uppercase tracking-widest px-1.5 py-1 rounded bg-white/5 border border-white/10 ${tipColor}`}>
+              <span
+                className={`w-[40px] sm:w-[52px] h-[24px] sm:h-[26px] flex items-center justify-center text-[10px] sm:text-xs font-bold uppercase tracking-widest rounded bg-white/5 border border-white/10 ${tipColor} leading-none overflow-hidden`}
+              >
                 {prediction}
               </span>
             </div>
