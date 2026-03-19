@@ -131,7 +131,7 @@ export default function DateNavigator({ date }: Props) {
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
               placeholder="Team"
-              className="w-28 h-8 bg-[#1F1F1F] text-white text-xs px-2 rounded-md border border-white/10 outline-none focus:border-orange-400"
+              className="w-28 h-8 bg-[#1F1F1F] text-white text-xs px-2 rounded-md border border-white/10 outline-none focus:border-white/10"
             />
             <button
               type="submit"
@@ -143,9 +143,7 @@ export default function DateNavigator({ date }: Props) {
             <button
               type="button"
               onClick={() => {
-                if (searchText.trim()) {
-                  clearSearch();
-                }
+                clearSearch();
                 setIsSearchOpen(false);
               }}
               className="w-8 h-8 bg-[#1F1F1F] text-gray-300 rounded-md border border-white/5 flex items-center justify-center hover:bg-[#2F2F2F] transition-colors text-xs font-bold"

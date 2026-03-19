@@ -2,7 +2,6 @@
 
 import useSWR from "swr";
 import Image from "next/image";
-import Link from "next/link";
 import FixtureCard from "@/components/FixtureCard";
 import Loader from "@/components/Loader";
 import { useState, useEffect } from "react";
@@ -157,17 +156,18 @@ export default function PredictionsList({
     <div className="max-w-xl mx-auto px-1 py-2 space-y-1">
       {safeData.length === 0 && (
         <p className="text-center py-8 text-gray-500">
-          {query ? `No fixtures found for "${query}" on this date.` : "No fixtures available for this date."}
+          {query
+            ? (date === "live"
+              ? `No live fixture for "${query}".`
+              : `No fixtures for "${query}" on this date.`)
+            : "No fixtures available for this date."}
         </p>
       )}
 
       {safeData.map((league, idx) => (
         <div key={league.id || idx}>
           <div className="flex items-center gap-1 mb-1">
-            <Link
-              href={`/league/${league.id}?name=${encodeURIComponent(league.name)}&logo=${encodeURIComponent(league.logo)}`}
-              className="flex items-center gap-1 hover:bg-white/5 p-1 rounded transition cursor-pointer"
-            >
+            <div className="flex items-center gap-1 p-1 rounded">
               {league.logo && (
                 <Image
                   src={league.logo}
@@ -179,12 +179,12 @@ export default function PredictionsList({
                 />
               )}
               <div className="flex flex-col">
-                <span className="font-semibold text-xs text-gray-300 hover:text-orange-400 transition-colors">
-                  {league.name} ›
+                <span className="font-semibold text-xs text-gray-300">
+                  {league.name}
                 </span>
                 <span className="text-xs text-gray-400">{league.country}</span>
               </div>
-            </Link>
+            </div>
           </div>
 
           <div className="space-y-1">

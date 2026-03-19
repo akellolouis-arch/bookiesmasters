@@ -5,7 +5,6 @@ import "./globals.css";
 
 
 import Navbar from "@/components/Navbar";
-import TopLeaguesRibbon from "@/components/TopLeaguesRibbon";
 import Footer from "@/components/Footer";
 
 
@@ -117,7 +116,6 @@ export default function RootLayout({
         </Script>
 
         <Navbar />
-        <TopLeaguesRibbon />
         <main className="min-h-screen">{children}</main>
 
         <Footer />

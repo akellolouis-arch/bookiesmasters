@@ -8,7 +8,6 @@ import { startDailyScheduler } from "./services/dailyUpdateService.js";
 import { startLiveService } from "./services/liveScoreService.js";
 // import { startStandingsPoller } from "./services/standingsPollingService.js";
 
-import leagueRoutes from "./routes/leagueRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 
@@ -55,7 +54,6 @@ mongoose
 // ROUTES
 // ---------------------------------------------
 app.use("/api/fixtures", fixtureRoutes);
-app.use("/api/leagues", leagueRoutes);
 // app.use("/api/webhooks", webhookRoutes); // Webhooks disabled due to payment removal
 app.use("/api/user", userRoutes);
 app.use("/api/payment", paymentRoutes); // New Manual Payments
