@@ -246,4 +246,77 @@ export async function getLeagueFixtures(leagueId) {
   ];
 }
 
-// getLiveFixtures removed
+export async function getLiveFixturesGroupedByLeague() {
+  const LIVE_STATUSES = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"];
+
+  const liveFixtures = await Fixture.aggregate([
+    {
+      $match: {
+        "fixture.fixture.status.short": { $in: LIVE_STATUSES }
+      }
+    },
+    {
+      $project: {
+        fixtureId: 1,
+        "fixture.fixture": 1,
+        "fixture.league": 1,
+        "fixture.teams": 1,
+        "fixture.goals": 1,
+        "fixture.score": 1,
+        "fixture.status": 1,
+        livescore: 1,
+        prediction: 1,
+        customPrediction: 1,
+        customOdds: 1,
+        odds: {
+          $map: {
+            input: { $slice: ["$odds", 1] },
+            as: "bookmaker",
+            in: {
+              id: "$$bookmaker.id",
+              name: "$$bookmaker.name",
+              logo: "$$bookmaker.logo",
+              markets: {
+                $filter: {
+                  input: "$$bookmaker.markets",
+                  as: "market",
+                  cond: {
+                    $or: [
+                      { $eq: ["$$market.name", "Match Winner"] },
+                      { $eq: ["$$market.id", 1] }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      $sort: { "fixture.league.id": 1, "fixture.fixture.date": 1 }
+    }
+  ]);
+
+  const grouped = {};
+  liveFixtures.forEach((doc) => {
+    const league = doc.fixture.league;
+    const leagueId = league.id;
+
+    if (!grouped[leagueId]) {
+      grouped[leagueId] = {
+        league: {
+          id: league.id,
+          name: league.name,
+          logo: league.logo,
+          country: league.country
+        },
+        matches: []
+      };
+    }
+
+    grouped[leagueId].matches.push(formatFixtureCard(doc));
+  });
+
+  return Object.values(grouped);
+}

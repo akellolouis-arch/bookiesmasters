@@ -1,4 +1,4 @@
-import { getFixturesGroupedByLeague } from "../services/fixtureCardService.js";
+import { getFixturesGroupedByLeague, getLiveFixturesGroupedByLeague } from "../services/fixtureCardService.js";
 
 export async function fetchFixtureCardsByDate(req, res) {
   try {
@@ -19,6 +19,20 @@ export async function fetchFixtureCardsByDate(req, res) {
     });
   } catch (err) {
     console.error("❌ Error fetching fixture cards:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+}
+
+export async function fetchLiveFixtureCards(req, res) {
+  try {
+    const fixtures = await getLiveFixturesGroupedByLeague();
+    const totalLeagues = fixtures.length;
+    res.json({
+      totalLeagues,
+      fixtures
+    });
+  } catch (err) {
+    console.error("❌ Error fetching live fixture cards:", err);
     res.status(500).json({ error: "Server error" });
   }
 }
