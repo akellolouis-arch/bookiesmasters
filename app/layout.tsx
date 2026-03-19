@@ -108,7 +108,7 @@ export default function RootLayout({
               "url": "https://bookiesmasters.com",
               "logo": "https://bookiesmasters.com/bookiesmasters_text_v2.png",
               "sameAs": [
-                "https://facebook.com/bookiesmasters",
+                "https://www.facebook.com/profile.php?id=61556994182742",
                 "https://twitter.com/bookiesmasters"
               ]
             }

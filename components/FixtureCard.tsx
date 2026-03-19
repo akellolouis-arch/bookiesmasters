@@ -136,7 +136,7 @@ export default function FixtureCard({
           }
           router.push(`/prediction/${fixtureId}`);
         }}
-        className={`cursor-pointer block bg-[#1F1F1F] rounded-xl shadow-sm hover:shadow-md hover:bg-[#2a2a2a] transition flex items-center justify-between p-2 sm:p-3 border-l-4 border-r border-t border-b border-r-white/5 border-t-white/5 border-b-white/5 ${isLive ? "border-l-red-500" : "border-l-transparent"} gap-2`}
+        className="cursor-pointer block bg-[#1F1F1F] rounded-xl shadow-sm hover:shadow-md hover:bg-[#2a2a2a] transition flex items-center justify-between p-2 sm:p-3 border border-white/5 gap-2"
       >
         {/* STATUS */}
         <div className="w-[40px] sm:w-[50px] text-left shrink-0">

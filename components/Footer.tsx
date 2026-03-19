@@ -1,6 +1,6 @@
 "use client";
 
-import { Facebook, Twitter, Instagram, Mail } from "lucide-react";
+import { Facebook, Instagram } from "lucide-react";
 import Link from "next/link";
 
 export default function Footer() {
@@ -26,11 +26,13 @@ export default function Footer() {
           </p>
 
           <div className="flex space-x-4 mt-2 md:justify-center">
-            <a href="#" className="text-gray-400 hover:text-white transition-colors">
+            <a
+              href="https://www.facebook.com/profile.php?id=61556994182742"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-white transition-colors"
+            >
               <Facebook size={16} />
-            </a>
-            <a href="#" className="text-gray-400 hover:text-white transition-colors">
-              <Twitter size={16} />
             </a>
             <a href="#" className="text-gray-400 hover:text-white transition-colors">
               <Instagram size={16} />
