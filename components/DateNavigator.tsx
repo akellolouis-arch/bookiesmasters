@@ -1,9 +1,9 @@
 "use client";
 
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface Props {
   date: string; // yyyy-mm-dd from page params
@@ -12,7 +12,10 @@ interface Props {
 export default function DateNavigator({ date }: Props) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const isLivePage = pathname === "/live";
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchText, setSearchText] = useState(searchParams.get("q") || "");
 
   // Parse current date
   const [year, month, day] = date.split("-").map(Number);
@@ -42,6 +45,10 @@ export default function DateNavigator({ date }: Props) {
     }
   }, [date]);
 
+  useEffect(() => {
+    setSearchText(searchParams.get("q") || "");
+  }, [searchParams]);
+
 
   // Helper to format YYYY-MM-DD
   const toYYYYMMDD = (d: Date) => {
@@ -52,7 +59,24 @@ export default function DateNavigator({ date }: Props) {
   };
 
   const handleDateClick = (d: Date) => {
-    router.push(`/predictions/${toYYYYMMDD(d)}`);
+    const nextDate = toYYYYMMDD(d);
+    const q = (searchParams.get("q") || "").trim();
+    const url = q ? `/predictions/${nextDate}?q=${encodeURIComponent(q)}` : `/predictions/${nextDate}`;
+    router.push(url);
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = searchText.trim();
+    const basePath = isLivePage ? "/live" : `/predictions/${date}`;
+    const url = trimmed ? `${basePath}?q=${encodeURIComponent(trimmed)}` : basePath;
+    router.push(url);
+  };
+
+  const clearSearch = () => {
+    setSearchText("");
+    const basePath = isLivePage ? "/live" : `/predictions/${date}`;
+    router.push(basePath);
   };
 
   return (
@@ -99,12 +123,47 @@ export default function DateNavigator({ date }: Props) {
           })}
         </div>
 
-        {/* RIGHT: Search button */}
-        <button
-          className="shrink-0 w-8 h-8 bg-[#1F1F1F] text-white rounded-md border border-white/5 flex items-center justify-center hover:bg-[#2F2F2F] transition-colors"
-        >
-          <Search size={14} />
-        </button>
+        {/* RIGHT: Search button/input */}
+        {isSearchOpen ? (
+          <form onSubmit={handleSearchSubmit} className="shrink-0 flex items-center gap-1">
+            <input
+              type="text"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              placeholder="Team"
+              className="w-28 h-8 bg-[#1F1F1F] text-white text-xs px-2 rounded-md border border-white/10 outline-none focus:border-orange-400"
+            />
+            <button
+              type="submit"
+              className="w-8 h-8 bg-[#1F1F1F] text-white rounded-md border border-white/5 flex items-center justify-center hover:bg-[#2F2F2F] transition-colors"
+              aria-label="Search fixtures"
+            >
+              <Search size={14} />
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (searchText.trim()) {
+                  clearSearch();
+                }
+                setIsSearchOpen(false);
+              }}
+              className="w-8 h-8 bg-[#1F1F1F] text-gray-300 rounded-md border border-white/5 flex items-center justify-center hover:bg-[#2F2F2F] transition-colors text-xs font-bold"
+              aria-label="Close search"
+            >
+              ×
+            </button>
+          </form>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setIsSearchOpen(true)}
+            className="shrink-0 w-8 h-8 bg-[#1F1F1F] text-white rounded-md border border-white/5 flex items-center justify-center hover:bg-[#2F2F2F] transition-colors"
+            aria-label="Open fixture search"
+          >
+            <Search size={14} />
+          </button>
+        )}
       </div>
 
       <style jsx>{`

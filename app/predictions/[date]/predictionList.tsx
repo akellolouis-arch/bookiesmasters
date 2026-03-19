@@ -6,6 +6,7 @@ import Link from "next/link";
 import FixtureCard from "@/components/FixtureCard";
 import Loader from "@/components/Loader";
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 
 // ------------------------------
 // TYPES BASED ON YOUR BACKEND RESPONSE
@@ -70,6 +71,8 @@ export default function PredictionsList({
   initialData,
   date,
 }: PredictionsListProps) {
+  const searchParams = useSearchParams();
+  const query = (searchParams.get("q") || "").trim().toLowerCase();
 
   // Construct URL dynamically
   const apiUrl = date === "live"
@@ -112,6 +115,20 @@ export default function PredictionsList({
     });
   }
 
+  // Filter fixtures by searched team name for the currently active date.
+  if (query) {
+    safeData = safeData
+      .map((league) => ({
+        ...league,
+        matches: league.matches.filter((match: FixtureCardProps) => {
+          const home = match.homeTeam?.name?.toLowerCase() || "";
+          const away = match.awayTeam?.name?.toLowerCase() || "";
+          return home.includes(query) || away.includes(query);
+        }),
+      }))
+      .filter((league) => league.matches.length > 0);
+  }
+
   // Show only fixtures that have at least one 1X2 odd (or are live/finished)
   safeData = safeData
     .map((league) => ({
@@ -140,7 +157,7 @@ export default function PredictionsList({
     <div className="max-w-xl mx-auto px-1 py-2 space-y-1">
       {safeData.length === 0 && (
         <p className="text-center py-8 text-gray-500">
-          No fixtures available for this date.
+          {query ? `No fixtures found for "${query}" on this date.` : "No fixtures available for this date."}
         </p>
       )}
 
