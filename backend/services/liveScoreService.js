@@ -13,6 +13,23 @@ const BASE_URL = "https://v3.football.api-sports.io";
 // Poll every 1 minute
 const POLL_INTERVAL = 1 * 60 * 1000;
 
+function sanitizeKeyEvents(events) {
+    if (!Array.isArray(events)) return [];
+
+    // Keep only goals and cards for match details timeline.
+    return events
+        .filter((e) => e?.type === "Goal" || e?.type === "Card")
+        .map((e) => ({
+            time: e.time,
+            team: e.team,
+            player: e.player,
+            assist: e.assist || null,
+            type: e.type,
+            detail: e.detail,
+            comments: e.comments
+        }));
+}
+
 export async function pollLiveScores() {
     try {
         console.log("⚡ Live Score Poller: Checking for active or impending matches...");
@@ -20,6 +37,10 @@ export async function pollLiveScores() {
         // --- OPTIMIZATION: Only poll if we have matches LIVE right now, OR starting in the next 5 mins
         const now = new Date();
         const fiveMinsFromNow = new Date(now.getTime() + 5 * 60 * 1000);
+        const fortyEightHoursAgo = new Date(now.getTime() - 48 * 60 * 60 * 1000);
+        const twoHoursAgo = new Date(now.getTime() - 120 * 60 * 1000);
+        const twoHoursTenAgo = new Date(now.getTime() - 130 * 60 * 1000);
+        const sixHoursAgo = new Date(now.getTime() - 6 * 60 * 60 * 1000);
 
         const LIVE_STATUSES = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"];
 
@@ -35,44 +56,32 @@ export async function pollLiveScores() {
         }).select("fixtureId").lean();
 
         if (activeOrImpendingMatches.length === 0) {
-            console.log("   🛌 No local matches live or starting within 5 mins. Sleeping...");
-            return;
+            console.log("   🛌 No local matches live or starting within 5 mins. Running overdue reconciliation only...");
+        } else {
+            console.log(`   🔥 Found ${activeOrImpendingMatches.length} local matches active/starting! Polling API...`);
         }
 
-        console.log(`   🔥 Found ${activeOrImpendingMatches.length} local matches active/starting! Polling API...`);
-
-        // 1. Fetch ALL live matches in the world right now from API (1 request, hugely efficient)
-        const res = await axios.get(`${BASE_URL}/fixtures`, {
-            params: { live: "all" },
-            headers: { "x-apisports-key": API_KEY }
-        });
-
-        const apiFixtures = res.data.response || [];
-        const apiLiveIds = apiFixtures.map(f => f.fixture.id);
+        let apiFixtures = [];
+        let apiLiveIds = [];
+        if (activeOrImpendingMatches.length > 0) {
+            // 1. Fetch ALL live matches in the world right now from API (1 request, hugely efficient)
+            const res = await axios.get(`${BASE_URL}/fixtures`, {
+                params: { live: "all" },
+                headers: { "x-apisports-key": API_KEY }
+            });
+            apiFixtures = res.data.response || [];
+            apiLiveIds = apiFixtures.map(f => f.fixture.id);
+        }
 
         if (apiFixtures.length === 0) {
-            // console.log("   ℹ️ No matches are currently LIVE in the world.");
-            return;
+            console.log("   ℹ️ API reports no LIVE matches globally. Running stuck-match reconciliation only...");
+        } else {
+            console.log(`   🎯 API reports ${apiFixtures.length} active live matches... mapping to database.`);
         }
-
-        console.log(`   🎯 API reports ${apiFixtures.length} active live matches... mapping to database.`);
 
         // 2. Build the bulk update operations for everything currently live
         const bulkOps = apiFixtures.map((match) => {
-            // OPTIMIZATION: User requested ONLY goal events and NO assist provider.
-            const goalEventsOnly = match.events
-                ? match.events
-                    .filter(e => e.type === "Goal")
-                    .map(e => ({
-                        time: e.time,
-                        team: e.team,
-                        player: e.player,
-                        type: e.type,
-                        detail: e.detail,
-                        comments: e.comments
-                        // 'assist' is intentionally omitted here
-                    }))
-                : [];
+            const keyEvents = sanitizeKeyEvents(match.events);
 
             return {
                 updateOne: {
@@ -83,7 +92,7 @@ export async function pollLiveScores() {
                             "fixture.goals": match.goals,
                             "fixture.score": match.score,
                             "status": match.fixture.status.short, // redundant cache field
-                            "fixture.events": goalEventsOnly, // Save ONLY goals without assists
+                            "fixture.events": keyEvents, // Save goals + cards with assist when available
                             "livescore": match.score,
                             "lastLiveUpdate": new Date()
                         }
@@ -103,9 +112,6 @@ export async function pollLiveScores() {
 
         // --- STUCK MATCH DETECTOR ---
         // 1) Find matches that are still "NS" in our DB, but kickoff was > 120 mins ago (they must be finished)
-        const twoHoursAgo = new Date(now.getTime() - 120 * 60 * 1000);
-        const fortyEightHoursAgo = new Date(now.getTime() - 48 * 60 * 60 * 1000); // Prevent querying ancient matches
-
         const stuckMatches = await Fixture.find({
             "fixture.fixture.status.short": "NS",
             "fixture.fixture.date": {
@@ -123,7 +129,6 @@ export async function pollLiveScores() {
 
         // 2) Matches that are still LIVE/2H at 90' long after kickoff
         // Some fixtures get stuck at 90' on the API. If kickoff was > 130 mins ago, force-fetch them as finished.
-        const twoHoursTenAgo = new Date(now.getTime() - 130 * 60 * 1000);
         const stuckLiveMatches = await Fixture.find({
             "fixture.fixture.status.short": { $in: LIVE_STATUSES },
             "fixture.fixture.status.elapsed": { $gte: 90 },
@@ -137,6 +142,23 @@ export async function pollLiveScores() {
             console.log(`   🚨 Detected ${stuckLiveMatches.length} matches stuck LIVE at 90'+. Force-fetching final score.`);
             const stuckLiveIds = stuckLiveMatches.map(m => m.fixtureId);
             finishedIds = [...new Set([...finishedIds, ...stuckLiveIds])];
+        }
+
+        // 3) Hard safety finalizer:
+        // Any non-finished fixture older than 6 hours should be force-checked once more.
+        const nonFinishedStatuses = ["NS", ...LIVE_STATUSES];
+        const staleRecentMatches = await Fixture.find({
+            "fixture.fixture.status.short": { $in: nonFinishedStatuses },
+            "fixture.fixture.date": {
+                $lte: sixHoursAgo.toISOString(),
+                $gte: fortyEightHoursAgo.toISOString()
+            }
+        }).select("fixtureId").lean();
+
+        if (staleRecentMatches.length > 0) {
+            console.log(`   🚨 Detected ${staleRecentMatches.length} stale non-finished matches older than 6h. Force-fetching final score.`);
+            const staleIds = staleRecentMatches.map(m => m.fixtureId);
+            finishedIds = [...new Set([...finishedIds, ...staleIds])];
         }
 
         if (finishedIds.length > 0) {
@@ -155,19 +177,7 @@ export async function pollLiveScores() {
                 const finalFixtures = finishRes.data.response || [];
 
                 finalFixtures.forEach(match => {
-                    const goalEventsOnly = match.events
-                        ? match.events
-                            .filter(e => e.type === "Goal")
-                            .map(e => ({
-                                time: e.time,
-                                team: e.team,
-                                player: e.player,
-                                type: e.type,
-                                detail: e.detail,
-                                comments: e.comments
-                                // 'assist' is intentionally omitted here
-                            }))
-                        : [];
+                    const keyEvents = sanitizeKeyEvents(match.events);
 
                     // If API still reports a LIVE status long after kickoff, force-close it.
                     const kickoff = new Date(match?.fixture?.date);
@@ -196,7 +206,7 @@ export async function pollLiveScores() {
                                     "fixture.goals": match.goals,
                                     "fixture.score": match.score,
                                     "status": match.fixture.status.short,
-                                    "fixture.events": goalEventsOnly,
+                                    "fixture.events": keyEvents,
                                     "livescore": match.score,
                                     "lastLiveUpdate": new Date()
                                 }

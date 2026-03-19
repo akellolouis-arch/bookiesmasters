@@ -3,7 +3,7 @@
 import React from "react";
 import H2HSection from "@/components/fixture-details/H2HSection";
 import LastFiveMatches from "@/components/fixture-details/LastFiveMatches";
-// import Events from "@/components/fixture-details/Events";
+import Events from "@/components/fixture-details/Events";
 import Standings from "@/components/fixture-details/Standings";
 // import Odds from "@/components/fixture-details/Odds";
 import TeamDisplay from "@/components/fixture-details/TeamDisplay";
@@ -35,6 +35,7 @@ type FixtureDetailsData = {
     injuries?: any[];
     h2h?: any[];
     standings?: any[];
+    events?: any[];
     homeTeam: { id: number; name: string; logo: string; last5Matches?: any[]; allMatches?: any[] };
     awayTeam: { id: number; name: string; logo: string; last5Matches?: any[]; allMatches?: any[] };
 };
@@ -97,6 +98,17 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
 
                 {/* VERTICAL CONTENT STACK (Replacing Tabs) */}
                 <div className="space-y-8 mt-6">
+                    {/* Match Events (Goals + Cards) */}
+                    {data.events && data.events.length > 0 && (
+                        <div className="bg-[#1a1a1a] rounded-xl p-4 border border-white/5">
+                            <h3 className="text-sm font-bold text-white mb-4 uppercase tracking-wider flex items-center gap-2">
+                                <span className="w-1 h-4 bg-orange-500 rounded-full" />
+                                Match Events
+                            </h3>
+                            <Events events={data.events} homeTeamId={data.homeTeam.id} awayTeamId={data.awayTeam.id} />
+                        </div>
+                    )}
+
                     {/* Injuries Section */}
                     {data.injuries && data.injuries.length > 0 && (
                         <div className="bg-[#1a1a1a] rounded-xl p-4 border border-white/5">

@@ -34,6 +34,12 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
     // Check if match is live/active to apply red color
     const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE"].includes(status);
     const isFinished = ["FT", "AET", "PEN"].includes(status);
+    const kickoffTime = new Date(date).toLocaleTimeString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+        timeZone: "Africa/Nairobi",
+    });
 
     // Tip Validation Logic (Matches FixtureCard)
     const getTipStatus = (tVal: string) => {
@@ -129,7 +135,14 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
 
                             {/* Status / Date */}
                             <div className={`text-xs font-bold mt-1 ${isLive ? "text-red-500 animate-pulse" : "text-gray-400"}`}>
-                                {isFinished ? "Full Time" : displayDate}
+                                {isFinished ? (
+                                    <div className="flex flex-col items-center leading-tight">
+                                        <span>FT</span>
+                                        <span className="text-[10px] text-gray-500 mt-0.5">{kickoffTime}</span>
+                                    </div>
+                                ) : (
+                                    displayDate
+                                )}
                             </div>
                         </div>
                     ) : (

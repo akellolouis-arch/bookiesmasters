@@ -2,6 +2,12 @@
 
 export function formatFixtureCard(fixtureDoc) {
   const fx = fixtureDoc.fixture;
+  const kickoffTime = new Date(fx.fixture.date).toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "Africa/Nairobi",
+  });
 
   // 🔥 PRIORITY: Use live data if available
   const live = fixtureDoc.livescore;
@@ -158,5 +164,6 @@ export function formatFixtureCard(fixtureDoc) {
     creditCost: 0,
     customOdds: fixtureDoc.customOdds,
     prediction: tip,
+    kickoffTime,
   };
 }

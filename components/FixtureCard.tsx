@@ -26,6 +26,7 @@ export interface Team {
 export interface FixtureCardProps {
   fixtureId: number;
   status: string;
+  kickoffTime?: string;
   homeTeam: Team;
   awayTeam: Team;
   odds: Odds;
@@ -37,6 +38,7 @@ export interface FixtureCardProps {
 export default function FixtureCard({
   fixtureId,
   status,
+  kickoffTime,
   homeTeam,
   awayTeam,
   odds,
@@ -46,6 +48,7 @@ export default function FixtureCard({
 }: FixtureCardProps) {
   const router = useRouter();
   const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(status) || status.includes("'");
+  const isFinished = status === "FT";
 
   function getOddsColor(
     value: string | null,
@@ -138,9 +141,16 @@ export default function FixtureCard({
       >
         {/* STATUS */}
         <div className="w-[40px] sm:w-[50px] text-left shrink-0">
-          <p className={`text-[10px] sm:text-xs leading-none font-bold ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
-            {status}
-          </p>
+          <div className="flex flex-col leading-none">
+            <p className={`text-[10px] sm:text-xs font-bold ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
+              {status}
+            </p>
+            {isFinished && kickoffTime && (
+              <p className="text-[9px] sm:text-[10px] text-gray-500 mt-1">
+                {kickoffTime}
+              </p>
+            )}
+          </div>
         </div>
 
         {/* TEAMS */}
@@ -193,7 +203,7 @@ export default function FixtureCard({
           {prediction && prediction !== "N/A" && (
             <div className="flex items-center justify-center">
               <span
-                className={`w-[40px] sm:w-[52px] h-[24px] sm:h-[26px] flex items-center justify-center text-[10px] sm:text-xs font-bold uppercase tracking-widest rounded bg-white/5 border border-white/10 ${tipColor} leading-none overflow-hidden`}
+                className={`w-[34px] sm:w-[44px] h-[22px] sm:h-[24px] flex items-center justify-center text-[10px] sm:text-xs font-bold uppercase tracking-widest rounded bg-white/5 border border-white/10 ${tipColor} leading-none overflow-hidden`}
               >
                 {prediction}
               </span>

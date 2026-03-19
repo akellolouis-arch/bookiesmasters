@@ -29,6 +29,7 @@ export interface Odds {
 export interface FixtureCardProps {
   fixtureId: number;
   status: string;
+  kickoffTime?: string;
   score: string | null;
   league: { id: number; name: string; logo: string; country: string };
   homeTeam: Team;

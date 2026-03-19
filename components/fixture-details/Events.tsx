@@ -58,6 +58,9 @@ const Events: React.FC<EventsProps> = ({ events, homeTeamId }) => {
                                         <div className="text-right">
                                             <div className="text-xs text-gray-200 font-medium leading-tight">{event.player.name}</div>
                                             <div className="text-[11px] text-gray-500">{event.detail}</div>
+                                            {event.assist?.name && (
+                                                <div className="text-[10px] text-gray-500">Assist: {event.assist.name}</div>
+                                            )}
                                         </div>
                                         <div className="w-5 flex justify-center">{eventIcon}</div>
                                     </>
@@ -78,6 +81,9 @@ const Events: React.FC<EventsProps> = ({ events, homeTeamId }) => {
                                         <div className="text-left">
                                             <div className="text-xs text-gray-200 font-medium leading-tight">{event.player.name}</div>
                                             <div className="text-[10px] text-gray-500">{event.detail}</div>
+                                            {event.assist?.name && (
+                                                <div className="text-[10px] text-gray-500">Assist: {event.assist.name}</div>
+                                            )}
                                         </div>
                                     </>
                                 )}

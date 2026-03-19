@@ -121,31 +121,82 @@ async function fetchPrediction(fixtureId) {
    FETCH ODDS (1xBet ONLY)
 --------------------------------------------- */
 async function fetchOdds(fixtureId) {
+  const MAX_RETRIES = 3;
+  const RETRY_DELAY_MS = 1500;
+
   try {
-    // Use 1xBet (11) as the single source of odds
-    let res = await api.get(`/odds`, {
-      params: { fixture: fixtureId, bookmaker: 11 }
-    });
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      // Use 1xBet (11) as the single source of odds
+      const res = await api.get(`/odds`, {
+        params: { fixture: fixtureId, bookmaker: 11 }
+      });
 
-    let odds = res.data?.response?.[0];
+      const odds = res.data?.response?.[0];
+      if (!odds || !odds.bookmakers) return [];
 
-    if (!odds || !odds.bookmakers) return [];
-
-    return odds.bookmakers.map(b => ({
-      bookmaker: b.name,
-      markets: b.bets
-        .filter(m => m.name === "Match Winner") // 🔥 FILTER: Only keep Match Winner
-        .map(m => ({
-          id: m.id,
-          name: m.name,
-          values: m.values.map(v => ({
-            value: v.value,
-            odd: v.odd
+      const normalized = odds.bookmakers.map(b => ({
+        bookmaker: b.name,
+        markets: b.bets
+          .filter(m => m.name === "Match Winner") // Keep only Match Winner market
+          .map(m => ({
+            id: m.id,
+            name: m.name,
+            values: m.values.map(v => ({
+              value: v.value,
+              odd: v.odd
+            }))
           }))
-        }))
-    }));
+      }));
 
+      // If API returned bookmakers but no Match Winner entries, treat as "no odds for this fixture".
+      const hasMatchWinner = normalized.some(
+        (b) => Array.isArray(b.markets) && b.markets.some((m) => Array.isArray(m.values) && m.values.length > 0)
+      );
+      if (!hasMatchWinner) return [];
+
+      return normalized;
+    }
+    return [];
   } catch (err) {
+    // Retry only for transient API failures (429/5xx), then give up.
+    const statusCode = err?.response?.status;
+    const shouldRetry = statusCode === 429 || (statusCode >= 500 && statusCode < 600);
+
+    if (shouldRetry) {
+      for (let retry = 1; retry <= MAX_RETRIES; retry++) {
+        try {
+          await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS * retry));
+          const retryRes = await api.get(`/odds`, {
+            params: { fixture: fixtureId, bookmaker: 11 }
+          });
+          const retryOdds = retryRes.data?.response?.[0];
+          if (!retryOdds || !retryOdds.bookmakers) return [];
+
+          const normalizedRetry = retryOdds.bookmakers.map(b => ({
+            bookmaker: b.name,
+            markets: b.bets
+              .filter(m => m.name === "Match Winner")
+              .map(m => ({
+                id: m.id,
+                name: m.name,
+                values: m.values.map(v => ({
+                  value: v.value,
+                  odd: v.odd
+                }))
+              }))
+          }));
+
+          const hasMatchWinnerRetry = normalizedRetry.some(
+            (b) => Array.isArray(b.markets) && b.markets.some((m) => Array.isArray(m.values) && m.values.length > 0)
+          );
+          if (!hasMatchWinnerRetry) return [];
+          return normalizedRetry;
+        } catch {
+          // Continue retries
+        }
+      }
+    }
+
     console.log(`⚠ Odds not available for fixture ${fixtureId}: ${err.message}`);
     return [];
   }
@@ -272,6 +323,11 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
       } else if (allowFetchForFinished) {
         // One-off backfill for yesterday's finished fixtures
         bets = await fetchOdds(fixtureId);
+      }
+
+      // Never wipe existing odds due to temporary upstream/API issues.
+      if ((!bets || bets.length === 0) && existingDoc && existingDoc.odds && existingDoc.odds.length > 0) {
+        bets = existingDoc.odds;
       }
 
       // 4️⃣ injuries (Weekly Forecast)
