@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 // import { Lock } from "lucide-react";
 // import { useSession, signIn } from "next-auth/react";
@@ -156,24 +155,16 @@ export default function FixtureCard({
         {/* TEAMS */}
         <div className="flex flex-col items-start text-left flex-1 min-w-0 gap-1">
           <div className="flex items-center gap-1.5 w-full">
-            <Link
-              href={`/team/${homeTeam.id}?name=${encodeURIComponent(homeTeam.name)}&logo=${encodeURIComponent(homeTeam.logo)}`}
-              onClick={(e) => e.stopPropagation()} // Prevent triggering the main card link
-              className="flex items-center gap-1.5 hover:text-orange-400 transition-colors max-w-full overflow-hidden"
-            >
+            <div className="flex items-center gap-1.5 max-w-full overflow-hidden">
               <Image src={homeTeam.logo} alt={homeTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
               <span className="font-medium text-[11px] sm:text-xs truncate text-white">{homeTeam.name}</span>
-            </Link>
+            </div>
           </div>
           <div className="flex items-center gap-1.5 w-full">
-            <Link
-              href={`/team/${awayTeam.id}?name=${encodeURIComponent(awayTeam.name)}&logo=${encodeURIComponent(awayTeam.logo)}`}
-              onClick={(e) => e.stopPropagation()} // Prevent triggering the main card link
-              className="flex items-center gap-1.5 hover:text-orange-400 transition-colors max-w-full overflow-hidden"
-            >
+            <div className="flex items-center gap-1.5 max-w-full overflow-hidden">
               <Image src={awayTeam.logo} alt={awayTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
               <span className="font-medium text-[11px] sm:text-xs truncate text-white">{awayTeam.name}</span>
-            </Link>
+            </div>
           </div>
         </div>
 
@@ -203,7 +194,7 @@ export default function FixtureCard({
           {prediction && prediction !== "N/A" && (
             <div className="flex items-center justify-center">
               <span
-                className={`w-[34px] sm:w-[44px] h-[22px] sm:h-[24px] flex items-center justify-center text-[10px] sm:text-xs font-bold uppercase tracking-widest rounded bg-white/5 border border-white/10 ${tipColor} leading-none overflow-hidden`}
+                className={`w-[30px] sm:w-[38px] h-[20px] sm:h-[22px] flex items-center justify-center text-[10px] sm:text-xs font-bold uppercase tracking-wide rounded bg-white/5 border border-white/10 ${tipColor} leading-none overflow-hidden`}
               >
                 {prediction}
               </span>

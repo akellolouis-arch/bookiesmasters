@@ -14,8 +14,9 @@ export default function DateNavigator({ date }: Props) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isLivePage = pathname === "/live";
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [searchText, setSearchText] = useState(searchParams.get("q") || "");
+  const initialQuery = searchParams.get("q") || "";
+  const [isSearchOpen, setIsSearchOpen] = useState(Boolean(initialQuery));
+  const [searchText, setSearchText] = useState(initialQuery);
 
   // Parse current date
   const [year, month, day] = date.split("-").map(Number);
@@ -46,7 +47,9 @@ export default function DateNavigator({ date }: Props) {
   }, [date]);
 
   useEffect(() => {
-    setSearchText(searchParams.get("q") || "");
+    const q = searchParams.get("q") || "";
+    setSearchText(q);
+    setIsSearchOpen(Boolean(q));
   }, [searchParams]);
 
 
