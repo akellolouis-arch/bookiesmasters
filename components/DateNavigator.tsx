@@ -90,11 +90,10 @@ export default function DateNavigator({ date }: Props) {
         <Link
           href="/live"
           className={`shrink-0 w-12 h-8 rounded-md flex flex-col items-center justify-center text-[9px] font-bold transition-colors border ${isLivePage
-            ? "bg-red-600/10 border-red-600 text-red-500 animate-pulse"
+            ? "bg-white/20 border-transparent text-white shadow-lg shadow-white/10"
             : "bg-[#1F1F1F] border-white/5 text-gray-400 hover:text-white"
             }`}
         >
-          <span className="w-1.5 h-1.5 rounded-full bg-current mb-0.5 animate-pulse" />
           LIVE
         </Link>
 
