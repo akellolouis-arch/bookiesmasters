@@ -23,28 +23,49 @@ const api = axios.create({
 });
 
 /* ---------------------------------------------
-   UTIL: GET DATE + N DAYS (UTC)
+   DATES: align with site (Africa/Nairobi), not UTC
+   Frontend uses Kenya calendar for /predictions/YYYY-MM-DD; UTC getDatePlus
+   was shifting "day after tomorrow" vs API fixture buckets.
 --------------------------------------------- */
-function getDatePlus(days) {
-  const d = new Date();
-  d.setUTCDate(d.getUTCDate() + days);
+const KENYA_TZ = "Africa/Nairobi";
 
-  const yyyy = d.getUTCFullYear();
-  const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
-  const dd = String(d.getUTCDate()).padStart(2, "0");
+const kenyaYmdFormatter = new Intl.DateTimeFormat("en-CA", {
+  timeZone: KENYA_TZ,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
 
-  return `${yyyy}-${mm}-${dd}`;
+/** YYYY-MM-DD for "today" in Kenya + offset calendar days. */
+function getKenyaDatePlus(offsetDays) {
+  const todayYmd = kenyaYmdFormatter.format(new Date());
+  const [y, m, d] = todayYmd.split("-").map(Number);
+  const base = new Date(
+    `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}T00:00:00+03:00`
+  );
+  const target = new Date(base.getTime() + offsetDays * 86400000);
+  return kenyaYmdFormatter.format(target);
 }
 
-function toUtcDateOnly(dateTimeIso) {
+/** Legacy name: used for logs / backfill flags — now Kenya-based. */
+function getDatePlus(days) {
+  return getKenyaDatePlus(days);
+}
+
+/** Calendar day in Kenya for a fixture kickoff (matches date navigator). */
+function toKenyaDateOnly(dateTimeIso) {
   if (!dateTimeIso) return null;
-  // API-Football fixture date is ISO; we compare by UTC calendar day.
   const d = new Date(dateTimeIso);
   if (Number.isNaN(d.getTime())) return null;
-  const yyyy = d.getUTCFullYear();
-  const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
-  const dd = String(d.getUTCDate()).padStart(2, "0");
-  return `${yyyy}-${mm}-${dd}`;
+  return kenyaYmdFormatter.format(d);
+}
+
+/** API-Football "Match Winner" bet: id 1 or common name variants. */
+function isMatchWinnerMarket(bet) {
+  if (!bet) return false;
+  if (bet.id === 1) return true;
+  const n = (bet.name || "").trim().toLowerCase();
+  return n === "match winner" || n === "full time result" || n === "1x2";
 }
 
 /* ---------------------------------------------
@@ -59,12 +80,12 @@ async function getSavedLeagueIds() {
 /* ---------------------------------------------
    FETCH FIXTURES FOR MULTIPLE DATES
 --------------------------------------------- */
-async function fetchFixturesForDates(savedLeagueIds, daysAhead = 2) {
+async function fetchFixturesForDates(savedLeagueIds, daysAhead = 3) {
   let combined = [];
 
   // Start from day = -1 to ensure we fetch yesterday's matches and capture missed FT results
   for (let day = -1; day <= daysAhead; day++) {
-    const date = getDatePlus(day);
+    const date = getKenyaDatePlus(day);
     console.log(`📅 Fetching fixtures for ${date}`);
 
     try {
@@ -137,7 +158,7 @@ async function fetchOdds(fixtureId) {
       const normalized = odds.bookmakers.map(b => ({
         bookmaker: b.name,
         markets: b.bets
-          .filter(m => m.name === "Match Winner") // Keep only Match Winner market
+          .filter((m) => isMatchWinnerMarket(m))
           .map(m => ({
             id: m.id,
             name: m.name,
@@ -175,7 +196,7 @@ async function fetchOdds(fixtureId) {
           const normalizedRetry = retryOdds.bookmakers.map(b => ({
             bookmaker: b.name,
             markets: b.bets
-              .filter(m => m.name === "Match Winner")
+              .filter((m) => isMatchWinnerMarket(m))
               .map(m => ({
                 id: m.id,
                 name: m.name,
@@ -210,7 +231,7 @@ async function fetchOdds(fixtureId) {
 export async function updateDailyFixtures(force = false, recordCompletion = true) {
   try {
     // MongoDB should already be connected by server.js
-    console.log("📡 Updating fixtures from today up to +7 days...\n");
+    console.log("📡 Updating fixtures (Kenya dates: yesterday through +3 days)...\n");
 
     // 0. CHECK LAST RUN TO PREVENT RESTART-BURNOUT
     // Every time server restarts, this runs. If we restart 5 times, we burn 5x requests.
@@ -241,11 +262,11 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
       return;
     }
 
-    // 2. Fetch fixtures for multiple days (Reduced from 7 to 2 to save API quota)
-    const fixtures = await fetchFixturesForDates(savedLeagueIds, 2);
+    // 2. Fetch fixtures for multiple Kenya calendar days (+3 ahead covers "day after tomorrow" + API/1xBet lag)
+    const fixtures = await fetchFixturesForDates(savedLeagueIds, 3);
 
     if (fixtures.length === 0) {
-      console.log("⚠ No fixtures found for saved leagues between yesterday and +2 days.");
+      console.log("⚠ No fixtures found for saved leagues between yesterday and +3 Kenya days.");
       return;
     }
 
@@ -291,7 +312,7 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
 
       // OPTIMIZATION: Skip prediction/odds fetch if match is finished
       const isFinished = f.fixture?.status?.short && ["FT", "AET", "PEN"].includes(f.fixture.status.short);
-      const fixtureDateOnly = toUtcDateOnly(f.fixture?.date);
+      const fixtureDateOnly = toKenyaDateOnly(f.fixture?.date);
       const isRecentFixture = fixtureDateOnly === yesterdayDate || fixtureDateOnly === todayDate;
       const allowFetchForFinished = backfillRecentFinished && isRecentFixture;
 
