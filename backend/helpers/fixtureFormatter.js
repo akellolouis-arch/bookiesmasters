@@ -2,6 +2,40 @@
 
 const VALID_CUSTOM_TIPS = new Set(["1", "2", "X", "1X", "X2"]);
 
+/**
+ * Raw API/custom tip before UI formatting (1, 2, X, 1X, X2, or N/A).
+ * Shared resolver for scripts/tools; cards use this via formatFixtureCard.
+ */
+export function resolvePredictionTip(fixtureDoc) {
+  const fx = fixtureDoc?.fixture;
+  if (!fx?.teams?.home?.name) return "N/A";
+
+  let tip = "N/A";
+  const customRaw =
+    typeof fixtureDoc.customPrediction === "string"
+      ? fixtureDoc.customPrediction.trim()
+      : "";
+  const pred =
+    customRaw && VALID_CUSTOM_TIPS.has(customRaw)
+      ? customRaw
+      : fixtureDoc.prediction;
+
+  if (typeof pred === "string") {
+    tip = pred;
+  } else if (pred && typeof pred === "object") {
+    const { win_or_draw, winner } = pred;
+    const homeName = fx.teams.home.name;
+
+    if (win_or_draw === true) {
+      tip = winner && winner.name === homeName ? "1X" : "X2";
+    } else {
+      tip = winner && winner.name === homeName ? "1" : "2";
+    }
+  }
+
+  return tip;
+}
+
 export function formatFixtureCard(fixtureDoc) {
   const fx = fixtureDoc.fixture;
   const kickoffTime = new Date(fx.fixture.date).toLocaleTimeString("en-GB", {
@@ -125,28 +159,7 @@ export function formatFixtureCard(fixtureDoc) {
   // -----------------------------
   // PREDICTION HANDLING — API-Football only (1, 2, 1X, X2)
   // -----------------------------
-  let tip = "N/A";
-  const customRaw =
-    typeof fixtureDoc.customPrediction === "string"
-      ? fixtureDoc.customPrediction.trim()
-      : "";
-  const pred =
-    customRaw && VALID_CUSTOM_TIPS.has(customRaw)
-      ? customRaw
-      : fixtureDoc.prediction;
-
-  if (typeof pred === "string") {
-    tip = pred;
-  } else if (pred && typeof pred === "object") {
-    const { win_or_draw, winner } = pred;
-    const homeName = fx.teams.home.name;
-
-    if (win_or_draw === true) {
-      tip = winner && winner.name === homeName ? "1X" : "X2";
-    } else {
-      tip = winner && winner.name === homeName ? "1" : "2";
-    }
-  }
+  const tip = resolvePredictionTip(fixtureDoc);
 
   return {
     fixtureId: fixtureDoc.fixtureId,
