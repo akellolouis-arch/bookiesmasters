@@ -78,41 +78,97 @@ async function getSavedLeagueIds() {
 }
 
 /* ---------------------------------------------
-   FETCH FIXTURES FOR MULTIPLE DATES
+   FETCH FIXTURES — MUST paginate (API returns ~1 page only otherwise).
+   Without this, "Sunday" / "+2 days" looks almost empty while API has many games.
 --------------------------------------------- */
-async function fetchFixturesForDates(savedLeagueIds, daysAhead = 3) {
-  let combined = [];
+const MAX_FIXTURE_PAGES = 40;
+const BETWEEN_PAGE_DELAY_MS = 400;
 
-  // Start from day = -1 to ensure we fetch yesterday's matches and capture missed FT results
-  for (let day = -1; day <= daysAhead; day++) {
-    const date = getKenyaDatePlus(day);
-    console.log(`📅 Fetching fixtures for ${date}`);
+/**
+ * @param {Record<string, string|number>} baseParams - e.g. { date } or { from, to }
+ */
+async function fetchFixturesAllPages(baseParams) {
+  const merged = [];
+  let page = 1;
+  let totalPages = 1;
 
-    try {
-      const res = await api.get(`/fixtures`, {
-        params: { date }
-      });
+  while (page <= totalPages && page <= MAX_FIXTURE_PAGES) {
+    // eslint-disable-next-line no-await-in-loop
+    const res = await api.get(`/fixtures`, {
+      params: { ...baseParams, page },
+    });
 
-      if (res.data.errors && Object.keys(res.data.errors).length > 0) {
-        console.error("❌ API Errors:", JSON.stringify(res.data.errors, null, 2));
-      }
+    const body = res.data;
+    if (body?.errors && Object.keys(body.errors).length > 0) {
+      console.error("❌ API Errors:", JSON.stringify(body.errors, null, 2));
+    }
 
-      const fixtures = res.data.response || [];
-      console.log(`   → Total fixtures on ${date}: ${fixtures.length}`);
+    totalPages = body?.paging?.total ?? 1;
+    const chunk = body?.response || [];
+    merged.push(...chunk);
 
-      // filter by saved leagues
-      // ONLY keep fixtures that match our saved leagues
-      const filtered = fixtures.filter(f =>
-        savedLeagueIds.includes(f.league.id)
-      );
-
-      combined = combined.concat(filtered);
-    } catch (err) {
-      console.error(`❌ Error fetching fixtures for date ${date}:`, err.message);
+    if (chunk.length === 0) break;
+    page += 1;
+    if (page <= totalPages) {
+      // eslint-disable-next-line no-await-in-loop
+      await new Promise((r) => setTimeout(r, BETWEEN_PAGE_DELAY_MS));
     }
   }
 
-  return combined;
+  return merged;
+}
+
+/**
+ * Kenya window [yesterday .. +daysAhead] with optional extra buffer days.
+ * Prefer single from/to range (one paginated stream); fall back to per-day if API rejects range.
+ */
+async function fetchFixturesForDates(savedLeagueIds, daysAhead = 3, extraBufferDays = 1) {
+  const from = getKenyaDatePlus(-1 - extraBufferDays);
+  const to = getKenyaDatePlus(daysAhead + extraBufferDays);
+
+  let raw = [];
+
+  try {
+    console.log(`📅 Fetching fixtures from=${from} to=${to} (Kenya, all pages)...`);
+    raw = await fetchFixturesAllPages({ from, to });
+    console.log(`   → Raw rows from API (all pages): ${raw.length}`);
+  } catch (err) {
+    console.warn(`⚠ Range fetch failed (${err.message}), falling back to per-day + pagination...`);
+    raw = [];
+    for (let day = -1 - extraBufferDays; day <= daysAhead + extraBufferDays; day++) {
+      const date = getKenyaDatePlus(day);
+      // eslint-disable-next-line no-await-in-loop
+      const dayRows = await fetchFixturesAllPages({ date });
+      console.log(`   → ${date}: ${dayRows.length} fixture rows (all pages)`);
+      raw.push(...dayRows);
+      // eslint-disable-next-line no-await-in-loop
+      await new Promise((r) => setTimeout(r, BETWEEN_PAGE_DELAY_MS));
+    }
+  }
+
+  // Dedupe by fixture id (range can overlap buffer)
+  const byId = new Map();
+  for (const f of raw) {
+    const id = f?.fixture?.id;
+    if (id != null) byId.set(id, f);
+  }
+  const unique = [...byId.values()];
+
+  // Keep Kenya kickoff inside intended window [yesterday .. +daysAhead] (drop buffer-only rows)
+  const startYmd = getKenyaDatePlus(-1);
+  const endYmd = getKenyaDatePlus(daysAhead);
+  const inWindow = unique.filter((f) => {
+    const ymd = toKenyaDateOnly(f?.fixture?.date);
+    if (!ymd) return false;
+    return ymd >= startYmd && ymd <= endYmd;
+  });
+
+  const filtered = inWindow.filter((f) => savedLeagueIds.includes(f.league.id));
+  console.log(
+    `   → Unique: ${unique.length}, Kenya window ${startYmd}..${endYmd}: ${inWindow.length}, saved leagues: ${filtered.length}`
+  );
+
+  return filtered;
 }
 
 /* ---------------------------------------------
