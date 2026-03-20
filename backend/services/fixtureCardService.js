@@ -1,6 +1,16 @@
 import Fixture from "../models/Fixture.js";
 import { formatFixtureCard } from "../helpers/fixtureFormatter.js";
 
+/** Main / live lists: only home win or home-double-chance tips. */
+const ALLOWED_LIST_TIPS = new Set(["1", "1X"]);
+
+function shouldIncludePredictionCard(card) {
+  const tip = String(card?.prediction ?? "")
+    .trim()
+    .toUpperCase();
+  return ALLOWED_LIST_TIPS.has(tip);
+}
+
 export async function getFixturesGroupedByLeague(date) {
   if (!date) throw new Error("Date parameter is required");
 
@@ -171,10 +181,12 @@ export async function getFixturesGroupedByLeague(date) {
       };
     }
 
-    grouped[leagueId].matches.push(formatFixtureCard(doc));
+    const card = formatFixtureCard(doc);
+    if (!shouldIncludePredictionCard(card)) return;
+    grouped[leagueId].matches.push(card);
   });
 
-  return Object.values(grouped);
+  return Object.values(grouped).filter((g) => g.matches.length > 0);
 }
 
 export async function getLiveFixturesGroupedByLeague() {
@@ -246,8 +258,10 @@ export async function getLiveFixturesGroupedByLeague() {
       };
     }
 
-    grouped[leagueId].matches.push(formatFixtureCard(doc));
+    const card = formatFixtureCard(doc);
+    if (!shouldIncludePredictionCard(card)) return;
+    grouped[leagueId].matches.push(card);
   });
 
-  return Object.values(grouped);
+  return Object.values(grouped).filter((g) => g.matches.length > 0);
 }

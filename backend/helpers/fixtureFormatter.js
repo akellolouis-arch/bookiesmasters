@@ -1,5 +1,7 @@
 // API-Football prediction only (1, 2, 1X, X2) — no OV15/UN35/BTTS best-pick logic
 
+const VALID_CUSTOM_TIPS = new Set(["1", "2", "X", "1X", "X2"]);
+
 export function formatFixtureCard(fixtureDoc) {
   const fx = fixtureDoc.fixture;
   const kickoffTime = new Date(fx.fixture.date).toLocaleTimeString("en-GB", {
@@ -124,7 +126,14 @@ export function formatFixtureCard(fixtureDoc) {
   // PREDICTION HANDLING — API-Football only (1, 2, 1X, X2)
   // -----------------------------
   let tip = "N/A";
-  const pred = fixtureDoc.prediction;
+  const customRaw =
+    typeof fixtureDoc.customPrediction === "string"
+      ? fixtureDoc.customPrediction.trim()
+      : "";
+  const pred =
+    customRaw && VALID_CUSTOM_TIPS.has(customRaw)
+      ? customRaw
+      : fixtureDoc.prediction;
 
   if (typeof pred === "string") {
     tip = pred;
