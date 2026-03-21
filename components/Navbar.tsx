@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Menu, X } from "lucide-react";
@@ -11,13 +11,6 @@ import logo from "@/public/bookiesmasters_text_v2.png";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  /** Avoid mobile menu icon showing before the logo image has painted (looks “broken”). */
-  const [logoReady, setLogoReady] = useState(false);
-
-  useEffect(() => {
-    const t = window.setTimeout(() => setLogoReady(true), 2500);
-    return () => window.clearTimeout(t);
-  }, []);
 
 
 
@@ -42,7 +35,6 @@ export default function Navbar() {
             alt="BookiesMasters Logo"
             className="h-[17px] w-auto max-w-full object-contain object-left"
             priority
-            onLoadingComplete={() => setLogoReady(true)}
           />
         </Link>
 
@@ -60,21 +52,14 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Fixed width so fading in the icon doesn’t shift layout */}
-        <div className="flex h-8 w-8 shrink-0 items-center justify-end md:hidden">
-          <button
-            type="button"
-            className={`text-[#63FF79] transition-opacity duration-200 hover:text-[#4CE060] font-bold ${
-              logoReady ? "opacity-100" : "pointer-events-none opacity-0"
-            }`}
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label="Toggle Menu"
-            aria-hidden={!logoReady}
-            tabIndex={logoReady ? 0 : -1}
-          >
-            {menuOpen ? <X size={20} strokeWidth={4} /> : <Menu width={30} height={18} strokeWidth={4} preserveAspectRatio="none" className="-skew-x-[10deg]" />}
-          </button>
-        </div>
+        <button
+          type="button"
+          className="flex h-8 w-8 shrink-0 items-center justify-center text-[#63FF79] hover:text-[#4CE060] md:hidden font-bold"
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle Menu"
+        >
+          {menuOpen ? <X size={20} strokeWidth={4} /> : <Menu width={30} height={18} strokeWidth={4} preserveAspectRatio="none" className="-skew-x-[10deg]" />}
+        </button>
       </div>
 
       {/* Mobile Dropdown */}
