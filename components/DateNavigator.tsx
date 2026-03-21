@@ -9,6 +9,34 @@ interface Props {
   date: string; // yyyy-mm-dd from page params
 }
 
+const KENYA_TZ = "Africa/Nairobi";
+
+const kenyaYmdFormatter = new Intl.DateTimeFormat("en-CA", {
+  timeZone: KENYA_TZ,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
+/** 9 days: Kenya today −6 … +2. Same logic on server + client → no empty strip before dates. */
+function buildKenyaDateStrip(): Date[] {
+  const todayYmd = kenyaYmdFormatter.format(new Date());
+  const [y0, m0, d0] = todayYmd.split("-").map(Number);
+  const out: Date[] = [];
+  for (let i = -6; i <= 2; i++) {
+    const ms = Date.UTC(y0, m0 - 1, d0 + i);
+    out.push(new Date(ms));
+  }
+  return out;
+}
+
+function toYYYYMMDDUtc(d: Date) {
+  const y = d.getUTCFullYear();
+  const m = String(d.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(d.getUTCDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
 export default function DateNavigator({ date }: Props) {
   const router = useRouter();
   const pathname = usePathname();
@@ -18,27 +46,9 @@ export default function DateNavigator({ date }: Props) {
   const [isSearchOpen, setIsSearchOpen] = useState(Boolean(initialQuery));
   const [searchText, setSearchText] = useState(initialQuery);
 
-  // Parse selected date from URL (yyyy-mm-dd)
-  const [year, month, day] = date.split("-").map(Number);
-  const currentDate = new Date(year, month - 1, day);
+  const selectedYmd = date;
 
-  /**
-   * Build the scroll row only on the client. Using `new Date()` for "today" during SSR
-   * vs hydration (different TZ / midnight) caused hydration mismatches and broke click
-   * handling for date buttons and sometimes list items below.
-   */
-  const [dates, setDates] = useState<Date[]>([]);
-  useEffect(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const next: Date[] = [];
-    for (let i = -6; i <= 2; i++) {
-      const d = new Date(today);
-      d.setDate(today.getDate() + i);
-      next.push(d);
-    }
-    setDates(next);
-  }, []);
+  const [dates] = useState(() => buildKenyaDateStrip());
 
   // Scroll active date into view on mount / when strip is ready
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -58,16 +68,8 @@ export default function DateNavigator({ date }: Props) {
   }, [searchParams]);
 
 
-  // Helper to format YYYY-MM-DD
-  const toYYYYMMDD = (d: Date) => {
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    return `${y}-${m}-${day}`;
-  };
-
   const handleDateClick = (d: Date) => {
-    const nextDate = toYYYYMMDD(d);
+    const nextDate = toYYYYMMDDUtc(d);
     const q = (searchParams.get("q") || "").trim();
     const url = q ? `/predictions/${nextDate}?q=${encodeURIComponent(q)}` : `/predictions/${nextDate}`;
     router.push(url);
@@ -89,9 +91,8 @@ export default function DateNavigator({ date }: Props) {
 
   return (
     <div className="max-w-[100vw] bg-black border-y border-white/5 mx-auto">
-      <div className="max-w-3xl mx-auto flex items-center gap-1 md:gap-3 px-2 py-1.5">
+      <div className="max-w-3xl mx-auto flex items-center gap-1 md:gap-3 px-2 py-1.5 min-w-0">
 
-        {/* LEFT: LIVE button */}
         <Link
           href="/live"
           className={`shrink-0 w-12 h-8 rounded-md flex flex-col items-center justify-center text-[9px] font-bold transition-colors border ${isLivePage
@@ -102,43 +103,40 @@ export default function DateNavigator({ date }: Props) {
           LIVE
         </Link>
 
-        {/* CENTER: SCROLLABLE DATES */}
         <div
           ref={scrollContainerRef}
-          className="flex-1 overflow-x-auto flex items-center gap-1.5 scrollbar-hide no-scrollbar px-1 min-h-8"
+          className="flex-1 min-w-0 overflow-x-auto flex items-center gap-1.5 scrollbar-hide no-scrollbar px-1 min-h-8"
         >
-          {dates.length === 0 ? (
-            <div className="flex-1 flex items-center gap-1.5 px-1 opacity-40">
-              {Array.from({ length: 9 }).map((_, i) => (
-                <div key={i} className="shrink-0 w-[45px] h-8 rounded-md bg-[#1F1F1F] border border-white/5" />
-              ))}
-            </div>
-          ) : (
-            dates.map((d, i) => {
-              const isActive = d.toDateString() === currentDate.toDateString();
-              const dayName = d.toLocaleDateString("en-GB", { weekday: "short" });
-              const dateStr = d.toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit" });
+          {dates.map((d, i) => {
+            const isActive = toYYYYMMDDUtc(d) === selectedYmd;
+            const dayName = d.toLocaleDateString("en-GB", {
+              weekday: "short",
+              timeZone: KENYA_TZ,
+            });
+            const dateStr = d.toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "2-digit",
+              timeZone: KENYA_TZ,
+            });
 
-              return (
-                <button
-                  type="button"
-                  key={`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}-${i}`}
-                  onClick={() => handleDateClick(d)}
-                  data-active={isActive}
-                  className={`shrink-0 flex flex-col items-center justify-center w-[45px] h-8 rounded-md border transition-all ${isActive
-                    ? "bg-white/20 border-transparent text-white shadow-lg shadow-white/10"
-                    : "bg-[#1F1F1F] border-white/5 text-gray-500 hover:bg-[#252525] hover:text-gray-300"
-                    }`}
-                >
-                  <span className="text-[9px] font-bold uppercase leading-tight">{dayName}</span>
-                  <span className="text-[9px] font-medium leading-tight opacity-90">{dateStr}</span>
-                </button>
-              );
-            })
-          )}
+            return (
+              <button
+                type="button"
+                key={`${toYYYYMMDDUtc(d)}-${i}`}
+                onClick={() => handleDateClick(d)}
+                data-active={isActive}
+                className={`shrink-0 flex flex-col items-center justify-center w-[45px] h-8 rounded-md border transition-all ${isActive
+                  ? "bg-white/20 border-transparent text-white shadow-lg shadow-white/10"
+                  : "bg-[#1F1F1F] border-white/5 text-gray-500 hover:bg-[#252525] hover:text-gray-300"
+                  }`}
+              >
+                <span className="text-[9px] font-bold uppercase leading-tight">{dayName}</span>
+                <span className="text-[9px] font-medium leading-tight opacity-90">{dateStr}</span>
+              </button>
+            );
+          })}
         </div>
 
-        {/* RIGHT: Search button/input */}
         {isSearchOpen ? (
           <form onSubmit={handleSearchSubmit} className="shrink-0 flex items-center gap-1">
             <input
