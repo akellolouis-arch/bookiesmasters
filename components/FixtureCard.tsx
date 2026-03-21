@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 // import { Lock } from "lucide-react";
 // import { useSession, signIn } from "next-auth/react";
 // import { useState } from "react";
@@ -45,7 +45,6 @@ export default function FixtureCard({
   prediction,
   liveOdds,
 }: FixtureCardProps) {
-  const router = useRouter();
   const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(status) || status.includes("'");
   const isFinished = status === "FT";
 
@@ -120,23 +119,24 @@ export default function FixtureCard({
     }
   }
 
+  const href = `/prediction/${fixtureId}`;
+
   return (
     <div className="relative group max-w-xl mx-auto mb-3">
-      {/* Main Card Content - Clickable (Details Page) */}
-      <div
+      <Link
+        href={href}
+        prefetch={true}
         onClick={() => {
-          // Track ViewContent on click
-          if (typeof window !== 'undefined' && (window as any).fbq) {
-            (window as any).fbq('track', 'ViewContent', {
+          if (typeof window !== "undefined" && (window as { fbq?: (...args: unknown[]) => void }).fbq) {
+            (window as { fbq: (...args: unknown[]) => void }).fbq("track", "ViewContent", {
               content_name: `${homeTeam.name} vs ${awayTeam.name}`,
-              content_category: 'Prediction',
+              content_category: "Prediction",
               content_ids: [fixtureId],
-              content_type: 'product'
+              content_type: "product",
             });
           }
-          router.push(`/prediction/${fixtureId}`);
         }}
-        className="cursor-pointer block bg-[#1F1F1F] rounded-xl shadow-sm hover:shadow-md hover:bg-[#2a2a2a] transition flex items-center justify-between p-2 sm:p-3 border border-white/5 gap-2"
+        className="cursor-pointer block bg-[#1F1F1F] rounded-xl shadow-sm hover:shadow-md hover:bg-[#2a2a2a] transition flex items-center justify-between p-2 sm:p-3 border border-white/5 gap-2 no-underline text-inherit"
       >
         {/* STATUS */}
         <div className="w-[40px] sm:w-[50px] text-left shrink-0">
@@ -201,7 +201,7 @@ export default function FixtureCard({
             </div>
           )}
         </div>
-      </div >
-    </div >
+      </Link>
+    </div>
   );
 }
