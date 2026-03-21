@@ -86,6 +86,14 @@ function getKenyaDayStartMs(ymd) {
   ).getTime();
 }
 
+/** API-Football terminal / final match statuses — do not burn quota on predictions/odds. */
+const FINISHED_STATUS_SHORT = new Set(["FT", "AET", "PEN", "AWD", "WO"]);
+
+function isFinishedStatusShort(short) {
+  if (short == null || short === "") return false;
+  return FINISHED_STATUS_SHORT.has(String(short).toUpperCase());
+}
+
 /** API-Football "Match Winner" bet: id 1 or common name variants. */
 function isMatchWinnerMarket(bet) {
   if (!bet) return false;
@@ -104,11 +112,11 @@ async function getSavedLeagueIds() {
 }
 
 /* ---------------------------------------------
-   FETCH FIXTURES — MUST paginate (API returns ~1 page only otherwise).
-   Without this, "Sunday" / "+2 days" looks almost empty while API has many games.
+   FETCH FIXTURES — one GET /fixtures per Kenya calendar day, `date` ONLY.
+   API-Sports currently rejects `page`, `timezone`, and bare `from`/`to` in our tests;
+   extra params trigger "field do not exist" / "need another parameter".
 --------------------------------------------- */
-const MAX_FIXTURE_PAGES = 40;
-const BETWEEN_PAGE_DELAY_MS = 400;
+const BETWEEN_DAY_REQUESTS_MS = 400;
 
 function getFixtureApiErrors(body) {
   const e = body?.errors;
@@ -117,112 +125,52 @@ function getFixtureApiErrors(body) {
   return keys.length ? e : null;
 }
 
-/**
- * API-Sports: `from` + `to` does NOT accept `page` ("The Page field do not exist").
- * Use one request without `page`; if paging.total > 1 we must fall back to per-day fetches.
- */
-async function fetchFixturesDateRangeNoPage(from, to) {
+/** Single request: ?date=YYYY-MM-DD (no pagination params). */
+async function fetchFixturesForOneDate(date) {
   const res = await api.get(`/fixtures`, {
-    params: { from, to, timezone: KENYA_TZ },
+    params: { date },
   });
   const body = res.data;
   const errs = getFixtureApiErrors(body);
   if (errs) {
-    return {
-      ok: false,
-      rows: [],
-      pagingTotal: 0,
-      errors: errs,
-    };
+    console.error(`❌ API Errors (${date}):`, JSON.stringify(errs, null, 2));
+    return [];
   }
-  const pagingTotal = body?.paging?.total ?? 1;
   const rows = body?.response || [];
-  return { ok: true, rows, pagingTotal, errors: null };
-}
-
-/**
- * Paginated /fixtures for a single calendar `date` (and optional extra params).
- * Always sends timezone + page (supported for `date` queries).
- *
- * @param {Record<string, string|number>} baseParams - e.g. { date: '2026-03-21' }
- */
-async function fetchFixturesAllPages(baseParams) {
-  const merged = [];
-  let page = 1;
-  let totalPages = 1;
-
-  while (page <= totalPages && page <= MAX_FIXTURE_PAGES) {
-    // eslint-disable-next-line no-await-in-loop
-    const res = await api.get(`/fixtures`, {
-      params: { timezone: KENYA_TZ, ...baseParams, page },
-    });
-
-    const body = res.data;
-    const errs = getFixtureApiErrors(body);
-    if (errs) {
-      console.error("❌ API Errors:", JSON.stringify(errs, null, 2));
-    }
-
-    totalPages = body?.paging?.total ?? 1;
-    const chunk = body?.response || [];
-    merged.push(...chunk);
-
-    if (chunk.length === 0) break;
-    page += 1;
-    if (page <= totalPages) {
-      // eslint-disable-next-line no-await-in-loop
-      await new Promise((r) => setTimeout(r, BETWEEN_PAGE_DELAY_MS));
-    }
+  const total = body?.paging?.total ?? 1;
+  if (total > 1) {
+    console.warn(
+      `⚠ ${date}: API reports paging.total=${total} but \`page\` is not accepted — using first response only (${rows.length} rows).`
+    );
   }
-
-  return merged;
+  return rows;
 }
 
 /**
- * Kenya window [yesterday .. +daysAhead] with optional extra buffer days.
- * Try from/to once (no page + timezone). If API errors, multi-page range, or you need full coverage, use per-day + page.
+ * Kenya window: today .. today+daysAhead (inclusive) only — no yesterday, no buffer days (saves API quota).
+ * Pull each calendar day separately with `date=` only.
  */
-async function fetchFixturesForDates(savedLeagueIds, daysAhead = 2, extraBufferDays = 1) {
-  const from = getKenyaDatePlus(-1 - extraBufferDays);
-  const to = getKenyaDatePlus(daysAhead + extraBufferDays);
-
+async function fetchFixturesForDates(savedLeagueIds, daysAhead = 2) {
   let raw = [];
 
-  console.log(`📅 Fetching fixtures ${from}..${to} (Kenya TZ; range without page — API rejects from/to+page)...`);
-  const range = await fetchFixturesDateRangeNoPage(from, to);
+  const startYmd = getKenyaDatePlus(0);
+  const endYmd = getKenyaDatePlus(daysAhead);
 
-  const usePerDay =
-    !range.ok || range.errors != null || range.pagingTotal > 1;
+  console.log(
+    `📅 Fetching fixtures per Kenya day (${startYmd} .. ${endYmd}) only, param: date only`
+  );
 
-  if (!usePerDay) {
-    raw = range.rows;
-    console.log(`   → Raw rows from API (single range request): ${raw.length}`);
+  for (let day = 0; day <= daysAhead; day++) {
+    const date = getKenyaDatePlus(day);
+    // eslint-disable-next-line no-await-in-loop
+    const dayRows = await fetchFixturesForOneDate(date);
+    console.log(`   → ${date}: ${dayRows.length} fixture rows`);
+    raw.push(...dayRows);
+    // eslint-disable-next-line no-await-in-loop
+    await new Promise((r) => setTimeout(r, BETWEEN_DAY_REQUESTS_MS));
   }
 
-  if (usePerDay) {
-    if (range.errors) {
-      console.warn(`⚠ Range rejected by API: ${JSON.stringify(range.errors)}`);
-    } else if (range.pagingTotal > 1) {
-      console.warn(
-        `⚠ Range spans ${range.pagingTotal} API pages but from/to cannot use page; using per-day + pagination.`
-      );
-    } else if (!range.ok) {
-      console.warn("⚠ Range request failed; using per-day + pagination.");
-    }
-
-    raw = [];
-    for (let day = -1 - extraBufferDays; day <= daysAhead + extraBufferDays; day++) {
-      const date = getKenyaDatePlus(day);
-      // eslint-disable-next-line no-await-in-loop
-      const dayRows = await fetchFixturesAllPages({ date });
-      console.log(`   → ${date}: ${dayRows.length} fixture rows (all pages)`);
-      raw.push(...dayRows);
-      // eslint-disable-next-line no-await-in-loop
-      await new Promise((r) => setTimeout(r, BETWEEN_PAGE_DELAY_MS));
-    }
-  }
-
-  // Dedupe by fixture id (range can overlap buffer)
+  // Dedupe by fixture id
   const byId = new Map();
   for (const f of raw) {
     const id = f?.fixture?.id;
@@ -230,9 +178,7 @@ async function fetchFixturesForDates(savedLeagueIds, daysAhead = 2, extraBufferD
   }
   const unique = [...byId.values()];
 
-  // Keep Kenya kickoff inside intended window [yesterday .. +daysAhead] (drop buffer-only rows)
-  const startYmd = getKenyaDatePlus(-1);
-  const endYmd = getKenyaDatePlus(daysAhead);
+  // Keep Kenya kickoff inside [today .. +daysAhead] only
   const inWindow = unique.filter((f) => {
     const ymd = toKenyaDateOnly(f?.fixture?.date);
     if (!ymd) return false;
@@ -363,7 +309,7 @@ async function fetchOdds(fixtureId) {
 export async function updateDailyFixtures(force = false, recordCompletion = true) {
   try {
     // MongoDB should already be connected by server.js
-    console.log("📡 Updating fixtures (Kenya dates: yesterday through +2 days)...\n");
+    console.log("📡 Updating fixtures (Kenya dates: today through +2 days only)...\n");
 
     // 0. CHECK LAST RUN — at most once per Kenya calendar day (not rolling 24h).
     // Rolling 24h broke a fixed clock schedule: e.g. Monday 10:05 run → Tuesday 10:00 is only ~23h55m → skip.
@@ -395,11 +341,11 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
       return;
     }
 
-    // 2. Fetch fixtures for multiple Kenya calendar days (yesterday through +2 days)
+    // 2. Fetch fixtures: Kenya today .. today+2 only (no extra buffer days)
     const fixtures = await fetchFixturesForDates(savedLeagueIds, 2);
 
     if (fixtures.length === 0) {
-      console.log("⚠ No fixtures found for saved leagues between yesterday and +2 Kenya days.");
+      console.log("⚠ No fixtures found for saved leagues between today and +2 Kenya days.");
       return;
     }
 
@@ -443,39 +389,39 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
       // Check if we already have this fixture
       const existingDoc = await Fixture.findOne({ fixtureId: fixtureId }).lean();
 
-      // OPTIMIZATION: Skip prediction/odds fetch if match is finished
-      const isFinished = f.fixture?.status?.short && ["FT", "AET", "PEN"].includes(f.fixture.status.short);
+      const statusFromApi = f.fixture?.status?.short;
+      const statusFromDb =
+        existingDoc?.fixture?.fixture?.status?.short ?? existingDoc?.fixture?.status?.short;
+      const isFinished =
+        isFinishedStatusShort(statusFromApi) || isFinishedStatusShort(statusFromDb);
+
       const fixtureDateOnly = toKenyaDateOnly(f.fixture?.date);
       const isRecentFixture = fixtureDateOnly === yesterdayDate || fixtureDateOnly === todayDate;
       const allowFetchForFinished = backfillRecentFinished && isRecentFixture;
+
+      // Quota: never call predictions/odds APIs for finished matches unless explicit backfill env.
+      const mayCallPredOddsApis = !isFinished || allowFetchForFinished;
 
       let prediction = null;
       let h2h = null;
       let bets = [];
 
-      // 1️⃣ predictions
-      // If we already have a prediction object in the DB, OR if the match is finished, SKIP fetching it again.
+      // 1️⃣ predictions — skip API for finished (reuse DB only)
       if (existingDoc && existingDoc.prediction && Object.keys(existingDoc.prediction).length > 0) {
         prediction = existingDoc.prediction;
         h2h = existingDoc.h2h;
-      } else if (!isFinished || allowFetchForFinished) {
-        // Only fetch if missing AND match isn't finished
-        // OR we're doing a one-off backfill for yesterday's finished fixtures
+      } else if (mayCallPredOddsApis) {
         const predResult = await fetchPrediction(fixtureId);
         prediction = predResult.prediction;
         h2h = predResult.h2h;
       }
 
-    // 3️⃣ odds
-    // We ALWAYS fetch fresh odds from 1xBet during the daily run (unless the match is finished)
-    // because odds fluctuate leading up to the match day.
+      // 3️⃣ odds — fresh 1xBet only for not started / live; finished → keep DB, no API
       if (!isFinished) {
         bets = await fetchOdds(fixtureId);
       } else if (existingDoc && existingDoc.odds && existingDoc.odds.length > 0) {
-        // If finished, just preserve whatever the final pre-match odds were
         bets = existingDoc.odds;
       } else if (allowFetchForFinished) {
-        // One-off backfill for yesterday's finished fixtures
         bets = await fetchOdds(fixtureId);
       }
 
@@ -551,10 +497,10 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
 
 const DAILY_UPDATE_HOUR = Number.isFinite(Number(process.env.DAILY_UPDATE_HOUR))
   ? Number(process.env.DAILY_UPDATE_HOUR)
-  : 10;
+  : 6;
 const DAILY_UPDATE_MINUTE = Number.isFinite(Number(process.env.DAILY_UPDATE_MINUTE))
   ? Number(process.env.DAILY_UPDATE_MINUTE)
-  : 7;
+  : 0;
 
 function scheduleNextDailyUpdate() {
   const delay = msUntilNextKenyaWallClock(DAILY_UPDATE_HOUR, DAILY_UPDATE_MINUTE);
@@ -582,7 +528,7 @@ export function startDailyScheduler() {
   console.log(
     `⏰ Daily Update Scheduler: runs every day at ${DAILY_UPDATE_HOUR}:${String(DAILY_UPDATE_MINUTE).padStart(2, "0")} Africa/Nairobi`
   );
-  // First fire is the next 10:07 Kenya (today if still before that time, else tomorrow)
+  // First fire is the next 06:00 Kenya (today if still before that time, else tomorrow)
   scheduleNextDailyUpdate();
 }
 
