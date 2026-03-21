@@ -1,6 +1,35 @@
 import Fixture from "../models/Fixture.js";
 import { formatFixtureCard } from "../helpers/fixtureFormatter.js";
 
+/** Country A→Z, then league name A→Z (e.g. all England leagues together, ordered). */
+function compareCountryThenLeagueName(a, b) {
+  const countryA = (a?.country ?? "").toString();
+  const countryB = (b?.country ?? "").toString();
+  const c = countryA.localeCompare(countryB, "en", { sensitivity: "base" });
+  if (c !== 0) return c;
+  const nameA = (a?.name ?? "").toString();
+  const nameB = (b?.name ?? "").toString();
+  return nameA.localeCompare(nameB, "en", { sensitivity: "base" });
+}
+
+function sortDocsByCountryLeagueKickoff(docs) {
+  return [...docs].sort((x, y) => {
+    const lx = x.fixture?.league;
+    const ly = y.fixture?.league;
+    const c = compareCountryThenLeagueName(lx, ly);
+    if (c !== 0) return c;
+    const dx = new Date(x.fixture?.fixture?.date || 0).getTime();
+    const dy = new Date(y.fixture?.fixture?.date || 0).getTime();
+    return dx - dy;
+  });
+}
+
+function sortLeagueGroups(groups) {
+  return [...groups].sort((ga, gb) =>
+    compareCountryThenLeagueName(ga.league, gb.league)
+  );
+}
+
 export async function getFixturesGroupedByLeague(date) {
   if (!date) throw new Error("Date parameter is required");
 
@@ -91,7 +120,11 @@ export async function getFixturesGroupedByLeague(date) {
       }
     },
     {
-      $sort: { "fixture.league.id": 1, "fixture.fixture.date": 1 }
+      $sort: {
+        "fixture.league.country": 1,
+        "fixture.league.name": 1,
+        "fixture.fixture.date": 1
+      }
     },
     {
       $project: {
@@ -156,9 +189,11 @@ export async function getFixturesGroupedByLeague(date) {
     return hasOdds || isPlayedOrLive;
   });
 
-  // Group by league
+  const orderedDocs = sortDocsByCountryLeagueKickoff(fixturesWithOdds);
+
+  // Group by league (iteration order = country → league → kickoff)
   const grouped = {};
-  fixturesWithOdds.forEach(doc => {
+  orderedDocs.forEach(doc => {
     const league = doc.fixture.league;
     const leagueId = league.id;
 
@@ -177,7 +212,7 @@ export async function getFixturesGroupedByLeague(date) {
     grouped[leagueId].matches.push(formatFixtureCard(doc));
   });
 
-  return Object.values(grouped);
+  return sortLeagueGroups(Object.values(grouped));
 }
 
 export async function getLiveFixturesGroupedByLeague() {
@@ -228,12 +263,18 @@ export async function getLiveFixturesGroupedByLeague() {
       }
     },
     {
-      $sort: { "fixture.league.id": 1, "fixture.fixture.date": 1 }
+      $sort: {
+        "fixture.league.country": 1,
+        "fixture.league.name": 1,
+        "fixture.fixture.date": 1
+      }
     }
   ]);
 
+  const orderedLive = sortDocsByCountryLeagueKickoff(liveFixtures);
+
   const grouped = {};
-  liveFixtures.forEach((doc) => {
+  orderedLive.forEach((doc) => {
     const league = doc.fixture.league;
     const leagueId = league.id;
 
@@ -252,5 +293,5 @@ export async function getLiveFixturesGroupedByLeague() {
     grouped[leagueId].matches.push(formatFixtureCard(doc));
   });
 
-  return Object.values(grouped);
+  return sortLeagueGroups(Object.values(grouped));
 }
