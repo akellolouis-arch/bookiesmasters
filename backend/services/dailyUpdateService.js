@@ -60,6 +60,32 @@ function toKenyaDateOnly(dateTimeIso) {
   return kenyaYmdFormatter.format(d);
 }
 
+/**
+ * Milliseconds until the next `hour`:`minute` wall clock in Africa/Nairobi.
+ * Kenya is UTC+3 year-round (no DST), so +03:00 is stable.
+ */
+function msUntilNextKenyaWallClock(hour, minute = 0) {
+  const now = new Date();
+  const ymd = kenyaYmdFormatter.format(now);
+  const [y, m, d] = ymd.split("-").map(Number);
+  const pad = (n) => String(n).padStart(2, "0");
+  let target = new Date(
+    `${y}-${pad(m)}-${pad(d)}T${pad(hour)}:${pad(minute)}:00+03:00`
+  );
+  if (target.getTime() <= now.getTime()) {
+    target = new Date(target.getTime() + 86400000);
+  }
+  return target.getTime() - now.getTime();
+}
+
+/** Start of calendar day `ymd` (YYYY-MM-DD) in Kenya, as UTC ms. */
+function getKenyaDayStartMs(ymd) {
+  const [y, m, d] = ymd.split("-").map(Number);
+  return new Date(
+    `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}T00:00:00+03:00`
+  ).getTime();
+}
+
 /** API-Football "Match Winner" bet: id 1 or common name variants. */
 function isMatchWinnerMarket(bet) {
   if (!bet) return false;
@@ -289,9 +315,9 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
     // MongoDB should already be connected by server.js
     console.log("📡 Updating fixtures (Kenya dates: yesterday through +3 days)...\n");
 
-    // 0. CHECK LAST RUN TO PREVENT RESTART-BURNOUT
-    // Every time server restarts, this runs. If we restart 5 times, we burn 5x requests.
-    // Solution: Check DB.
+    // 0. CHECK LAST RUN — at most once per Kenya calendar day (not rolling 24h).
+    // Rolling 24h broke the 10:00 schedule: e.g. Monday 10:05 run → Tuesday 10:00 is only ~23h55m → skip.
+    // Deploy/restart no longer triggers an immediate run; the scheduler waits for 10:00 Nairobi.
 
     // Dynamic import to avoid circular dep issues at top level if any
     const SystemConfig = (await import("../models/SystemConfig.js")).default;
@@ -301,12 +327,13 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
 
     if (!force && lastRunConfig && lastRunConfig.value) {
       const lastRun = new Date(lastRunConfig.value);
-      const hoursCheck = 24; // Only allow run if > 24 hours have passed
-      const msSinceLast = now - lastRun;
+      const todayKenya = kenyaYmdFormatter.format(now);
+      const startOfTodayKenyaMs = getKenyaDayStartMs(todayKenya);
 
-      if (msSinceLast < hoursCheck * 60 * 60 * 1000) {
-        console.log(`⏳ Daily Update already ran at ${lastRun.toISOString()}. Skipping to save API quota.`);
-        console.log(`   (Next run allowed after ${hoursCheck} hours)`);
+      if (lastRun.getTime() >= startOfTodayKenyaMs) {
+        console.log(
+          `⏳ Daily update already completed for Kenya date ${todayKenya} (last ${lastRun.toISOString()}). Skipping.`
+        );
         return;
       }
     }
@@ -472,19 +499,41 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
   }
 }
 
+const DAILY_UPDATE_HOUR = Number.isFinite(Number(process.env.DAILY_UPDATE_HOUR))
+  ? Number(process.env.DAILY_UPDATE_HOUR)
+  : 10;
+const DAILY_UPDATE_MINUTE = Number.isFinite(Number(process.env.DAILY_UPDATE_MINUTE))
+  ? Number(process.env.DAILY_UPDATE_MINUTE)
+  : 0;
+
+function scheduleNextDailyUpdate() {
+  const delay = msUntilNextKenyaWallClock(DAILY_UPDATE_HOUR, DAILY_UPDATE_MINUTE);
+  const nextRun = new Date(Date.now() + delay);
+  const mm = String(DAILY_UPDATE_MINUTE).padStart(2, "0");
+  console.log(
+    `⏰ Next daily update: ${nextRun.toISOString()} (in ~${Math.round(delay / 60000)} min) — Africa/Nairobi ${DAILY_UPDATE_HOUR}:${mm}`
+  );
+
+  setTimeout(async () => {
+    console.log(
+      `⏰ Scheduled daily update (${DAILY_UPDATE_HOUR}:${String(DAILY_UPDATE_MINUTE).padStart(2, "0")} Kenya) starting...`
+    );
+    try {
+      await updateDailyFixtures(false, true);
+    } catch (err) {
+      console.error("❌ Scheduled daily update failed:", err);
+    } finally {
+      scheduleNextDailyUpdate();
+    }
+  }, delay);
+}
+
 export function startDailyScheduler() {
-  console.log("⏰ Daily Update Scheduler Started (Runs every 24h, first run in 5 mins)");
-
-  // Delay the first run by 5 minutes to allow server startup/health-checks to pass
-  setTimeout(() => {
-    console.log("⏰ Starting initial Daily Update...");
-    updateDailyFixtures(false, true);
-  }, 5 * 60 * 1000);
-
-  // Then schedule the daily interval
-  setInterval(() => {
-    updateDailyFixtures(false, true);
-  }, 24 * 60 * 60 * 1000);
+  console.log(
+    `⏰ Daily Update Scheduler: runs every day at ${DAILY_UPDATE_HOUR}:${String(DAILY_UPDATE_MINUTE).padStart(2, "0")} Africa/Nairobi`
+  );
+  // First fire is the *next* 10:00 Kenya (today if still before 10:00, else tomorrow)
+  scheduleNextDailyUpdate();
 }
 
 /* ---------------------------------------------

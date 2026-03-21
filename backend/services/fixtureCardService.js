@@ -144,13 +144,19 @@ export async function getFixturesGroupedByLeague(date) {
   ]);
   console.timeEnd("DB:FetchFixtures");
 
-  // Filter out fixtures that **do not have match winner odds**,
-  // but ALWAYS include finished or live matches so past results are visible.
-  const fixturesWithOdds = fixtures.filter(f => {
-    const hasOdds = f.odds && f.odds.length > 0 && f.odds[0].markets && f.odds[0].markets.length > 0;
-    const statusShort = f.fixture?.fixture?.status?.short;
+  // Filter: prefer showing fixtures with 1x2 odds, but DO NOT hide upcoming fixtures
+  // just because 1xBet has not published Match Winner yet (common for +2/+3 days out).
+  // Always keep live / finished / postponed etc. visible too.
+  const fixturesWithOdds = fixtures.filter((f) => {
+    const hasOdds =
+      f.odds &&
+      f.odds.length > 0 &&
+      f.odds[0].markets &&
+      f.odds[0].markets.length > 0;
+    const statusShort = f.fixture?.fixture?.status?.short || "";
     const isPlayedOrLive = statusShort && !["NS", "TBD"].includes(statusShort);
-    return hasOdds || isPlayedOrLive;
+    const isScheduledSoon = ["NS", "TBD", "PST"].includes(statusShort);
+    return hasOdds || isPlayedOrLive || isScheduledSoon;
   });
 
   // Group by league

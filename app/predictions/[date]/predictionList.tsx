@@ -128,18 +128,8 @@ export default function PredictionsList({
       .filter((league) => league.matches.length > 0);
   }
 
-  // Show only fixtures that have at least one 1X2 odd (or are live/finished)
-  safeData = safeData
-    .map((league) => ({
-      ...league,
-      matches: league.matches.filter((match: FixtureCardProps) => {
-        const o = match.odds;
-        if (!o) return false;
-        if (!o.home && !o.draw && !o.away) return false;
-        return true;
-      }),
-    }))
-    .filter((league) => league.matches.length > 0);
+  // Backend already decides visibility (includes upcoming fixtures before 1xBet posts 1X2).
+  // Do not strip those here — odds render as "-" on FixtureCard.
 
   // FIX: Prevent "shambolic" display on initial load by waiting for mount
   const [mounted, setMounted] = useState(false);
