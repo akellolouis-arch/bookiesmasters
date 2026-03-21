@@ -146,7 +146,11 @@ export default async function PredictionsPage({
         name: f.league.name,
         logo: f.league.logo,
         country: f.league.country,
-        matches: f.matches,
+        matches: f.matches.filter((match) => {
+          if (!match.odds) return false;
+          if (!match.odds.home && !match.odds.draw && !match.odds.away) return false;
+          return true;
+        }),
       }))
       .filter((league) => league.matches.length > 0);
   }
