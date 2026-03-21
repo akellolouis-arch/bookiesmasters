@@ -316,8 +316,8 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
     console.log("📡 Updating fixtures (Kenya dates: yesterday through +3 days)...\n");
 
     // 0. CHECK LAST RUN — at most once per Kenya calendar day (not rolling 24h).
-    // Rolling 24h broke the 10:00 schedule: e.g. Monday 10:05 run → Tuesday 10:00 is only ~23h55m → skip.
-    // Deploy/restart no longer triggers an immediate run; the scheduler waits for 10:00 Nairobi.
+    // Rolling 24h broke a fixed clock schedule: e.g. Monday 10:05 run → Tuesday 10:00 is only ~23h55m → skip.
+    // Deploy/restart no longer triggers an immediate run; the scheduler waits for the next Kenya wall time.
 
     // Dynamic import to avoid circular dep issues at top level if any
     const SystemConfig = (await import("../models/SystemConfig.js")).default;
@@ -501,10 +501,10 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
 
 const DAILY_UPDATE_HOUR = Number.isFinite(Number(process.env.DAILY_UPDATE_HOUR))
   ? Number(process.env.DAILY_UPDATE_HOUR)
-  : 10;
+  : 9;
 const DAILY_UPDATE_MINUTE = Number.isFinite(Number(process.env.DAILY_UPDATE_MINUTE))
   ? Number(process.env.DAILY_UPDATE_MINUTE)
-  : 0;
+  : 47;
 
 function scheduleNextDailyUpdate() {
   const delay = msUntilNextKenyaWallClock(DAILY_UPDATE_HOUR, DAILY_UPDATE_MINUTE);
@@ -532,7 +532,7 @@ export function startDailyScheduler() {
   console.log(
     `⏰ Daily Update Scheduler: runs every day at ${DAILY_UPDATE_HOUR}:${String(DAILY_UPDATE_MINUTE).padStart(2, "0")} Africa/Nairobi`
   );
-  // First fire is the *next* 10:00 Kenya (today if still before 10:00, else tomorrow)
+  // First fire is the next 09:47 Kenya (today if still before that time, else tomorrow)
   scheduleNextDailyUpdate();
 }
 
