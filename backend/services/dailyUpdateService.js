@@ -150,7 +150,7 @@ async function fetchFixturesForOneDate(date) {
  * Kenya window: today .. today+daysAhead (inclusive) only — no yesterday, no buffer days (saves API quota).
  * Pull each calendar day separately with `date=` only.
  */
-async function fetchFixturesForDates(savedLeagueIds, daysAhead = 2) {
+async function fetchFixturesForDates(savedLeagueIds, daysAhead = 1) {
   let raw = [];
 
   const startYmd = getKenyaDatePlus(0);
@@ -309,7 +309,7 @@ async function fetchOdds(fixtureId) {
 export async function updateDailyFixtures(force = false, recordCompletion = true) {
   try {
     // MongoDB should already be connected by server.js
-    console.log("📡 Updating fixtures (Kenya dates: today through +2 days only)...\n");
+    console.log("📡 Updating fixtures (Kenya dates: today through +1 days only)...\n");
 
     // 0. CHECK LAST RUN — at most once per Kenya calendar day (not rolling 24h).
     // Rolling 24h broke a fixed clock schedule: e.g. Monday 10:05 run → Tuesday 10:00 is only ~23h55m → skip.
@@ -341,11 +341,11 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
       return;
     }
 
-    // 2. Fetch fixtures: Kenya today .. today+2 only (no extra buffer days)
-    const fixtures = await fetchFixturesForDates(savedLeagueIds, 2);
+    // 2. Fetch fixtures: Kenya today .. today+1 only (no extra buffer days)
+    const fixtures = await fetchFixturesForDates(savedLeagueIds, 1);
 
     if (fixtures.length === 0) {
-      console.log("⚠ No fixtures found for saved leagues between today and +2 Kenya days.");
+      console.log("⚠ No fixtures found for saved leagues between today and +1 Kenya days.");
       return;
     }
 
@@ -497,10 +497,10 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
 
 const DAILY_UPDATE_HOUR = Number.isFinite(Number(process.env.DAILY_UPDATE_HOUR))
   ? Number(process.env.DAILY_UPDATE_HOUR)
-  : 6;
+  : 0;
 const DAILY_UPDATE_MINUTE = Number.isFinite(Number(process.env.DAILY_UPDATE_MINUTE))
   ? Number(process.env.DAILY_UPDATE_MINUTE)
-  : 0;
+  : 1;
 
 function scheduleNextDailyUpdate() {
   const delay = msUntilNextKenyaWallClock(DAILY_UPDATE_HOUR, DAILY_UPDATE_MINUTE);

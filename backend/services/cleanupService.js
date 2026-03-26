@@ -21,12 +21,12 @@ export async function cleanupOldFixtures() {
     try {
         console.log("🧹 [Cleanup] Starting database cleanup for matches > 7 days old...");
 
-        const sevenDaysAgo = new Date();
-        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        const twoDaysAgo = new Date();
+        twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
 
         // Find count first
         const count = await Fixture.countDocuments({
-            "fixture.fixture.date": { $lt: sevenDaysAgo.toISOString() },
+            "fixture.fixture.date": { $lt: twoDaysAgo.toISOString() },
             "cleanupDone": { $ne: true } // Avoid reprocessing
         });
 
@@ -39,7 +39,7 @@ export async function cleanupOldFixtures() {
 
         const result = await Fixture.updateMany(
             {
-                "fixture.fixture.date": { $lt: sevenDaysAgo.toISOString() },
+                "fixture.fixture.date": { $lt: twoDaysAgo.toISOString() },
                 "cleanupDone": { $ne: true }
             },
             {

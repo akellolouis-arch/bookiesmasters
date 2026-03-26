@@ -18,12 +18,12 @@ const kenyaYmdFormatter = new Intl.DateTimeFormat("en-CA", {
   day: "2-digit",
 });
 
-/** 9 days: Kenya today −6 … +2. Same logic on server + client → no empty strip before dates. */
+/** 4 days: Kenya today −2 … +1. */
 function buildKenyaDateStrip(): Date[] {
   const todayYmd = kenyaYmdFormatter.format(new Date());
   const [y0, m0, d0] = todayYmd.split("-").map(Number);
   const out: Date[] = [];
-  for (let i = -6; i <= 2; i++) {
+  for (let i = -2; i <= 1; i++) {
     const ms = Date.UTC(y0, m0 - 1, d0 + i);
     out.push(new Date(ms));
   }

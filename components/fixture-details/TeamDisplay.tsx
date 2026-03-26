@@ -16,7 +16,7 @@ interface TeamDisplayProps {
     displayDate: string;
     venue?: string;
     date: string;
-    score?: { home: number | null; away: number | null };
+    score?: { home: number | null; away: number | null } | null;
     tip?: string | null;
 }
 
