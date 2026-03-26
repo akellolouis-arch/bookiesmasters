@@ -1,4 +1,3 @@
-
 import React from "react";
 import Image from "next/image";
 
@@ -14,10 +13,9 @@ interface TeamDisplayProps {
     homeTeam: Team;
     awayTeam: Team;
     status: string;
-    // displayDate usually contains time or "FT"
     displayDate: string;
     venue?: string;
-    date: string; // ISO date string
+    date: string;
     score?: { home: number | null; away: number | null };
     tip?: string | null;
 }
@@ -32,7 +30,6 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
     score,
     tip,
 }) => {
-    // Check if match is live/active to apply red color
     const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE"].includes(status);
     const isFinished = ["FT", "AET", "PEN"].includes(status);
     const kickoffTime = new Date(date).toLocaleTimeString("en-GB", {
@@ -42,10 +39,8 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
         timeZone: "Africa/Nairobi",
     });
 
-    // Tip Validation Logic (Matches FixtureCard)
     const getTipStatus = (tVal: string) => {
         if (!score || score.home === null || score.away === null || status === "NS") return "PENDING";
-
         const h = Number(score.home);
         const a = Number(score.away);
         const t = tVal.trim().toUpperCase();
@@ -57,7 +52,6 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
         if (t === "X2") return a >= h ? "WIN" : "LOSS";
         if (t === "12") return h !== a ? "WIN" : "LOSS";
 
-        // Basic Over/Under Support
         if (t.startsWith("OVER")) {
             const line = parseFloat(t.split(" ")[1]);
             if (!isNaN(line)) return (h + a) > line ? "WIN" : "LOSS";
@@ -66,118 +60,98 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
             const line = parseFloat(t.split(" ")[1]);
             if (!isNaN(line)) return (h + a) < line ? "WIN" : "LOSS";
         }
-
         return "PENDING";
     };
 
-    let tipColorClass = "text-orange-400 bg-orange-900/20 border-orange-500/20";
+    let tipBadge = null;
     if (tip && tip !== "N/A") {
         const s = getTipStatus(tip);
-        if (s === "WIN") tipColorClass = "text-green-400 bg-green-900/40 border-green-500/20";
-        if (s === "LOSS") tipColorClass = "text-red-400 bg-red-900/20 border-red-500/20";
-    }
+        let colors = "text-orange-300 bg-orange-500/20 border-orange-500/30";
+        let icon = "🎯";
+        if (s === "WIN") {
+            colors = "text-emerald-300 bg-emerald-500/20 border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.2)]";
+            icon = "✅";
+        }
+        if (s === "LOSS") {
+            colors = "text-rose-300 bg-rose-500/20 border-rose-500/30";
+            icon = "❌";
+        }
 
-    const renderFormBars = (forms: { result: string; color: string }[]) => {
-        if (!forms || !Array.isArray(forms) || forms.length === 0) return null;
-
-        return (
-            <div className="flex justify-center gap-1 mt-1">
-                {forms.map((m, idx) => (
-                    <span
-                        key={idx}
-                        className="rounded-sm text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center"
-                        style={{ backgroundColor: m.color }}
-                    >
-                        {m.result}
-                    </span>
-                ))}
+        tipBadge = (
+            <div className={`mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md border animate-in zoom-in duration-500 ${colors}`}>
+                <span>{icon}</span> Tip: {tip}
             </div>
         );
-    };
+    }
 
     return (
-        <div className="flex flex-col items-center mb-3 text-white bg-[#1F1F1F] p-2 rounded-xl shadow-sm border border-white/5">
-            {/* League/Header info is usually above this component, so we just show teams here */}
+        <div className="relative w-full overflow-hidden rounded-2xl mb-6 bg-gradient-to-br from-[#0f172a] via-[#020617] to-[#1e1b4b] border border-white/10 shadow-2xl">
 
-            <div className="grid grid-cols-3 items-center gap-1 sm:gap-2 max-w-lg w-full">
-                {/* Home */}
-                <div className="flex flex-col items-center">
-                    <div className="relative w-12 h-12 sm:w-16 sm:h-16 mb-2">
-                        <Image
-                            src={homeTeam?.logo}
-                            alt={homeTeam?.name}
-                            fill
-                            className="object-contain"
-                            unoptimized
-                        />
+            {/* Subtle Abstract Background Glows */}
+            <div className="absolute top-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full mix-blend-screen filter blur-[80px] opacity-50 translate-x-[-20%] translate-y-[-20%]"></div>
+            <div className="absolute bottom-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full mix-blend-screen filter blur-[80px] opacity-50 translate-x-[20%] translate-y-[20%]"></div>
+
+            {/* Main Content */}
+            <div className="relative z-10 p-6 sm:p-8 flex flex-col items-center">
+
+                {/* Scoreboard Area */}
+                <div className="flex items-center justify-between w-full max-w-2xl mx-auto">
+
+                    {/* Home Team */}
+                    <div className="flex flex-col items-center flex-1">
+                        <div className="relative w-16 h-16 sm:w-24 sm:h-24 mb-3 filter drop-shadow-lg transition-transform hover:scale-105 duration-300">
+                            <Image src={homeTeam?.logo} alt={homeTeam?.name} fill className="object-contain" unoptimized />
+                        </div>
+                        <h2 className="font-extrabold text-center text-sm sm:text-xl text-white tracking-wide drop-shadow-md">
+                            {homeTeam.name}
+                        </h2>
                     </div>
-                    <span className="font-bold text-center text-xs sm:text-sm text-gray-200 leading-tight">
-                        {homeTeam.name}
-                    </span>
-                    {homeTeam.form && renderFormBars(homeTeam.form)}
-                </div>
 
-                {/* Center - Score/Time */}
-                <div className="flex flex-col items-center justify-center text-center">
-
-                    {/* TIP Display - Above Score/Time */}
-                    {tip && tip !== "N/A" && (
-                        <div className={`mb-2 border px-3 py-1 rounded text-xs font-bold uppercase tracking-wider animate-in fade-in slide-in-from-top-1 ${tipColorClass}`}>
-                            Tip: {tip}
-                        </div>
-                    )}
-
-                    {score ? (
-                        <div className="flex flex-col items-center">
-                            {/* Score */}
-                            <div className={`text-2xl sm:text-3xl font-bold tracking-wider ${isLive ? "text-red-500" : "text-gray-200"}`}>
-                                {score.home} - {score.away}
+                    {/* Center Info (Score & Time) */}
+                    <div className="flex flex-col items-center justify-center flex-shrink-0 px-2 sm:px-6">
+                        {score ? (
+                            <div className="flex flex-col items-center">
+                                <div className={`text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter drop-shadow-[0_0_10px_rgba(255,255,255,0.1)] flex items-center gap-3 ${isLive ? "text-rose-500" : "text-white"}`}>
+                                    <span>{score.home}</span>
+                                    <span className="text-white/20 text-3xl sm:text-4xl">-</span>
+                                    <span>{score.away}</span>
+                                </div>
+                                <div className={`mt-2 text-xs sm:text-sm font-bold tracking-widest uppercase px-3 py-1 rounded-full backdrop-blur-md bg-white/5 border border-white/10 ${isLive ? "text-rose-400 animate-pulse border-rose-500/30 bg-rose-500/10" : "text-gray-300"}`}>
+                                    {isFinished ? `FT • ${kickoffTime}` : displayDate}
+                                </div>
                             </div>
-
-                            {/* Status / Date */}
-                            <div className={`text-xs font-bold mt-1 ${isLive ? "text-red-500 animate-pulse" : "text-gray-400"}`}>
-                                {isFinished ? (
-                                    <div className="flex flex-col items-center leading-tight">
-                                        <span>FT</span>
-                                        <span className="text-[10px] text-gray-500 mt-0.5">{kickoffTime}</span>
-                                    </div>
-                                ) : (
-                                    displayDate
-                                )}
+                        ) : (
+                            <div className="flex flex-col items-center">
+                                <div className="text-3xl sm:text-5xl font-black text-white/10 mb-2 tracking-widest">v</div>
+                                <div className="text-xs sm:text-sm font-semibold tracking-widest text-[#94a3b8] uppercase bg-white/5 px-4 py-1.5 rounded-full backdrop-blur-md border border-white/5">
+                                    {displayDate}
+                                </div>
                             </div>
-                        </div>
-                    ) : (
-                        <div className="flex flex-col items-center">
-                            <div className="text-sm font-bold text-gray-400">
-                                {displayDate}
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                {/* Away */}
-                <div className="flex flex-col items-center">
-                    <div className="relative w-12 h-12 sm:w-16 sm:h-16 mb-2">
-                        <Image
-                            src={awayTeam?.logo}
-                            alt={awayTeam?.name}
-                            fill
-                            className="object-contain"
-                            unoptimized
-                        />
+                        )}
                     </div>
-                    <span className="font-bold text-center text-xs sm:text-sm text-gray-200 leading-tight">
-                        {awayTeam.name}
-                    </span>
-                    {awayTeam.form && renderFormBars(awayTeam.form)}
+
+                    {/* Away Team */}
+                    <div className="flex flex-col items-center flex-1">
+                        <div className="relative w-16 h-16 sm:w-24 sm:h-24 mb-3 filter drop-shadow-lg transition-transform hover:scale-105 duration-300">
+                            <Image src={awayTeam?.logo} alt={awayTeam?.name} fill className="object-contain" unoptimized />
+                        </div>
+                        <h2 className="font-extrabold text-center text-sm sm:text-xl text-white tracking-wide drop-shadow-md">
+                            {awayTeam.name}
+                        </h2>
+                    </div>
+
                 </div>
+
+                {/* Prediction Tip Badge */}
+                {tipBadge}
+
+                {/* Match Info Footer (Venue) */}
+                {venue && (
+                    <div className="mt-6 flex items-center justify-center text-[#64748b] text-[10px] sm:text-xs tracking-wider uppercase">
+                        <span className="mr-1">🏟</span> {venue}
+                    </div>
+                )}
             </div>
-
-            {venue && (
-                <p className="mt-4 text-gray-500 text-[10px] sm:text-xs text-center border-t border-white/10 pt-2 w-full max-w-xs">
-                    🏟 {venue}
-                </p>
-            )}
         </div>
     );
 };

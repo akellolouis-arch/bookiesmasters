@@ -22,7 +22,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
 
     if (!matches || matches.length === 0) {
         return (
-            <div className="mb-6 max-w-3xl mx-auto bg-[#1F1F1F] p-4 rounded-xl shadow-sm border border-white/5 text-center">
+            <div className="mb-4 w-full text-center">
                 <div className="text-gray-500 text-xs uppercase tracking-widest mb-2">{teamName}</div>
                 <div className="text-sm text-gray-400">No match history available</div>
             </div>
@@ -34,9 +34,9 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
     const hasMore = matches.length > 5;
 
     return (
-        <div className="mb-6 max-w-3xl mx-auto bg-[#1F1F1F] p-4 rounded-xl shadow-sm border border-white/5 animate-in fade-in duration-500">
+        <div className="mb-6 w-full animate-in fade-in duration-500">
             {/* 🏆 Title + Team Logo centered */}
-            <div className="flex flex-col items-start mb-4 border-b border-white/5 pb-2">
+            <div className="flex flex-col items-start mb-4 border-b border-white/10 pb-2">
                 <div className="flex items-center justify-start gap-2">
                     {teamLogo && (
                         <img

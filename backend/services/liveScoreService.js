@@ -101,6 +101,66 @@ export async function pollLiveScores() {
             };
         });
 
+        const liveBulkOpIds = new Set(apiFixtures.map((m) => m.fixture.id));
+
+        // 2b. API `live=all` often omits lower tiers (e.g. Argentina Primera C). Those stay `NS` in DB
+        // so the UI shows kickoff time instead of live minutes. Refresh by fixture id.
+        const PAST_KICKOFF_GRACE_MS = 2 * 60 * 1000;
+        const impendingIdList = activeOrImpendingMatches.map((m) => m.fixtureId);
+        if (impendingIdList.length > 0) {
+            const pastKickoffNs = await Fixture.find({
+                fixtureId: { $in: impendingIdList },
+                "fixture.fixture.status.short": "NS",
+                "fixture.fixture.date": {
+                    $lt: new Date(now.getTime() - PAST_KICKOFF_GRACE_MS).toISOString(),
+                    $gte: fortyEightHoursAgo.toISOString()
+                }
+            })
+                .select("fixtureId")
+                .lean();
+
+            const refetchNsIds = pastKickoffNs
+                .map((d) => d.fixtureId)
+                .filter((id) => !liveBulkOpIds.has(id));
+
+            if (refetchNsIds.length > 0) {
+                console.log(
+                    `   🔄 ${refetchNsIds.length} past-kickoff NS not in live=all — fetching by id (lower-tier / missing from live feed)...`
+                );
+                const REFETCH_BATCH = 20;
+                for (let i = 0; i < refetchNsIds.length; i += REFETCH_BATCH) {
+                    const batchIds = refetchNsIds.slice(i, i + REFETCH_BATCH).join("-");
+                    const refreshRes = await axios.get(`${BASE_URL}/fixtures`, {
+                        params: { ids: batchIds },
+                        headers: { "x-apisports-key": API_KEY }
+                    });
+                    const rows = refreshRes.data?.response || [];
+                    rows.forEach((match) => {
+                        const keyEvents = sanitizeKeyEvents(match.events);
+                        bulkOps.push({
+                            updateOne: {
+                                filter: { fixtureId: match.fixture.id },
+                                update: {
+                                    $set: {
+                                        "fixture.fixture.status": match.fixture.status,
+                                        "fixture.goals": match.goals,
+                                        "fixture.score": match.score,
+                                        "status": match.fixture.status.short,
+                                        "fixture.events": keyEvents,
+                                        "livescore": match.score,
+                                        "lastLiveUpdate": new Date()
+                                    }
+                                }
+                            }
+                        });
+                    });
+                    if (i + REFETCH_BATCH < refetchNsIds.length) {
+                        await new Promise((r) => setTimeout(r, 500));
+                    }
+                }
+            }
+        }
+
         // 3. Find matches that WERE live in our DB, but just finished (dropped off live=all)
         // We already have `activeOrImpendingMatches`, let's just filter it to those that WERE live.
         const localLiveMatches = await Fixture.find({

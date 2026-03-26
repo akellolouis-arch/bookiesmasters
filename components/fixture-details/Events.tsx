@@ -33,14 +33,14 @@ interface EventsProps {
 const Events: React.FC<EventsProps> = ({ events, homeTeamId }) => {
     if (!events || events.length === 0) {
         return (
-            <div className="text-center p-8 text-gray-500 bg-[#1F1F1F] rounded-xl border border-white/5">
+            <div className="text-center py-6 text-gray-500 w-full">
                 <p className="text-sm">No match events available</p>
             </div>
         );
     }
 
     return (
-        <div className="bg-[#1F1F1F] rounded-xl border border-white/5 py-3 relative">
+        <div className="w-full relative py-2">
             {/* Center Line */}
             <div className="absolute left-1/2 top-4 bottom-4 w-px bg-white/5 transform -translate-x-1/2"></div>
 

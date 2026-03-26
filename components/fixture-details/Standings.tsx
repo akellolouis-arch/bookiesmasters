@@ -33,9 +33,9 @@ const Standings: React.FC<StandingsProps> = ({ standings }) => {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 w-full animate-in fade-in duration-500">
             {standings.map((group, groupIndex) => (
-                <div key={groupIndex} className="bg-[#1F1F1F] rounded-xl border border-white/5 p-4">
+                <div key={groupIndex} className="w-full">
                     {/* Only show group name if there are multiple groups (e.g. AFCON) */}
                     {standings.length > 1 && (
                         <h3 className="text-gray-200 font-semibold mb-3 px-2">

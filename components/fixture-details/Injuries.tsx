@@ -52,14 +52,14 @@ export default function Injuries({ injuries }: InjuriesProps) {
     const teams = Array.from(new Set(injuries.map(i => i.team.name)));
 
     return (
-        <div className="p-4 space-y-6">
+        <div className="w-full space-y-4 animate-in fade-in duration-500">
             {teams.map(teamName => {
                 const teamInjuries = injuries.filter(i => i.team.name === teamName);
                 const teamLogo = teamInjuries[0].team.logo;
 
                 return (
-                    <div key={teamName} className="bg-[#1F1F1F] rounded-xl p-4 border border-white/5">
-                        <div className="flex items-center gap-3 mb-3 pb-2 border-b border-white/5">
+                    <div key={teamName} className="w-full">
+                        <div className="flex items-center gap-3 mb-3 pb-2 border-b border-white/10">
                             <img src={teamLogo} alt={teamName} className="w-6 h-6 object-contain" />
                             <h3 className="font-bold text-sm text-gray-200">{teamName}</h3>
                         </div>
