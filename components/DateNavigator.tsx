@@ -18,12 +18,12 @@ const kenyaYmdFormatter = new Intl.DateTimeFormat("en-CA", {
   day: "2-digit",
 });
 
-/** 4 days: Kenya today −2 … +1. */
+/** 7 days: Kenya today −5 … +1. */
 function buildKenyaDateStrip(): Date[] {
   const todayYmd = kenyaYmdFormatter.format(new Date());
   const [y0, m0, d0] = todayYmd.split("-").map(Number);
   const out: Date[] = [];
-  for (let i = -2; i <= 1; i++) {
+  for (let i = -5; i <= 1; i++) {
     const ms = Date.UTC(y0, m0 - 1, d0 + i);
     out.push(new Date(ms));
   }
@@ -125,7 +125,7 @@ export default function DateNavigator({ date }: Props) {
                 key={`${toYYYYMMDDUtc(d)}-${i}`}
                 onClick={() => handleDateClick(d)}
                 data-active={isActive}
-                className={`shrink-0 flex flex-col items-center justify-center w-[45px] h-8 rounded-md border transition-all ${isActive
+                className={`flex-1 flex flex-col items-center justify-center min-w-[45px] h-8 rounded-md border transition-all ${isActive
                   ? "bg-white/20 border-transparent text-white shadow-lg shadow-white/10"
                   : "bg-[#1F1F1F] border-white/5 text-gray-500 hover:bg-[#252525] hover:text-gray-300"
                   }`}
