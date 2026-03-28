@@ -179,6 +179,11 @@ export async function getFixturesGroupedByLeague(date) {
 
   // Only list fixtures with Match Winner (1x2) odds; always keep live/finished visible.
   const fixturesWithOdds = fixtures.filter((f) => {
+    // Prevent displaying Friendlies fixtures
+    if (f.fixture?.league?.name?.toLowerCase().includes("friendlies")) {
+      return false;
+    }
+
     const hasOdds =
       f.odds &&
       f.odds.length > 0 &&
@@ -271,7 +276,9 @@ export async function getLiveFixturesGroupedByLeague() {
     }
   ]);
 
-  const orderedLive = sortDocsByCountryLeagueKickoff(liveFixtures);
+  const orderedLive = sortDocsByCountryLeagueKickoff(
+    liveFixtures.filter(f => !f.fixture?.league?.name?.toLowerCase().includes("friendlies"))
+  );
 
   const grouped = {};
   orderedLive.forEach((doc) => {
