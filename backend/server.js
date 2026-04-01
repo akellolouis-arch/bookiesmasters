@@ -61,12 +61,13 @@ app.use("/api/payment", paymentRoutes); // New Manual Payments
 // ---------------------------------------------
 // START: Mongo FIRST — then HTTP (fixes buffering timeouts on cold start)
 // ---------------------------------------------
-/** Shorter per-attempt timeout + retries: Atlas M0 resume & cold start often fail once; the driver also reuses a generic "whitelist" message for several faults. */
+/** Retries + IPv4: PaaS (e.g. Render) → Atlas sometimes fails SRV/IPv6 paths; `family: 4` forces IPv4. */
 const MONGO_OPTIONS = {
-  serverSelectionTimeoutMS: 20_000,
+  serverSelectionTimeoutMS: 45_000,
   socketTimeoutMS: 60_000,
   maxPoolSize: 10,
   retryWrites: true,
+  family: 4,
 };
 
 const MONGO_CONNECT_MAX_ATTEMPTS = Math.max(
