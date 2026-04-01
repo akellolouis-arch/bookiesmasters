@@ -61,12 +61,56 @@ app.use("/api/payment", paymentRoutes); // New Manual Payments
 // ---------------------------------------------
 // START: Mongo FIRST — then HTTP (fixes buffering timeouts on cold start)
 // ---------------------------------------------
+/** Shorter per-attempt timeout + retries: Atlas M0 resume & cold start often fail once; the driver also reuses a generic "whitelist" message for several faults. */
 const MONGO_OPTIONS = {
-  serverSelectionTimeoutMS: 45_000,
+  serverSelectionTimeoutMS: 20_000,
   socketTimeoutMS: 60_000,
   maxPoolSize: 10,
   retryWrites: true,
 };
+
+const MONGO_CONNECT_MAX_ATTEMPTS = Math.max(
+  1,
+  Number(process.env.MONGO_CONNECT_MAX_ATTEMPTS) || 12
+);
+const MONGO_CONNECT_RETRY_DELAY_MS = Math.max(
+  1000,
+  Number(process.env.MONGO_CONNECT_RETRY_DELAY_MS) || 5000
+);
+
+async function sleep(ms) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+async function connectMongoWithRetry(uri) {
+  let lastErr;
+  for (let attempt = 1; attempt <= MONGO_CONNECT_MAX_ATTEMPTS; attempt++) {
+    try {
+      if (mongoose.connection.readyState !== 0) {
+        await mongoose.disconnect();
+      }
+    } catch {
+      // ignore cleanup errors
+    }
+
+    try {
+      await mongoose.connect(uri, MONGO_OPTIONS);
+      if (attempt > 1) {
+        console.log(`✅ MongoDB connected (attempt ${attempt}/${MONGO_CONNECT_MAX_ATTEMPTS})`);
+      }
+      return;
+    } catch (err) {
+      lastErr = err;
+      console.warn(
+        `⚠️ Mongo connect attempt ${attempt}/${MONGO_CONNECT_MAX_ATTEMPTS}: ${err.message}`
+      );
+      if (attempt < MONGO_CONNECT_MAX_ATTEMPTS) {
+        await sleep(MONGO_CONNECT_RETRY_DELAY_MS);
+      }
+    }
+  }
+  throw lastErr;
+}
 
 async function startServer() {
   if (!process.env.MONGO_URI) {
@@ -82,17 +126,20 @@ async function startServer() {
   });
 
   try {
-    await mongoose.connect(process.env.MONGO_URI, MONGO_OPTIONS);
+    await connectMongoWithRetry(process.env.MONGO_URI);
     console.log("✅ MongoDB connected");
 
     startLiveService();
     startDailyScheduler();
 
-    app.listen(PORT, () => {
+    app.listen(PORT, "0.0.0.0", () => {
       console.log(`🚀 Server listening on port ${PORT} (Mongo ready before accept)`);
     });
   } catch (err) {
-    console.error("❌ MongoDB connection failed — refusing to start HTTP:", err.message);
+    console.error(
+      "❌ MongoDB connection failed after all retries (HTTP not started):",
+      err.message
+    );
     process.exit(1);
   }
 }
