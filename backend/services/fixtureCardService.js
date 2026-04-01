@@ -54,7 +54,8 @@ export async function getFixturesGroupedByLeague(date) {
   };
 
   // Fetch all fixtures for the date using Aggregation for Deep Filtering
-  console.time("DB:FetchFixtures");
+  const fetchLabel = `DB:FetchFixtures:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`;
+  console.time(fetchLabel);
   const fixtures = await Fixture.aggregate([
     {
       $match: matchFilter
@@ -175,7 +176,7 @@ export async function getFixturesGroupedByLeague(date) {
       }
     }
   ]);
-  console.timeEnd("DB:FetchFixtures");
+  console.timeEnd(fetchLabel);
 
   // Only list fixtures with Match Winner (1x2) odds; always keep live/finished visible.
   const fixturesWithOdds = fixtures.filter((f) => {

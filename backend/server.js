@@ -37,18 +37,18 @@ app.use((req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
-// ---------------------------------------------
-// MONGO CONNECTION
-// ---------------------------------------------
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("✅ MongoDB connected");
-    startLiveService();     // 🚀 Start the 2m Live Scores poller
-    // startStandingsPoller(); // 🏆 DISABLED: Standings handled by dailyUpdateService
-    startDailyScheduler();  // ⏰ Start daily fixture update
-  })
-  .catch((err) => console.error("❌ MongoDB connection error:", err.message));
+// Test route (no DB — useful for process-up checks)
+app.get("/", (req, res) => {
+  res.send("Backend running with CORS enabled");
+});
+
+// All /api/* needs a live Mongo connection (must run BEFORE route handlers)
+app.use("/api", (req, res, next) => {
+  if (mongoose.connection.readyState !== 1) {
+    return res.status(503).json({ error: "Database temporarily unavailable" });
+  }
+  next();
+});
 
 // ---------------------------------------------
 // ROUTES
@@ -58,13 +58,43 @@ app.use("/api/fixtures", fixtureRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/payment", paymentRoutes); // New Manual Payments
 
-
-// Test route
-app.get("/", (req, res) => {
-  res.send("Backend running with CORS enabled");
-});
-
 // ---------------------------------------------
-// START SERVER
+// START: Mongo FIRST — then HTTP (fixes buffering timeouts on cold start)
 // ---------------------------------------------
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+const MONGO_OPTIONS = {
+  serverSelectionTimeoutMS: 45_000,
+  socketTimeoutMS: 60_000,
+  maxPoolSize: 10,
+  retryWrites: true,
+};
+
+async function startServer() {
+  if (!process.env.MONGO_URI) {
+    console.error("❌ MONGO_URI is not set");
+    process.exit(1);
+  }
+
+  mongoose.connection.on("error", (err) => {
+    console.error("❌ MongoDB driver error:", err.message);
+  });
+  mongoose.connection.on("disconnected", () => {
+    console.warn("⚠️ MongoDB disconnected");
+  });
+
+  try {
+    await mongoose.connect(process.env.MONGO_URI, MONGO_OPTIONS);
+    console.log("✅ MongoDB connected");
+
+    startLiveService();
+    startDailyScheduler();
+
+    app.listen(PORT, () => {
+      console.log(`🚀 Server listening on port ${PORT} (Mongo ready before accept)`);
+    });
+  } catch (err) {
+    console.error("❌ MongoDB connection failed — refusing to start HTTP:", err.message);
+    process.exit(1);
+  }
+}
+
+startServer();
