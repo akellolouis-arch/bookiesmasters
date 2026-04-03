@@ -1,17 +1,27 @@
 import axios from "axios";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
+dotenv.config({
+  path: path.resolve(__dirname, "../../.env.local"),
+  override: true,
+});
 
 import League from "../models/League.js";
 
 const API_KEY = process.env.API_KEY;
 const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/bookiesmasters";
+
+/** Match server.js — avoids TLS/internal_error on Node 20+ ↔ Atlas in some environments */
+const MONGO_OPTIONS = {
+  serverSelectionTimeoutMS: 45_000,
+  autoSelectFamily: false,
+  retryWrites: true,
+};
 
 const api = axios.create({
     baseURL: "https://v3.football.api-sports.io",
@@ -22,8 +32,17 @@ const api = axios.create({
 
 async function run() {
     try {
+        if (!API_KEY) {
+            console.error("❌ API_KEY is not set (backend/.env or .env.local)");
+            process.exit(1);
+        }
+        if (!process.env.MONGO_URI) {
+            console.error("❌ MONGO_URI is not set (backend/.env or root .env.local)");
+            process.exit(1);
+        }
+
         console.log("🔌 Connecting to MongoDB...");
-        await mongoose.connect(MONGO_URI);
+        await mongoose.connect(MONGO_URI, MONGO_OPTIONS);
         console.log("✅ Connected to MongoDB");
 
         console.log("🧹 Deleting all saved leagues...");
