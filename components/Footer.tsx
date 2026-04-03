@@ -79,7 +79,7 @@ export default function Footer() {
               </a>
             </li>
             <li>
-              <a href="https://combodef.com/L?tag=d_5366565m_60651c_&site=5366565&ad=60651" target="_blank" rel="noopener noreferrer" className="hover:text-teal-400 transition-colors">
+              <a href="https://paripesa.bet/bkms254" target="_blank" rel="noopener noreferrer" className="hover:text-teal-400 transition-colors">
                 Paripesa
               </a>
             </li>
