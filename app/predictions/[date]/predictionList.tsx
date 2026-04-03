@@ -129,7 +129,7 @@ export default function PredictionsList({
       .filter((league) => league.matches.length > 0);
   }
 
-  // Keep in sync with server mapping in page.tsx and backend card rules (odds / tip / score / live).
+  // Only fixtures with at least one 1×2 odd (same rule as page.tsx).
   safeData = safeData
     .map((league) => ({
       ...league,

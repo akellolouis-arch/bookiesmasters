@@ -113,7 +113,49 @@ function isMatchWinnerMarket(bet) {
   if (!bet) return false;
   if (bet.id === 1) return true;
   const n = (bet.name || "").trim().toLowerCase();
-  return n === "match winner" || n === "full time result" || n === "1x2";
+  return (
+    n === "match winner" ||
+    n === "full time result" ||
+    n === "1x2" ||
+    n === "3-way result" ||
+    n === "winner"
+  );
+}
+
+/** Bookmaker ids in order (API-Football). Default: 11=1xBet, 8=Bet365 — 1xBet often omits lines; Bet365 usually has them. */
+function getOddsBookmakerIds() {
+  const raw = process.env.ODDS_BOOKMAKER_IDS || "11,8";
+  return raw
+    .split(/[,\s]+/)
+    .map((s) => Number(String(s).trim()))
+    .filter((n) => Number.isFinite(n) && n > 0);
+}
+
+function normalizeApiBookmakersToOurOddsShape(bookmakers) {
+  if (!Array.isArray(bookmakers)) return [];
+  return bookmakers.map((b) => ({
+    id: b.id,
+    name: b.name,
+    logo: b.logo ?? null,
+    markets: (b.bets || [])
+      .filter((m) => isMatchWinnerMarket(m))
+      .map((m) => ({
+        id: 1,
+        name: "Match Winner",
+        values: (m.values || []).map((v) => ({
+          value: v.value,
+          odd: v.odd != null ? String(v.odd) : v.odd,
+        })),
+      })),
+  }));
+}
+
+function oddsPayloadHasMatchWinner(normalized) {
+  return normalized.some(
+    (b) =>
+      Array.isArray(b.markets) &&
+      b.markets.some((m) => Array.isArray(m.values) && m.values.length > 0)
+  );
 }
 
 /* ---------------------------------------------
@@ -231,88 +273,48 @@ async function fetchPrediction(fixtureId) {
 }
 
 /* ---------------------------------------------
-   FETCH ODDS (1xBet ONLY)
+   FETCH ODDS — try bookmakers in order (env ODDS_BOOKMAKER_IDS, default 11,8)
 --------------------------------------------- */
+async function fetchOddsForBookmaker(fixtureId, bookmakerId) {
+  const res = await api.get(`/odds`, {
+    params: { fixture: fixtureId, bookmaker: bookmakerId },
+  });
+  const odds = res.data?.response?.[0];
+  if (!odds || !odds.bookmakers?.length) return null;
+  const normalized = normalizeApiBookmakersToOurOddsShape(odds.bookmakers);
+  if (!oddsPayloadHasMatchWinner(normalized)) return null;
+  return normalized;
+}
+
 async function fetchOdds(fixtureId) {
+  const bookmakerIds = getOddsBookmakerIds();
   const MAX_RETRIES = 3;
   const RETRY_DELAY_MS = 1500;
 
-  try {
+  for (const bookmakerId of bookmakerIds) {
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-      // Use 1xBet (11) as the single source of odds
-      const res = await api.get(`/odds`, {
-        params: { fixture: fixtureId, bookmaker: 11 }
-      });
-
-      const odds = res.data?.response?.[0];
-      if (!odds || !odds.bookmakers) return [];
-
-      const normalized = odds.bookmakers.map(b => ({
-        bookmaker: b.name,
-        markets: b.bets
-          .filter((m) => isMatchWinnerMarket(m))
-          .map(m => ({
-            id: m.id,
-            name: m.name,
-            values: m.values.map(v => ({
-              value: v.value,
-              odd: v.odd
-            }))
-          }))
-      }));
-
-      // If API returned bookmakers but no Match Winner entries, treat as "no odds for this fixture".
-      const hasMatchWinner = normalized.some(
-        (b) => Array.isArray(b.markets) && b.markets.some((m) => Array.isArray(m.values) && m.values.length > 0)
-      );
-      if (!hasMatchWinner) return [];
-
-      return normalized;
-    }
-    return [];
-  } catch (err) {
-    // Retry only for transient API failures (429/5xx), then give up.
-    const statusCode = err?.response?.status;
-    const shouldRetry = statusCode === 429 || (statusCode >= 500 && statusCode < 600);
-
-    if (shouldRetry) {
-      for (let retry = 1; retry <= MAX_RETRIES; retry++) {
-        try {
-          await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS * retry));
-          const retryRes = await api.get(`/odds`, {
-            params: { fixture: fixtureId, bookmaker: 11 }
-          });
-          const retryOdds = retryRes.data?.response?.[0];
-          if (!retryOdds || !retryOdds.bookmakers) return [];
-
-          const normalizedRetry = retryOdds.bookmakers.map(b => ({
-            bookmaker: b.name,
-            markets: b.bets
-              .filter((m) => isMatchWinnerMarket(m))
-              .map(m => ({
-                id: m.id,
-                name: m.name,
-                values: m.values.map(v => ({
-                  value: v.value,
-                  odd: v.odd
-                }))
-              }))
-          }));
-
-          const hasMatchWinnerRetry = normalizedRetry.some(
-            (b) => Array.isArray(b.markets) && b.markets.some((m) => Array.isArray(m.values) && m.values.length > 0)
-          );
-          if (!hasMatchWinnerRetry) return [];
-          return normalizedRetry;
-        } catch {
-          // Continue retries
+      try {
+        const normalized = await fetchOddsForBookmaker(fixtureId, bookmakerId);
+        if (normalized) return normalized;
+        break;
+      } catch (err) {
+        const statusCode = err?.response?.status;
+        const shouldRetry =
+          statusCode === 429 || (statusCode >= 500 && statusCode < 600);
+        if (shouldRetry && attempt < MAX_RETRIES) {
+          await new Promise((r) => setTimeout(r, RETRY_DELAY_MS * attempt));
+          continue;
         }
+        if (!shouldRetry || attempt === MAX_RETRIES) {
+          console.log(
+            `⚠ Odds bm=${bookmakerId} fixture ${fixtureId}: ${err.message}`
+          );
+        }
+        break;
       }
     }
-
-    console.log(`⚠ Odds not available for fixture ${fixtureId}: ${err.message}`);
-    return [];
   }
+  return [];
 }
 
 /* ---------------------------------------------
@@ -391,6 +393,7 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
     const backfillRecentFinished = process.env.BACKFILL_RECENT_FINISHED === "1";
     const yesterdayDate = getDatePlus(-1);
     const todayDate = getDatePlus(0);
+    const tomorrowDate = getDatePlus(1);
 
     let processedCount = 0;
     for (const f of fixtures) {
@@ -410,10 +413,14 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
         isFinishedStatusShort(statusFromApi) || isFinishedStatusShort(statusFromDb);
 
       const fixtureDateOnly = toKenyaDateOnly(f.fixture?.date);
-      const isRecentFixture = fixtureDateOnly === yesterdayDate || fixtureDateOnly === todayDate;
+      // Same rough window as fetch (today..tomorrow Kenya): used for FT odds backfill when DB is empty.
+      const isRecentFixture =
+        fixtureDateOnly === yesterdayDate ||
+        fixtureDateOnly === todayDate ||
+        fixtureDateOnly === tomorrowDate;
       const allowFetchForFinished = backfillRecentFinished && isRecentFixture;
 
-      // Quota: never call predictions/odds APIs for finished matches unless explicit backfill env.
+      // Predictions API for finished games only if BACKFILL_RECENT_FINISHED=1 (quota). Odds: see block below.
       const mayCallPredOddsApis = !isFinished || allowFetchForFinished;
 
       let prediction = null;
@@ -430,12 +437,13 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
         h2h = predResult.h2h;
       }
 
-      // 3️⃣ odds — fresh 1xBet only for not started / live; finished → keep DB, no API
+      // 3️⃣ odds — NS/live: refresh. FT: keep DB if non-empty; if empty and kickoff in recent Kenya window, fetch (closing line
+      // often still in API). Otherwise FT would persist [] and UI shows no prices — not a separate "clear" script (cleanup only strips >6d).
       if (!isFinished) {
         bets = await fetchOdds(fixtureId);
-      } else if (existingDoc && existingDoc.odds && existingDoc.odds.length > 0) {
+      } else if (existingDoc?.odds?.length > 0) {
         bets = existingDoc.odds;
-      } else if (allowFetchForFinished) {
+      } else if (isRecentFixture) {
         bets = await fetchOdds(fixtureId);
       }
 

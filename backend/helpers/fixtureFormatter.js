@@ -129,13 +129,30 @@ export function formatFixtureCard(fixtureDoc) {
     const bookmaker = fixtureDoc.odds[0];
 
     if (bookmaker && bookmaker.markets) {
-      const matchWinner = bookmaker.markets.find(
-        m => m.name && (m.name === "Match Winner" || m.id === 1)
-      );
+      const matchWinner = bookmaker.markets.find((m) => {
+        if (!m) return false;
+        if (m.id === 1) return true;
+        const n = (m.name || "").trim().toLowerCase();
+        return (
+          n === "match winner" ||
+          n === "full time result" ||
+          n === "1x2"
+        );
+      });
       if (matchWinner && matchWinner.values) {
-        odds.home = matchWinner.values.find(v => v.value === "Home")?.odd || null;
-        odds.draw = matchWinner.values.find(v => v.value === "Draw")?.odd || null;
-        odds.away = matchWinner.values.find(v => v.value === "Away")?.odd || null;
+        const vals = matchWinner.values;
+        const homeOdd = vals.find(
+          (v) => v.value === "Home" || v.value === "1"
+        )?.odd;
+        const drawOdd = vals.find(
+          (v) => v.value === "Draw" || v.value === "X"
+        )?.odd;
+        const awayOdd = vals.find(
+          (v) => v.value === "Away" || v.value === "2"
+        )?.odd;
+        odds.home = homeOdd != null ? String(homeOdd) : null;
+        odds.draw = drawOdd != null ? String(drawOdd) : null;
+        odds.away = awayOdd != null ? String(awayOdd) : null;
       }
 
       const bttsMarket = bookmaker.markets.find(

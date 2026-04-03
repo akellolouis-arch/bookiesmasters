@@ -93,8 +93,8 @@ export async function getFixturesGroupedByLeague(date) {
                   as: "market",
                   cond: {
                     $or: [
-                      { $eq: ["$$market.name", "Match Winner"] },
-                      { $eq: ["$$market.id", 1] }
+                      { $eq: ["$$market.id", 1] },
+                      { $in: ["$$market.name", ["Match Winner", "Full Time Result", "1x2"]] }
                     ]
                   }
                 }
@@ -162,10 +162,9 @@ export async function getFixturesGroupedByLeague(date) {
                   input: "$$bookmaker.markets", // Iterate over markets
                   as: "market",
                   cond: {
-                    // Check specific name or ID (1=Match Winner)
                     $or: [
-                      { $eq: ["$$market.name", "Match Winner"] },
-                      { $eq: ["$$market.id", 1] }
+                      { $eq: ["$$market.id", 1] },
+                      { $in: ["$$market.name", ["Match Winner", "Full Time Result", "1x2"]] }
                     ]
                   }
                 }
@@ -257,8 +256,8 @@ export async function getLiveFixturesGroupedByLeague() {
                   as: "market",
                   cond: {
                     $or: [
-                      { $eq: ["$$market.name", "Match Winner"] },
-                      { $eq: ["$$market.id", 1] }
+                      { $eq: ["$$market.id", 1] },
+                      { $in: ["$$market.name", ["Match Winner", "Full Time Result", "1x2"]] }
                     ]
                   }
                 }

@@ -107,12 +107,16 @@ export default function FixtureCard({
   let effectiveOdds = odds || { home: null, draw: null, away: null };
   if (isLive && liveOdds && Array.isArray(liveOdds) && liveOdds.length > 0) {
     const market = (liveOdds[0] as { markets?: Array<{ name?: string; id?: number; values?: Array<{ value?: string; odd?: string }> }> })?.markets?.find(
-      (m: { name?: string; id?: number }) => m?.name === "Match Winner" || m?.id === 1
+      (m: { name?: string; id?: number }) => {
+        if (m?.id === 1) return true;
+        const n = (m?.name || "").trim().toLowerCase();
+        return n === "match winner" || n === "full time result" || n === "1x2";
+      }
     );
     if (market?.values) {
-      const homeVal = market.values.find((v: { value?: string }) => v?.value === "Home")?.odd;
-      const drawVal = market.values.find((v: { value?: string }) => v?.value === "Draw")?.odd;
-      const awayVal = market.values.find((v: { value?: string }) => v?.value === "Away")?.odd;
+      const homeVal = market.values.find((v: { value?: string }) => ["Home", "1"].includes(String(v?.value)))?.odd;
+      const drawVal = market.values.find((v: { value?: string }) => ["Draw", "X"].includes(String(v?.value)))?.odd;
+      const awayVal = market.values.find((v: { value?: string }) => ["Away", "2"].includes(String(v?.value)))?.odd;
       if (homeVal != null && awayVal != null) {
         effectiveOdds = { home: homeVal, draw: drawVal ?? null, away: awayVal };
       }
