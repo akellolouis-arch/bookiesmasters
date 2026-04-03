@@ -61,13 +61,17 @@ app.use("/api/payment", paymentRoutes); // New Manual Payments
 // ---------------------------------------------
 // START: Mongo FIRST — then HTTP (fixes buffering timeouts on cold start)
 // ---------------------------------------------
-/** Retries + IPv4: PaaS (e.g. Render) → Atlas sometimes fails SRV/IPv6 paths; `family: 4` forces IPv4. */
+/**
+ * Atlas + Node 20+ OpenSSL: TLS "alert number 80" often comes from happy-eyeballs / IP-family
+ * selection (IPv4 vs IPv6). Use autoSelectFamily: false (MongoDB driver / community fix).
+ * Avoid `family: 4` here — it has caused TLS internal_error on some PaaS→Atlas paths.
+ */
 const MONGO_OPTIONS = {
   serverSelectionTimeoutMS: 45_000,
   socketTimeoutMS: 60_000,
   maxPoolSize: 10,
   retryWrites: true,
-  family: 4,
+  autoSelectFamily: false,
 };
 
 const MONGO_CONNECT_MAX_ATTEMPTS = Math.max(
