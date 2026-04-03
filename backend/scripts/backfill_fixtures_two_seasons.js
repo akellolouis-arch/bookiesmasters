@@ -1,16 +1,18 @@
 /**
  * Backfill fixtures for current + previous season for saved leagues.
  *
- * Behavior:
- * - Deletes ALL saved fixtures first.
- * - Fetches BOTH seasons (previous + current) for all saved leagues via API-Football GET /fixtures?league=&season=
- * - After backfill, enforces that only those two seasons exist for saved leagues.
+ * Default (incremental):
+ * - Does NOT delete existing fixtures.
+ * - For each saved league, fetches previous + current season only if that
+ *   league+season has no documents yet (saves API quota; safe to re-run after crashes).
+ * - Does NOT prune stray leagues/seasons unless you pass --prune.
  *
  * Usage:
  *   node backend/scripts/backfill_fixtures_two_seasons.js --yes
+ *   node backend/scripts/backfill_fixtures_two_seasons.js --yes --prune
  *
  * Requires:
- * - backend/.env with API_KEY and MONGO_URI
+ * - API_KEY and MONGO_URI in backend/.env and/or repo root .env.local
  */
 
 import dotenv from "dotenv";
@@ -23,28 +25,58 @@ import Fixture from "../models/Fixture.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
+dotenv.config({
+  path: path.resolve(__dirname, "../../.env.local"),
+  override: true,
+});
 
 const BASE_URL = "https://v3.football.api-sports.io";
+
+const MONGO_OPTIONS = {
+  serverSelectionTimeoutMS: 45_000,
+  autoSelectFamily: false,
+  retryWrites: true,
+};
 
 function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-async function apiGetFixtures({ apiKey, leagueId, season, page }) {
+async function apiGetFixtures({ apiKey, leagueId, season }, maxAttempts = 4) {
   const url = new URL(`${BASE_URL}/fixtures`);
   url.searchParams.set("league", String(leagueId));
   url.searchParams.set("season", String(season));
 
-  const res = await fetch(url, { headers: { "x-apisports-key": apiKey } });
-  const data = await res.json();
-  return data;
+  let lastErr;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const res = await fetch(url, { headers: { "x-apisports-key": apiKey } });
+      const data = await res.json();
+      return data;
+    } catch (err) {
+      lastErr = err;
+      console.warn(
+        `  ⚠️ fetch attempt ${attempt}/${maxAttempts} failed: ${err.message}`
+      );
+      if (attempt < maxAttempts) {
+        await sleep(800 * attempt);
+      }
+    }
+  }
+  throw lastErr;
 }
 
 function pickLeagueSeasons(leagueDoc) {
-  // Our League documents have a top-level `season` set by fetch_odds_leagues.js
   const currentSeason = Number(leagueDoc?.season);
   if (!Number.isFinite(currentSeason)) return null;
   return { currentSeason, previousSeason: currentSeason - 1 };
+}
+
+async function seasonFixtureCount(leagueId, season) {
+  return Fixture.countDocuments({
+    "fixture.league.id": leagueId,
+    "fixture.league.season": season,
+  });
 }
 
 async function upsertFixtures(fixtures) {
@@ -74,6 +106,8 @@ async function upsertFixtures(fixtures) {
 
 async function main() {
   const yes = process.argv.includes("--yes");
+  const doPrune = process.argv.includes("--prune");
+
   if (!yes) {
     console.error("Refusing to run without --yes (this script writes to MongoDB).");
     process.exit(1);
@@ -81,11 +115,11 @@ async function main() {
 
   const apiKey = process.env.API_KEY;
   const mongoUri = process.env.MONGO_URI;
-  if (!apiKey) throw new Error("API_KEY missing in backend/.env");
-  if (!mongoUri) throw new Error("MONGO_URI missing in backend/.env");
+  if (!apiKey) throw new Error("API_KEY missing (backend/.env or .env.local)");
+  if (!mongoUri) throw new Error("MONGO_URI missing (backend/.env or .env.local)");
 
   console.log("🔌 Connecting to MongoDB...");
-  await mongoose.connect(mongoUri);
+  await mongoose.connect(mongoUri, MONGO_OPTIONS);
   console.log("✅ Connected.\n");
 
   const leagues = await League.find({})
@@ -94,12 +128,13 @@ async function main() {
 
   const leagueIds = leagues.map((l) => Number(l?.league?.id)).filter(Number.isFinite);
   console.log(`📚 Saved leagues: ${leagueIds.length}`);
+  console.log(
+    doPrune
+      ? "🧹 --prune: will remove fixtures outside saved leagues / target seasons after fetch.\n"
+      : "⏭️ No full wipe; skipping league-seasons that already have rows in DB.\n"
+  );
 
-  console.log("\n🧹 Deleting ALL fixtures first...");
-  const wipeRes = await Fixture.deleteMany({});
-  console.log(`✅ Deleted ${wipeRes.deletedCount ?? 0} fixtures.\n`);
-
-  let leagueProcessed = 0;
+  let seasonsSkipped = 0;
   let seasonsFetched = 0;
   let fixturesRetrieved = 0;
 
@@ -111,65 +146,79 @@ async function main() {
     if (!seasons) continue;
 
     const { currentSeason, previousSeason } = seasons;
-
-    leagueProcessed++;
-    const leagueName = l?.league?.name ?? String(leagueId);
-    console.log(`\n🏟️ ${leagueName} (${leagueId})`);
-
     const toFetch = [previousSeason, currentSeason];
 
+    const leagueName = l?.league?.name ?? String(leagueId);
+    let leagueHeaderPrinted = false;
+
     for (const season of toFetch) {
+      const existing = await seasonFixtureCount(leagueId, season);
+      if (existing > 0) {
+        seasonsSkipped++;
+        if (!leagueHeaderPrinted) {
+          console.log(`\n🏟️ ${leagueName} (${leagueId})`);
+          leagueHeaderPrinted = true;
+        }
+        console.log(
+          `  ⏭️ Skip season ${season} (${existing} fixture rows already in DB)`
+        );
+        continue;
+      }
+
+      if (!leagueHeaderPrinted) {
+        console.log(`\n🏟️ ${leagueName} (${leagueId})`);
+        leagueHeaderPrinted = true;
+      }
+
       seasonsFetched++;
       console.log(`  📦 Fetching season ${season} fixtures...`);
 
-      let seasonFixtures = [];
-
-      const data = await apiGetFixtures({ apiKey, leagueId, season, page: 1 });
+      const data = await apiGetFixtures({ apiKey, leagueId, season });
       if (data?.errors && Object.keys(data.errors).length > 0) {
-        console.log(`  ❌ API errors for league=${leagueId} season=${season}: ${JSON.stringify(data.errors)}`);
+        console.log(
+          `  ❌ API errors for league=${leagueId} season=${season}: ${JSON.stringify(data.errors)}`
+        );
       } else {
-        seasonFixtures = Array.isArray(data?.response) ? data.response : [];
+        const seasonFixtures = Array.isArray(data?.response) ? data.response : [];
+        console.log(`  ✅ Retrieved ${seasonFixtures.length} fixtures for season ${season}. Saving...`);
+        const { upserts, modified } = await upsertFixtures(seasonFixtures);
+        fixturesRetrieved += seasonFixtures.length;
+        console.log(`  💾 Saved (upserted=${upserts}, modified=${modified})`);
       }
 
-      console.log(`  ✅ Retrieved ${seasonFixtures.length} fixtures for season ${season}. Saving...`);
-      const { upserts, modified } = await upsertFixtures(seasonFixtures);
-      fixturesRetrieved += seasonFixtures.length;
-      console.log(`  💾 Saved (upserted=${upserts}, modified=${modified})`);
-
-      // Gentle rate limiting between league-season calls
       await sleep(300);
     }
   }
 
-  console.log("\n🧹 Cleanup: keep ONLY previous+current season fixtures for saved leagues...");
-  let deletedTotal = 0;
+  if (doPrune) {
+    console.log("\n🧹 Cleanup (--prune): keep ONLY previous+current season for saved leagues...");
+    let deletedTotal = 0;
 
-  // 1) Delete any fixtures for leagues that are NOT in our saved leagues list.
-  const resOtherLeagues = await Fixture.deleteMany({
-    "fixture.league.id": { $nin: leagueIds },
-  });
-  deletedTotal += resOtherLeagues.deletedCount ?? 0;
-
-  // 2) For each saved league, delete fixtures not in {previousSeason, currentSeason}.
-  for (const l of leagues) {
-    const leagueId = Number(l?.league?.id);
-    if (!Number.isFinite(leagueId)) continue;
-    const seasons = pickLeagueSeasons(l);
-    if (!seasons) continue;
-    const allowed = [seasons.previousSeason, seasons.currentSeason];
-
-    const res = await Fixture.deleteMany({
-      "fixture.league.id": leagueId,
-      "fixture.league.season": { $nin: allowed },
+    const resOtherLeagues = await Fixture.deleteMany({
+      "fixture.league.id": { $nin: leagueIds },
     });
-    deletedTotal += res.deletedCount ?? 0;
+    deletedTotal += resOtherLeagues.deletedCount ?? 0;
+
+    for (const l of leagues) {
+      const leagueId = Number(l?.league?.id);
+      if (!Number.isFinite(leagueId)) continue;
+      const s = pickLeagueSeasons(l);
+      if (!s) continue;
+      const allowed = [s.previousSeason, s.currentSeason];
+
+      const res = await Fixture.deleteMany({
+        "fixture.league.id": leagueId,
+        "fixture.league.season": { $nin: allowed },
+      });
+      deletedTotal += res.deletedCount ?? 0;
+    }
+    console.log(`✅ Deleted ${deletedTotal} pruned fixtures.\n`);
   }
-  console.log(`✅ Deleted ${deletedTotal} old fixtures.\n`);
 
   console.log("🎉 Backfill complete.");
-  console.log(`- Leagues processed: ${leagueProcessed}`);
-  console.log(`- League-seasons fetched: ${seasonsFetched}`);
-  console.log(`- Fixtures retrieved (and attempted to save): ${fixturesRetrieved}`);
+  console.log(`- League-season API calls: ${seasonsFetched}`);
+  console.log(`- League-seasons skipped (already in DB): ${seasonsSkipped}`);
+  console.log(`- Fixtures retrieved (this run): ${fixturesRetrieved}`);
 
   await mongoose.disconnect();
   process.exit(0);
@@ -179,4 +228,3 @@ main().catch((err) => {
   console.error(err);
   process.exit(1);
 });
-

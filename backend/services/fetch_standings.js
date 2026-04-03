@@ -7,6 +7,10 @@ import League from "../models/League.js";
 import Standing from "../models/Standing.js";
 
 import { fileURLToPath } from "url";
+import {
+  applyMongoDnsHints,
+  getMongoClientOptions,
+} from "../mongoConnectOptions.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
@@ -47,7 +51,11 @@ async function fetchLeagueStandings(leagueId, season) {
 export async function updateStandings(standalone = true, targetLeagues = null) {
     try {
         if (standalone) {
-            await mongoose.connect(process.env.MONGO_URI);
+            applyMongoDnsHints();
+            await mongoose.connect(
+                process.env.MONGO_URI,
+                getMongoClientOptions()
+            );
             console.log("✅ Connected to MongoDB");
         }
 

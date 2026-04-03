@@ -1,6 +1,8 @@
 import axios from "axios";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
 
 import League from "../models/League.js";       // your saved leagues
 import Fixture from "../models/Fixture.js";     // unified fixture model
@@ -9,8 +11,20 @@ import { updateStandings } from "./fetch_standings.js";
 // Duplicate removed
 
 import { cleanupOldFixtures } from "./cleanupService.js";
+import {
+  applyMongoDnsHints,
+  getMongoClientOptions,
+} from "../mongoConnectOptions.js";
 
-dotenv.config();
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
+dotenv.config({
+  path: path.resolve(__dirname, "../../.env.local"),
+  override: true,
+});
+
+/** Same as server.js — Atlas TLS/DNS on Render, etc. */
+const MONGO_CONNECT_OPTIONS = getMongoClientOptions();
 
 /* ---------------------------------------------
    API BASE URL + HEADERS
@@ -536,8 +550,9 @@ export function startDailyScheduler() {
    RUN IF EXECUTED DIRECTLY
 --------------------------------------------- */
 if (process.argv[1].includes("dailyUpdateService.js")) {
+  applyMongoDnsHints();
   const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/bookiesmasters";
-  mongoose.connect(MONGO_URI)
+  mongoose.connect(MONGO_URI, MONGO_CONNECT_OPTIONS)
     .then(() => {
       const backfillRecentFinished = process.env.BACKFILL_RECENT_FINISHED === "1";
       console.log(

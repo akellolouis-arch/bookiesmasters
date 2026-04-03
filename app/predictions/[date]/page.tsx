@@ -1,5 +1,6 @@
 import PredictionsList from "./predictionList";
 import DateNavigator from "@/components/DateNavigator";
+import { shouldShowMatchOnPredictionsPage } from "@/lib/predictionsMatchVisibility";
 
 
 
@@ -146,11 +147,9 @@ export default async function PredictionsPage({
         name: f.league.name,
         logo: f.league.logo,
         country: f.league.country,
-        matches: f.matches.filter((match) => {
-          if (!match.odds) return false;
-          if (!match.odds.home && !match.odds.draw && !match.odds.away) return false;
-          return true;
-        }),
+        matches: f.matches.filter((match) =>
+          shouldShowMatchOnPredictionsPage(match)
+        ),
       }))
       .filter((league) => league.matches.length > 0);
   }

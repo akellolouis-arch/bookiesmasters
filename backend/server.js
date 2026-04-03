@@ -2,6 +2,10 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import {
+  applyMongoDnsHints,
+  getMongoClientOptions,
+} from "./mongoConnectOptions.js";
 import cors from "cors";         // ⭐ IMPORTANT
 import fixtureRoutes from "./routes/fixtureRoutes.js";
 import { startDailyScheduler } from "./services/dailyUpdateService.js";
@@ -118,6 +122,8 @@ async function connectMongoWithRetry(uri) {
 }
 
 async function startServer() {
+  applyMongoDnsHints();
+
   if (!process.env.MONGO_URI) {
     console.error("❌ MONGO_URI is not set");
     process.exit(1);

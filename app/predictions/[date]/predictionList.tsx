@@ -4,6 +4,7 @@ import useSWR from "swr";
 import Image from "next/image";
 import FixtureCard from "@/components/FixtureCard";
 import Loader from "@/components/Loader";
+import { shouldShowMatchOnPredictionsPage } from "@/lib/predictionsMatchVisibility";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 
@@ -128,16 +129,13 @@ export default function PredictionsList({
       .filter((league) => league.matches.length > 0);
   }
 
-  // Only show fixtures with at least one 1X2 odd (backend also filters; keep in sync).
+  // Keep in sync with server mapping in page.tsx and backend card rules (odds / tip / score / live).
   safeData = safeData
     .map((league) => ({
       ...league,
-      matches: league.matches.filter((match: FixtureCardProps) => {
-        const o = match.odds;
-        if (!o) return false;
-        if (!o.home && !o.draw && !o.away) return false;
-        return true;
-      }),
+      matches: league.matches.filter((match: FixtureCardProps) =>
+        shouldShowMatchOnPredictionsPage(match)
+      ),
     }))
     .filter((league) => league.matches.length > 0);
 
