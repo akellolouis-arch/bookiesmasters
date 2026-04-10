@@ -174,6 +174,20 @@ async function getSavedLeagueIds() {
 --------------------------------------------- */
 const BETWEEN_DAY_REQUESTS_MS = 400;
 
+/**
+ * Pause after each fixture enrichment (predictions + odds + save). API-Football will
+ * return empty bodies or 429 if requests are burst; ~1k+ fixtures × 2+ calls without delay
+ * often leaves “tomorrow” (processed late in the loop) with odds: [] and prediction: null.
+ * Env DAILY_INTER_FIXTURE_DELAY_MS (ms, default 120; set 0 to disable).
+ */
+function readInterFixtureDelayMs() {
+  const raw = process.env.DAILY_INTER_FIXTURE_DELAY_MS;
+  if (raw === undefined || raw === "") return 120;
+  const n = Number(raw);
+  if (!Number.isFinite(n) || n < 0) return 120;
+  return n;
+}
+
 function getFixtureApiErrors(body) {
   const e = body?.errors;
   if (!e || typeof e !== "object") return null;
@@ -365,6 +379,13 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
       return;
     }
 
+    const interFixtureDelayMs = readInterFixtureDelayMs();
+    console.log(
+      `   ⏱️ Inter-fixture delay: ${interFixtureDelayMs}ms (~${Math.round(
+        (fixtures.length * interFixtureDelayMs) / 60000
+      )} min throttle overhead for ${fixtures.length} fixtures)`
+    );
+
     // 2.5 Fetch all injuries for the required leagues in ONE go per league
     const leagueSeasonMap = new Map();
     for (const f of fixtures) {
@@ -396,6 +417,10 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
     const tomorrowDate = getDatePlus(1);
 
     let processedCount = 0;
+    let statsNsWithOdds = 0;
+    let statsNsOddsStillEmpty = 0;
+    let statsPredFilled = 0;
+
     for (const f of fixtures) {
       const fixtureId = f.fixture.id;
       processedCount++;
@@ -435,6 +460,7 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
         const predResult = await fetchPrediction(fixtureId);
         prediction = predResult.prediction;
         h2h = predResult.h2h;
+        if (prediction && Object.keys(prediction).length > 0) statsPredFilled += 1;
       }
 
       // 3️⃣ odds — NS/live: refresh. FT: keep DB if non-empty; if empty and kickoff in recent Kenya window, fetch (closing line
@@ -450,6 +476,11 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
       // Never wipe existing odds due to temporary upstream/API issues.
       if ((!bets || bets.length === 0) && existingDoc && existingDoc.odds && existingDoc.odds.length > 0) {
         bets = existingDoc.odds;
+      }
+
+      if (!isFinished && statusFromApi === "NS") {
+        if (bets && bets.length > 0) statsNsWithOdds += 1;
+        else statsNsOddsStillEmpty += 1;
       }
 
       // 4️⃣ injuries (Weekly Forecast)
@@ -488,8 +519,14 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
         { upsert: true }
       );
 
-      // console.log(`✔ Saved fixture ${fixtureId}`);
+      if (interFixtureDelayMs > 0) {
+        await new Promise((r) => setTimeout(r, interFixtureDelayMs));
+      }
     }
+
+    console.log(
+      `📈 Enrichment summary: predictions filled (this run): ${statsPredFilled}; NS fixtures — with odds: ${statsNsWithOdds}, still empty: ${statsNsOddsStillEmpty} (delay ${interFixtureDelayMs}ms/fixture; if “still empty” is huge, increase DAILY_INTER_FIXTURE_DELAY_MS or check API quota / 429 logs)`
+    );
 
     // 6️⃣ Update Standings
     console.log("📊 Updating Standings...");
