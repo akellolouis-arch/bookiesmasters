@@ -32,6 +32,7 @@ export interface FixtureCardProps {
   score: string | null;
   prediction?: string | null;
   liveOdds?: unknown;
+  index?: number;
 }
 
 export default function FixtureCard({
@@ -44,6 +45,7 @@ export default function FixtureCard({
   score,
   prediction,
   liveOdds,
+  index,
 }: FixtureCardProps) {
   const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(status) || status.includes("'");
   const isFinished = status === "FT";
@@ -125,14 +127,18 @@ export default function FixtureCard({
 
   const href = `/prediction/${fixtureId}`;
 
+  const isEven = index !== undefined ? index % 2 === 0 : true;
+  const bgClass = isEven ? "bg-[#0A0A0A]" : "bg-[#1E1E1E]";
+  const hoverClass = isEven ? "hover:bg-[#151515]" : "hover:bg-[#282828]";
+
   return (
-    <div className="relative group max-w-xl mx-auto mb-3">
+    <div className="relative group w-full md:max-w-2xl lg:max-w-2xl mx-auto">
       <Link
         href={href}
         prefetch={true}
         onClick={() => {
-          if (typeof window !== "undefined" && (window as { fbq?: (...args: unknown[]) => void }).fbq) {
-            (window as { fbq: (...args: unknown[]) => void }).fbq("track", "ViewContent", {
+          if (typeof window !== "undefined" && (window as unknown as { fbq?: (...args: unknown[]) => void }).fbq) {
+            (window as unknown as { fbq: (...args: unknown[]) => void }).fbq("track", "ViewContent", {
               content_name: `${homeTeam.name} vs ${awayTeam.name}`,
               content_category: "Prediction",
               content_ids: [fixtureId],
@@ -140,7 +146,7 @@ export default function FixtureCard({
             });
           }
         }}
-        className="cursor-pointer block bg-[#1F1F1F] rounded-xl shadow-sm hover:shadow-md hover:bg-[#2a2a2a] transition flex items-center justify-between p-2 sm:p-3 border border-white/5 gap-2 no-underline text-inherit"
+        className={`cursor-pointer block ${bgClass} hover:shadow-md ${hoverClass} transition flex items-center justify-between p-2 sm:p-3 gap-2 no-underline text-inherit`}
       >
         {/* STATUS */}
         <div className="w-[40px] sm:w-[50px] text-left shrink-0">

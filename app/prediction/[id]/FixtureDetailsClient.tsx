@@ -60,6 +60,29 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data }) => 
                     tip={data.tip}
                 />
 
+                {/* --- ODDS & ADVICE SECTION --- */}
+                <div className="flex flex-col gap-4 mt-6 mb-6">
+                    {/* Call To Action Box (Odds) */}
+                    <div className="bg-[#1a1a1b] p-4 sm:p-6 border border-white/5 flex flex-col items-center justify-center text-center">
+                        <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Latest Odds</h3>
+                        <BetButton teamName={data.homeTeam.name} isLive={isLive} odds={primaryOdds} />
+                    </div>
+
+                    {/* Prediction Advice Panel */}
+                    {data.apiPrediction?.advice && (
+                        <div className="bg-gradient-to-br from-[#1e1b4b] to-[#0f172a] p-4 sm:p-6 border border-indigo-500/20 shadow-lg relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full mix-blend-screen filter blur-[40px] translate-x-10 -translate-y-10"></div>
+                            <h3 className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse" />
+                                Expert Advice
+                            </h3>
+                            <p className="text-sm text-indigo-100 font-medium leading-relaxed italic">
+                                &quot;{data.apiPrediction.advice}&quot;
+                            </p>
+                        </div>
+                    )}
+                </div>
+
                 {/* --- TAB NAVIGATION --- */}
                 <div className="flex justify-center mb-6">
                     <div className="inline-flex bg-[#1a1a1b] rounded-full p-1 border border-white/5 shadow-inner">
@@ -109,26 +132,6 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data }) => 
 
                             {/* Right Column: Insights, Action, Injuries */}
                             <div className="lg:col-span-5 space-y-6">
-
-                                {/* Prediction Advice Panel */}
-                                {data.apiPrediction?.advice && (
-                                    <div className="bg-gradient-to-br from-[#1e1b4b] to-[#0f172a] rounded-2xl p-6 border border-indigo-500/20 shadow-lg relative overflow-hidden">
-                                        <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full mix-blend-screen filter blur-[40px] translate-x-10 -translate-y-10"></div>
-                                        <h3 className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2 flex items-center gap-2">
-                                            <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse" />
-                                            Expert Advice
-                                        </h3>
-                                        <p className="text-sm text-indigo-100 font-medium leading-relaxed italic">
-                                            &quot;{data.apiPrediction.advice}&quot;
-                                        </p>
-                                    </div>
-                                )}
-
-                                {/* Call To Action Box */}
-                                <div className="bg-[#1a1a1b] rounded-2xl p-6 border border-white/5 flex flex-col items-center justify-center text-center">
-                                    <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Latest Odds</h3>
-                                    <BetButton teamName={data.homeTeam.name} isLive={isLive} odds={primaryOdds} />
-                                </div>
 
                                 {/* Injuries Panel */}
                                 {data.injuries && data.injuries.length > 0 && (

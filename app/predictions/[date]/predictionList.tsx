@@ -101,7 +101,7 @@ export default function PredictionsList({
   let safeData: LeagueGroup[] = initialData;
 
   if (Array.isArray(backendFixtures)) {
-    safeData = backendFixtures.map((f: { league?: { id: number; name: string; logo: string; country: string }; matches?: unknown[] }) => {
+    safeData = backendFixtures.map((f: { league?: { id: number; name: string; logo: string; country: string }; matches?: FixtureCardProps[] }) => {
       if (f.league) {
         return {
           id: f.league.id,
@@ -151,7 +151,7 @@ export default function PredictionsList({
   }
 
   return (
-    <div className="max-w-xl mx-auto px-1 py-2 space-y-1">
+    <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto sm:px-1 md:px-4 py-2 space-y-1">
       {safeData.length === 0 && (
         <p className="text-center py-8 text-gray-500">
           {query
@@ -162,36 +162,42 @@ export default function PredictionsList({
         </p>
       )}
 
-      {safeData.map((league, idx) => (
-        <div key={league.id || idx}>
-          <div className="flex items-center gap-1 mb-1">
-            <div className="flex items-center gap-1 p-1 rounded">
-              {league.logo && (
-                <Image
-                  src={league.logo}
-                  alt={league.name}
-                  width={20}
-                  height={20}
-                  className="w-5 h-5"
-                  unoptimized
-                />
-              )}
-              <div className="flex flex-col">
-                <span className="font-semibold text-xs text-gray-300">
-                  {league.name}
-                </span>
-                <span className="text-xs text-gray-400">{league.country}</span>
+      {(() => {
+        let globalIdx = 0;
+        return safeData.map((league, idx) => (
+          <div key={league.id || idx}>
+            <div className="flex items-center gap-1 mb-1">
+              <div className="flex items-center gap-1 p-1 rounded">
+                {league.logo && (
+                  <Image
+                    src={league.logo}
+                    alt={league.name}
+                    width={20}
+                    height={20}
+                    className="w-5 h-5"
+                    unoptimized
+                  />
+                )}
+                <div className="flex flex-col">
+                  <span className="font-semibold text-xs text-gray-300">
+                    {league.name}
+                  </span>
+                  <span className="text-xs text-gray-400">{league.country}</span>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="space-y-1">
-            {league.matches.map((fixture) => (
-              <FixtureCard key={fixture.fixtureId} {...fixture} />
-            ))}
+            <div className="flex flex-col">
+              {league.matches.map((fixture) => {
+                const currentIdx = globalIdx++;
+                return (
+                  <FixtureCard key={fixture.fixtureId} {...fixture} index={currentIdx} />
+                );
+              })}
+            </div>
           </div>
-        </div>
-      ))}
+        ));
+      })()}
     </div>
   );
 }

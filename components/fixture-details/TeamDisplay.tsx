@@ -105,6 +105,31 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                         <h2 className="font-extrabold text-center text-sm sm:text-xl text-white tracking-wide drop-shadow-md">
                             {homeTeam.name}
                         </h2>
+                        {homeTeam.last5Matches && homeTeam.last5Matches.length > 0 && (
+                            <div className="mt-2 flex gap-1">
+                                {homeTeam.last5Matches.map((m, i) => {
+                                    const isHome = m?.teams?.home?.id === homeTeam.id;
+                                    const hGoal = m?.goals?.home;
+                                    const aGoal = m?.goals?.away;
+                                    let res = "D";
+                                    let color = "bg-gray-500/80";
+                                    if (hGoal != null && aGoal != null) {
+                                        if (isHome) {
+                                            if (hGoal > aGoal) { res = "W"; color = "bg-emerald-500/80"; }
+                                            else if (hGoal < aGoal) { res = "L"; color = "bg-rose-500/80"; }
+                                        } else {
+                                            if (aGoal > hGoal) { res = "W"; color = "bg-emerald-500/80"; }
+                                            else if (aGoal < hGoal) { res = "L"; color = "bg-rose-500/80"; }
+                                        }
+                                    }
+                                    return (
+                                        <div key={i} className={`w-4 h-4 sm:w-5 sm:h-5 rounded text-[8px] sm:text-[10px] font-bold flex items-center justify-center text-white ${color}`}>
+                                            {res}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
 
                     {/* Center Info (Score & Time) */}
@@ -138,6 +163,31 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                         <h2 className="font-extrabold text-center text-sm sm:text-xl text-white tracking-wide drop-shadow-md">
                             {awayTeam.name}
                         </h2>
+                        {awayTeam.last5Matches && awayTeam.last5Matches.length > 0 && (
+                            <div className="mt-2 flex gap-1">
+                                {awayTeam.last5Matches.map((m, i) => {
+                                    const isHome = m?.teams?.home?.id === awayTeam.id;
+                                    const hGoal = m?.goals?.home;
+                                    const aGoal = m?.goals?.away;
+                                    let res = "D";
+                                    let color = "bg-gray-500/80";
+                                    if (hGoal != null && aGoal != null) {
+                                        if (isHome) {
+                                            if (hGoal > aGoal) { res = "W"; color = "bg-emerald-500/80"; }
+                                            else if (hGoal < aGoal) { res = "L"; color = "bg-rose-500/80"; }
+                                        } else {
+                                            if (aGoal > hGoal) { res = "W"; color = "bg-emerald-500/80"; }
+                                            else if (aGoal < hGoal) { res = "L"; color = "bg-rose-500/80"; }
+                                        }
+                                    }
+                                    return (
+                                        <div key={i} className={`w-4 h-4 sm:w-5 sm:h-5 rounded text-[8px] sm:text-[10px] font-bold flex items-center justify-center text-white ${color}`}>
+                                            {res}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
 
                 </div>

@@ -13,10 +13,10 @@ const LeagueFixtures: React.FC<LeagueFixturesProps> = ({ fixtures }) => {
     }
 
     return (
-        <div className="space-y-2">
+        <div className="flex flex-col">
             {fixtures.map((fixture, index) => (
                 <React.Fragment key={fixture.fixtureId}>
-                    <FixtureCard {...fixture} />
+                    <FixtureCard {...fixture} index={index} />
                     {index === 5 && <AdBanner />}
 
                 </React.Fragment>
