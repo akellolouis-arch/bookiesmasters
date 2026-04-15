@@ -153,7 +153,7 @@ export default function PredictionsList({
   return (
     <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto sm:px-1 md:px-4">
       {safeData.length === 0 && (
-        <p className="text-center py-8 text-gray-500 font-bold">
+        <p className="text-center py-8 text-gray-500">
           {query
             ? (date === "live"
               ? `No live fixture for "${query}".`
