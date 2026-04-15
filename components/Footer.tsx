@@ -11,10 +11,13 @@ export default function Footer() {
 
 
         {/* Brand */}
-        <div className="space-y-1.5">
+        <div className="space-y-3">
           <h5 className="text-sm font-bold text-white tracking-wider">Bookiesmasters</h5>
           <p className="text-xs leading-relaxed text-gray-400">
-            Get guided football predictions, fixtures, odds, events, livescores and insights powered by data — all in one place.
+            Get instant access to premium football predictions, livescores , fixture odds , match events , and expert match insights.
+          </p>
+          <p className="text-[10px] italic text-gray-500 leading-relaxed border-t border-white/5 pt-2">
+            Disclaimer: Approximately 65% of football matches end as draws and not all fixtures will end as win or draw. The win or draw tips displayed on this platform are provided by a third party. Bookiesmasters does not independently own the rights to these predictions.
           </p>
         </div>
 
