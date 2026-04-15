@@ -5,14 +5,14 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-[#1F1F1F] text-gray-400 md:justify-center px-4 py-3 md:py-4 border-t border-white/5">
+    <footer className="bg-[#1F1F1F] text-gray-400 md:justify-center px-4 pt-1 pb-3 md:pt-2 md:pb-4 border-t border-white/5">
       {/* Main section */}
       <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 md:text-center">
 
 
         {/* Brand */}
         <div className="space-y-3">
-          <h5 className="text-sm font-bold text-amber-100 tracking-wider">Bookiesmasters</h5>
+          <h5 className="text-sm font-bold text-gray-300 tracking-wider">Bookiesmasters</h5>
           <p className="text-xs leading-relaxed text-gray-400">
             Get instant access to premium football predictions, livescores , fixture odds , match events , and expert match insights.
           </p>
@@ -23,7 +23,7 @@ export default function Footer() {
 
         {/* Contact + Socials */}
         <div className="space-y-1.5">
-          <h5 className="text-sm font-bold text-amber-100 tracking-wider">Stay connected</h5>
+          <h5 className="text-sm font-bold text-gray-300 tracking-wider">Stay connected</h5>
           <p className="text-xs text-gray-400">
             Have questions? Reach us anytime.
           </p>
@@ -42,7 +42,7 @@ export default function Footer() {
 
         {/* Quick Links */}
         <div className="space-y-1.5">
-          <h5 className="text-sm font-bold text-amber-100 tracking-wider">Quick links</h5>
+          <h5 className="text-sm font-bold text-gray-300 tracking-wider">Quick links</h5>
           <ul className="text-xs space-y-1">
             <li>
               <Link href="/terms-of-service" className="hover:text-teal-400 transition-colors">
@@ -69,7 +69,7 @@ export default function Footer() {
 
         {/* Betting Sites */}
         <div className="space-y-1.5">
-          <h5 className="text-sm font-bold text-amber-100 tracking-wider">Betting sites</h5>
+          <h5 className="text-sm font-bold text-gray-300 tracking-wider">Betting sites</h5>
           <ul className="text-xs space-y-1">
             <li>
               <a href="https://reffpa.com/L?tag=d_5148910m_97c_telegram&site=5148910&ad=97&r=registration" target="_blank" rel="noopener noreferrer" className="hover:text-teal-400 transition-colors">

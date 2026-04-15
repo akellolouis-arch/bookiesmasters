@@ -96,7 +96,7 @@ export default function DateNavigator({ date }: Props) {
         <Link
           href="/live"
           className={`shrink-0 w-12 h-8 rounded-md flex flex-col items-center justify-center text-[9px] font-bold transition-colors border ${isLivePage
-            ? "bg-white/20 border-transparent text-white shadow-lg shadow-white/10"
+            ? "bg-white/20 border-transparent text-amber-100 shadow-lg shadow-white/10"
             : "bg-[#1F1F1F] border-white/5 text-gray-400 hover:text-white"
             }`}
         >
@@ -126,7 +126,7 @@ export default function DateNavigator({ date }: Props) {
                 onClick={() => handleDateClick(d)}
                 data-active={isActive}
                 className={`flex-1 flex flex-col items-center justify-center min-w-[45px] h-8 rounded-md border transition-all ${isActive
-                  ? "bg-white/20 border-transparent text-white shadow-lg shadow-white/10"
+                  ? "bg-white/20 border-transparent text-amber-100 shadow-lg shadow-white/10"
                   : "bg-[#1F1F1F] border-white/5 text-gray-500 hover:bg-[#252525] hover:text-gray-300"
                   }`}
               >

@@ -151,7 +151,7 @@ export default function FixtureCard({
         {/* STATUS */}
         <div className="w-[40px] sm:w-[50px] text-left shrink-0">
           <div className="flex flex-col leading-none">
-            <p className={`text-[10px] sm:text-xs font-bold ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
+            <p className={`text-[10px] sm:text-xs font-semibold ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
               {status}
             </p>
             {isFinished && kickoffTime && (
@@ -167,26 +167,26 @@ export default function FixtureCard({
           <div className="flex items-center gap-1.5 w-full">
             <div className="flex items-center gap-1.5 max-w-full overflow-hidden">
               <Image src={homeTeam.logo} alt={homeTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
-              <span className="font-medium text-[11px] sm:text-xs truncate text-white">{homeTeam.name}</span>
+              <span className="font-normal text-[11px] sm:text-xs truncate text-white">{homeTeam.name}</span>
             </div>
           </div>
           <div className="flex items-center gap-1.5 w-full">
             <div className="flex items-center gap-1.5 max-w-full overflow-hidden">
               <Image src={awayTeam.logo} alt={awayTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
-              <span className="font-medium text-[11px] sm:text-xs truncate text-white">{awayTeam.name}</span>
+              <span className="font-normal text-[11px] sm:text-xs truncate text-white">{awayTeam.name}</span>
             </div>
           </div>
         </div>
 
         {/* 1X2 ODDS */}
         <div className={`flex flex-row justify-between w-[90px] sm:w-[130px] shrink-0 ${isLive ? "text-white" : ""}`}>
-          <span className={`text-[10px] sm:text-xs font-bold leading-none ${getOddsColor(effectiveOdds?.home ?? null, [effectiveOdds?.home ?? null, effectiveOdds?.draw ?? null, effectiveOdds?.away ?? null])}`}>
+          <span className={`text-[10px] sm:text-xs font-semibold leading-none ${getOddsColor(effectiveOdds?.home ?? null, [effectiveOdds?.home ?? null, effectiveOdds?.draw ?? null, effectiveOdds?.away ?? null])}`}>
             {effectiveOdds?.home ?? "-"}
           </span>
-          <span className={`text-[10px] sm:text-xs font-bold leading-none ${getOddsColor(effectiveOdds?.draw ?? null, [effectiveOdds?.home ?? null, effectiveOdds?.draw ?? null, effectiveOdds?.away ?? null])}`}>
+          <span className={`text-[10px] sm:text-xs font-semibold leading-none ${getOddsColor(effectiveOdds?.draw ?? null, [effectiveOdds?.home ?? null, effectiveOdds?.draw ?? null, effectiveOdds?.away ?? null])}`}>
             {effectiveOdds?.draw ?? "-"}
           </span>
-          <span className={`text-[10px] sm:text-xs font-bold leading-none ${getOddsColor(effectiveOdds?.away ?? null, [effectiveOdds?.home ?? null, effectiveOdds?.draw ?? null, effectiveOdds?.away ?? null])}`}>
+          <span className={`text-[10px] sm:text-xs font-semibold leading-none ${getOddsColor(effectiveOdds?.away ?? null, [effectiveOdds?.home ?? null, effectiveOdds?.draw ?? null, effectiveOdds?.away ?? null])}`}>
             {effectiveOdds?.away ?? "-"}
           </span>
         </div>
