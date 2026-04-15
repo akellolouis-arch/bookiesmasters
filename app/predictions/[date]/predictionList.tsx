@@ -151,7 +151,7 @@ export default function PredictionsList({
   }
 
   return (
-    <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto sm:px-1 md:px-4 py-2 space-y-1">
+    <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto sm:px-1 md:px-4 py-2">
       {safeData.length === 0 && (
         <p className="text-center py-8 text-gray-500">
           {query
@@ -166,7 +166,7 @@ export default function PredictionsList({
         let globalIdx = 0;
         return safeData.map((league, idx) => (
           <div key={league.id || idx}>
-            <div className="flex items-center gap-1 mb-1 mt-4 bg-gradient-to-r from-emerald-900/40 to-[#121212] py-2 px-3 shadow-md rounded-md border border-white/5 border-b-0">
+            <div className="flex items-center gap-1 bg-gradient-to-r from-emerald-900/40 to-[#121212] py-2 px-3 shadow-md border border-white/5 border-b-0">
               <div className="flex items-center gap-2 w-full">
                 {league.logo && (
                   <Image
