@@ -153,12 +153,14 @@ export default function PredictionsList({
   return (
     <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto sm:px-1 md:px-4 py-2">
       {safeData.length === 0 && (
-        <p className="text-center py-8 text-gray-500">
+        <p className="text-center py-8 text-gray-500 font-bold">
           {query
             ? (date === "live"
               ? `No live fixture for "${query}".`
               : `No fixtures for "${query}" on this date.`)
-            : "No fixtures available for this date."}
+            : (date === "live"
+              ? "No live fixtures."
+              : "No fixtures available for this date.")}
         </p>
       )}
 
@@ -182,7 +184,7 @@ export default function PredictionsList({
                   <span className="font-extrabold text-xs text-white tracking-wide truncate drop-shadow-sm">
                     {league.name}
                   </span>
-                  <span className="text-[8px] text-emerald-200/70 font-semibold uppercase tracking-wider truncate">{league.country}</span>
+                  <span className="text-[8px] text-emerald-200/70 font-semibold lowercase tracking-wider truncate">{league.country}</span>
                 </div>
               </div>
             </div>
