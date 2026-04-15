@@ -45,7 +45,7 @@ export default function Navbar() {
             <Link
               key={link.name}
               href={link.path}
-              className="text-gray-300 hover:text-white transition"
+              className="text-emerald-200/70 hover:text-white transition font-medium"
             >
               {link.name}
             </Link>
@@ -71,7 +71,7 @@ export default function Navbar() {
                 key={link.name}
                 href={link.path}
                 onClick={() => setMenuOpen(false)}
-                className="text-gray-300 hover:text-white transition"
+                className="text-emerald-200/70 hover:text-white transition font-medium"
               >
                 {link.name}
               </Link>

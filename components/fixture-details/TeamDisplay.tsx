@@ -108,22 +108,13 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                         {homeTeam.last5Matches && homeTeam.last5Matches.length > 0 && (
                             <div className="mt-2 flex gap-1">
                                 {homeTeam.last5Matches.map((m, i) => {
-                                    const isHome = m?.teams?.home?.id === homeTeam.id;
-                                    const hGoal = m?.goals?.home;
-                                    const aGoal = m?.goals?.away;
-                                    let res = "D";
-                                    let color = "bg-gray-500/80";
-                                    if (hGoal != null && aGoal != null) {
-                                        if (isHome) {
-                                            if (hGoal > aGoal) { res = "W"; color = "bg-emerald-500/80"; }
-                                            else if (hGoal < aGoal) { res = "L"; color = "bg-rose-500/80"; }
-                                        } else {
-                                            if (aGoal > hGoal) { res = "W"; color = "bg-emerald-500/80"; }
-                                            else if (aGoal < hGoal) { res = "L"; color = "bg-rose-500/80"; }
-                                        }
-                                    }
+                                    const res = m.result || "D";
+                                    let bgClass = "bg-orange-400/80"; // pale orange for D
+                                    if (res === "W") bgClass = "bg-emerald-500/80";
+                                    if (res === "L") bgClass = "bg-rose-500/80";
+
                                     return (
-                                        <div key={i} className={`w-4 h-4 sm:w-5 sm:h-5 rounded text-[8px] sm:text-[10px] font-bold flex items-center justify-center text-white ${color}`}>
+                                        <div key={i} className={`w-4 h-4 sm:w-5 sm:h-5 rounded text-[8px] sm:text-[10px] font-bold flex items-center justify-center text-white ${bgClass}`}>
                                             {res}
                                         </div>
                                     );
@@ -166,22 +157,13 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                         {awayTeam.last5Matches && awayTeam.last5Matches.length > 0 && (
                             <div className="mt-2 flex gap-1">
                                 {awayTeam.last5Matches.map((m, i) => {
-                                    const isHome = m?.teams?.home?.id === awayTeam.id;
-                                    const hGoal = m?.goals?.home;
-                                    const aGoal = m?.goals?.away;
-                                    let res = "D";
-                                    let color = "bg-gray-500/80";
-                                    if (hGoal != null && aGoal != null) {
-                                        if (isHome) {
-                                            if (hGoal > aGoal) { res = "W"; color = "bg-emerald-500/80"; }
-                                            else if (hGoal < aGoal) { res = "L"; color = "bg-rose-500/80"; }
-                                        } else {
-                                            if (aGoal > hGoal) { res = "W"; color = "bg-emerald-500/80"; }
-                                            else if (aGoal < hGoal) { res = "L"; color = "bg-rose-500/80"; }
-                                        }
-                                    }
+                                    const res = m.result || "D";
+                                    let bgClass = "bg-orange-400/80"; // pale orange for D
+                                    if (res === "W") bgClass = "bg-emerald-500/80";
+                                    if (res === "L") bgClass = "bg-rose-500/80";
+
                                     return (
-                                        <div key={i} className={`w-4 h-4 sm:w-5 sm:h-5 rounded text-[8px] sm:text-[10px] font-bold flex items-center justify-center text-white ${color}`}>
+                                        <div key={i} className={`w-4 h-4 sm:w-5 sm:h-5 rounded text-[8px] sm:text-[10px] font-bold flex items-center justify-center text-white ${bgClass}`}>
                                             {res}
                                         </div>
                                     );
