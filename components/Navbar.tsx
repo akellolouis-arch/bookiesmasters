@@ -65,7 +65,7 @@ export default function Navbar() {
       {/* Mobile Dropdown */}
       {menuOpen && (
         <div className="md:hidden bg-gradient-to-r from-emerald-900/40 to-[#121212] border-t border-white/5">
-          <div className="flex flex-col pl-3 pr-2 py-1.5 space-y-2">
+          <div className="flex flex-col pl-3 pr-2 py-1.5 space-y-1">
             {links.map((link) => (
               <Link
                 key={link.name}
