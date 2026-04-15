@@ -12,18 +12,18 @@ export default function Footer() {
 
         {/* Brand */}
         <div className="space-y-3">
-          <h5 className="text-sm font-bold text-white tracking-wider">Bookiesmasters</h5>
+          <h5 className="text-sm font-bold text-amber-100 tracking-wider">Bookiesmasters</h5>
           <p className="text-xs leading-relaxed text-gray-400">
             Get instant access to premium football predictions, livescores , fixture odds , match events , and expert match insights.
           </p>
           <p className="text-[10px] italic text-gray-500 leading-relaxed border-t border-white/5 pt-2">
-            Disclaimer: Approximately 65% of football matches end as draws and not all fixtures will end as win or draw. The win or draw tips displayed on this platform are provided by a third party. Bookiesmasters does not independently own the rights to these predictions.
+            Disclaimer: Approximately 65% of football matches end as draws and not all fixtures will end as win or draw. The win or draw tips displayed on this platform are provided by a third party. Bookiesmasters does not independently own the rights to these predictions and accepts no liability or financial responsibility for any losses incurred from acting upon them. Please bet responsibly.
           </p>
         </div>
 
         {/* Contact + Socials */}
         <div className="space-y-1.5">
-          <h5 className="text-sm font-bold text-white tracking-wider">Stay connected</h5>
+          <h5 className="text-sm font-bold text-amber-100 tracking-wider">Stay connected</h5>
           <p className="text-xs text-gray-400">
             Have questions? Reach us anytime.
           </p>
@@ -42,7 +42,7 @@ export default function Footer() {
 
         {/* Quick Links */}
         <div className="space-y-1.5">
-          <h5 className="text-sm font-bold text-white tracking-wider">Quick links</h5>
+          <h5 className="text-sm font-bold text-amber-100 tracking-wider">Quick links</h5>
           <ul className="text-xs space-y-1">
             <li>
               <Link href="/terms-of-service" className="hover:text-teal-400 transition-colors">
@@ -69,7 +69,7 @@ export default function Footer() {
 
         {/* Betting Sites */}
         <div className="space-y-1.5">
-          <h5 className="text-sm font-bold text-white tracking-wider">Betting sites</h5>
+          <h5 className="text-sm font-bold text-amber-100 tracking-wider">Betting sites</h5>
           <ul className="text-xs space-y-1">
             <li>
               <a href="https://reffpa.com/L?tag=d_5148910m_97c_telegram&site=5148910&ad=97&r=registration" target="_blank" rel="noopener noreferrer" className="hover:text-teal-400 transition-colors">
