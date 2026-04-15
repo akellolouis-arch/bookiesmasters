@@ -65,13 +65,13 @@ export default function Navbar() {
       {/* Mobile Dropdown */}
       {menuOpen && (
         <div className="md:hidden bg-gradient-to-r from-emerald-900/40 to-[#121212] border-t border-white/5">
-          <div className="flex flex-col px-4 py-3 space-y-3">
+          <div className="flex flex-col pl-3 pr-2 py-1.5 space-y-2">
             {links.map((link) => (
               <Link
                 key={link.name}
                 href={link.path}
                 onClick={() => setMenuOpen(false)}
-                className="text-emerald-200/70 hover:text-white transition font-medium"
+                className="text-emerald-200/70 hover:text-white transition font-medium text-xs tracking-wide drop-shadow-sm"
               >
                 {link.name}
               </Link>
