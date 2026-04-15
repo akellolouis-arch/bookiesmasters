@@ -182,7 +182,7 @@ export default function PredictionsList({
                   <span className="font-extrabold text-xs text-white tracking-wide truncate drop-shadow-sm">
                     {league.name}
                   </span>
-                  <span className="text-[10px] text-emerald-200/70 font-semibold uppercase tracking-wider truncate">{league.country}</span>
+                  <span className="text-[8px] text-emerald-200/70 font-semibold uppercase tracking-wider truncate">{league.country}</span>
                 </div>
               </div>
             </div>
