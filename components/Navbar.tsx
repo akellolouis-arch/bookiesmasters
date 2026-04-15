@@ -71,7 +71,7 @@ export default function Navbar() {
                 key={link.name}
                 href={link.path}
                 onClick={() => setMenuOpen(false)}
-                className="text-emerald-200/70 hover:text-white transition font-medium text-xs tracking-wide drop-shadow-sm"
+                className="text-emerald-200/70 hover:text-white transition font-medium text-[13px] tracking-wide drop-shadow-sm"
               >
                 {link.name}
               </Link>
