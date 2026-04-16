@@ -331,12 +331,20 @@ async function fetchOdds(fixtureId) {
   return [];
 }
 
+let isDailyUpdateRunning = false;
+
 /* ---------------------------------------------
    MAIN: UPDATE DAILY FIXTURES
    - force: bypass last-run time check when true
    - recordCompletion: whether to update lastDailyUpdate timestamp
 ---------------------------------------------- */
 export async function updateDailyFixtures(force = false, recordCompletion = true) {
+  if (isDailyUpdateRunning) {
+    console.log("⏳ Daily update is already running, skipping overlapping invocation.");
+    return;
+  }
+  isDailyUpdateRunning = true;
+
   try {
     // MongoDB should already be connected by server.js
     console.log("📡 Updating fixtures (Kenya dates: today through +1 days only)...\n");
@@ -551,6 +559,8 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
 
   } catch (err) {
     console.error("❌ ERROR UPDATING FIXTURES/DATA:", err);
+  } finally {
+    isDailyUpdateRunning = false;
   }
 }
 
@@ -587,7 +597,14 @@ export function startDailyScheduler() {
   console.log(
     `⏰ Daily Update Scheduler: runs every day at ${DAILY_UPDATE_HOUR}:${String(DAILY_UPDATE_MINUTE).padStart(2, "0")} Africa/Nairobi`
   );
-  // First fire is the next 06:00 Kenya (today if still before that time, else tomorrow)
+
+  // Attempt an immediate run on backend startup in case we missed today's scheduled time.
+  console.log(`⏰ Checking if daily update needs to run immediately upon startup...`);
+  updateDailyFixtures(false, true).catch((err) => {
+    console.error("❌ Startup daily update failed:", err);
+  });
+
+  // First fire is the next scheduled time
   scheduleNextDailyUpdate();
 }
 
