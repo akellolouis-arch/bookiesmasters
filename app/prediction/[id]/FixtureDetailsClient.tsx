@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import useSWR from "swr";
 import H2HSection from "@/components/fixture-details/H2HSection";
 import LastFiveMatches from "@/components/fixture-details/LastFiveMatches";
 import Events from "@/components/fixture-details/Events";
@@ -36,8 +37,24 @@ interface FixtureDetailsClientProps {
     data: FixtureDetailsData;
 }
 
-const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data }) => {
+const fetcher = (url: string) => fetch(url, { cache: "no-store" }).then((res) => res.json());
+
+const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initialData }) => {
     const [activeTab, setActiveTab] = useState<"overview" | "h2h" | "standings">("overview");
+
+    const isMatchLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(initialData.status) || initialData.status.includes("'");
+    
+    const { data: swrData } = useSWR(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/fixtures/${initialData.fixtureId}`,
+        fetcher,
+        {
+            refreshInterval: isMatchLive ? 15000 : 0,
+            revalidateOnMount: true,
+            revalidateOnFocus: true,
+        }
+    );
+
+    const data = swrData?.data ? { ...initialData, ...swrData.data } : initialData;
 
     const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(data.status) || data.status.includes("'");
     const primaryOdds = (data.odds && data.odds.length > 0 && data.odds[0].markets && data.odds[0].markets.length > 0)

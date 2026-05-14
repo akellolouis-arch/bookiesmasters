@@ -3,7 +3,7 @@ import { cache } from "react";
 import FixtureDetailsClient from "./FixtureDetailsClient";
 
 /** Avoid hammering Render; still fresh enough for match pages */
-export const revalidate = 30;
+export const revalidate = 86400;
 
 /** Fail fast so Vercel never sits 300s on a stuck upstream (504 in your logs) */
 const FETCH_TIMEOUT_MS = 15_000;
@@ -50,7 +50,7 @@ const getFixture = cache(async (id: string): Promise<FixtureDetailData | null> =
     const url = `${base}/api/fixtures/${id}`;
 
     try {
-        const res = await fetchWithTimeout(url, 30);
+        const res = await fetchWithTimeout(url, 86400);
 
         if (!res.ok) {
             console.error(`⚠️ Failed to fetch details for ${id}. Status: ${res.status}`);

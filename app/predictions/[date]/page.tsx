@@ -5,7 +5,7 @@ import { shouldShowMatchOnPredictionsPage } from "@/lib/predictionsMatchVisibili
 
 
 
-export const revalidate = 30; // Cache for 30 seconds (ISR)
+export const revalidate = 86400; // Cache for 1 day (ISR)
 export const dynamicParams = true; // Allow generating pages for new dates
 
 // ---------------------
@@ -125,7 +125,7 @@ export default async function PredictionsPage({
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/fixtures/cards?date=${date}`,
-      { next: { revalidate: 30 } } // Cache at the Data Cache level for 30s
+      { next: { revalidate: 86400 } } // Cache at the Data Cache level for 1 day
     );
 
     if (!res.ok) {

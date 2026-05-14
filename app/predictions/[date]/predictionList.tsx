@@ -83,10 +83,11 @@ export default function PredictionsList({
     apiUrl,
     fetcher,
     {
-      refreshInterval: 0, // DISABLED polling to save resources
+      refreshInterval: date === "live" ? 15000 : 0,
       fallbackData: { fixtures: initialData },
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
+      revalidateOnMount: true,
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
       dedupingInterval: 60000,
     }
   );

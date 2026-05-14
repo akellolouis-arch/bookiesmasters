@@ -2,7 +2,7 @@ import PredictionsList from "../predictions/[date]/predictionList";
 import DateNavigator from "@/components/DateNavigator";
 import { Suspense } from "react";
 
-export const revalidate = 15;
+export const revalidate = 86400;
 
 interface BackendLeague {
   id: number;
@@ -61,7 +61,7 @@ export default async function LivePage() {
 
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fixtures/live`, {
-      next: { revalidate: 15 },
+      next: { revalidate: 86400 },
     });
     if (res.ok) {
       backendData = await res.json();
