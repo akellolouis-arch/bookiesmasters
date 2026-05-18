@@ -14,10 +14,10 @@ export default function Footer() {
         <div className="space-y-3">
           <h5 className="text-sm font-bold text-gray-300 tracking-wider">Bookiesmasters</h5>
           <p className="text-xs leading-relaxed text-gray-400">
-            Get instant access to premium football predictions, livescores , fixture odds , match events , and expert match insights.
+            Get instant access to premium football analytics, livescores, market probabilities, match events, and expert insights.
           </p>
           <p className="text-[10px] italic text-gray-500 leading-relaxed border-t border-white/5 pt-2">
-            Disclaimer: Approximately 65% of football matches end as draws and not all fixtures will end as win or draw. Predictions displayed on this platform are not guaranteed to be accurate and are provided by a third party. Bookiesmasters does not independently own the rights to these predictions and accepts no liability or financial responsibility for any losses incurred from acting upon them. Please bet responsibly.
+            Disclaimer: Forecasts and data displayed on this platform are for informational and entertainment purposes only and are not guaranteed to be accurate. We accept no liability or financial responsibility for decisions made based on this data. Please use our platform responsibly.
           </p>
         </div>
 
@@ -67,7 +67,7 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* Betting Sites */}
+        {/* Partners (Temporarily Hidden for Payment Gateway Review)
         <div className="space-y-1.5">
           <h5 className="text-sm font-bold text-gray-300 tracking-wider">Betting sites</h5>
           <ul className="text-xs space-y-1">
@@ -83,6 +83,7 @@ export default function Footer() {
             </li>
           </ul>
         </div>
+        */}
       </div>
 
       {/* Footer bottom */}
