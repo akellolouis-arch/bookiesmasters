@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import useSWR from "swr";
 import H2HSection from "@/components/fixture-details/H2HSection";
 import LastFiveMatches from "@/components/fixture-details/LastFiveMatches";
@@ -40,7 +40,6 @@ interface FixtureDetailsClientProps {
 const fetcher = (url: string) => fetch(url, { cache: "no-store" }).then((res) => res.json());
 
 const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initialData }) => {
-    const [activeTab, setActiveTab] = useState<"overview" | "h2h" | "standings">("overview");
 
     const isMatchLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(initialData.status) || initialData.status.includes("'");
     
@@ -62,7 +61,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
         : undefined;
 
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-white py-4 px-2 sm:px-4 font-sans">
+        <div className="min-h-screen bg-[#0a0a0a] text-white py-4 px-2 sm:px-4">
             <div className="max-w-5xl mx-auto">
                 <LeagueHeader league={data.league} logo={data.leagueLogo} country={data.country} />
 
@@ -100,124 +99,89 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                     )}
                 </div>
 
-                {/* --- TAB NAVIGATION --- */}
-                <div className="flex justify-center mb-6">
-                    <div className="inline-flex bg-[#1a1a1b] rounded-full p-1 border border-white/5 shadow-inner">
-                        <button
-                            onClick={() => setActiveTab("overview")}
-                            className={`px-6 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 ${activeTab === "overview" ? "bg-white text-black shadow-md scale-105" : "text-gray-400 hover:text-white"
-                                }`}
-                        >
-                            Overview
-                        </button>
-                        <button
-                            onClick={() => setActiveTab("h2h")}
-                            className={`px-6 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 ${activeTab === "h2h" ? "bg-white text-black shadow-md scale-105" : "text-gray-400 hover:text-white"
-                                }`}
-                        >
-                            H2H & Form
-                        </button>
-                        <button
-                            onClick={() => setActiveTab("standings")}
-                            className={`px-6 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 ${activeTab === "standings" ? "bg-white text-black shadow-md scale-105" : "text-gray-400 hover:text-white"
-                                }`}
-                        >
-                            Standings
-                        </button>
+                {/* --- OVERVIEW CARD --- */}
+                <div className="bg-[#121212] rounded-3xl p-4 sm:p-6 border border-white/5 shadow-xl mb-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        {/* Left Column: Match Events */}
+                        <div className="lg:col-span-7 space-y-6">
+                            <div>
+                                <h3 className="text-sm font-black text-white mb-4 uppercase tracking-widest flex items-center gap-2">
+                                    <span className="w-1.5 h-5 bg-blue-500 rounded-full" />
+                                    Match Events
+                                </h3>
+                                <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
+                                    <Events events={data.events || []} homeTeamId={data.homeTeam.id} awayTeamId={data.awayTeam.id} />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Right Column: Insights, Action, Injuries */}
+                        <div className="lg:col-span-5 space-y-6">
+                            {/* Injuries Panel */}
+                            {data.injuries && data.injuries.length > 0 && (
+                                <div>
+                                    <h3 className="text-sm font-black text-white mb-4 uppercase tracking-widest flex items-center gap-2">
+                                        <span className="w-1.5 h-5 bg-rose-500 rounded-full" />
+                                        Injuries & Suspensions
+                                    </h3>
+                                    <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
+                                        <Injuries injuries={data.injuries} />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
 
-                {/* --- TAB CONTENT CONTAINER --- */}
-                <div className="bg-[#121212] rounded-3xl p-4 sm:p-8 border border-white/5 shadow-2xl min-h-[500px]">
-
-                    {/* OVERVIEW TAB */}
-                    {activeTab === "overview" && (
-                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-
-                            {/* Left Column: Match Events */}
-                            <div className="lg:col-span-7 space-y-6">
-                                <div>
-                                    <h3 className="text-sm font-black text-white mb-4 uppercase tracking-widest flex items-center gap-2">
-                                        <span className="w-1.5 h-5 bg-blue-500 rounded-full" />
-                                        Match Events
-                                    </h3>
-                                    <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
-                                        <Events events={data.events || []} homeTeamId={data.homeTeam.id} awayTeamId={data.awayTeam.id} />
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Right Column: Insights, Action, Injuries */}
-                            <div className="lg:col-span-5 space-y-6">
-
-                                {/* Injuries Panel */}
-                                {data.injuries && data.injuries.length > 0 && (
-                                    <div>
-                                        <h3 className="text-sm font-black text-white mb-4 uppercase tracking-widest flex items-center gap-2">
-                                            <span className="w-1.5 h-5 bg-rose-500 rounded-full" />
-                                            Injuries & Suspensions
-                                        </h3>
-                                        <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
-                                            <Injuries injuries={data.injuries} />
-                                        </div>
-                                    </div>
-                                )}
+                {/* --- H2H & FORM CARD --- */}
+                <div className="bg-[#121212] rounded-3xl p-4 sm:p-6 border border-white/5 shadow-xl mb-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        {/* Column 1: Recent Form */}
+                        <div className="space-y-6">
+                            <h3 className="text-sm font-black text-white mb-4 uppercase tracking-widest flex items-center gap-2">
+                                <span className="w-1.5 h-5 bg-emerald-500 rounded-full" />
+                                Recent Form
+                            </h3>
+                            <div className="bg-white/5 rounded-2xl p-4 sm:p-6 border border-white/5 space-y-8">
+                                <LastFiveMatches
+                                    teamName={data.homeTeam.name}
+                                    teamLogo={data.homeTeam.logo}
+                                    matches={data.homeTeam.allMatches || data.homeTeam.last5Matches || []}
+                                />
+                                <div className="w-full h-px bg-white/5"></div>
+                                <LastFiveMatches
+                                    teamName={data.awayTeam.name}
+                                    teamLogo={data.awayTeam.logo}
+                                    matches={data.awayTeam.allMatches || data.awayTeam.last5Matches || []}
+                                />
                             </div>
                         </div>
-                    )}
 
-                    {/* H2H & FORM TAB */}
-                    {activeTab === "h2h" && (
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-
-                            {/* Column 1: Recent Form */}
-                            <div className="space-y-6">
-                                <h3 className="text-sm font-black text-white mb-4 uppercase tracking-widest flex items-center gap-2">
-                                    <span className="w-1.5 h-5 bg-emerald-500 rounded-full" />
-                                    Recent Form
-                                </h3>
-                                <div className="bg-white/5 rounded-2xl p-4 sm:p-6 border border-white/5 space-y-8">
-                                    <LastFiveMatches
-                                        teamName={data.homeTeam.name}
-                                        teamLogo={data.homeTeam.logo}
-                                        matches={data.homeTeam.allMatches || data.homeTeam.last5Matches || []}
-                                    />
-                                    <div className="w-full h-px bg-white/5"></div>
-                                    <LastFiveMatches
-                                        teamName={data.awayTeam.name}
-                                        teamLogo={data.awayTeam.logo}
-                                        matches={data.awayTeam.allMatches || data.awayTeam.last5Matches || []}
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Column 2: Head to Head */}
-                            <div className="space-y-6">
-                                <h3 className="text-sm font-black text-white mb-4 uppercase tracking-widest flex items-center gap-2">
-                                    <span className="w-1.5 h-5 bg-orange-500 rounded-full" />
-                                    Head to Head
-                                </h3>
-                                <div className="bg-white/5 rounded-2xl p-4 sm:p-6 border border-white/5">
-                                    <H2HSection h2h={data.h2h || []} />
-                                </div>
-                            </div>
-
-                        </div>
-                    )}
-
-                    {/* STANDINGS TAB */}
-                    {activeTab === "standings" && (
-                        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                            <h3 className="text-sm font-black text-white mb-6 uppercase tracking-widest flex items-center gap-2">
-                                <span className="w-1.5 h-5 bg-purple-500 rounded-full" />
-                                League Table
+                        {/* Column 2: Head to Head */}
+                        <div className="space-y-6">
+                            <h3 className="text-sm font-black text-white mb-4 uppercase tracking-widest flex items-center gap-2">
+                                <span className="w-1.5 h-5 bg-orange-500 rounded-full" />
+                                Head to Head
                             </h3>
                             <div className="bg-white/5 rounded-2xl p-4 sm:p-6 border border-white/5">
-                                <Standings standings={data.standings || []} />
+                                <H2HSection h2h={data.h2h || []} />
                             </div>
                         </div>
-                    )}
+                    </div>
                 </div>
+
+                {/* --- STANDINGS CARD --- */}
+                {data.standings && data.standings.length > 0 && (
+                    <div className="bg-[#121212] rounded-3xl p-4 sm:p-6 border border-white/5 shadow-xl mb-6">
+                        <h3 className="text-sm font-black text-white mb-6 uppercase tracking-widest flex items-center gap-2">
+                            <span className="w-1.5 h-5 bg-purple-500 rounded-full" />
+                            League Table
+                        </h3>
+                        <div className="bg-white/5 rounded-2xl p-4 sm:p-6 border border-white/5">
+                            <Standings standings={data.standings || []} />
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
