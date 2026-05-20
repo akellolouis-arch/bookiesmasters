@@ -109,7 +109,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                                     <span className="w-1.5 h-5 bg-blue-500 rounded-full" />
                                     Match Events
                                 </h3>
-                                <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
+                                <div className="mt-2">
                                     <Events events={data.events || []} homeTeamId={data.homeTeam.id} awayTeamId={data.awayTeam.id} />
                                 </div>
                             </div>
@@ -124,7 +124,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                                         <span className="w-1.5 h-5 bg-rose-500 rounded-full" />
                                         Injuries & Suspensions
                                     </h3>
-                                    <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
+                                    <div className="mt-2">
                                         <Injuries injuries={data.injuries} />
                                     </div>
                                 </div>
@@ -142,7 +142,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                                 <span className="w-1.5 h-5 bg-emerald-500 rounded-full" />
                                 Recent Form
                             </h3>
-                            <div className="bg-white/5 rounded-2xl p-4 sm:p-6 border border-white/5 space-y-8">
+                            <div className="mt-2 space-y-8">
                                 <LastFiveMatches
                                     teamName={data.homeTeam.name}
                                     teamLogo={data.homeTeam.logo}
@@ -163,7 +163,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                                 <span className="w-1.5 h-5 bg-orange-500 rounded-full" />
                                 Head to Head
                             </h3>
-                            <div className="bg-white/5 rounded-2xl p-4 sm:p-6 border border-white/5">
+                            <div className="mt-2">
                                 <H2HSection h2h={data.h2h || []} />
                             </div>
                         </div>
@@ -177,7 +177,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                             <span className="w-1.5 h-5 bg-purple-500 rounded-full" />
                             League Table
                         </h3>
-                        <div className="bg-white/5 rounded-2xl p-4 sm:p-6 border border-white/5">
+                        <div className="mt-2">
                             <Standings standings={data.standings || []} />
                         </div>
                     </div>
