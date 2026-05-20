@@ -42,46 +42,36 @@ export default function Injuries({ injuries }: InjuriesProps) {
         );
     }
 
-    // Group by Team
-    const homeTeamInjuries = injuries.filter((i, index, self) =>
-        // Simple grouping by first team found logic or improved logic
-        i.team.id === self[0].team.id
-    );
+    // Deduplicate injuries (API sometimes returns same player multiple times)
+    const uniqueInjuries = Array.from(new Map(injuries.map(i => [i.player.id || i.player.name, i])).values());
 
-    // Actually, let's group dynamically
-    const teams = Array.from(new Set(injuries.map(i => i.team.name)));
+    // Get unique teams from deduplicated list
+    const teams = Array.from(new Set(uniqueInjuries.map(i => i.team.name)));
 
     return (
-        <div className="w-full space-y-4 animate-in fade-in duration-500">
+        <div className="w-full grid grid-cols-2 gap-2 sm:gap-6 animate-in fade-in duration-500">
             {teams.map(teamName => {
-                const teamInjuries = injuries.filter(i => i.team.name === teamName);
+                const teamInjuries = uniqueInjuries.filter(i => i.team.name === teamName);
                 const teamLogo = teamInjuries[0].team.logo;
 
                 return (
-                    <div key={teamName} className="w-full">
-                        <div className="flex items-center gap-3 mb-3 pb-2 border-b border-white/10">
-                            <img src={teamLogo} alt={teamName} className="w-6 h-6 object-contain" />
-                            <h3 className="font-bold text-sm text-gray-200">{teamName}</h3>
+                    <div key={teamName} className="w-full bg-[#111] rounded-xl p-2 sm:p-4 border border-white/5 overflow-hidden">
+                        <div className="flex items-center gap-1.5 sm:gap-3 mb-2 sm:mb-4 pb-2 sm:pb-3 border-b border-white/5">
+                            <img src={teamLogo} alt={teamName} className="w-4 h-4 sm:w-6 sm:h-6 object-contain shrink-0" />
+                            <h3 className="font-bold text-[10px] sm:text-sm text-gray-200 truncate">{teamName}</h3>
                         </div>
 
-                        <div className="space-y-3">
+                        <div className="space-y-2 sm:space-y-3">
                             {teamInjuries.map((injury, idx) => (
-                                <div key={idx} className="flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <img
-                                            src={injury.player.photo}
-                                            alt={injury.player.name}
-                                            className="w-8 h-8 rounded-full bg-gray-800 object-cover"
-                                        />
-                                        <div>
-                                            <p className="text-xs font-bold text-white">{injury.player.name}</p>
-                                            <p className="text-[10px] text-red-400">{injury.player.type}</p>
-                                        </div>
-                                    </div>
-                                    <div className="text-right">
-                                        <span className="px-1.5 py-0.5 bg-red-900/20 text-red-500 text-[10px] rounded border border-red-900/30">
-                                            {injury.player.reason}
-                                        </span>
+                                <div key={idx} className="flex items-center gap-1.5 sm:gap-3">
+                                    <img
+                                        src={injury.player.photo}
+                                        alt={injury.player.name}
+                                        className="w-5 h-5 sm:w-8 sm:h-8 rounded-full bg-gray-800 object-cover border border-white/10 shrink-0"
+                                    />
+                                    <div className="flex flex-col min-w-0">
+                                        <p className="text-[9px] sm:text-xs font-bold text-white truncate">{injury.player.name}</p>
+                                        <p className="text-[8px] sm:text-[10px] text-red-400 font-medium capitalize mt-0.5 truncate">{injury.player.reason}</p>
                                     </div>
                                 </div>
                             ))}
