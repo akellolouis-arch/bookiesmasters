@@ -54,7 +54,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
 
     const data = swrData?.data ? { ...initialData, ...swrData.data } : initialData;
 
-    const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(data.status) || data.status.includes("'");
+    const isLive = data.status ? (["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(data.status) || data.status.includes("'")) : false;
     const primaryOdds = (data.odds && data.odds.length > 0 && data.odds[0].markets && data.odds[0].markets.length > 0)
         ? data.odds[0].markets[0].values
         : undefined;

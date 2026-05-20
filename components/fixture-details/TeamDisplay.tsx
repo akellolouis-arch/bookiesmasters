@@ -31,8 +31,8 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
     tip,
     league,
 }) => {
-    const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE"].includes(status);
-    const isFinished = ["FT", "AET", "PEN"].includes(status);
+    const isLive = status ? ["1H", "HT", "2H", "ET", "BT", "P", "LIVE"].includes(status) : false;
+    const isFinished = status ? ["FT", "AET", "PEN"].includes(status) : false;
     
     const dateObj = new Date(date);
     const kickoffTime = dateObj.toLocaleTimeString("en-GB", {

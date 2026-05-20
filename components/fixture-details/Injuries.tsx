@@ -43,7 +43,7 @@ export default function Injuries({ injuries }: InjuriesProps) {
     }
 
     // Deduplicate injuries (API sometimes returns same player multiple times)
-    const uniqueInjuries = Array.from(new Map(injuries.map(i => [i.player.id || i.player.name, i])).values());
+    const uniqueInjuries = Array.from(new Map(injuries.map(i => [i.player?.id || i.player?.name || "unknown", i])).values());
 
     // Get unique teams from deduplicated list
     const teams = Array.from(new Set(uniqueInjuries.map(i => i.team.name)));
