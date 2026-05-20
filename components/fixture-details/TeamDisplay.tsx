@@ -25,6 +25,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
     homeTeam,
     awayTeam,
     status,
+    displayDate,
     date,
     venue,
     score,
