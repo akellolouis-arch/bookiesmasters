@@ -18,6 +18,7 @@ interface TeamDisplayProps {
     date: string;
     score?: { home: number | null; away: number | null } | null;
     tip?: string | null;
+    league?: string;
 }
 
 const TeamDisplay: React.FC<TeamDisplayProps> = ({
@@ -28,6 +29,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
     venue,
     score,
     tip,
+    league,
 }) => {
     const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE"].includes(status);
     const isFinished = ["FT", "AET", "PEN"].includes(status);
@@ -66,6 +68,48 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
             </div>
         );
     };
+
+    const getTipStatus = (tVal: string) => {
+        if (!score || score.home === null || score.away === null || status === "NS") return "PENDING";
+        const h = Number(score.home);
+        const a = Number(score.away);
+        const t = tVal.trim().toUpperCase();
+
+        if (t === "1") return h > a ? "WIN" : "LOSS";
+        if (t === "2") return a > h ? "WIN" : "LOSS";
+        if (t === "X") return h === a ? "WIN" : "LOSS";
+        if (t === "1X") return h >= a ? "WIN" : "LOSS";
+        if (t === "X2") return a >= h ? "WIN" : "LOSS";
+        if (t === "12") return h !== a ? "WIN" : "LOSS";
+
+        if (t.startsWith("OVER")) {
+            const line = parseFloat(t.split(" ")[1]);
+            if (!isNaN(line)) return (h + a) > line ? "WIN" : "LOSS";
+        }
+        if (t.startsWith("UNDER")) {
+            const line = parseFloat(t.split(" ")[1]);
+            if (!isNaN(line)) return (h + a) < line ? "WIN" : "LOSS";
+        }
+        return "PENDING";
+    };
+
+    let tipBadge = null;
+    if (tip && tip !== "N/A") {
+        const s = getTipStatus(tip);
+        let colors = "border-orange-500 text-orange-400 shadow-[0_0_12px_rgba(249,115,22,0.2)] bg-orange-500/10";
+        if (s === "WIN") {
+            colors = "border-emerald-500 text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.2)] bg-emerald-500/10";
+        }
+        if (s === "LOSS") {
+            colors = "border-[#b91c1c] text-[#f87171] shadow-[0_0_12px_rgba(185,28,28,0.2)] bg-[#7f1d1d]/10";
+        }
+
+        tipBadge = (
+            <div className={`mb-4 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full border-2 font-bold text-[10px] sm:text-sm flex items-center justify-center ${colors}`}>
+                {tip}
+            </div>
+        );
+    }
 
     return (
         <div className="relative w-full overflow-hidden bg-gradient-to-br from-[#0f172a] via-[#020617] to-[#1e1b4b] py-6 sm:py-8 flex flex-col items-center">
@@ -110,11 +154,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                         </div>
                         
                         {/* Tip Badge (Red Circle/Pill) */}
-                        {tip && tip !== "N/A" && (
-                            <div className="mb-4 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full border border-[#b91c1c] text-[#f87171] font-bold text-[10px] sm:text-sm shadow-[0_0_12px_rgba(185,28,28,0.2)] bg-[#7f1d1d]/10 flex items-center justify-center">
-                                {tip}
-                            </div>
-                        )}
+                        {tipBadge}
 
                         {/* Score Box */}
                         {score ? (
@@ -133,6 +173,13 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                                 <div className="bg-white/10 rounded-xl sm:rounded-2xl px-6 sm:px-8 py-3 flex items-center justify-center border border-white/5 backdrop-blur-md">
                                     <span className="text-2xl sm:text-4xl font-black text-gray-500">-</span>
                                 </div>
+                            </div>
+                        )}
+
+                        {/* League Badge */}
+                        {league && (
+                            <div className="mt-4 px-3 sm:px-5 py-1.5 bg-white text-black rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-md tracking-wide">
+                                {league}
                             </div>
                         )}
                     </div>

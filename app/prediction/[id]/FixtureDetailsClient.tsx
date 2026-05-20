@@ -7,7 +7,6 @@ import LastFiveMatches from "@/components/fixture-details/LastFiveMatches";
 import Events from "@/components/fixture-details/Events";
 import Standings from "@/components/fixture-details/Standings";
 import TeamDisplay from "@/components/fixture-details/TeamDisplay";
-import LeagueHeader from "@/components/fixture-details/LeagueHeader";
 import Injuries from "@/components/fixture-details/Injuries";
 import BetButton from "@/components/BetButton";
 
@@ -63,8 +62,6 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
     return (
         <div className="min-h-screen bg-[#0a0a0a] text-white py-4 px-2 sm:px-4">
             <div className="max-w-5xl mx-auto">
-                <LeagueHeader league={data.league} logo={data.leagueLogo} country={data.country} />
-
                 <TeamDisplay
                     homeTeam={data.homeTeam}
                     awayTeam={data.awayTeam}
@@ -74,6 +71,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                     date={data.date}
                     score={data.score}
                     tip={data.tip}
+                    league={data.league}
                 />
 
                 {/* --- ODDS & ADVICE SECTION --- */}
