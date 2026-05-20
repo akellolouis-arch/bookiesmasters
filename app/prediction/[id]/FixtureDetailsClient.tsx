@@ -78,7 +78,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 <div className="flex flex-col gap-2 my-2">
                     {/* Call To Action Box (Odds) */}
                     <div className="flex flex-col items-center justify-center text-center">
-                        <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Latest Odds</h3>
+                        <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Prematch Odds</h3>
                         <BetButton teamName={data.homeTeam.name} isLive={isLive} odds={primaryOdds} />
                     </div>
 

@@ -118,6 +118,12 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                 
                 {/* TOP HEADER: Names & Venue */}
                 <div className="text-center mb-3 px-4">
+                    {/* League Badge (Moved to Top) */}
+                    {league && (
+                        <div className="mb-3 inline-block px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-gray-200 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide uppercase">
+                            {league}
+                        </div>
+                    )}
                     <h1 className="text-lg sm:text-2xl md:text-3xl font-medium text-white tracking-wide">
                         {homeTeam.name} <span className="font-black mx-1 sm:mx-3 text-white">VS</span> {awayTeam.name}
                     </h1>
@@ -156,10 +162,10 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                         {/* Score Box */}
                         {score ? (
                             <div className="flex flex-col items-center">
-                                <div className={`bg-white rounded-xl sm:rounded-2xl px-4 sm:px-6 py-2 sm:py-3 shadow-xl flex items-center justify-center gap-2 sm:gap-4 border border-gray-200 ${isLive ? "animate-pulse" : ""}`}>
-                                    <span className={`text-2xl sm:text-4xl font-black ${isLive ? "text-rose-600" : "text-black"}`}>{score.home}</span>
+                                <div className={`bg-white/5 backdrop-blur-sm rounded-xl sm:rounded-2xl px-4 sm:px-6 py-2 sm:py-3 shadow-lg flex items-center justify-center gap-2 sm:gap-4 border border-white/10 ${isLive ? "animate-pulse" : ""}`}>
+                                    <span className={`text-2xl sm:text-4xl font-black ${isLive ? "text-rose-500" : "text-white"}`}>{score.home}</span>
                                     <span className="text-xl sm:text-2xl font-bold text-gray-400">-</span>
-                                    <span className={`text-2xl sm:text-4xl font-black ${isLive ? "text-rose-600" : "text-black"}`}>{score.away}</span>
+                                    <span className={`text-2xl sm:text-4xl font-black ${isLive ? "text-rose-500" : "text-white"}`}>{score.away}</span>
                                 </div>
                                 <div className="mt-2 text-[10px] sm:text-xs font-bold tracking-widest text-gray-400 uppercase">
                                     {isFinished ? "FT" : status}
@@ -170,13 +176,6 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                                 <div className="bg-white/10 rounded-xl sm:rounded-2xl px-6 sm:px-8 py-3 flex items-center justify-center border border-white/5 backdrop-blur-md">
                                     <span className="text-2xl sm:text-4xl font-black text-gray-500">-</span>
                                 </div>
-                            </div>
-                        )}
-
-                        {/* League Badge */}
-                        {league && (
-                            <div className="mt-4 px-3 sm:px-5 py-1.5 bg-white text-black rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-md tracking-wide">
-                                {league}
                             </div>
                         )}
                     </div>
