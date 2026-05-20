@@ -124,11 +124,11 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                             {league}
                         </div>
                     )}
-                    <h1 className="text-lg sm:text-2xl md:text-3xl font-medium text-white tracking-wide">
-                        {homeTeam.name} <span className="font-black mx-1 sm:mx-3 text-white">VS</span> {awayTeam.name}
+                    <h1 className="text-base sm:text-lg md:text-xl font-normal text-white tracking-wide">
+                        {homeTeam.name} <span className="font-bold mx-1 sm:mx-3 text-white">VS</span> {awayTeam.name}
                     </h1>
                     {venue && (
-                        <div className="mt-2 text-[10px] sm:text-xs text-gray-400 font-medium flex items-center justify-center gap-1.5 uppercase tracking-widest">
+                        <div className="mt-2 text-[10px] sm:text-xs text-gray-400 font-medium flex items-center justify-center gap-1.5 lowercase">
                             <span>🏟</span> {venue}
                         </div>
                     )}
