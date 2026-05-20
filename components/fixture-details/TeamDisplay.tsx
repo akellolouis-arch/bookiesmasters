@@ -52,7 +52,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
     const renderForm = (last5Matches?: any[]) => {
         if (!last5Matches || last5Matches.length === 0) return null;
         return (
-            <div className="flex gap-1.5 mt-3">
+            <div className="flex flex-wrap justify-center gap-1 sm:gap-1.5 mt-2 px-1">
                 {last5Matches.map((m, i) => {
                     const res = m.result || "D";
                     let bgClass = "bg-[#eab308]"; // Yellow for Draw
@@ -60,7 +60,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                     if (res === "L") bgClass = "bg-[#dc2626]"; // Red for Loss
 
                     return (
-                        <div key={i} className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full text-[9px] sm:text-[11px] font-bold flex items-center justify-center text-white ${bgClass} shadow-sm`}>
+                        <div key={i} className={`w-4 h-4 sm:w-5 sm:h-5 shrink-0 rounded-full text-[8px] sm:text-[10px] font-bold flex items-center justify-center text-white ${bgClass} shadow-sm`}>
                             {res}
                         </div>
                     );
@@ -112,15 +112,12 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
     }
 
     return (
-        <div className="relative w-full overflow-hidden bg-gradient-to-br from-[#0f172a] via-[#020617] to-[#1e1b4b] py-6 sm:py-8 flex flex-col items-center">
-            {/* Subtle Abstract Background Glows */}
-            <div className="absolute top-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full mix-blend-screen filter blur-[80px] opacity-50 translate-x-[-20%] translate-y-[-20%]"></div>
-            <div className="absolute bottom-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full mix-blend-screen filter blur-[80px] opacity-50 translate-x-[20%] translate-y-[20%]"></div>
+        <div className="relative w-full py-2 sm:py-4 flex flex-col items-center bg-transparent">
 
             <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
                 
                 {/* TOP HEADER: Names & Venue */}
-                <div className="text-center mb-6 px-4">
+                <div className="text-center mb-3 px-4">
                     <h1 className="text-lg sm:text-2xl md:text-3xl font-medium text-white tracking-wide">
                         {homeTeam.name} <span className="font-black mx-1 sm:mx-3 text-white">VS</span> {awayTeam.name}
                     </h1>
@@ -132,10 +129,10 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                 </div>
 
                 {/* MIDDLE ROW: Logos & Score */}
-                <div className="flex items-start justify-center w-full px-2 sm:px-6 gap-2 sm:gap-6 md:gap-12">
+                <div className="flex items-start justify-center w-full px-1 sm:px-4 gap-2 sm:gap-4 md:gap-8">
                     
                     {/* HOME TEAM */}
-                    <div className="flex flex-col items-center flex-1 max-w-[120px] sm:max-w-[160px]">
+                    <div className="flex flex-col items-center flex-1 min-w-0">
                         {/* Logo Card */}
                         <div className="w-20 h-24 sm:w-28 sm:h-32 md:w-32 md:h-36 bg-white/5 rounded-[1.5rem] sm:rounded-[2rem] border border-white/10 flex items-center justify-center p-3 sm:p-4 shadow-lg backdrop-blur-sm">
                             <div className="relative w-full h-full filter drop-shadow-md">
@@ -185,7 +182,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                     </div>
 
                     {/* AWAY TEAM */}
-                    <div className="flex flex-col items-center flex-1 max-w-[120px] sm:max-w-[160px]">
+                    <div className="flex flex-col items-center flex-1 min-w-0">
                         {/* Logo Card */}
                         <div className="w-20 h-24 sm:w-28 sm:h-32 md:w-32 md:h-36 bg-white/5 rounded-[1.5rem] sm:rounded-[2rem] border border-white/10 flex items-center justify-center p-3 sm:p-4 shadow-lg backdrop-blur-sm">
                             <div className="relative w-full h-full filter drop-shadow-md">
