@@ -99,8 +99,8 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                     )}
                 </div>
 
-                {/* --- OVERVIEW CARD --- */}
-                <div className="bg-[#121212] rounded-3xl p-4 sm:p-6 border border-white/5 shadow-xl mb-6">
+                {/* --- OVERVIEW SECTION --- */}
+                <div className="mb-10">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                         {/* Left Column: Match Events */}
                         <div className="lg:col-span-7 space-y-6">
@@ -133,8 +133,8 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                     </div>
                 </div>
 
-                {/* --- H2H & FORM CARD --- */}
-                <div className="bg-[#121212] rounded-3xl p-4 sm:p-6 border border-white/5 shadow-xl mb-6">
+                {/* --- H2H & FORM SECTION --- */}
+                <div className="mb-10">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         {/* Column 1: Recent Form */}
                         <div className="space-y-6">
@@ -170,9 +170,9 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                     </div>
                 </div>
 
-                {/* --- STANDINGS CARD --- */}
+                {/* --- STANDINGS SECTION --- */}
                 {data.standings && data.standings.length > 0 && (
-                    <div className="bg-[#121212] rounded-3xl p-4 sm:p-6 border border-white/5 shadow-xl mb-6">
+                    <div className="mb-10">
                         <h3 className="text-sm font-black text-white mb-6 uppercase tracking-widest flex items-center gap-2">
                             <span className="w-1.5 h-5 bg-purple-500 rounded-full" />
                             League Table
