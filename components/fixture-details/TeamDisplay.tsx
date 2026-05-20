@@ -24,7 +24,6 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
     homeTeam,
     awayTeam,
     status,
-    displayDate,
     date,
     venue,
     score,
@@ -32,160 +31,129 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
 }) => {
     const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE"].includes(status);
     const isFinished = ["FT", "AET", "PEN"].includes(status);
-    const kickoffTime = new Date(date).toLocaleTimeString("en-GB", {
+    
+    const dateObj = new Date(date);
+    const kickoffTime = dateObj.toLocaleTimeString("en-GB", {
         hour: "2-digit",
         minute: "2-digit",
         hour12: false,
         timeZone: "Africa/Nairobi",
     });
+    const formattedDate = dateObj.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        timeZone: "Africa/Nairobi",
+    });
 
-    const getTipStatus = (tVal: string) => {
-        if (!score || score.home === null || score.away === null || status === "NS") return "PENDING";
-        const h = Number(score.home);
-        const a = Number(score.away);
-        const t = tVal.trim().toUpperCase();
+    // Form bubble renderer
+    const renderForm = (last5Matches?: any[]) => {
+        if (!last5Matches || last5Matches.length === 0) return null;
+        return (
+            <div className="flex gap-1.5 mt-3">
+                {last5Matches.map((m, i) => {
+                    const res = m.result || "D";
+                    let bgClass = "bg-[#eab308]"; // Yellow for Draw
+                    if (res === "W") bgClass = "bg-[#16a34a]"; // Green for Win
+                    if (res === "L") bgClass = "bg-[#dc2626]"; // Red for Loss
 
-        if (t === "1") return h > a ? "WIN" : "LOSS";
-        if (t === "2") return a > h ? "WIN" : "LOSS";
-        if (t === "X") return h === a ? "WIN" : "LOSS";
-        if (t === "1X") return h >= a ? "WIN" : "LOSS";
-        if (t === "X2") return a >= h ? "WIN" : "LOSS";
-        if (t === "12") return h !== a ? "WIN" : "LOSS";
-
-        if (t.startsWith("OVER")) {
-            const line = parseFloat(t.split(" ")[1]);
-            if (!isNaN(line)) return (h + a) > line ? "WIN" : "LOSS";
-        }
-        if (t.startsWith("UNDER")) {
-            const line = parseFloat(t.split(" ")[1]);
-            if (!isNaN(line)) return (h + a) < line ? "WIN" : "LOSS";
-        }
-        return "PENDING";
-    };
-
-    let tipBadge = null;
-    if (tip && tip !== "N/A") {
-        const s = getTipStatus(tip);
-        let colors = "text-orange-300 bg-orange-500/20 border-orange-500/30";
-        let icon = "🎯";
-        if (s === "WIN") {
-            colors = "text-emerald-300 bg-emerald-500/20 border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.2)]";
-            icon = "✅";
-        }
-        if (s === "LOSS") {
-            colors = "text-rose-300 bg-rose-500/20 border-rose-500/30";
-            icon = "❌";
-        }
-
-        tipBadge = (
-            <div className={`mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md border animate-in zoom-in duration-500 ${colors}`}>
-                <span>{icon}</span> Tip: {tip}
+                    return (
+                        <div key={i} className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full text-[9px] sm:text-[11px] font-bold flex items-center justify-center text-white ${bgClass} shadow-sm`}>
+                            {res}
+                        </div>
+                    );
+                })}
             </div>
         );
-    }
+    };
 
     return (
-        <div className="relative w-full overflow-hidden bg-gradient-to-br from-[#0f172a] via-[#020617] to-[#1e1b4b]">
-
+        <div className="relative w-full overflow-hidden bg-gradient-to-br from-[#0f172a] via-[#020617] to-[#1e1b4b] py-6 sm:py-8 flex flex-col items-center">
             {/* Subtle Abstract Background Glows */}
             <div className="absolute top-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full mix-blend-screen filter blur-[80px] opacity-50 translate-x-[-20%] translate-y-[-20%]"></div>
             <div className="absolute bottom-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full mix-blend-screen filter blur-[80px] opacity-50 translate-x-[20%] translate-y-[20%]"></div>
 
-            {/* Main Content */}
-            <div className="relative z-10 p-6 sm:p-8 flex flex-col items-center">
-
-                {/* Scoreboard Area */}
-                <div className="flex items-center justify-between w-full max-w-2xl mx-auto">
-
-                    {/* Home Team */}
-                    <div className="flex flex-col items-center flex-1">
-                        <div className="relative w-16 h-16 sm:w-24 sm:h-24 mb-3 filter drop-shadow-lg transition-transform hover:scale-105 duration-300">
-                            <Image src={homeTeam?.logo} alt={homeTeam?.name} fill className="object-contain" unoptimized />
+            <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
+                
+                {/* TOP HEADER: Names & Venue */}
+                <div className="text-center mb-6 px-4">
+                    <h1 className="text-lg sm:text-2xl md:text-3xl font-medium text-white tracking-wide">
+                        {homeTeam.name} <span className="font-black mx-1 sm:mx-3 text-white">VS</span> {awayTeam.name}
+                    </h1>
+                    {venue && (
+                        <div className="mt-2 text-[10px] sm:text-xs text-gray-400 font-medium flex items-center justify-center gap-1.5 uppercase tracking-widest">
+                            <span>🏟</span> {venue}
                         </div>
-                        <h2 className="font-extrabold text-center text-sm sm:text-xl text-white tracking-wide drop-shadow-md">
-                            {homeTeam.name}
-                        </h2>
-                        {homeTeam.last5Matches && homeTeam.last5Matches.length > 0 && (
-                            <div className="mt-2 flex gap-1">
-                                {homeTeam.last5Matches.map((m, i) => {
-                                    const res = m.result || "D";
-                                    let bgClass = "bg-orange-400/80"; // pale orange for D
-                                    if (res === "W") bgClass = "bg-emerald-500/80";
-                                    if (res === "L") bgClass = "bg-rose-500/80";
+                    )}
+                </div>
 
-                                    return (
-                                        <div key={i} className={`w-4 h-4 sm:w-5 sm:h-5 rounded text-[8px] sm:text-[10px] font-bold flex items-center justify-center text-white ${bgClass}`}>
-                                            {res}
-                                        </div>
-                                    );
-                                })}
+                {/* MIDDLE ROW: Logos & Score */}
+                <div className="flex items-start justify-center w-full px-2 sm:px-6 gap-2 sm:gap-6 md:gap-12">
+                    
+                    {/* HOME TEAM */}
+                    <div className="flex flex-col items-center flex-1 max-w-[120px] sm:max-w-[160px]">
+                        {/* Logo Card */}
+                        <div className="w-20 h-24 sm:w-28 sm:h-32 md:w-32 md:h-36 bg-white/5 rounded-[1.5rem] sm:rounded-[2rem] border border-white/10 flex items-center justify-center p-3 sm:p-4 shadow-lg backdrop-blur-sm">
+                            <div className="relative w-full h-full filter drop-shadow-md">
+                                <Image src={homeTeam?.logo} alt={homeTeam?.name} fill className="object-contain" unoptimized />
                             </div>
-                        )}
+                        </div>
+                        {/* Form */}
+                        {renderForm(homeTeam.last5Matches)}
                     </div>
 
-                    {/* Center Info (Score & Time) */}
-                    <div className="flex flex-col items-center justify-center flex-shrink-0 px-2 sm:px-6">
+                    {/* CENTER INFO */}
+                    <div className="flex flex-col items-center justify-start mt-1 sm:mt-2 min-w-[100px] sm:min-w-[140px]">
+                        {/* Date & Time */}
+                        <div className="text-[10px] sm:text-sm text-gray-300 font-semibold mb-3 tracking-wide whitespace-nowrap">
+                            {formattedDate} <span className="ml-1">{kickoffTime}</span>
+                        </div>
+                        
+                        {/* Tip Badge (Red Circle/Pill) */}
+                        {tip && tip !== "N/A" && (
+                            <div className="mb-4 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full border border-[#b91c1c] text-[#f87171] font-bold text-[10px] sm:text-sm shadow-[0_0_12px_rgba(185,28,28,0.2)] bg-[#7f1d1d]/10 flex items-center justify-center">
+                                {tip}
+                            </div>
+                        )}
+
+                        {/* Score Box */}
                         {score ? (
                             <div className="flex flex-col items-center">
-                                <div className={`text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter drop-shadow-[0_0_10px_rgba(255,255,255,0.1)] flex items-center gap-3 ${isLive ? "text-rose-500" : "text-white"}`}>
-                                    <span>{score.home}</span>
-                                    <span className="text-white/20 text-3xl sm:text-4xl">-</span>
-                                    <span>{score.away}</span>
+                                <div className={`bg-white rounded-xl sm:rounded-2xl px-4 sm:px-6 py-2 sm:py-3 shadow-xl flex items-center justify-center gap-2 sm:gap-4 border border-gray-200 ${isLive ? "animate-pulse" : ""}`}>
+                                    <span className={`text-2xl sm:text-4xl font-black ${isLive ? "text-rose-600" : "text-black"}`}>{score.home}</span>
+                                    <span className="text-xl sm:text-2xl font-bold text-gray-400">-</span>
+                                    <span className={`text-2xl sm:text-4xl font-black ${isLive ? "text-rose-600" : "text-black"}`}>{score.away}</span>
                                 </div>
-                                <div className={`mt-2 text-xs sm:text-sm font-bold tracking-widest uppercase px-3 py-1 rounded-full backdrop-blur-md bg-white/5 border border-white/10 ${isLive ? "text-rose-400 animate-pulse border-rose-500/30 bg-rose-500/10" : "text-gray-300"}`}>
-                                    {isFinished ? `FT • ${kickoffTime}` : displayDate}
+                                <div className="mt-2 text-[10px] sm:text-xs font-bold tracking-widest text-gray-400 uppercase">
+                                    {isFinished ? "FT" : status}
                                 </div>
                             </div>
                         ) : (
-                            <div className="flex flex-col items-center">
-                                <div className="text-3xl sm:text-5xl font-black text-white/10 mb-2 tracking-widest">v</div>
-                                <div className="text-xs sm:text-sm font-semibold tracking-widest text-[#94a3b8] uppercase bg-white/5 px-4 py-1.5 rounded-full backdrop-blur-md border border-white/5">
-                                    {displayDate}
+                            <div className="flex flex-col items-center mt-2">
+                                <div className="bg-white/10 rounded-xl sm:rounded-2xl px-6 sm:px-8 py-3 flex items-center justify-center border border-white/5 backdrop-blur-md">
+                                    <span className="text-2xl sm:text-4xl font-black text-gray-500">-</span>
                                 </div>
                             </div>
                         )}
                     </div>
 
-                    {/* Away Team */}
-                    <div className="flex flex-col items-center flex-1">
-                        <div className="relative w-16 h-16 sm:w-24 sm:h-24 mb-3 filter drop-shadow-lg transition-transform hover:scale-105 duration-300">
-                            <Image src={awayTeam?.logo} alt={awayTeam?.name} fill className="object-contain" unoptimized />
-                        </div>
-                        <h2 className="font-extrabold text-center text-sm sm:text-xl text-white tracking-wide drop-shadow-md">
-                            {awayTeam.name}
-                        </h2>
-                        {awayTeam.last5Matches && awayTeam.last5Matches.length > 0 && (
-                            <div className="mt-2 flex gap-1">
-                                {awayTeam.last5Matches.map((m, i) => {
-                                    const res = m.result || "D";
-                                    let bgClass = "bg-orange-400/80"; // pale orange for D
-                                    if (res === "W") bgClass = "bg-emerald-500/80";
-                                    if (res === "L") bgClass = "bg-rose-500/80";
-
-                                    return (
-                                        <div key={i} className={`w-4 h-4 sm:w-5 sm:h-5 rounded text-[8px] sm:text-[10px] font-bold flex items-center justify-center text-white ${bgClass}`}>
-                                            {res}
-                                        </div>
-                                    );
-                                })}
+                    {/* AWAY TEAM */}
+                    <div className="flex flex-col items-center flex-1 max-w-[120px] sm:max-w-[160px]">
+                        {/* Logo Card */}
+                        <div className="w-20 h-24 sm:w-28 sm:h-32 md:w-32 md:h-36 bg-white/5 rounded-[1.5rem] sm:rounded-[2rem] border border-white/10 flex items-center justify-center p-3 sm:p-4 shadow-lg backdrop-blur-sm">
+                            <div className="relative w-full h-full filter drop-shadow-md">
+                                <Image src={awayTeam?.logo} alt={awayTeam?.name} fill className="object-contain" unoptimized />
                             </div>
-                        )}
+                        </div>
+                        {/* Form */}
+                        {renderForm(awayTeam.last5Matches)}
                     </div>
-
                 </div>
 
-                {/* Prediction Tip Badge */}
-                {tipBadge}
-
-                {/* Match Info Footer (Venue) */}
-                {venue && (
-                    <div className="mt-6 flex items-center justify-center text-[#64748b] text-[10px] sm:text-xs tracking-wider uppercase">
-                        <span className="mr-1">🏟</span> {venue}
-                    </div>
-                )}
             </div>
         </div>
     );
 };
 
 export default TeamDisplay;
+
