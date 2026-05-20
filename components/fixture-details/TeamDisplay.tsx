@@ -167,7 +167,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                                     <span className="text-xl sm:text-2xl font-bold text-gray-400">-</span>
                                     <span className={`text-2xl sm:text-4xl font-black ${isLive ? "text-rose-500" : "text-white"}`}>{score.away}</span>
                                 </div>
-                                <div className="mt-2 text-[10px] sm:text-xs font-bold tracking-widest text-gray-400 uppercase">
+                                <div className={`mt-2 text-[10px] sm:text-xs font-bold tracking-widest uppercase ${isLive ? "text-rose-500 animate-pulse" : "text-gray-400"}`}>
                                     {isFinished ? "FT" : status}
                                 </div>
                             </div>

@@ -100,20 +100,22 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 <div className="mt-4">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
                         {/* Left Column: Match Events */}
-                        <div className="lg:col-span-7 space-y-4">
-                            <div>
-                                <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
-                                    <span className="w-1.5 h-5 bg-blue-500 rounded-full" />
-                                    Match Events
-                                </h3>
+                        {data.events && data.events.length > 0 && (
+                            <div className="lg:col-span-7 space-y-4">
                                 <div>
-                                    <Events events={data.events || []} homeTeamId={data.homeTeam.id} awayTeamId={data.awayTeam.id} />
+                                    <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
+                                        <span className="w-1.5 h-5 bg-blue-500 rounded-full" />
+                                        Match Events
+                                    </h3>
+                                    <div>
+                                        <Events events={data.events} homeTeamId={data.homeTeam.id} awayTeamId={data.awayTeam.id} />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        )}
 
                         {/* Right Column: Insights, Action, Injuries */}
-                        <div className="lg:col-span-5 space-y-4">
+                        <div className={`${data.events && data.events.length > 0 ? "lg:col-span-5" : "lg:col-span-12"} space-y-4`}>
                             {/* Injuries Panel */}
                             {data.injuries && data.injuries.length > 0 && (
                                 <div>
@@ -132,7 +134,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
 
                 {/* --- H2H & FORM SECTION --- */}
                 <div className="mt-4">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div className={`grid grid-cols-1 ${data.h2h && data.h2h.length > 0 ? "lg:grid-cols-2" : "lg:grid-cols-1"} gap-4`}>
                         {/* Column 1: Recent Form */}
                         <div className="space-y-4">
                             <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
@@ -155,15 +157,17 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                         </div>
 
                         {/* Column 2: Head to Head */}
-                        <div className="space-y-4">
-                            <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
-                                <span className="w-1.5 h-5 bg-orange-500 rounded-full" />
-                                Head to Head
-                            </h3>
-                            <div>
-                                <H2HSection h2h={data.h2h || []} />
+                        {data.h2h && data.h2h.length > 0 && (
+                            <div className="space-y-4">
+                                <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
+                                    <span className="w-1.5 h-5 bg-orange-500 rounded-full" />
+                                    Head to Head
+                                </h3>
+                                <div>
+                                    <H2HSection h2h={data.h2h} />
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </div>
                 </div>
 
