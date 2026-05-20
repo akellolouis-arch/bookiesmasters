@@ -85,7 +85,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
     }
 
     return (
-        <div className="relative w-full overflow-hidden rounded-2xl mb-6 bg-gradient-to-br from-[#0f172a] via-[#020617] to-[#1e1b4b] border border-white/10 shadow-2xl">
+        <div className="relative w-full overflow-hidden bg-gradient-to-br from-[#0f172a] via-[#020617] to-[#1e1b4b]">
 
             {/* Subtle Abstract Background Glows */}
             <div className="absolute top-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full mix-blend-screen filter blur-[80px] opacity-50 translate-x-[-20%] translate-y-[-20%]"></div>
