@@ -42,7 +42,7 @@ const fetcher = (url: string) => fetch(url, { cache: "no-store" }).then((res) =>
 const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initialData }) => {
 
     const isMatchLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(initialData.status) || initialData.status.includes("'");
-    
+
     const { data: swrData } = useSWR(
         `${process.env.NEXT_PUBLIC_API_URL}/api/fixtures/${initialData.fixtureId}`,
         fetcher,
@@ -77,7 +77,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 />
 
                 {/* --- ODDS & ADVICE SECTION --- */}
-                <div className="flex flex-col gap-4 mt-6 mb-6">
+                <div className="flex flex-col gap-1 mt-0 mb-0">
                     {/* Call To Action Box (Odds) */}
                     <div className="bg-[#1a1a1b] p-4 sm:p-6 border border-white/5 flex flex-col items-center justify-center text-center">
                         <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Latest Odds</h3>
