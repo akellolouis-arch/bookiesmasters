@@ -77,10 +77,10 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 />
 
                 {/* --- ODDS & ADVICE SECTION --- */}
-                <div className="flex flex-col gap-1 mt-0 mb-0">
+                <div className="flex flex-col gap-1">
                     {/* Call To Action Box (Odds) */}
                     <div className="bg-[#1a1a1b] p-4 sm:p-6 border border-white/5 flex flex-col items-center justify-center text-center">
-                        <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Latest Odds</h3>
+                        <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Latest Odds</h3>
                         <BetButton teamName={data.homeTeam.name} isLive={isLive} odds={primaryOdds} />
                     </div>
 
@@ -88,7 +88,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                     {data.apiPrediction?.advice && (
                         <div className="bg-gradient-to-br from-[#1e1b4b] to-[#0f172a] p-4 sm:p-6 border border-indigo-500/20 shadow-lg relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full mix-blend-screen filter blur-[40px] translate-x-10 -translate-y-10"></div>
-                            <h3 className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                            <h3 className="text-[10px] font-black text-indigo-400 uppercase tracking-widest flex items-center gap-2">
                                 <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse" />
                                 Expert Advice
                             </h3>
@@ -100,16 +100,16 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 </div>
 
                 {/* --- OVERVIEW SECTION --- */}
-                <div className="mb-10">
+                <div>
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                         {/* Left Column: Match Events */}
                         <div className="lg:col-span-7 space-y-6">
                             <div>
-                                <h3 className="text-sm font-black text-white mb-4 uppercase tracking-widest flex items-center gap-2">
+                                <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
                                     <span className="w-1.5 h-5 bg-blue-500 rounded-full" />
                                     Match Events
                                 </h3>
-                                <div className="mt-2">
+                                <div>
                                     <Events events={data.events || []} homeTeamId={data.homeTeam.id} awayTeamId={data.awayTeam.id} />
                                 </div>
                             </div>
@@ -120,11 +120,11 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                             {/* Injuries Panel */}
                             {data.injuries && data.injuries.length > 0 && (
                                 <div>
-                                    <h3 className="text-sm font-black text-white mb-4 uppercase tracking-widest flex items-center gap-2">
+                                    <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
                                         <span className="w-1.5 h-5 bg-rose-500 rounded-full" />
                                         Injuries & Suspensions
                                     </h3>
-                                    <div className="mt-2">
+                                    <div>
                                         <Injuries injuries={data.injuries} />
                                     </div>
                                 </div>
@@ -134,15 +134,15 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 </div>
 
                 {/* --- H2H & FORM SECTION --- */}
-                <div className="mb-10">
+                <div>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         {/* Column 1: Recent Form */}
                         <div className="space-y-6">
-                            <h3 className="text-sm font-black text-white mb-4 uppercase tracking-widest flex items-center gap-2">
+                            <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
                                 <span className="w-1.5 h-5 bg-emerald-500 rounded-full" />
                                 Recent Form
                             </h3>
-                            <div className="mt-2 space-y-8">
+                            <div className="space-y-8">
                                 <LastFiveMatches
                                     teamName={data.homeTeam.name}
                                     teamLogo={data.homeTeam.logo}
@@ -159,11 +159,11 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
 
                         {/* Column 2: Head to Head */}
                         <div className="space-y-6">
-                            <h3 className="text-sm font-black text-white mb-4 uppercase tracking-widest flex items-center gap-2">
+                            <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
                                 <span className="w-1.5 h-5 bg-orange-500 rounded-full" />
                                 Head to Head
                             </h3>
-                            <div className="mt-2">
+                            <div>
                                 <H2HSection h2h={data.h2h || []} />
                             </div>
                         </div>
@@ -172,12 +172,12 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
 
                 {/* --- STANDINGS SECTION --- */}
                 {data.standings && data.standings.length > 0 && (
-                    <div className="mb-10">
-                        <h3 className="text-sm font-black text-white mb-6 uppercase tracking-widest flex items-center gap-2">
+                    <div>
+                        <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
                             <span className="w-1.5 h-5 bg-purple-500 rounded-full" />
                             League Table
                         </h3>
-                        <div className="mt-2">
+                        <div>
                             <Standings standings={data.standings || []} />
                         </div>
                     </div>
