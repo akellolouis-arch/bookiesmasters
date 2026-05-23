@@ -59,6 +59,21 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
         ? data.odds[0].markets[0].values
         : undefined;
 
+    const isFinishedCache = ["FT", "AET", "PEN"].includes(initialData.status);
+    
+    // If not finished in cache and we don't have SWR data yet, display a full-page loader.
+    // This ensures absolutely nothing is displayed until the latest score/minutes are ready.
+    if (!isFinishedCache && !swrData) {
+        return (
+            <div className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center space-y-4">
+                <div className="w-10 h-10 border-4 border-rose-500 border-t-transparent rounded-full animate-spin"></div>
+                <div className="text-gray-400 text-[10px] sm:text-xs font-bold tracking-widest uppercase animate-pulse">
+                    Fetching Latest Data...
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen bg-[#0a0a0a] text-white py-4 px-2 sm:px-4">
             <div className="max-w-5xl mx-auto">

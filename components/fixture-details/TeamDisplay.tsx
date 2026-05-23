@@ -19,6 +19,7 @@ interface TeamDisplayProps {
     score?: { home: number | null; away: number | null } | null;
     tip?: string | null;
     league?: string;
+    isLoading?: boolean;
 }
 
 const TeamDisplay: React.FC<TeamDisplayProps> = ({
@@ -31,6 +32,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
     score,
     tip,
     league,
+    isLoading,
 }) => {
     const isLive = status ? ["1H", "HT", "2H", "ET", "BT", "P", "LIVE"].includes(status) : false;
     const isFinished = status ? ["FT", "AET", "PEN"].includes(status) : false;
@@ -161,7 +163,16 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                         {tipBadge}
 
                         {/* Score Box */}
-                        {score ? (
+                        {isLoading ? (
+                            <div className="flex flex-col items-center mt-2">
+                                <div className="bg-white/5 backdrop-blur-sm rounded-xl sm:rounded-2xl px-6 sm:px-8 py-3 shadow-lg flex items-center justify-center border border-white/10 animate-pulse">
+                                    <span className="text-2xl sm:text-4xl font-black text-gray-500">-</span>
+                                </div>
+                                <div className="mt-2 text-[10px] sm:text-xs font-bold tracking-widest uppercase text-gray-400 animate-pulse">
+                                    LOADING...
+                                </div>
+                            </div>
+                        ) : score ? (
                             <div className="flex flex-col items-center">
                                 <div className={`bg-white/5 backdrop-blur-sm rounded-xl sm:rounded-2xl px-4 sm:px-6 py-2 sm:py-3 shadow-lg flex items-center justify-center gap-2 sm:gap-4 border border-white/10 ${isLive ? "animate-pulse" : ""}`}>
                                     <span className={`text-2xl sm:text-4xl font-black ${isLive ? "text-rose-500" : "text-white"}`}>{score.home}</span>
@@ -177,6 +188,11 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                                 <div className="bg-white/10 rounded-xl sm:rounded-2xl px-6 sm:px-8 py-3 flex items-center justify-center border border-white/5 backdrop-blur-md">
                                     <span className="text-2xl sm:text-4xl font-black text-gray-500">-</span>
                                 </div>
+                                {status && (
+                                    <div className="mt-2 text-[10px] sm:text-xs font-bold tracking-widest uppercase text-gray-400">
+                                        {status}
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
