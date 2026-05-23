@@ -60,19 +60,10 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
         : undefined;
 
     const isFinishedCache = ["FT", "AET", "PEN"].includes(initialData.status);
-    
-    // If not finished in cache and we don't have SWR data yet, display a full-page loader.
-    // This ensures absolutely nothing is displayed until the latest score/minutes are ready.
-    if (!isFinishedCache && !swrData) {
-        return (
-            <div className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center space-y-4">
-                <div className="w-10 h-10 border-4 border-rose-500 border-t-transparent rounded-full animate-spin"></div>
-                <div className="text-gray-400 text-[10px] sm:text-xs font-bold tracking-widest uppercase animate-pulse">
-                    Fetching Latest Data...
-                </div>
-            </div>
-        );
-    }
+    const hideStaleData = !isFinishedCache && !swrData;
+
+    const displayEvents = hideStaleData ? [] : data.events;
+    const displayInjuries = hideStaleData ? [] : data.injuries;
 
     return (
         <div className="min-h-screen bg-[#0a0a0a] text-white py-4 px-2 sm:px-4">
@@ -87,6 +78,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                     score={data.score}
                     tip={data.tip}
                     league={data.league}
+                    isLoading={hideStaleData}
                 />
 
                 {/* --- ODDS & ADVICE SECTION --- */}
@@ -115,7 +107,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 <div className="mt-4">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
                         {/* Left Column: Match Events */}
-                        {data.events && data.events.length > 0 && (
+                        {displayEvents && displayEvents.length > 0 && (
                             <div className="lg:col-span-7 space-y-4">
                                 <div>
                                     <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
@@ -123,23 +115,23 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                                         Match Events
                                     </h3>
                                     <div>
-                                        <Events events={data.events} homeTeamId={data.homeTeam.id} awayTeamId={data.awayTeam.id} />
+                                        <Events events={displayEvents} homeTeamId={data.homeTeam.id} awayTeamId={data.awayTeam.id} />
                                     </div>
                                 </div>
                             </div>
                         )}
 
                         {/* Right Column: Insights, Action, Injuries */}
-                        <div className={`${data.events && data.events.length > 0 ? "lg:col-span-5" : "lg:col-span-12"} space-y-4`}>
+                        <div className={`${displayEvents && displayEvents.length > 0 ? "lg:col-span-5" : "lg:col-span-12"} space-y-4`}>
                             {/* Injuries Panel */}
-                            {data.injuries && data.injuries.length > 0 && (
+                            {displayInjuries && displayInjuries.length > 0 && (
                                 <div>
                                     <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
                                         <span className="w-1.5 h-5 bg-rose-500 rounded-full" />
                                         Injuries & Suspensions
                                     </h3>
                                     <div>
-                                        <Injuries injuries={data.injuries} />
+                                        <Injuries injuries={displayInjuries} />
                                     </div>
                                 </div>
                             )}
