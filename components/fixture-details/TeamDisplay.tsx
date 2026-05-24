@@ -115,7 +115,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
     }
 
     return (
-        <div className="relative w-full py-2 sm:py-4 flex flex-col items-center bg-transparent">
+        <div className="relative w-full pb-2 sm:pb-4 flex flex-col items-center bg-transparent">
 
             <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
                 

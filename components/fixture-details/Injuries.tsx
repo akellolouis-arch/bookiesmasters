@@ -56,9 +56,9 @@ export default function Injuries({ injuries }: InjuriesProps) {
 
                 return (
                     <div key={teamName} className="w-full bg-[#111] rounded-xl p-2 sm:p-4 border border-white/5 overflow-hidden">
-                        <div className="flex items-center justify-center gap-1.5 sm:gap-3 mb-2 sm:mb-4 pb-2 sm:pb-3 border-b border-white/5">
+                        <div className="flex items-center gap-1.5 sm:gap-3 mb-2 sm:mb-4 pb-2 sm:pb-3 border-b border-white/5">
                             <img src={teamLogo} alt={teamName} className="w-4 h-4 sm:w-6 sm:h-6 object-contain shrink-0" />
-                            <h3 className="font-bold text-[10px] sm:text-sm text-gray-200 lowercase truncate">{teamName}</h3>
+                            <h3 className="text-sm font-bold text-gray-200 capitalize tracking-widest truncate">{teamName}</h3>
                         </div>
 
                         <div className="space-y-2 sm:space-y-3">
