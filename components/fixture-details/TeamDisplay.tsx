@@ -184,11 +184,6 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                                         {status === "HT" ? "HT" : isFinished ? "FT" : (isLive && displayDate ? displayDate : status)}
                                     </div>
                                 )}
-                                {score.halftime && score.halftime.home !== null && score.halftime.away !== null && (
-                                    <div className="text-[11px] sm:text-xs text-gray-500 font-medium mt-0.5 tracking-wider lowercase">
-                                        {score.halftime.home}-{score.halftime.away}
-                                    </div>
-                                )}
                             </div>
                         ) : (
                             <div className="flex flex-col items-center mt-1">

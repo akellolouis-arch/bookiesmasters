@@ -132,7 +132,7 @@ const Events: React.FC<EventsProps> = ({ events, homeTeamId, status, score }) =>
                     if (['FT', 'AET', 'PEN'].includes(status)) {
                         renderItems.push(
                             <div key="ft-end" className="flex justify-center w-full mt-4 mb-1 relative z-10">
-                                <div className="text-[10px] font-bold text-emerald-500 bg-[#0a0a0a] px-3 py-1 border border-emerald-500/20 rounded-full uppercase tracking-widest">
+                                <div className="text-[10px] font-bold text-gray-500 bg-[#0a0a0a] px-3 py-1 border border-white/5 rounded-full uppercase tracking-widest whitespace-nowrap">
                                     FT
                                 </div>
                             </div>
