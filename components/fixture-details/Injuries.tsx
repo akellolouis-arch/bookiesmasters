@@ -70,8 +70,8 @@ export default function Injuries({ injuries }: InjuriesProps) {
                                         className="w-5 h-5 sm:w-8 sm:h-8 rounded-full bg-gray-800 object-cover border border-white/10 shrink-0"
                                     />
                                     <div className="flex flex-col min-w-0">
-                                        <p className="text-[9px] sm:text-xs font-bold text-white truncate">{injury.player.name}</p>
-                                        <p className="text-[8px] sm:text-[10px] text-red-400 font-medium capitalize mt-0.5 truncate">{injury.player.reason}</p>
+                                        <p className="text-xs font-medium text-gray-200 leading-tight truncate">{injury.player.name}</p>
+                                        <p className="text-[11px] text-gray-500 capitalize mt-0.5 truncate">{injury.player.reason}</p>
                                     </div>
                                 </div>
                             ))}

@@ -101,7 +101,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                                     Expert Advice
                                 </h3>
                             </div>
-                            <p className="text-[11px] sm:text-xs text-emerald-100/90 font-medium leading-relaxed italic">
+                            <p className="text-xs text-emerald-100/90 font-medium leading-relaxed italic">
                                 &quot;{data.apiPrediction.advice}&quot;
                             </p>
                         </div>
