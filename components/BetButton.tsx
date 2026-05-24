@@ -26,22 +26,10 @@ interface BetButtonProps {
 }
 
 export default function BetButton({ teamName, odds, isLive = false }: BetButtonProps) {
-    const TELEGRAM_LINK = "https://t.me/bookiesm";
-
-    const handleClick = (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        window.open(TELEGRAM_LINK, "_blank");
-    };
-
     return (
-        <button
-            onClick={handleClick}
+        <div
             className={`
-            group relative overflow-hidden rounded-lg px-2 py-1.5 
-            border border-white/10 hover:border-white/20
-            bg-[#1a1a1a] hover:bg-[#252525]
-            shadow-sm hover:shadow-md transition-all duration-300
+            group relative px-2 py-1.5 
             flex items-center justify-center gap-2 w-full sm:w-full lg:max-w-3xl mx-auto
             mt-1 mb-2
           `}
@@ -65,6 +53,6 @@ export default function BetButton({ teamName, odds, isLive = false }: BetButtonP
                     View Odds <ExternalLink size={12} />
                 </span>
             )}
-        </button>
+        </div>
     );
 }

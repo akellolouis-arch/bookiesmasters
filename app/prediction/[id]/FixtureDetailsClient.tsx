@@ -85,18 +85,24 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 <div className="flex flex-col gap-1 my-1">
                     {/* Call To Action Box (Odds) */}
                     <div className="flex flex-col items-center justify-center text-center">
-                        <h3 className="text-[10px] font-bold text-gray-500 tracking-widest mb-2">Prematch odds</h3>
+                        <div className="flex justify-center mb-2">
+                            <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-gray-200 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide capitalize">
+                                Prematch odds
+                            </h3>
+                        </div>
                         <BetButton teamName={data.homeTeam.name} isLive={isLive} odds={primaryOdds} />
                     </div>
 
                     {/* Prediction Advice Panel */}
                     {data.apiPrediction?.advice && (
                         <div className="flex flex-col items-center justify-center text-center mt-1">
-                            <h3 className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest flex items-center justify-center gap-2 mb-2">
-                                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                                Expert Advice
-                            </h3>
-                            <p className="text-sm text-emerald-100/90 font-medium leading-relaxed italic">
+                            <div className="flex justify-center mb-2">
+                                <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-emerald-400 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide capitalize">
+                                    <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                                    Expert Advice
+                                </h3>
+                            </div>
+                            <p className="text-[11px] sm:text-xs text-emerald-100/90 font-medium leading-relaxed italic">
                                 &quot;{data.apiPrediction.advice}&quot;
                             </p>
                         </div>
@@ -110,10 +116,12 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                         {displayEvents && displayEvents.length > 0 && (
                             <div className="lg:col-span-7 space-y-2">
                                 <div>
-                                    <h3 className="text-sm font-bold text-gray-200 capitalize tracking-widest flex items-center gap-2">
-                                        <span className="w-1.5 h-5 bg-blue-500 rounded-full" />
-                                        Match Events
-                                    </h3>
+                                    <div className="flex justify-center mb-3">
+                                        <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-gray-200 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide capitalize">
+                                            <span className="w-1.5 h-3 bg-blue-500 rounded-full" />
+                                            Match Events
+                                        </h3>
+                                    </div>
                                     <div>
                                         <Events events={displayEvents} homeTeamId={data.homeTeam.id} awayTeamId={data.awayTeam.id} />
                                     </div>
@@ -126,10 +134,12 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                             {/* Injuries Panel */}
                             {displayInjuries && displayInjuries.length > 0 && (
                                 <div>
-                                    <h3 className="text-sm font-bold text-gray-200 capitalize tracking-widest flex items-center gap-2">
-                                        <span className="w-1.5 h-5 bg-rose-500 rounded-full" />
-                                        Injuries & Suspensions
-                                    </h3>
+                                    <div className="flex justify-center mb-3">
+                                        <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-gray-200 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide capitalize">
+                                            <span className="w-1.5 h-3 bg-rose-500 rounded-full" />
+                                            Injuries & Suspensions
+                                        </h3>
+                                    </div>
                                     <div>
                                         <Injuries injuries={displayInjuries} />
                                     </div>
@@ -144,10 +154,12 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                     <div className={`grid grid-cols-1 ${data.h2h && data.h2h.length > 0 ? "lg:grid-cols-2" : "lg:grid-cols-1"} gap-2`}>
                         {/* Column 1: Recent Form */}
                         <div className="space-y-2">
-                            <h3 className="text-sm font-bold text-gray-200 capitalize tracking-widest flex items-center gap-2">
-                                <span className="w-1.5 h-5 bg-emerald-500 rounded-full" />
-                                Recent Form
-                            </h3>
+                            <div className="flex justify-center mb-3">
+                                <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-gray-200 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide capitalize">
+                                    <span className="w-1.5 h-3 bg-emerald-500 rounded-full" />
+                                    Recent Form
+                                </h3>
+                            </div>
                             <div className="space-y-2">
                                 <LastFiveMatches
                                     teamName={data.homeTeam.name}
@@ -166,10 +178,12 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                         {/* Column 2: Head to Head */}
                         {data.h2h && data.h2h.length > 0 && (
                             <div className="space-y-2">
-                                <h3 className="text-sm font-bold text-gray-200 capitalize tracking-widest flex items-center gap-2">
-                                    <span className="w-1.5 h-5 bg-orange-500 rounded-full" />
-                                    Head to Head
-                                </h3>
+                                <div className="flex justify-center mb-3">
+                                    <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-gray-200 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide capitalize">
+                                        <span className="w-1.5 h-3 bg-orange-500 rounded-full" />
+                                        Head to Head
+                                    </h3>
+                                </div>
                                 <div>
                                     <H2HSection h2h={data.h2h} />
                                 </div>
@@ -181,10 +195,12 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 {/* --- STANDINGS SECTION --- */}
                 {data.standings && data.standings.length > 0 && (
                     <div className="mt-2">
-                        <h3 className="text-sm font-bold text-gray-200 capitalize tracking-widest flex items-center gap-2">
-                            <span className="w-1.5 h-5 bg-purple-500 rounded-full" />
-                            League Table
-                        </h3>
+                        <div className="flex justify-center mb-3">
+                            <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-gray-200 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide capitalize">
+                                <span className="w-1.5 h-3 bg-purple-500 rounded-full" />
+                                League Table
+                            </h3>
+                        </div>
                         <div>
                             <Standings standings={data.standings || []} />
                         </div>
