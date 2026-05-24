@@ -1,19 +1,19 @@
 export default function ContactPage() {
     return (
-        <div className="min-h-screen bg-[#111111] text-gray-300 py-12 px-4 md:px-8">
-            <div className="max-w-3xl mx-auto space-y-6">
-                <h1 className="text-3xl font-bold text-white mb-8">Contact Us</h1>
+        <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto px-1 sm:px-4 md:px-4 pt-2 pb-4 font-sans text-gray-300">
+            <div className="space-y-3">
+                <h1 className="text-sm font-semibold text-emerald-100/90 mb-2">Contact Us</h1>
 
-                <p>
+                <p className="text-xs leading-normal text-gray-400">
                     We value your feedback and are here to assist with any inquiries.
                 </p>
 
-                <div className="bg-[#1F1F1F] p-6 rounded-lg border border-white/5 mt-8">
-                    <h2 className="text-xl font-semibold text-white mb-4">Get in Touch</h2>
-                    <p className="mb-4">
+                <div className="bg-[#1F1F1F] p-4 rounded-lg border border-white/5 mt-4">
+                    <h2 className="text-xs font-semibold text-emerald-100/90 mb-2">Get in Touch</h2>
+                    <p className="text-xs leading-normal text-gray-400 mb-2">
                         For support, partnerships, or general questions, please email us directly:
                     </p>
-                    <a href="mailto:support@bookiesmasters.com" className="text-teal-400 font-bold text-lg hover:underline">
+                    <a href="mailto:support@bookiesmasters.com" className="text-teal-400 font-semibold text-xs hover:underline">
                         support@bookiesmasters.com
                     </a>
                 </div>
