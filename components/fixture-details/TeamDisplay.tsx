@@ -16,7 +16,7 @@ interface TeamDisplayProps {
     displayDate: string;
     venue?: string;
     date: string;
-    score?: { home: number | null; away: number | null } | null;
+    score?: { home: number | null; away: number | null; halftime?: { home: number | null; away: number | null } } | null;
     tip?: string | null;
     league?: string;
     isLoading?: boolean;
@@ -131,8 +131,8 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                         {homeTeam.name} <span className="font-bold mx-1 sm:mx-3 text-white">VS</span> {awayTeam.name}
                     </h1>
                     {venue && (
-                        <div className="mt-0.5 text-[10px] sm:text-xs text-gray-400 font-medium flex items-center justify-center gap-1.5 lowercase">
-                            <span>🏟</span> {venue}
+                        <div className="mt-0.5 text-[10px] sm:text-xs text-gray-400 font-medium flex items-center justify-center gap-1.5 capitalize">
+                            <span>🏟</span> {venue.toLowerCase().includes('unknown') ? '' : venue}
                         </div>
                     )}
                 </div>
@@ -174,14 +174,19 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                             </div>
                         ) : score ? (
                             <div className="flex flex-col items-center">
-                                <div className={`bg-white/5 backdrop-blur-sm rounded-xl sm:rounded-2xl px-4 sm:px-6 py-2 sm:py-3 shadow-lg flex items-center justify-center gap-2 sm:gap-4 border border-white/10 ${isLive ? "animate-pulse" : ""}`}>
-                                    <span className={`text-2xl sm:text-4xl font-black ${isLive ? "text-rose-500" : "text-white"}`}>{score.home}</span>
-                                    <span className="text-xl sm:text-2xl font-bold text-gray-400">-</span>
-                                    <span className={`text-2xl sm:text-4xl font-black ${isLive ? "text-rose-500" : "text-white"}`}>{score.away}</span>
+                                <div className={`bg-white/5 backdrop-blur-sm rounded-xl sm:rounded-2xl px-4 sm:px-6 py-1 sm:py-2 shadow-lg flex items-center justify-center gap-2 sm:gap-4 border border-white/10 ${isLive ? "animate-pulse" : ""}`}>
+                                    <span className={`text-xl sm:text-3xl font-bold ${isLive ? "text-rose-500" : "text-white"}`}>{score.home}</span>
+                                    <span className="text-lg sm:text-xl font-bold text-gray-400">-</span>
+                                    <span className={`text-xl sm:text-3xl font-bold ${isLive ? "text-rose-500" : "text-white"}`}>{score.away}</span>
                                 </div>
                                 {status !== "NS" && (
                                     <div className={`mt-1 text-[10px] sm:text-xs font-bold tracking-widest uppercase ${isLive ? "text-rose-500 animate-pulse" : "text-gray-400"}`}>
                                         {status === "HT" ? "HT" : isFinished ? "FT" : (isLive && displayDate ? displayDate : status)}
+                                    </div>
+                                )}
+                                {score.halftime && score.halftime.home !== null && score.halftime.away !== null && (
+                                    <div className="text-[10px] sm:text-[11px] text-gray-500 font-medium mt-0.5 tracking-wider lowercase">
+                                        ht {score.halftime.home}-{score.halftime.away}
                                     </div>
                                 )}
                             </div>

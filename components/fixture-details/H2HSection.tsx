@@ -43,11 +43,12 @@ const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
             <h3 className="text-sm font-bold text-left text-gray-200 mb-2 border-b border-white/10 pb-1">Head to Head</h3>
             <div className="flex flex-col">
                 {h2h.slice(0, 5).map((match, i) => {
-                    const matchDate = new Date(match.fixture.date).toLocaleDateString("en-US", {
+                    const matchDateObj = new Date(match.fixture.date);
+                    const monthDay = matchDateObj.toLocaleDateString("en-US", {
                         month: "2-digit",
                         day: "2-digit",
-                        year: "2-digit",
                     });
+                    const year = matchDateObj.getFullYear();
 
                     const isEven = i % 2 === 0;
                     const bgClass = isEven ? "bg-[#0A0A0A]" : "bg-[#1E1E1E]";
@@ -59,20 +60,30 @@ const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
                             className={`grid grid-cols-[auto_1fr_auto_1fr] md:grid-cols-4 items-center p-2 text-sm transition-colors ${bgClass} ${hoverClass}`}
                         >
                             {/* 1️⃣ Date */}
-                            <div className="truncate text-gray-500 text-xs md:text-xs mr-2">{matchDate}</div>
+                            <div className="flex flex-col items-center justify-center mr-2 w-10 shrink-0">
+                                <span className="text-gray-500 text-[10px] font-medium leading-none mb-0.5">{monthDay}</span>
+                                <span className="text-gray-600 text-[9px] leading-none">{year}</span>
+                            </div>
 
                             {/* 2️⃣ Home Team */}
-                            <div className={`truncate font-medium text-right pr-3 text-xs md:text-sm ${match.teams.home.winner ? 'text-green-400 font-bold' : 'text-gray-300'}`}>
+                            <div className={`font-medium text-right pr-3 text-xs md:text-sm whitespace-normal break-words leading-tight ${match.teams.home.winner ? 'text-green-400 font-bold' : 'text-gray-300'}`}>
                                 {match.teams.home.name}
                             </div>
 
                             {/* 3️⃣ Score */}
-                            <div className="flex justify-center font-bold text-white bg-black/40 px-2 py-0.5 rounded min-w-[3rem] text-xs">
-                                {match.goals.home} - {match.goals.away}
+                            <div className="flex flex-col items-center justify-center shrink-0 w-14">
+                                <div className="flex justify-center w-full font-bold text-white bg-black/40 px-2 py-0.5 rounded text-xs">
+                                    {match.goals.home} - {match.goals.away}
+                                </div>
+                                {match.score?.halftime && match.score.halftime.home !== null && match.score.halftime.away !== null && (
+                                    <span className="text-[8px] text-gray-500 mt-0.5 font-medium tracking-wide">
+                                        ht {match.score.halftime.home}-{match.score.halftime.away}
+                                    </span>
+                                )}
                             </div>
 
                             {/* 4️⃣ Away Team */}
-                            <div className={`truncate font-medium text-left pl-3 text-xs md:text-sm ${match.teams.away.winner ? 'text-green-400 font-bold' : 'text-gray-300'}`}>
+                            <div className={`font-medium text-left pl-3 text-xs md:text-sm whitespace-normal break-words leading-tight ${match.teams.away.winner ? 'text-green-400 font-bold' : 'text-gray-300'}`}>
                                 {match.teams.away.name}
                             </div>
                         </div>

@@ -54,11 +54,12 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
             {/* 🏟️ Matches List */}
             <div className="flex flex-col">
                 {visibleMatches.map((m, i) => {
-                    const matchDate = new Date(m.date).toLocaleDateString("en-US", {
+                    const matchDateObj = new Date(m.date);
+                    const monthDay = matchDateObj.toLocaleDateString("en-US", {
                         month: "2-digit",
                         day: "2-digit",
-                        year: "2-digit",
                     });
+                    const year = matchDateObj.getFullYear();
 
                     const isEven = i % 2 === 0;
                     const bgClass = isEven ? "bg-[#0A0A0A]" : "bg-[#1E1E1E]";
@@ -70,24 +71,32 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                             className={`grid grid-cols-[auto_1fr_auto_1fr] md:grid-cols-4 items-center p-2 text-sm transition-colors ${bgClass} ${hoverClass}`}
                         >
                             {/* 1️⃣ Date */}
-                            <div className="truncate text-gray-500 text-xs mr-2 w-16 text-center">{matchDate}</div>
+                            <div className="flex flex-col items-center justify-center mr-2 w-10 shrink-0">
+                                <span className="text-gray-500 text-[10px] font-medium leading-none mb-0.5">{monthDay}</span>
+                                <span className="text-gray-600 text-[9px] leading-none">{year}</span>
+                            </div>
 
                             {/* 2️⃣ Home Team */}
                             <div className="flex items-center justify-end gap-2 pr-3 min-w-0">
-                                <span className="truncate font-medium text-gray-300 text-xs md:text-sm">{m.homeTeam.name}</span>
+                                <span className="font-medium text-gray-300 text-xs md:text-sm whitespace-normal break-words leading-tight text-right">{m.homeTeam.name}</span>
                                 {m.homeTeam.logo && (
                                     <img src={m.homeTeam.logo} alt={m.homeTeam.name} className="w-5 h-5 object-contain flex-shrink-0" />
                                 )}
                             </div>
 
                             {/* 3️⃣ Score with perspective-based badge */}
-                            <div className="flex justify-center">
+                            <div className="flex flex-col items-center justify-center shrink-0 w-14">
                                 <span
-                                    className="w-14 text-center px-1.5 py-0.5 rounded font-bold text-[10px]"
+                                    className="w-full text-center px-1.5 py-0.5 rounded font-bold text-[10px]"
                                     style={{ backgroundColor: m.color, color: m.result === "D" ? "#7c2d12" : (m.result === "W" ? "#14532d" : "#7f1d1d") }}
                                 >
                                     {m.score.home} - {m.score.away}
                                 </span>
+                                {(m as any).score?.halftime && (m as any).score.halftime.home !== null && (m as any).score.halftime.away !== null && (
+                                    <span className="text-[8px] text-gray-500 mt-0.5 font-medium tracking-wide">
+                                        ht {(m as any).score.halftime.home}-{(m as any).score.halftime.away}
+                                    </span>
+                                )}
                             </div>
 
                             {/* 4️⃣ Away Team */}
@@ -95,7 +104,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                                 {m.awayTeam.logo && (
                                     <img src={m.awayTeam.logo} alt={m.awayTeam.name} className="w-5 h-5 object-contain flex-shrink-0" />
                                 )}
-                                <span className="truncate font-medium text-gray-300 text-xs md:text-sm">{m.awayTeam.name}</span>
+                                <span className="font-medium text-gray-300 text-xs md:text-sm whitespace-normal break-words leading-tight text-left">{m.awayTeam.name}</span>
                             </div>
                         </div>
                     );
