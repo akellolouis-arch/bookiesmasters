@@ -122,7 +122,8 @@ export const getFixtureById = async (fixtureId) => {
         if ((isLive || isFinished) && currentGoals?.home !== null) {
             score = {
                 home: currentGoals.home,
-                away: currentGoals.away
+                away: currentGoals.away,
+                halftime: live?.score?.halftime || matchData.score?.halftime || null
             };
         }
 
