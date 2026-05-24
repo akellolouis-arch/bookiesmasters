@@ -20,7 +20,7 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="w-full bg-[#1F1F1F] text-white shadow-md">
+    <nav className="sticky top-0 z-50 w-full bg-[#1F1F1F] text-white shadow-md">
       {/*
         Avoid justify-between: when the logo image hasn’t painted yet, the left slot can
         collapse and the hamburger reads as “first”. Logo → flex spacer → links / toggler.

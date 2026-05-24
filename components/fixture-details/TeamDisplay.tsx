@@ -179,16 +179,18 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                                     <span className="text-xl sm:text-2xl font-bold text-gray-400">-</span>
                                     <span className={`text-2xl sm:text-4xl font-black ${isLive ? "text-rose-500" : "text-white"}`}>{score.away}</span>
                                 </div>
-                                <div className={`mt-2 text-[10px] sm:text-xs font-bold tracking-widest uppercase ${isLive ? "text-rose-500 animate-pulse" : "text-gray-400"}`}>
-                                    {isFinished ? "FT" : (isLive && displayDate ? displayDate : status)}
-                                </div>
+                                {status !== "NS" && (
+                                    <div className={`mt-2 text-[10px] sm:text-xs font-bold tracking-widest uppercase ${isLive ? "text-rose-500 animate-pulse" : "text-gray-400"}`}>
+                                        {isFinished ? "FT" : (isLive && displayDate ? displayDate : status)}
+                                    </div>
+                                )}
                             </div>
                         ) : (
                             <div className="flex flex-col items-center mt-2">
                                 <div className="bg-white/10 rounded-xl sm:rounded-2xl px-6 sm:px-8 py-3 flex items-center justify-center border border-white/5 backdrop-blur-md">
                                     <span className="text-2xl sm:text-4xl font-black text-gray-500">-</span>
                                 </div>
-                                {status && (
+                                {status && status !== "NS" && (
                                     <div className="mt-2 text-[10px] sm:text-xs font-bold tracking-widest uppercase text-gray-400">
                                         {status}
                                     </div>
