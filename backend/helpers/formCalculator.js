@@ -63,6 +63,7 @@ export const calculateTeamForm = async (teamId) => {
             score: {
                 home: match.goals.home,
                 away: match.goals.away,
+                halftime: match.score?.halftime || null,
             },
             venue: match.fixture?.venue?.name || "Unknown venue",
             result, // W/D/L from current team's perspective

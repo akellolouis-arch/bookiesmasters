@@ -185,7 +185,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                                     </div>
                                 )}
                                 {score.halftime && score.halftime.home !== null && score.halftime.away !== null && (
-                                    <div className="text-[10px] sm:text-[11px] text-gray-500 font-medium mt-0.5 tracking-wider lowercase">
+                                    <div className="text-[11px] sm:text-xs text-gray-500 font-medium mt-0.5 tracking-wider lowercase">
                                         {score.halftime.home}-{score.halftime.away}
                                     </div>
                                 )}
