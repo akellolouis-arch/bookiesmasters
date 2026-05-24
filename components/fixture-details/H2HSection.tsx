@@ -77,7 +77,7 @@ const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
                                 </div>
                                 {match.score?.halftime && match.score.halftime.home !== null && match.score.halftime.away !== null && (
                                     <span className="text-[8px] text-gray-500 mt-0.5 font-medium tracking-wide">
-                                        ht {match.score.halftime.home}-{match.score.halftime.away}
+                                        {match.score.halftime.home}-{match.score.halftime.away}
                                     </span>
                                 )}
                             </div>

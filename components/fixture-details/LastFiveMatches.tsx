@@ -94,7 +94,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                                 </span>
                                 {(m as any).score?.halftime && (m as any).score.halftime.home !== null && (m as any).score.halftime.away !== null && (
                                     <span className="text-[8px] text-gray-500 mt-0.5 font-medium tracking-wide">
-                                        ht {(m as any).score.halftime.home}-{(m as any).score.halftime.away}
+                                        {(m as any).score.halftime.home}-{(m as any).score.halftime.away}
                                     </span>
                                 )}
                             </div>

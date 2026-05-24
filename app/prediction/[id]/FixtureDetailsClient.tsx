@@ -110,40 +110,21 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
 
                 {/* --- OVERVIEW SECTION --- */}
                 <div className="mt-2">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-2">
-                        {/* Left Column: Match Events */}
-                        {displayEvents && displayEvents.length > 0 && (
-                            <div className="lg:col-span-7 space-y-2">
+                    {/* Match Events */}
+                    {displayEvents && displayEvents.length > 0 && (
+                        <div className="space-y-2">
+                            <div>
+                                <div className="flex justify-center mb-3">
+                                    <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-gray-200 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide uppercase">
+                                        Match Events
+                                    </h3>
+                                </div>
                                 <div>
-                                    <div className="flex justify-center mb-3">
-                                        <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-gray-200 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide uppercase">
-                                            Match Events
-                                        </h3>
-                                    </div>
-                                    <div>
-                                        <Events events={displayEvents} homeTeamId={data.homeTeam.id} awayTeamId={data.awayTeam.id} status={data.status} />
-                                    </div>
+                                    <Events events={displayEvents} homeTeamId={data.homeTeam.id} awayTeamId={data.awayTeam.id} status={data.status} />
                                 </div>
                             </div>
-                        )}
-
-                        {/* Right Column: Insights, Action, Injuries */}
-                        <div className={`${displayEvents && displayEvents.length > 0 ? "lg:col-span-5" : "lg:col-span-12"} space-y-2`}>
-                            {/* Injuries Panel */}
-                            {displayInjuries && displayInjuries.length > 0 && (
-                                <div>
-                                    <div className="flex justify-center mb-3">
-                                        <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-gray-200 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide uppercase">
-                                            Injuries & Suspensions
-                                        </h3>
-                                    </div>
-                                    <div>
-                                        <Injuries injuries={displayInjuries} />
-                                    </div>
-                                </div>
-                            )}
                         </div>
-                    </div>
+                    )}
                 </div>
 
                 {/* --- H2H & FORM SECTION --- */}
@@ -197,6 +178,20 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                         </div>
                         <div>
                             <Standings standings={data.standings || []} />
+                        </div>
+                    </div>
+                )}
+
+                {/* --- INJURIES SECTION --- */}
+                {displayInjuries && displayInjuries.length > 0 && (
+                    <div className="mt-2">
+                        <div className="flex justify-center mb-3">
+                            <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-gray-200 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide uppercase">
+                                Injuries & Suspensions
+                            </h3>
+                        </div>
+                        <div>
+                            <Injuries injuries={displayInjuries} />
                         </div>
                     </div>
                 )}
