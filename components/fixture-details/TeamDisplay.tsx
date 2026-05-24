@@ -181,7 +181,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                                 </div>
                                 {status !== "NS" && (
                                     <div className={`mt-2 text-[10px] sm:text-xs font-bold tracking-widest uppercase ${isLive ? "text-rose-500 animate-pulse" : "text-gray-400"}`}>
-                                        {isFinished ? "FT" : (isLive && displayDate ? displayDate : status)}
+                                        {status === "HT" ? "HT" : isFinished ? "FT" : (isLive && displayDate ? displayDate : status)}
                                     </div>
                                 )}
                             </div>

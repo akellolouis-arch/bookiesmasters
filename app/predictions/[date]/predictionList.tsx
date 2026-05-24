@@ -79,11 +79,29 @@ export default function PredictionsList({
     ? `${process.env.NEXT_PUBLIC_API_URL}/api/fixtures/live`
     : `${process.env.NEXT_PUBLIC_API_URL}/api/fixtures/cards?date=${date}`;
 
-  const { data, isValidating } = useSWR(
+  const today = new Date().toLocaleDateString("en-CA", { timeZone: "Africa/Nairobi" });
+  const isToday = date === today;
+
+  const { data: swrData, isValidating } = useSWR(
     apiUrl,
     fetcher,
     {
-      refreshInterval: date === "live" ? 15000 : 0,
+      refreshInterval: (latestData) => {
+        if (date === "live") return 15000;
+        if (!isToday) return 0;
+        
+        let hasLive = false;
+        const fixturesToCheck = latestData?.fixtures || initialData;
+        if (Array.isArray(fixturesToCheck)) {
+          hasLive = fixturesToCheck.some((f: any) => {
+            const matches = f.matches || [];
+            return matches.some((m: any) =>
+              ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(m.status) || m.status?.includes("'")
+            );
+          });
+        }
+        return hasLive ? 15000 : 60000;
+      },
       fallbackData: { fixtures: initialData },
       revalidateOnMount: true,
       revalidateOnFocus: true,
@@ -93,11 +111,7 @@ export default function PredictionsList({
   );
 
   // UNWRAP LOGIC: backend returns { fixtures: [...] }
-  // The backend fixtures have a NESTED league object: { league: { id, name... }, matches: [] }
-  // But our component expects FLATTENED objects: { id, name, matches... }
-  // We must transform the SWR data to match initialData's shape.
-
-  const backendFixtures = data?.fixtures;
+  const backendFixtures = swrData?.fixtures;
 
   let safeData: LeagueGroup[] = initialData;
 
