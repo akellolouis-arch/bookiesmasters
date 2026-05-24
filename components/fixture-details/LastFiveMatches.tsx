@@ -123,7 +123,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                         </>
                     ) : (
                         <>
-                            Show More ({matches.length - 5}) <ChevronDown size={14} />
+                            Show More <ChevronDown size={14} />
                         </>
                     )}
                 </button>
