@@ -120,10 +120,10 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
             <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
                 
                 {/* TOP HEADER: Names & Venue */}
-                <div className="text-center mb-3 px-4">
+                <div className="text-center mb-1 px-4">
                     {/* League Badge (Moved to Top) */}
                     {league && (
-                        <div className="mb-3 inline-block px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-gray-200 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide uppercase">
+                        <div className="mb-1 inline-block px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-gray-200 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide uppercase">
                             {league}
                         </div>
                     )}
@@ -131,14 +131,14 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                         {homeTeam.name} <span className="font-bold mx-1 sm:mx-3 text-white">VS</span> {awayTeam.name}
                     </h1>
                     {venue && (
-                        <div className="mt-2 text-[10px] sm:text-xs text-gray-400 font-medium flex items-center justify-center gap-1.5 lowercase">
+                        <div className="mt-0.5 text-[10px] sm:text-xs text-gray-400 font-medium flex items-center justify-center gap-1.5 lowercase">
                             <span>🏟</span> {venue}
                         </div>
                     )}
                 </div>
 
                 {/* MIDDLE ROW: Logos & Score */}
-                <div className="flex items-start justify-center w-full px-1 sm:px-4 gap-2 sm:gap-4 md:gap-8">
+                <div className="flex items-start justify-center w-full px-1 sm:px-4 gap-2 sm:gap-4 md:gap-4">
                     
                     {/* HOME TEAM */}
                     <div className="flex flex-col items-center flex-1 min-w-0">
@@ -153,9 +153,9 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                     </div>
 
                     {/* CENTER INFO */}
-                    <div className="flex flex-col items-center justify-start mt-1 sm:mt-2 min-w-[100px] sm:min-w-[140px]">
+                    <div className="flex flex-col items-center justify-start mt-0 min-w-[100px] sm:min-w-[140px]">
                         {/* Date & Time */}
-                        <div className="text-[10px] sm:text-sm text-gray-300 font-semibold mb-3 tracking-wide whitespace-nowrap">
+                        <div className="text-[10px] sm:text-sm text-gray-300 font-semibold mb-1 tracking-wide whitespace-nowrap">
                             {formattedDate} <span className="ml-1">{kickoffTime}</span>
                         </div>
                         
@@ -180,18 +180,18 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                                     <span className={`text-2xl sm:text-4xl font-black ${isLive ? "text-rose-500" : "text-white"}`}>{score.away}</span>
                                 </div>
                                 {status !== "NS" && (
-                                    <div className={`mt-2 text-[10px] sm:text-xs font-bold tracking-widest uppercase ${isLive ? "text-rose-500 animate-pulse" : "text-gray-400"}`}>
+                                    <div className={`mt-1 text-[10px] sm:text-xs font-bold tracking-widest uppercase ${isLive ? "text-rose-500 animate-pulse" : "text-gray-400"}`}>
                                         {status === "HT" ? "HT" : isFinished ? "FT" : (isLive && displayDate ? displayDate : status)}
                                     </div>
                                 )}
                             </div>
                         ) : (
-                            <div className="flex flex-col items-center mt-2">
+                            <div className="flex flex-col items-center mt-1">
                                 <div className="bg-white/10 rounded-xl sm:rounded-2xl px-6 sm:px-8 py-3 flex items-center justify-center border border-white/5 backdrop-blur-md">
                                     <span className="text-2xl sm:text-4xl font-black text-gray-500">-</span>
                                 </div>
                                 {status && status !== "NS" && (
-                                    <div className="mt-2 text-[10px] sm:text-xs font-bold tracking-widest uppercase text-gray-400">
+                                    <div className="mt-1 text-[10px] sm:text-xs font-bold tracking-widest uppercase text-gray-400">
                                         {status}
                                     </div>
                                 )}

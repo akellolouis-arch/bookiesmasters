@@ -82,7 +82,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 />
 
                 {/* --- ODDS & ADVICE SECTION --- */}
-                <div className="flex flex-col gap-2 my-2">
+                <div className="flex flex-col gap-1 my-1">
                     {/* Call To Action Box (Odds) */}
                     <div className="flex flex-col items-center justify-center text-center">
                         <h3 className="text-[10px] font-bold text-gray-500 tracking-widest mb-2">Prematch odds</h3>
@@ -91,7 +91,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
 
                     {/* Prediction Advice Panel */}
                     {data.apiPrediction?.advice && (
-                        <div className="flex flex-col items-center justify-center text-center mt-2">
+                        <div className="flex flex-col items-center justify-center text-center mt-1">
                             <h3 className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest flex items-center justify-center gap-2 mb-2">
                                 <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
                                 Expert Advice
@@ -104,11 +104,11 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 </div>
 
                 {/* --- OVERVIEW SECTION --- */}
-                <div className="mt-4">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                <div className="mt-2">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-2">
                         {/* Left Column: Match Events */}
                         {displayEvents && displayEvents.length > 0 && (
-                            <div className="lg:col-span-7 space-y-4">
+                            <div className="lg:col-span-7 space-y-2">
                                 <div>
                                     <h3 className="text-sm font-bold text-gray-200 capitalize tracking-widest flex items-center gap-2">
                                         <span className="w-1.5 h-5 bg-blue-500 rounded-full" />
@@ -122,7 +122,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                         )}
 
                         {/* Right Column: Insights, Action, Injuries */}
-                        <div className={`${displayEvents && displayEvents.length > 0 ? "lg:col-span-5" : "lg:col-span-12"} space-y-4`}>
+                        <div className={`${displayEvents && displayEvents.length > 0 ? "lg:col-span-5" : "lg:col-span-12"} space-y-2`}>
                             {/* Injuries Panel */}
                             {displayInjuries && displayInjuries.length > 0 && (
                                 <div>
@@ -140,15 +140,15 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 </div>
 
                 {/* --- H2H & FORM SECTION --- */}
-                <div className="mt-4">
-                    <div className={`grid grid-cols-1 ${data.h2h && data.h2h.length > 0 ? "lg:grid-cols-2" : "lg:grid-cols-1"} gap-4`}>
+                <div className="mt-2">
+                    <div className={`grid grid-cols-1 ${data.h2h && data.h2h.length > 0 ? "lg:grid-cols-2" : "lg:grid-cols-1"} gap-2`}>
                         {/* Column 1: Recent Form */}
-                        <div className="space-y-4">
+                        <div className="space-y-2">
                             <h3 className="text-sm font-bold text-gray-200 capitalize tracking-widest flex items-center gap-2">
                                 <span className="w-1.5 h-5 bg-emerald-500 rounded-full" />
                                 Recent Form
                             </h3>
-                            <div className="space-y-4">
+                            <div className="space-y-2">
                                 <LastFiveMatches
                                     teamName={data.homeTeam.name}
                                     teamLogo={data.homeTeam.logo}
@@ -165,7 +165,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
 
                         {/* Column 2: Head to Head */}
                         {data.h2h && data.h2h.length > 0 && (
-                            <div className="space-y-4">
+                            <div className="space-y-2">
                                 <h3 className="text-sm font-bold text-gray-200 capitalize tracking-widest flex items-center gap-2">
                                     <span className="w-1.5 h-5 bg-orange-500 rounded-full" />
                                     Head to Head
@@ -180,7 +180,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
 
                 {/* --- STANDINGS SECTION --- */}
                 {data.standings && data.standings.length > 0 && (
-                    <div className="mt-4">
+                    <div className="mt-2">
                         <h3 className="text-sm font-bold text-gray-200 capitalize tracking-widest flex items-center gap-2">
                             <span className="w-1.5 h-5 bg-purple-500 rounded-full" />
                             League Table

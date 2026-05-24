@@ -39,8 +39,8 @@ const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
         return <p className="text-center text-gray-400 mb-6">No H2H data available</p>;
 
     return (
-        <div className="mb-6 w-full animate-in fade-in duration-500">
-            <h3 className="text-sm font-bold text-left text-gray-200 mb-4 border-b border-white/10 pb-2">Head to Head</h3>
+        <div className="mb-2 w-full animate-in fade-in duration-500">
+            <h3 className="text-sm font-bold text-left text-gray-200 mb-2 border-b border-white/10 pb-1">Head to Head</h3>
             <div className="flex flex-col">
                 {h2h.slice(0, 5).map((match, i) => {
                     const matchDate = new Date(match.fixture.date).toLocaleDateString("en-US", {

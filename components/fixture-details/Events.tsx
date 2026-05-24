@@ -40,11 +40,11 @@ const Events: React.FC<EventsProps> = ({ events, homeTeamId }) => {
     }
 
     return (
-        <div className="w-full relative py-2">
+        <div className="w-full relative py-1">
             {/* Center Line */}
             <div className="absolute left-1/2 top-4 bottom-4 w-px bg-white/5 transform -translate-x-1/2"></div>
 
-            <div className="space-y-2">
+            <div className="space-y-1">
                 {events.map((event, idx) => {
                     const isHome = event.team.id === homeTeamId;
                     const eventIcon = getEventEmoji(event.type, event.detail);

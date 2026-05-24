@@ -34,9 +34,9 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
     const hasMore = matches.length > 5;
 
     return (
-        <div className="mb-6 w-full animate-in fade-in duration-500">
+        <div className="mb-2 w-full animate-in fade-in duration-500">
             {/* 🏆 Title + Team Logo centered */}
-            <div className="flex flex-col items-start mb-4 border-b border-white/10 pb-2">
+            <div className="flex flex-col items-start mb-2 border-b border-white/10 pb-1">
                 <div className="flex items-center justify-start gap-2">
                     {teamLogo && (
                         <img

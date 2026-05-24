@@ -49,19 +49,19 @@ export default function Injuries({ injuries }: InjuriesProps) {
     const teams = Array.from(new Set(uniqueInjuries.map(i => i.team.name)));
 
     return (
-        <div className="w-full flex flex-col gap-3 sm:gap-4 animate-in fade-in duration-500">
+        <div className="w-full flex flex-col gap-1 sm:gap-2 animate-in fade-in duration-500">
             {teams.map(teamName => {
                 const teamInjuries = uniqueInjuries.filter(i => i.team.name === teamName);
                 const teamLogo = teamInjuries[0].team.logo;
 
                 return (
-                    <div key={teamName} className="w-full bg-[#111] rounded-xl p-2 sm:p-4 border border-white/5 overflow-hidden">
-                        <div className="flex items-center gap-1.5 sm:gap-3 mb-2 sm:mb-4 pb-2 sm:pb-3 border-b border-white/5">
+                    <div key={teamName} className="w-full">
+                        <div className="flex items-center gap-1.5 sm:gap-3 mb-1 sm:mb-2 pb-1 sm:pb-2 border-b border-white/5">
                             <img src={teamLogo} alt={teamName} className="w-4 h-4 sm:w-6 sm:h-6 object-contain shrink-0" />
                             <h3 className="text-sm font-bold text-gray-200 capitalize tracking-widest truncate">{teamName}</h3>
                         </div>
 
-                        <div className="space-y-2 sm:space-y-3">
+                        <div className="space-y-1 sm:space-y-1.5">
                             {teamInjuries.map((injury, idx) => (
                                 <div key={idx} className="flex items-center gap-1.5 sm:gap-3">
                                     <img
