@@ -41,18 +41,22 @@ const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
     return (
         <div className="mb-6 w-full animate-in fade-in duration-500">
             <h3 className="text-sm font-bold text-left text-gray-200 mb-4 border-b border-white/10 pb-2">Head to Head</h3>
-            <div className="flex flex-col gap-2">
-                {h2h.slice(0, 5).map((match) => {
+            <div className="flex flex-col">
+                {h2h.slice(0, 5).map((match, i) => {
                     const matchDate = new Date(match.fixture.date).toLocaleDateString("en-US", {
                         month: "2-digit",
                         day: "2-digit",
                         year: "2-digit",
                     });
 
+                    const isEven = i % 2 === 0;
+                    const bgClass = isEven ? "bg-[#0A0A0A]" : "bg-[#1E1E1E]";
+                    const hoverClass = isEven ? "hover:bg-[#151515]" : "hover:bg-[#282828]";
+
                     return (
                         <div
                             key={match.fixture.id}
-                            className="grid grid-cols-[auto_1fr_auto_1fr] md:grid-cols-4 items-center bg-white/5 hover:bg-white/10 p-2 rounded text-sm transition-colors border border-transparent hover:border-white/5"
+                            className={`grid grid-cols-[auto_1fr_auto_1fr] md:grid-cols-4 items-center p-2 text-sm transition-colors ${bgClass} ${hoverClass}`}
                         >
                             {/* 1️⃣ Date */}
                             <div className="truncate text-gray-500 text-xs md:text-xs mr-2">{matchDate}</div>

@@ -110,7 +110,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                         {displayEvents && displayEvents.length > 0 && (
                             <div className="lg:col-span-7 space-y-4">
                                 <div>
-                                    <h3 className="text-sm font-bold text-gray-200 uppercase tracking-widest flex items-center gap-2">
+                                    <h3 className="text-sm font-bold text-gray-200 lowercase tracking-widest flex items-center justify-center gap-2">
                                         <span className="w-1.5 h-5 bg-blue-500 rounded-full" />
                                         Match Events
                                     </h3>
@@ -126,7 +126,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                             {/* Injuries Panel */}
                             {displayInjuries && displayInjuries.length > 0 && (
                                 <div>
-                                    <h3 className="text-sm font-bold text-gray-200 uppercase tracking-widest flex items-center gap-2">
+                                    <h3 className="text-sm font-bold text-gray-200 lowercase tracking-widest flex items-center justify-center gap-2">
                                         <span className="w-1.5 h-5 bg-rose-500 rounded-full" />
                                         Injuries & Suspensions
                                     </h3>
@@ -144,7 +144,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                     <div className={`grid grid-cols-1 ${data.h2h && data.h2h.length > 0 ? "lg:grid-cols-2" : "lg:grid-cols-1"} gap-4`}>
                         {/* Column 1: Recent Form */}
                         <div className="space-y-4">
-                            <h3 className="text-sm font-bold text-gray-200 uppercase tracking-widest flex items-center gap-2">
+                            <h3 className="text-sm font-bold text-gray-200 lowercase tracking-widest flex items-center justify-center gap-2">
                                 <span className="w-1.5 h-5 bg-emerald-500 rounded-full" />
                                 Recent Form
                             </h3>
@@ -166,7 +166,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                         {/* Column 2: Head to Head */}
                         {data.h2h && data.h2h.length > 0 && (
                             <div className="space-y-4">
-                                <h3 className="text-sm font-bold text-gray-200 uppercase tracking-widest flex items-center gap-2">
+                                <h3 className="text-sm font-bold text-gray-200 lowercase tracking-widest flex items-center justify-center gap-2">
                                     <span className="w-1.5 h-5 bg-orange-500 rounded-full" />
                                     Head to Head
                                 </h3>
@@ -181,7 +181,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 {/* --- STANDINGS SECTION --- */}
                 {data.standings && data.standings.length > 0 && (
                     <div className="mt-4">
-                        <h3 className="text-sm font-bold text-gray-200 uppercase tracking-widest flex items-center gap-2">
+                        <h3 className="text-sm font-bold text-gray-200 lowercase tracking-widest flex items-center justify-center gap-2">
                             <span className="w-1.5 h-5 bg-purple-500 rounded-full" />
                             League Table
                         </h3>

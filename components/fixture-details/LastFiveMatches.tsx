@@ -52,7 +52,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
             </div>
 
             {/* 🏟️ Matches List */}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col">
                 {visibleMatches.map((m, i) => {
                     const matchDate = new Date(m.date).toLocaleDateString("en-US", {
                         month: "2-digit",
@@ -60,10 +60,14 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                         year: "2-digit",
                     });
 
+                    const isEven = i % 2 === 0;
+                    const bgClass = isEven ? "bg-[#0A0A0A]" : "bg-[#1E1E1E]";
+                    const hoverClass = isEven ? "hover:bg-[#151515]" : "hover:bg-[#282828]";
+
                     return (
                         <div
                             key={i}
-                            className="grid grid-cols-[auto_1fr_auto_1fr] md:grid-cols-4 items-center bg-white/5 hover:bg-white/10 p-2 rounded text-sm transition-colors border border-transparent hover:border-white/5"
+                            className={`grid grid-cols-[auto_1fr_auto_1fr] md:grid-cols-4 items-center p-2 text-sm transition-colors ${bgClass} ${hoverClass}`}
                         >
                             {/* 1️⃣ Date */}
                             <div className="truncate text-gray-500 text-xs mr-2 w-16 text-center">{matchDate}</div>
