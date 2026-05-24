@@ -93,19 +93,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                         <BetButton teamName={data.homeTeam.name} isLive={isLive} odds={primaryOdds} />
                     </div>
 
-                    {/* Prediction Advice Panel */}
-                    {data.apiPrediction?.advice && (
-                        <div className="flex flex-col items-center justify-center text-center mt-1">
-                            <div className="flex justify-center mb-2">
-                                <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-emerald-400 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide uppercase">
-                                    Expert Advice
-                                </h3>
-                            </div>
-                            <p className="text-xs text-emerald-100/90 font-medium leading-relaxed italic">
-                                &quot;{data.apiPrediction.advice}&quot;
-                            </p>
-                        </div>
-                    )}
+
                 </div>
 
                 {/* --- H2H & FORM SECTION --- */}

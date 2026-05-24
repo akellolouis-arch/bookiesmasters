@@ -69,9 +69,12 @@ export default function Injuries({ injuries }: InjuriesProps) {
                                         alt={injury.player.name}
                                         className="w-5 h-5 sm:w-8 sm:h-8 rounded-full bg-gray-800 object-cover border border-white/10 shrink-0"
                                     />
-                                    <div className="flex items-center gap-2 min-w-0 w-full">
-                                        <p className="text-xs font-medium text-gray-200 leading-tight whitespace-nowrap">{injury.player.name}</p>
-                                        <p className="text-[11px] text-gray-500 capitalize truncate">- {injury.player.reason}</p>
+                                    <div className="flex items-center justify-between min-w-0 w-full">
+                                        <div className="flex items-center gap-1.5 min-w-0">
+                                            <span className="text-[10px] text-gray-500 font-bold">{idx + 1}.</span>
+                                            <p className="text-xs font-medium text-gray-200 leading-tight truncate">{injury.player.name}</p>
+                                        </div>
+                                        <p className="text-[10px] text-gray-500 capitalize text-right shrink-0 ml-2">{injury.player.reason}</p>
                                     </div>
                                 </div>
                             ))}

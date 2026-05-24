@@ -168,9 +168,6 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                                 <div className="bg-white/5 backdrop-blur-sm rounded-xl sm:rounded-2xl px-4 sm:px-6 py-1 sm:py-2 shadow-lg flex items-center justify-center border border-white/10 animate-pulse">
                                     <span className="text-xl sm:text-3xl font-bold text-gray-500">-</span>
                                 </div>
-                                <div className="mt-2 text-[10px] sm:text-xs font-bold tracking-widest uppercase text-gray-400 animate-pulse">
-                                    LOADING...
-                                </div>
                             </div>
                         ) : score ? (
                             <div className="flex flex-col items-center">
