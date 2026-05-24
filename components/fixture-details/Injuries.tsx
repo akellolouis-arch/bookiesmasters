@@ -74,7 +74,9 @@ export default function Injuries({ injuries }: InjuriesProps) {
                                             <span className="text-[10px] text-gray-500 font-bold">{idx + 1}.</span>
                                             <p className="text-xs font-medium text-gray-200 leading-tight truncate">{injury.player.name}</p>
                                         </div>
-                                        <p className="text-[10px] text-gray-500 capitalize text-right shrink-0 ml-2">{injury.player.reason}</p>
+                                        <div className="w-24 sm:w-32 shrink-0 ml-2">
+                                            <p className="text-[10px] text-gray-500 capitalize text-left truncate">{injury.player.reason}</p>
+                                        </div>
                                     </div>
                                 </div>
                             ))}
