@@ -28,9 +28,10 @@ interface EventsProps {
     events: FixtureEvent[];
     homeTeamId: number;
     awayTeamId: number;
+    status: string;
 }
 
-const Events: React.FC<EventsProps> = ({ events, homeTeamId }) => {
+const Events: React.FC<EventsProps> = ({ events, homeTeamId, status }) => {
     if (!events || events.length === 0) {
         return (
             <div className="text-center py-6 text-gray-500 w-full">
@@ -45,52 +46,93 @@ const Events: React.FC<EventsProps> = ({ events, homeTeamId }) => {
             <div className="absolute left-1/2 top-4 bottom-4 w-px bg-white/5 transform -translate-x-1/2"></div>
 
             <div className="space-y-1">
-                {events.map((event, idx) => {
-                    const isHome = event.team.id === homeTeamId;
-                    const eventIcon = getEventEmoji(event.type, event.detail);
+                {(() => {
+                    const renderItems: React.ReactNode[] = [];
+                    let htInserted = false;
 
-                    return (
-                        <div key={idx} className="flex items-center w-full">
-                            {/* Home Side */}
-                            <div className="flex-1 flex justify-end pr-2 items-center space-x-1">
-                                {isHome && (
-                                    <>
-                                        <div className="text-right">
-                                            <div className="text-xs text-gray-200 font-medium leading-tight">{event.player?.name || "Unknown"}</div>
-                                            <div className="text-[11px] text-gray-500">{event.detail}</div>
-                                            {event.assist?.name && (
-                                                <div className="text-[10px] text-gray-500">Assist: {event.assist.name}</div>
-                                            )}
-                                        </div>
-                                        <div className="w-5 flex justify-center">{eventIcon}</div>
-                                    </>
-                                )}
-                            </div>
+                    events.forEach((event, idx) => {
+                        if (!htInserted && event.time?.elapsed > 45) {
+                            renderItems.push(
+                                <div key={`ht-${idx}`} className="flex justify-center w-full my-3 relative z-10">
+                                    <div className="text-[10px] font-bold text-gray-500 bg-[#0a0a0a] px-3 py-1 border border-white/5 rounded-full uppercase tracking-widest">
+                                        HT
+                                    </div>
+                                </div>
+                            );
+                            htInserted = true;
+                        }
 
-                            {/* Time */}
-                            <div className="relative z-10 w-9 h-9 flex-shrink-0 rounded-full bg-[#111] border border-zinc-700 flex items-center justify-center text-xs font-bold text-gray-400">
-                                {event.time?.elapsed || 0}'
-                                {event.time?.extra ? `+${event.time.extra}` : ''}
-                            </div>
+                        const isHome = event.team.id === homeTeamId;
+                        const eventIcon = getEventEmoji(event.type, event.detail);
+                        const isGoal = event.type?.toLowerCase() === 'goal';
+                        const playerName = event.player?.name && event.player.name !== "Unknown" ? event.player.name : null;
+                        const assistName = event.assist?.name && event.assist.name !== "Unknown" ? event.assist.name : null;
 
-                            {/* Away Side */}
-                            <div className="flex-1 flex justify-start pl-2 items-center space-x-2">
-                                {!isHome && (
-                                    <>
-                                        <div className="w-5 flex justify-center">{eventIcon}</div>
-                                        <div className="text-left">
-                                            <div className="text-xs text-gray-200 font-medium leading-tight">{event.player?.name || "Unknown"}</div>
-                                            <div className="text-[10px] text-gray-500">{event.detail}</div>
-                                            {event.assist?.name && (
-                                                <div className="text-[10px] text-gray-500">Assist: {event.assist.name}</div>
-                                            )}
-                                        </div>
-                                    </>
-                                )}
+                        renderItems.push(
+                            <div key={`evt-${idx}`} className="flex items-center w-full">
+                                {/* Home Side */}
+                                <div className="flex-1 flex justify-end pr-2 items-center space-x-1">
+                                    {isHome && (
+                                        <>
+                                            <div className="text-right">
+                                                {playerName && <div className="text-xs text-gray-200 font-medium leading-tight">{playerName}</div>}
+                                                {!isGoal && <div className="text-[11px] text-gray-500">{event.detail}</div>}
+                                                {assistName && (
+                                                    <div className="text-[10px] text-gray-500">Assist: {assistName}</div>
+                                                )}
+                                            </div>
+                                            <div className="w-5 flex justify-center">{eventIcon}</div>
+                                        </>
+                                    )}
+                                </div>
+
+                                {/* Time */}
+                                <div className="relative z-10 w-7 h-7 flex-shrink-0 rounded-full bg-[#0a0a0a] flex items-center justify-center text-xs font-bold text-gray-400">
+                                    {event.time?.elapsed || 0}'
+                                    {event.time?.extra ? <span className="text-[9px] text-gray-500 ml-0.5">+{event.time.extra}</span> : ''}
+                                </div>
+
+                                {/* Away Side */}
+                                <div className="flex-1 flex justify-start pl-2 items-center space-x-2">
+                                    {!isHome && (
+                                        <>
+                                            <div className="w-5 flex justify-center">{eventIcon}</div>
+                                            <div className="text-left">
+                                                {playerName && <div className="text-xs text-gray-200 font-medium leading-tight">{playerName}</div>}
+                                                {!isGoal && <div className="text-[11px] text-gray-500">{event.detail}</div>}
+                                                {assistName && (
+                                                    <div className="text-[10px] text-gray-500">Assist: {assistName}</div>
+                                                )}
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
                             </div>
-                        </div>
-                    );
-                })}
+                        );
+                    });
+
+                    if (!htInserted && ['HT', '2H', 'FT', 'AET', 'PEN'].includes(status)) {
+                        renderItems.push(
+                            <div key="ht-end" className="flex justify-center w-full my-3 relative z-10">
+                                <div className="text-[10px] font-bold text-gray-500 bg-[#0a0a0a] px-3 py-1 border border-white/5 rounded-full uppercase tracking-widest">
+                                    HT
+                                </div>
+                            </div>
+                        );
+                    }
+
+                    if (['FT', 'AET', 'PEN'].includes(status)) {
+                        renderItems.push(
+                            <div key="ft-end" className="flex justify-center w-full mt-4 mb-1 relative z-10">
+                                <div className="text-[10px] font-bold text-emerald-500 bg-[#0a0a0a] px-3 py-1 border border-emerald-500/20 rounded-full uppercase tracking-widest">
+                                    FT
+                                </div>
+                            </div>
+                        );
+                    }
+
+                    return renderItems;
+                })()}
             </div>
         </div>
     );
