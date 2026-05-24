@@ -29,9 +29,12 @@ interface EventsProps {
     homeTeamId: number;
     awayTeamId: number;
     status: string;
+    score?: {
+        halftime?: { home: number | null; away: number | null };
+    } | null;
 }
 
-const Events: React.FC<EventsProps> = ({ events, homeTeamId, status }) => {
+const Events: React.FC<EventsProps> = ({ events, homeTeamId, status, score }) => {
     if (!events || events.length === 0) {
         return (
             <div className="text-center py-6 text-gray-500 w-full">
@@ -49,13 +52,18 @@ const Events: React.FC<EventsProps> = ({ events, homeTeamId, status }) => {
                 {(() => {
                     const renderItems: React.ReactNode[] = [];
                     let htInserted = false;
+                    
+                    let htString = "HT";
+                    if (score?.halftime && score.halftime.home !== null && score.halftime.away !== null) {
+                        htString = `HT ${score.halftime.home} - ${score.halftime.away}`;
+                    }
 
                     events.forEach((event, idx) => {
                         if (!htInserted && event.time?.elapsed > 45) {
                             renderItems.push(
                                 <div key={`ht-${idx}`} className="flex justify-center w-full my-3 relative z-10">
-                                    <div className="text-[10px] font-bold text-gray-500 bg-[#0a0a0a] px-3 py-1 border border-white/5 rounded-full uppercase tracking-widest">
-                                        HT
+                                    <div className="text-[10px] font-bold text-gray-500 bg-[#0a0a0a] px-3 py-1 border border-white/5 rounded-full uppercase tracking-widest whitespace-nowrap">
+                                        {htString}
                                     </div>
                                 </div>
                             );
@@ -114,8 +122,8 @@ const Events: React.FC<EventsProps> = ({ events, homeTeamId, status }) => {
                     if (!htInserted && ['HT', '2H', 'FT', 'AET', 'PEN'].includes(status)) {
                         renderItems.push(
                             <div key="ht-end" className="flex justify-center w-full my-3 relative z-10">
-                                <div className="text-[10px] font-bold text-gray-500 bg-[#0a0a0a] px-3 py-1 border border-white/5 rounded-full uppercase tracking-widest">
-                                    HT
+                                <div className="text-[10px] font-bold text-gray-500 bg-[#0a0a0a] px-3 py-1 border border-white/5 rounded-full uppercase tracking-widest whitespace-nowrap">
+                                    {htString}
                                 </div>
                             </div>
                         );
