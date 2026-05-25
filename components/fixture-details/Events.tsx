@@ -78,46 +78,42 @@ const Events: React.FC<EventsProps> = ({ events, homeTeamId, status, score }) =>
                         renderItems.push(
                             <div key={`evt-${idx}`} className="flex items-center w-full">
                                 {/* Home Side */}
-                                <div className="flex-1 flex justify-between pr-3 sm:pr-5 py-1 border-r border-white/5 items-center">
+                                <div className="flex-1 flex justify-end pr-5 sm:pr-8 py-1 border-r border-white/5 items-center">
                                     {isHome && (
-                                        <>
-                                            <div className="text-left pl-2 sm:pl-4">
+                                        <div className="flex items-center gap-1.5 sm:gap-2">
+                                            <div className="text-right">
                                                 {playerName && <div className="text-xs text-gray-200 font-medium leading-tight">{playerName}</div>}
                                                 {!isGoal && <div className="text-[11px] text-gray-500">{event.detail}</div>}
                                                 {assistName && (
                                                     <div className="text-[10px] text-gray-500">Assist: {assistName}</div>
                                                 )}
                                             </div>
-                                            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                                                <div className="w-4 flex justify-center shrink-0">{eventIcon}</div>
-                                                <div className="text-[10px] sm:text-[11px] font-bold text-gray-400 text-right shrink-0 whitespace-nowrap min-w-[20px]">
-                                                    {event.time?.elapsed || 0}'
-                                                    {event.time?.extra ? <span className="text-[9px] text-gray-500 ml-0.5">+{event.time.extra}</span> : ''}
-                                                </div>
+                                            <div className="w-4 flex justify-center shrink-0">{eventIcon}</div>
+                                            <div className="text-[10px] sm:text-[11px] font-bold text-gray-400 text-right shrink-0 whitespace-nowrap min-w-[20px]">
+                                                {event.time?.elapsed || 0}'
+                                                {event.time?.extra ? <span className="text-[9px] text-gray-500 ml-0.5">+{event.time.extra}</span> : ''}
                                             </div>
-                                        </>
+                                        </div>
                                     )}
                                 </div>
 
                                 {/* Away Side */}
-                                <div className="flex-1 flex justify-between pl-3 sm:pl-5 py-1 items-center">
+                                <div className="flex-1 flex justify-start pl-5 sm:pl-8 py-1 items-center">
                                     {!isHome && (
-                                        <>
-                                            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                                                <div className="text-[10px] sm:text-[11px] font-bold text-gray-400 text-left shrink-0 whitespace-nowrap min-w-[20px]">
-                                                    {event.time?.elapsed || 0}'
-                                                    {event.time?.extra ? <span className="text-[9px] text-gray-500 ml-0.5">+{event.time.extra}</span> : ''}
-                                                </div>
-                                                <div className="w-4 flex justify-center shrink-0">{eventIcon}</div>
+                                        <div className="flex items-center gap-1.5 sm:gap-2">
+                                            <div className="text-[10px] sm:text-[11px] font-bold text-gray-400 text-left shrink-0 whitespace-nowrap min-w-[20px]">
+                                                {event.time?.elapsed || 0}'
+                                                {event.time?.extra ? <span className="text-[9px] text-gray-500 ml-0.5">+{event.time.extra}</span> : ''}
                                             </div>
-                                            <div className="text-right pr-2 sm:pr-4">
+                                            <div className="w-4 flex justify-center shrink-0">{eventIcon}</div>
+                                            <div className="text-left">
                                                 {playerName && <div className="text-xs text-gray-200 font-medium leading-tight">{playerName}</div>}
                                                 {!isGoal && <div className="text-[11px] text-gray-500">{event.detail}</div>}
                                                 {assistName && (
                                                     <div className="text-[10px] text-gray-500">Assist: {assistName}</div>
                                                 )}
                                             </div>
-                                        </>
+                                        </div>
                                     )}
                                 </div>
                             </div>
