@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface StandingTeam {
     rank: number;
@@ -25,9 +25,12 @@ interface StandingTeam {
 
 interface StandingsProps {
     standings: StandingTeam[][];
+    homeTeamId?: number;
+    awayTeamId?: number;
 }
 
-const Standings: React.FC<StandingsProps> = ({ standings }) => {
+const Standings: React.FC<StandingsProps> = ({ standings, homeTeamId, awayTeamId }) => {
+    const [showAll, setShowAll] = useState(false);
     if (!standings || standings.length === 0) {
         return (
             <div className="text-center p-4 text-gray-400 bg-[#1F1F1F] rounded-lg">
@@ -38,7 +41,43 @@ const Standings: React.FC<StandingsProps> = ({ standings }) => {
 
     return (
         <div className="space-y-2 w-full animate-in fade-in duration-500">
-            {standings.map((group, groupIndex) => (
+            {standings.map((group, groupIndex) => {
+                const getVisibleTeams = () => {
+                    if (showAll || !homeTeamId || !awayTeamId) return { teams: group, gaps: [] };
+
+                    const hIdx = group.findIndex(t => t.team.id === homeTeamId);
+                    const aIdx = group.findIndex(t => t.team.id === awayTeamId);
+
+                    const indices = new Set<number>();
+                    if (hIdx !== -1) {
+                        indices.add(hIdx - 1);
+                        indices.add(hIdx);
+                        indices.add(hIdx + 1);
+                    }
+                    if (aIdx !== -1) {
+                        indices.add(aIdx - 1);
+                        indices.add(aIdx);
+                        indices.add(aIdx + 1);
+                    }
+
+                    const validIndices = Array.from(indices).filter(i => i >= 0 && i < group.length).sort((a, b) => a - b);
+                    if (validIndices.length === 0) return { teams: group, gaps: [] };
+
+                    const teams = validIndices.map(i => group[i]);
+                    const gaps: number[] = [];
+                    for (let i = 1; i < validIndices.length; i++) {
+                        if (validIndices[i] > validIndices[i - 1] + 1) {
+                            gaps.push(i);
+                        }
+                    }
+
+                    return { teams, gaps };
+                };
+
+                const { teams: visibleGroup, gaps } = getVisibleTeams();
+                const hasMore = visibleGroup.length < group.length;
+
+                return (
                 <div key={groupIndex} className="w-full">
                     {/* Only show group name if there are multiple groups (e.g. AFCON) */}
                     {standings.length > 1 && (
@@ -65,64 +104,88 @@ const Standings: React.FC<StandingsProps> = ({ standings }) => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {group.map((team) => (
-                                    <tr key={team.team.id} className="group hover:bg-white/5 transition-colors border-b border-white/5 last:border-0">
-                                        <td className="sticky left-0 z-10 bg-[#0a0a0a] group-hover:bg-[#121212] py-1.5 px-1 w-8 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.5)] transition-colors">
-                                            <span
-                                                className={`flex items-center justify-center w-5 h-5 text-[10px] rounded-full font-medium mx-auto ${team.rank <= 4 ? 'bg-blue-600/20 text-blue-400' :
-                                                    team.rank >= group.length - 2 ? 'bg-red-600/20 text-red-400' :
-                                                        'text-gray-400'
-                                                    }`}
-                                            >
-                                                {team.rank}
-                                            </span>
-                                        </td>
-                                        <td className="sticky left-8 z-10 bg-[#0a0a0a] group-hover:bg-[#121212] py-1.5 px-1 shadow-[4px_0_8px_-2px_rgba(0,0,0,0.8)] transition-colors">
-                                            <div className="flex items-center space-x-2">
-                                                <img
-                                                    src={team.team.logo}
-                                                    alt={team.team.name + ""}
-                                                    className="w-5 h-5 object-contain"
-                                                />
-                                                <span className="font-medium text-gray-200 truncate max-w-[100px] sm:max-w-[140px] text-xs leading-tight">
-                                                    {team.team.name}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="py-1.5 px-0.5 text-center text-gray-300">{team.all.played}</td>
-                                        <td className="py-1.5 px-0.5 text-center text-gray-400">{team.all.win}</td>
-                                        <td className="py-1.5 px-0.5 text-center text-gray-400">{team.all.draw}</td>
-                                        <td className="py-1.5 px-0.5 text-center text-gray-400">{team.all.lose}</td>
-                                        <td className="py-1.5 px-0.5 text-center text-gray-300 font-medium">{team.all.goals?.for || 0}</td>
-                                        <td className="py-1.5 px-0.5 text-center text-gray-400">{team.all.goals?.against || 0}</td>
-                                        <td className={`py-1.5 px-0.5 text-center font-medium ${team.goalsDiff > 0 ? 'text-green-400' :
-                                            team.goalsDiff < 0 ? 'text-red-400' : 'text-gray-400'
-                                            }`}>
-                                            {team.goalsDiff > 0 ? `+${team.goalsDiff}` : team.goalsDiff}
-                                        </td>
-                                        <td className="py-1.5 px-0.5 text-center">
-                                            <div className="flex justify-center space-x-0.5">
-                                                {team.form?.split('').slice(-5).map((result, i) => (
+                                {visibleGroup.map((team, idx) => {
+                                    const isTarget = team.team.id === homeTeamId || team.team.id === awayTeamId;
+                                    const bgColor = isTarget ? "bg-[#eab308]" : "bg-[#0a0a0a] group-hover:bg-[#121212]";
+                                    const textColorPrimary = isTarget ? "text-black" : "text-gray-200";
+                                    const textColorSecondary = isTarget ? "text-black/80" : "text-gray-400";
+                                    const textColorTertiary = isTarget ? "text-black/70" : "text-gray-300";
+
+                                    return (
+                                        <React.Fragment key={team.team.id}>
+                                            {gaps.includes(idx) && (
+                                                <tr className="border-b border-white/5 bg-[#0a0a0a]/50">
+                                                    <td colSpan={11} className="py-1 text-center text-gray-500 text-xs tracking-widest sticky left-0 z-10 w-full shadow-[2px_0_5px_-2px_rgba(0,0,0,0.5)]">···</td>
+                                                </tr>
+                                            )}
+                                            <tr className={`group transition-colors border-b border-white/5 last:border-0 ${isTarget ? 'bg-[#eab308]' : 'hover:bg-white/5'}`}>
+                                                <td className={`sticky left-0 z-10 py-1.5 px-1 w-8 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.5)] transition-colors ${bgColor}`}>
                                                     <span
-                                                        key={i}
-                                                        className={`w-1.5 h-1.5 rounded-full ${result === 'W' ? 'bg-green-500' :
-                                                            result === 'D' ? 'bg-orange-500' :
-                                                                'bg-red-500'
+                                                        className={`flex items-center justify-center w-5 h-5 text-[10px] rounded-full font-medium mx-auto ${isTarget ? 'text-black' : (team.rank <= 4 ? 'bg-blue-600/20 text-blue-400' :
+                                                            team.rank >= group.length - 2 ? 'bg-red-600/20 text-red-400' :
+                                                                'text-gray-400')
                                                             }`}
-                                                    />
-                                                ))}
-                                            </div>
-                                        </td>
-                                        <td className="sticky right-0 z-10 bg-[#0a0a0a] group-hover:bg-[#121212] py-1.5 px-1 md:px-2 text-center font-bold text-gray-200 shadow-[-4px_0_8px_-2px_rgba(0,0,0,0.8)] transition-colors">
-                                            {team.points}
-                                        </td>
-                                    </tr>
-                                ))}
+                                                    >
+                                                        {team.rank}
+                                                    </span>
+                                                </td>
+                                                <td className={`sticky left-8 z-10 py-1.5 px-1 shadow-[4px_0_8px_-2px_rgba(0,0,0,0.8)] transition-colors ${bgColor}`}>
+                                                    <div className="flex items-center space-x-2">
+                                                        <img
+                                                            src={team.team.logo}
+                                                            alt={team.team.name + ""}
+                                                            className="w-5 h-5 object-contain"
+                                                        />
+                                                        <span className={`font-bold truncate max-w-[100px] sm:max-w-[140px] text-xs leading-tight ${textColorPrimary}`}>
+                                                            {team.team.name}
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td className={`py-1.5 px-0.5 text-center ${textColorTertiary}`}>{team.all.played}</td>
+                                                <td className={`py-1.5 px-0.5 text-center ${textColorSecondary}`}>{team.all.win}</td>
+                                                <td className={`py-1.5 px-0.5 text-center ${textColorSecondary}`}>{team.all.draw}</td>
+                                                <td className={`py-1.5 px-0.5 text-center ${textColorSecondary}`}>{team.all.lose}</td>
+                                                <td className={`py-1.5 px-0.5 text-center font-bold ${textColorPrimary}`}>{team.all.goals?.for || 0}</td>
+                                                <td className={`py-1.5 px-0.5 text-center ${textColorSecondary}`}>{team.all.goals?.against || 0}</td>
+                                                <td className={`py-1.5 px-0.5 text-center font-bold ${isTarget ? 'text-black' : (team.goalsDiff > 0 ? 'text-green-400' : team.goalsDiff < 0 ? 'text-red-400' : 'text-gray-400')}`}>
+                                                    {team.goalsDiff > 0 ? `+${team.goalsDiff}` : team.goalsDiff}
+                                                </td>
+                                                <td className="py-1.5 px-0.5 text-center">
+                                                    <div className="flex justify-center space-x-0.5">
+                                                        {team.form?.split('').slice(-5).map((result, i) => (
+                                                            <span
+                                                                key={i}
+                                                                className={`w-1.5 h-1.5 rounded-full ${result === 'W' ? 'bg-green-500' :
+                                                                    result === 'D' ? 'bg-yellow-500' :
+                                                                        'bg-red-500'
+                                                                    }`}
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                </td>
+                                                <td className={`sticky right-0 z-10 py-1.5 px-1 md:px-2 text-center font-bold shadow-[-4px_0_8px_-2px_rgba(0,0,0,0.8)] transition-colors ${bgColor} ${textColorPrimary}`}>
+                                                    {team.points}
+                                                </td>
+                                            </tr>
+                                        </React.Fragment>
+                                    );
+                                })}
                             </tbody>
                         </table>
                     </div>
+                    {hasMore && (
+                        <div className="flex justify-center mt-2">
+                            <button
+                                onClick={() => setShowAll(true)}
+                                className="px-6 py-2 text-xs font-bold text-gray-800 bg-gray-200 hover:bg-white rounded-full shadow transition-all"
+                            >
+                                View all
+                            </button>
+                        </div>
+                    )}
                 </div>
-            ))}
+                );
+            })}
         </div >
     );
 };

@@ -183,7 +183,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                             </h3>
                         </div>
                         <div>
-                            <Standings standings={data.standings || []} />
+                            <Standings standings={data.standings || []} homeTeamId={data.homeTeam.id} awayTeamId={data.awayTeam.id} />
                         </div>
                     </div>
                 )}
