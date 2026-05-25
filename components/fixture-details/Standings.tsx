@@ -39,9 +39,15 @@ const Standings: React.FC<StandingsProps> = ({ standings, homeTeamId, awayTeamId
         );
     }
 
+    const relevantGroups = standings.filter(group => {
+        if (!homeTeamId && !awayTeamId) return true;
+        return group.some(t => t.team.id === homeTeamId || t.team.id === awayTeamId);
+    });
+    const displayGroups = relevantGroups.length > 0 ? relevantGroups : standings;
+
     return (
         <div className="space-y-2 w-full animate-in fade-in duration-500">
-            {standings.map((group, groupIndex) => {
+            {displayGroups.map((group, groupIndex) => {
                 const getVisibleTeams = () => {
                     if (showAll || !homeTeamId || !awayTeamId) return { teams: group, gaps: [] };
 
@@ -106,10 +112,10 @@ const Standings: React.FC<StandingsProps> = ({ standings, homeTeamId, awayTeamId
                             <tbody>
                                 {visibleGroup.map((team, idx) => {
                                     const isTarget = team.team.id === homeTeamId || team.team.id === awayTeamId;
-                                    const bgColor = isTarget ? "bg-[#eab308]" : "bg-[#0a0a0a] group-hover:bg-[#121212]";
-                                    const textColorPrimary = isTarget ? "text-black" : "text-gray-200";
-                                    const textColorSecondary = isTarget ? "text-black/80" : "text-gray-400";
-                                    const textColorTertiary = isTarget ? "text-black/70" : "text-gray-300";
+                                    const bgColor = isTarget ? "bg-[#064e3b]" : "bg-[#0a0a0a] group-hover:bg-[#121212]";
+                                    const textColorPrimary = isTarget ? "text-emerald-400" : "text-gray-200";
+                                    const textColorSecondary = isTarget ? "text-emerald-100/70" : "text-gray-400";
+                                    const textColorTertiary = isTarget ? "text-emerald-100/90" : "text-gray-300";
 
                                     return (
                                         <React.Fragment key={team.team.id}>
@@ -118,10 +124,10 @@ const Standings: React.FC<StandingsProps> = ({ standings, homeTeamId, awayTeamId
                                                     <td colSpan={11} className="py-1 text-center text-gray-500 text-xs tracking-widest sticky left-0 z-10 w-full shadow-[2px_0_5px_-2px_rgba(0,0,0,0.5)]">···</td>
                                                 </tr>
                                             )}
-                                            <tr className={`group transition-colors border-b border-white/5 last:border-0 ${isTarget ? 'bg-[#eab308]' : 'hover:bg-white/5'}`}>
+                                            <tr className={`group transition-colors border-b border-white/5 last:border-0 ${isTarget ? 'bg-[#064e3b]' : 'hover:bg-white/5'}`}>
                                                 <td className={`sticky left-0 z-10 py-1.5 px-1 w-8 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.5)] transition-colors ${bgColor}`}>
                                                     <span
-                                                        className={`flex items-center justify-center w-5 h-5 text-[10px] rounded-full font-medium mx-auto ${isTarget ? 'text-black' : (team.rank <= 4 ? 'bg-blue-600/20 text-blue-400' :
+                                                        className={`flex items-center justify-center w-5 h-5 text-[10px] rounded-full font-medium mx-auto ${isTarget ? 'bg-white/20 text-white' : (team.rank <= 4 ? 'bg-blue-600/20 text-blue-400' :
                                                             team.rank >= group.length - 2 ? 'bg-red-600/20 text-red-400' :
                                                                 'text-gray-400')
                                                             }`}
@@ -147,7 +153,7 @@ const Standings: React.FC<StandingsProps> = ({ standings, homeTeamId, awayTeamId
                                                 <td className={`py-1.5 px-0.5 text-center ${textColorSecondary}`}>{team.all.lose}</td>
                                                 <td className={`py-1.5 px-0.5 text-center font-bold ${textColorPrimary}`}>{team.all.goals?.for || 0}</td>
                                                 <td className={`py-1.5 px-0.5 text-center ${textColorSecondary}`}>{team.all.goals?.against || 0}</td>
-                                                <td className={`py-1.5 px-0.5 text-center font-bold ${isTarget ? 'text-black' : (team.goalsDiff > 0 ? 'text-green-400' : team.goalsDiff < 0 ? 'text-red-400' : 'text-gray-400')}`}>
+                                                <td className={`py-1.5 px-0.5 text-center font-bold ${isTarget ? 'text-emerald-300' : (team.goalsDiff > 0 ? 'text-green-400' : team.goalsDiff < 0 ? 'text-red-400' : 'text-gray-400')}`}>
                                                     {team.goalsDiff > 0 ? `+${team.goalsDiff}` : team.goalsDiff}
                                                 </td>
                                                 <td className="py-1.5 px-0.5 text-center">
