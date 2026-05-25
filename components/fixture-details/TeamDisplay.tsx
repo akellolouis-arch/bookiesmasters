@@ -138,7 +138,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                 </div>
 
                 {/* MIDDLE ROW: Logos & Score */}
-                <div className="flex items-start justify-between w-full px-2 sm:px-8 md:px-16 lg:px-24">
+                <div className="flex items-start justify-between w-full px-0 sm:px-2 md:px-6 lg:px-10">
                     
                     {/* HOME TEAM */}
                     <div className="flex flex-col items-center min-w-0">
