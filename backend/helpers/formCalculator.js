@@ -39,7 +39,7 @@ export const calculateTeamForm = async (teamId) => {
             color = "#dc2626"; // red-600
         } else {
             result = "D";
-            color = "#f97316"; // orange-500
+            color = "#eab308"; // yellow-500
         }
 
         // Store result for form summary (ONLY for first 5)
