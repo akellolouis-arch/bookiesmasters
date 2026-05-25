@@ -133,9 +133,9 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                 <div className="mt-3 px-2 mb-2">
                     {/* Horizontal Progress Bar */}
                     <div className="w-full h-1.5 flex rounded-full overflow-hidden mb-3">
-                        {winPct > 0 && <div style={{ width: `${winPct}%` }} className="bg-green-500 h-full" />}
-                        {drawPct > 0 && <div style={{ width: `${drawPct}%` }} className="bg-yellow-500 h-full" />}
-                        {lossPct > 0 && <div style={{ width: `${lossPct}%` }} className="bg-red-500 h-full" />}
+                        <div className="flex-1 bg-green-500 h-full" />
+                        <div className="flex-1 bg-yellow-500 h-full" />
+                        <div className="flex-1 bg-red-500 h-full" />
                     </div>
                     
                     {/* Stats Columns */}
@@ -170,11 +170,11 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                 >
                     {showAll ? (
                         <>
-                            Show Less <ChevronUp size={14} />
+                            View less <ChevronUp size={14} />
                         </>
                     ) : (
                         <>
-                            Show More <ChevronDown size={14} />
+                            View all <ChevronDown size={14} />
                         </>
                     )}
                 </button>

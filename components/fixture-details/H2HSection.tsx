@@ -38,11 +38,40 @@ const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
     if (!h2h || h2h.length === 0)
         return <p className="text-center text-gray-400 mb-6">No H2H data available</p>;
 
+    const visibleMatches = h2h.slice(0, 5);
+
+    // Calculate Stats
+    const teamA = h2h[0].teams.home.name;
+    const teamB = h2h[0].teams.away.name;
+
+    let teamAWins = 0;
+    let teamBWins = 0;
+    let draws = 0;
+
+    visibleMatches.forEach(match => {
+        if (match.goals.home !== null && match.goals.away !== null) {
+            if (match.goals.home === match.goals.away) {
+                draws++;
+            } else if (match.goals.home > match.goals.away) {
+                if (match.teams.home.name === teamA) teamAWins++;
+                else teamBWins++;
+            } else if (match.goals.away > match.goals.home) {
+                if (match.teams.away.name === teamA) teamAWins++;
+                else teamBWins++;
+            }
+        }
+    });
+
+    const totalMatches = visibleMatches.length;
+    const teamAPct = totalMatches ? Math.round((teamAWins / totalMatches) * 100) : 0;
+    const drawPct = totalMatches ? Math.round((draws / totalMatches) * 100) : 0;
+    const teamBPct = totalMatches ? Math.round((teamBWins / totalMatches) * 100) : 0;
+
     return (
         <div className="mb-2 w-full animate-in fade-in duration-500">
             <h3 className="text-xs font-bold tracking-wide capitalize text-left text-emerald-200/70 mb-2 border-b border-white/10 pb-1">Head to Head</h3>
             <div className="flex flex-col">
-                {h2h.slice(0, 5).map((match, i) => {
+                {visibleMatches.map((match, i) => {
                     const matchDateObj = new Date(match.fixture.date);
                     const monthDay = matchDateObj.toLocaleDateString("en-US", {
                         month: "2-digit",
@@ -90,6 +119,40 @@ const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
                     );
                 })}
             </div>
+
+            {/* 📊 Form Summary */}
+            {totalMatches > 0 && (
+                <div className="mt-3 px-2 mb-2">
+                    {/* Horizontal Progress Bar */}
+                    <div className="w-full h-1.5 flex rounded-full overflow-hidden mb-3">
+                        <div className="flex-1 bg-green-500 h-full" />
+                        <div className="flex-1 bg-yellow-500 h-full" />
+                        <div className="flex-1 bg-blue-500 h-full" />
+                    </div>
+                    
+                    {/* Stats Columns */}
+                    <div className="flex justify-between text-center px-1 md:px-4">
+                        {/* Team A */}
+                        <div className="flex flex-col items-center">
+                            <span className="text-gray-200 text-[10px] sm:text-xs font-bold mb-1 max-w-[80px] sm:max-w-[100px] truncate">{teamA} {teamAWins}</span>
+                            <span className="text-gray-400 text-xs mb-1">{teamAPct}%</span>
+                            <div className="w-8 h-1 bg-green-500 rounded-full" />
+                        </div>
+                        {/* Draw */}
+                        <div className="flex flex-col items-center">
+                            <span className="text-gray-200 text-[10px] sm:text-xs font-bold mb-1">Draw {draws}</span>
+                            <span className="text-gray-400 text-xs mb-1">{drawPct}%</span>
+                            <div className="w-8 h-1 bg-yellow-500 rounded-full" />
+                        </div>
+                        {/* Team B */}
+                        <div className="flex flex-col items-center">
+                            <span className="text-gray-200 text-[10px] sm:text-xs font-bold mb-1 max-w-[80px] sm:max-w-[100px] truncate">{teamB} {teamBWins}</span>
+                            <span className="text-gray-400 text-xs mb-1">{teamBPct}%</span>
+                            <div className="w-8 h-1 bg-blue-500 rounded-full" />
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
