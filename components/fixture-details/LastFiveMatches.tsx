@@ -15,9 +15,10 @@ interface LastFiveMatchesProps {
     teamLogo?: string;
     teamName: string;
     matches: LastMatch[]; // Now contains 20 matches
+    subTitle?: string;
 }
 
-const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, matches }) => {
+const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, matches, subTitle }) => {
     const [showAll, setShowAll] = useState(false);
 
     if (!matches || matches.length === 0) {
@@ -35,9 +36,9 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
 
     return (
         <div className="mb-2 w-full animate-in fade-in duration-500">
-            {/* 🏆 Title + Team Logo centered */}
-            <div className="flex flex-col items-start mb-2 border-b border-white/10 pb-1">
-                <div className="flex items-center justify-start gap-2">
+            {/* 🏆 Title + Team Logo */}
+            <div className={`flex flex-col mb-2 border-b border-white/10 pb-1 items-start`}>
+                <div className={`flex items-center gap-2 justify-start`}>
                     {teamLogo && (
                         <img
                             src={teamLogo}
@@ -46,7 +47,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                         />
                     )}
                     <h4 className="text-xs font-bold text-emerald-200/70 tracking-wide capitalize">
-                        {teamName}
+                        {teamName} {subTitle && <span className="text-gray-400 font-normal ml-1">({subTitle})</span>}
                     </h4>
                 </div>
             </div>

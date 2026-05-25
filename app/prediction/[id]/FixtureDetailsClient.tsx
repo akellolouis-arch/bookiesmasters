@@ -156,6 +156,44 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                     </div>
                 </div>
 
+                {/* --- SPLIT HOME & AWAY MATCHES SECTION --- */}
+                <div className="mt-2">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
+                        {/* Home Matches Section */}
+                        <div className="space-y-2">
+                            <div className="flex justify-center mb-3">
+                                <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-amber-100 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide uppercase">
+                                    Home Matches
+                                </h3>
+                            </div>
+                            <div className="space-y-2">
+                                <LastFiveMatches
+                                    teamName={data.homeTeam.name}
+                                    teamLogo={data.homeTeam.logo}
+                                    matches={(data.homeTeam.allMatches || data.homeTeam.last5Matches || []).filter((m: any) => m.homeTeam.name === data.homeTeam.name)}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Away Matches Section */}
+                        <div className="space-y-2">
+                            <div className="flex justify-center mb-3">
+                                <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-amber-100 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide uppercase">
+                                    Away Matches
+                                </h3>
+                            </div>
+                            <div className="space-y-2">
+                                <LastFiveMatches
+                                    teamName={data.awayTeam.name}
+                                    teamLogo={data.awayTeam.logo}
+                                    matches={(data.awayTeam.allMatches || data.awayTeam.last5Matches || []).filter((m: any) => m.awayTeam.name === data.awayTeam.name)}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
 
                 {/* --- STANDINGS SECTION --- */}
                 {data.standings && data.standings.length > 0 && (
