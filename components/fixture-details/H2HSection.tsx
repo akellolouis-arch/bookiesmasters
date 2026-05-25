@@ -66,7 +66,7 @@ const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
                             </div>
 
                             {/* 2️⃣ Home Team */}
-                            <div className={`font-medium text-right pr-3 text-xs md:text-sm whitespace-normal break-words leading-tight ${match.teams.home.winner ? 'text-green-400 font-bold' : 'text-gray-300'}`}>
+                            <div className={`font-medium text-right pr-3 text-xs md:text-sm whitespace-normal break-words leading-tight ${match.teams.home.winner ? 'text-white' : 'text-gray-300'}`}>
                                 {match.teams.home.name}
                             </div>
 
@@ -83,7 +83,7 @@ const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
                             </div>
 
                             {/* 4️⃣ Away Team */}
-                            <div className={`font-medium text-left pl-3 text-xs md:text-sm whitespace-normal break-words leading-tight ${match.teams.away.winner ? 'text-green-400 font-bold' : 'text-gray-300'}`}>
+                            <div className={`font-medium text-left pl-3 text-xs md:text-sm whitespace-normal break-words leading-tight ${match.teams.away.winner ? 'text-white' : 'text-gray-300'}`}>
                                 {match.teams.away.name}
                             </div>
                         </div>

@@ -65,6 +65,9 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                     const bgClass = isEven ? "bg-[#0A0A0A]" : "bg-[#1E1E1E]";
                     const hoverClass = isEven ? "hover:bg-[#151515]" : "hover:bg-[#282828]";
 
+                    const homeWinner = m.score.home > m.score.away;
+                    const awayWinner = m.score.away > m.score.home;
+
                     return (
                         <div
                             key={i}
@@ -78,7 +81,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
 
                             {/* 2️⃣ Home Team */}
                             <div className="flex items-center justify-end gap-2 pr-3 min-w-0">
-                                <span className="font-medium text-gray-300 text-xs md:text-sm whitespace-normal break-words leading-tight text-right">{m.homeTeam.name}</span>
+                                <span className={`font-medium text-xs md:text-sm whitespace-normal break-words leading-tight text-right ${homeWinner ? 'text-white' : 'text-gray-300'}`}>{m.homeTeam.name}</span>
                                 {m.homeTeam.logo && (
                                     <img src={m.homeTeam.logo} alt={m.homeTeam.name} className="w-5 h-5 object-contain flex-shrink-0" />
                                 )}
@@ -104,7 +107,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                                 {m.awayTeam.logo && (
                                     <img src={m.awayTeam.logo} alt={m.awayTeam.name} className="w-5 h-5 object-contain flex-shrink-0" />
                                 )}
-                                <span className="font-medium text-gray-300 text-xs md:text-sm whitespace-normal break-words leading-tight text-left">{m.awayTeam.name}</span>
+                                <span className={`font-medium text-xs md:text-sm whitespace-normal break-words leading-tight text-left ${awayWinner ? 'text-white' : 'text-gray-300'}`}>{m.awayTeam.name}</span>
                             </div>
                         </div>
                     );
