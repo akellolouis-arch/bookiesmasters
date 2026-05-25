@@ -45,8 +45,7 @@ const Events: React.FC<EventsProps> = ({ events, homeTeamId, status, score }) =>
 
     return (
         <div className="w-full relative py-1">
-            {/* Center Line */}
-            <div className="absolute left-1/2 top-4 bottom-4 w-px bg-white/5 transform -translate-x-1/2"></div>
+
 
             <div className="space-y-1">
                 {(() => {
@@ -79,40 +78,46 @@ const Events: React.FC<EventsProps> = ({ events, homeTeamId, status, score }) =>
                         renderItems.push(
                             <div key={`evt-${idx}`} className="flex items-center w-full">
                                 {/* Home Side */}
-                                <div className="flex-1 flex justify-end pr-3 sm:pr-6 items-center">
+                                <div className="flex-1 flex justify-between pr-1 sm:pr-2 py-1 border-r border-white/5 items-center">
                                     {isHome && (
-                                        <div className="flex items-center gap-1.5 sm:gap-2">
-                                            <div className="text-right">
+                                        <>
+                                            <div className="text-left pl-1">
                                                 {playerName && <div className="text-xs text-gray-200 font-medium leading-tight">{playerName}</div>}
                                                 {!isGoal && <div className="text-[11px] text-gray-500">{event.detail}</div>}
                                                 {assistName && (
                                                     <div className="text-[10px] text-gray-500">Assist: {assistName}</div>
                                                 )}
                                             </div>
-                                            <div className="w-4 flex justify-center shrink-0">{eventIcon}</div>
-                                        </div>
+                                            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                                                <div className="w-4 flex justify-center shrink-0">{eventIcon}</div>
+                                                <div className="text-[10px] sm:text-[11px] font-bold text-gray-400 w-5 sm:w-6 text-right shrink-0">
+                                                    {event.time?.elapsed || 0}'
+                                                    {event.time?.extra ? <span className="text-[9px] text-gray-500 ml-0.5">+{event.time.extra}</span> : ''}
+                                                </div>
+                                            </div>
+                                        </>
                                     )}
                                 </div>
 
-                                {/* Time */}
-                                <div className="relative z-10 w-7 h-7 flex-shrink-0 rounded-full bg-[#0a0a0a] flex items-center justify-center text-xs font-bold text-gray-400">
-                                    {event.time?.elapsed || 0}'
-                                    {event.time?.extra ? <span className="text-[9px] text-gray-500 ml-0.5">+{event.time.extra}</span> : ''}
-                                </div>
-
                                 {/* Away Side */}
-                                <div className="flex-1 flex justify-start pl-3 sm:pl-6 items-center">
+                                <div className="flex-1 flex justify-between pl-1 sm:pl-2 py-1 items-center">
                                     {!isHome && (
-                                        <div className="flex items-center gap-1.5 sm:gap-2">
-                                            <div className="w-4 flex justify-center shrink-0">{eventIcon}</div>
-                                            <div className="text-left">
+                                        <>
+                                            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                                                <div className="text-[10px] sm:text-[11px] font-bold text-gray-400 w-5 sm:w-6 text-left shrink-0">
+                                                    {event.time?.elapsed || 0}'
+                                                    {event.time?.extra ? <span className="text-[9px] text-gray-500 ml-0.5">+{event.time.extra}</span> : ''}
+                                                </div>
+                                                <div className="w-4 flex justify-center shrink-0">{eventIcon}</div>
+                                            </div>
+                                            <div className="text-right pr-1">
                                                 {playerName && <div className="text-xs text-gray-200 font-medium leading-tight">{playerName}</div>}
                                                 {!isGoal && <div className="text-[11px] text-gray-500">{event.detail}</div>}
                                                 {assistName && (
                                                     <div className="text-[10px] text-gray-500">Assist: {assistName}</div>
                                                 )}
                                             </div>
-                                        </div>
+                                        </>
                                     )}
                                 </div>
                             </div>
