@@ -79,18 +79,18 @@ const Events: React.FC<EventsProps> = ({ events, homeTeamId, status, score }) =>
                         renderItems.push(
                             <div key={`evt-${idx}`} className="flex items-center w-full">
                                 {/* Home Side */}
-                                <div className="flex-1 flex justify-end pr-2 items-center space-x-1">
+                                <div className="flex-1 flex justify-start pr-2 items-center">
                                     {isHome && (
-                                        <>
-                                            <div className="text-right">
+                                        <div className="flex items-center gap-1.5 sm:gap-2 pl-1 sm:pl-2">
+                                            <div className="w-4 flex justify-center shrink-0">{eventIcon}</div>
+                                            <div className="text-left">
                                                 {playerName && <div className="text-xs text-gray-200 font-medium leading-tight">{playerName}</div>}
                                                 {!isGoal && <div className="text-[11px] text-gray-500">{event.detail}</div>}
                                                 {assistName && (
                                                     <div className="text-[10px] text-gray-500">Assist: {assistName}</div>
                                                 )}
                                             </div>
-                                            <div className="w-5 flex justify-center">{eventIcon}</div>
-                                        </>
+                                        </div>
                                     )}
                                 </div>
 
@@ -101,18 +101,18 @@ const Events: React.FC<EventsProps> = ({ events, homeTeamId, status, score }) =>
                                 </div>
 
                                 {/* Away Side */}
-                                <div className="flex-1 flex justify-start pl-2 items-center space-x-2">
+                                <div className="flex-1 flex justify-end pl-2 items-center">
                                     {!isHome && (
-                                        <>
-                                            <div className="w-5 flex justify-center">{eventIcon}</div>
-                                            <div className="text-left">
+                                        <div className="flex items-center gap-1.5 sm:gap-2 pr-1 sm:pr-2">
+                                            <div className="text-right">
                                                 {playerName && <div className="text-xs text-gray-200 font-medium leading-tight">{playerName}</div>}
                                                 {!isGoal && <div className="text-[11px] text-gray-500">{event.detail}</div>}
                                                 {assistName && (
                                                     <div className="text-[10px] text-gray-500">Assist: {assistName}</div>
                                                 )}
                                             </div>
-                                        </>
+                                            <div className="w-4 flex justify-center shrink-0">{eventIcon}</div>
+                                        </div>
                                     )}
                                 </div>
                             </div>

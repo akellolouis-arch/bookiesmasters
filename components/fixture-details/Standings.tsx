@@ -38,7 +38,7 @@ const Standings: React.FC<StandingsProps> = ({ standings }) => {
                 <div key={groupIndex} className="w-full">
                     {/* Only show group name if there are multiple groups (e.g. AFCON) */}
                     {standings.length > 1 && (
-                        <h3 className="text-gray-200 font-semibold mb-1 px-2">
+                        <h3 className="text-[10px] sm:text-xs font-bold tracking-wide capitalize text-gray-200 mb-2 px-1">
                             {group[0].group}
                         </h3>
                     )}
