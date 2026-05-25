@@ -48,20 +48,20 @@ const Standings: React.FC<StandingsProps> = ({ standings }) => {
                     )}
 
                     <div className="overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-                        <table className="w-full text-xs text-left min-w-[500px]">
+                        <table className="w-full text-xs text-left min-w-max">
                             <thead>
                                 <tr className="text-gray-400 border-b border-white/5">
                                     <th className="sticky left-0 z-20 bg-[#0a0a0a] py-1 px-1 w-8 text-center shadow-[2px_0_5px_-2px_rgba(0,0,0,0.5)]">#</th>
-                                    <th className="sticky left-8 z-20 bg-[#0a0a0a] py-1 px-1 text-left shadow-[4px_0_8px_-2px_rgba(0,0,0,0.8)]">Team</th>
-                                    <th className="py-1 px-2 text-center whitespace-nowrap">MP</th>
-                                    <th className="py-1 px-2 text-center whitespace-nowrap">W</th>
-                                    <th className="py-1 px-2 text-center whitespace-nowrap">D</th>
-                                    <th className="py-1 px-2 text-center whitespace-nowrap">L</th>
-                                    <th className="py-1 px-2 text-center whitespace-nowrap">GF</th>
-                                    <th className="py-1 px-2 text-center whitespace-nowrap">GA</th>
-                                    <th className="py-1 px-2 text-center whitespace-nowrap">GD</th>
-                                    <th className="py-1 px-2 text-center whitespace-nowrap">Form</th>
-                                    <th className="sticky right-0 z-20 bg-[#0a0a0a] py-1 px-2 text-center font-bold shadow-[-4px_0_8px_-2px_rgba(0,0,0,0.8)]">Pts</th>
+                                    <th className="sticky left-8 z-20 bg-[#0a0a0a] py-1 px-1 text-left shadow-[4px_0_8px_-2px_rgba(0,0,0,0.8)] w-full">Team</th>
+                                    <th className="py-1 px-1 text-center whitespace-nowrap">MP</th>
+                                    <th className="py-1 px-1 text-center whitespace-nowrap">W</th>
+                                    <th className="py-1 px-1 text-center whitespace-nowrap">D</th>
+                                    <th className="py-1 px-1 text-center whitespace-nowrap">L</th>
+                                    <th className="py-1 px-1 text-center whitespace-nowrap">GF</th>
+                                    <th className="py-1 px-1 text-center whitespace-nowrap">GA</th>
+                                    <th className="py-1 px-1 text-center whitespace-nowrap">GD</th>
+                                    <th className="py-1 px-1 text-center whitespace-nowrap">Form</th>
+                                    <th className="sticky right-0 z-20 bg-[#0a0a0a] py-1 px-1 md:px-2 text-center font-bold shadow-[-4px_0_8px_-2px_rgba(0,0,0,0.8)]">Pts</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -89,18 +89,18 @@ const Standings: React.FC<StandingsProps> = ({ standings }) => {
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="py-1.5 px-2 text-center text-gray-300">{team.all.played}</td>
-                                        <td className="py-1.5 px-2 text-center text-gray-400">{team.all.win}</td>
-                                        <td className="py-1.5 px-2 text-center text-gray-400">{team.all.draw}</td>
-                                        <td className="py-1.5 px-2 text-center text-gray-400">{team.all.lose}</td>
-                                        <td className="py-1.5 px-2 text-center text-gray-300 font-medium">{team.all.goals?.for || 0}</td>
-                                        <td className="py-1.5 px-2 text-center text-gray-400">{team.all.goals?.against || 0}</td>
-                                        <td className={`py-1.5 px-2 text-center font-medium ${team.goalsDiff > 0 ? 'text-green-400' :
+                                        <td className="py-1.5 px-1 text-center text-gray-300">{team.all.played}</td>
+                                        <td className="py-1.5 px-1 text-center text-gray-400">{team.all.win}</td>
+                                        <td className="py-1.5 px-1 text-center text-gray-400">{team.all.draw}</td>
+                                        <td className="py-1.5 px-1 text-center text-gray-400">{team.all.lose}</td>
+                                        <td className="py-1.5 px-1 text-center text-gray-300 font-medium">{team.all.goals?.for || 0}</td>
+                                        <td className="py-1.5 px-1 text-center text-gray-400">{team.all.goals?.against || 0}</td>
+                                        <td className={`py-1.5 px-1 text-center font-medium ${team.goalsDiff > 0 ? 'text-green-400' :
                                             team.goalsDiff < 0 ? 'text-red-400' : 'text-gray-400'
                                             }`}>
                                             {team.goalsDiff > 0 ? `+${team.goalsDiff}` : team.goalsDiff}
                                         </td>
-                                        <td className="py-1.5 px-2 text-center">
+                                        <td className="py-1.5 px-1 text-center">
                                             <div className="flex justify-center space-x-0.5">
                                                 {team.form?.split('').slice(-5).map((result, i) => (
                                                     <span
@@ -113,7 +113,7 @@ const Standings: React.FC<StandingsProps> = ({ standings }) => {
                                                 ))}
                                             </div>
                                         </td>
-                                        <td className="sticky right-0 z-10 bg-[#0a0a0a] group-hover:bg-[#121212] py-1.5 px-2 text-center font-bold text-gray-200 shadow-[-4px_0_8px_-2px_rgba(0,0,0,0.8)] transition-colors">
+                                        <td className="sticky right-0 z-10 bg-[#0a0a0a] group-hover:bg-[#121212] py-1.5 px-1 md:px-2 text-center font-bold text-gray-200 shadow-[-4px_0_8px_-2px_rgba(0,0,0,0.8)] transition-colors">
                                             {team.points}
                                         </td>
                                     </tr>

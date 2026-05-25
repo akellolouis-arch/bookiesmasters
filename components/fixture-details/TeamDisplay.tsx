@@ -138,10 +138,10 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                 </div>
 
                 {/* MIDDLE ROW: Logos & Score */}
-                <div className="flex items-start justify-center w-full px-1 sm:px-4 gap-2 sm:gap-4 md:gap-4">
+                <div className="flex items-start justify-between w-full px-2 sm:px-8 md:px-16 lg:px-24">
                     
                     {/* HOME TEAM */}
-                    <div className="flex flex-col items-center flex-1 min-w-0">
+                    <div className="flex flex-col items-center min-w-0">
                         {/* Logo Card */}
                         <div className="w-20 h-24 sm:w-28 sm:h-32 md:w-32 md:h-36 bg-white/5 rounded-[1.5rem] sm:rounded-[2rem] border border-white/10 flex items-center justify-center p-3 sm:p-4 shadow-lg backdrop-blur-sm">
                             <div className="relative w-full h-full filter drop-shadow-md">
@@ -197,7 +197,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                     </div>
 
                     {/* AWAY TEAM */}
-                    <div className="flex flex-col items-center flex-1 min-w-0">
+                    <div className="flex flex-col items-center min-w-0">
                         {/* Logo Card */}
                         <div className="w-20 h-24 sm:w-28 sm:h-32 md:w-32 md:h-36 bg-white/5 rounded-[1.5rem] sm:rounded-[2rem] border border-white/10 flex items-center justify-center p-3 sm:p-4 shadow-lg backdrop-blur-sm">
                             <div className="relative w-full h-full filter drop-shadow-md">
