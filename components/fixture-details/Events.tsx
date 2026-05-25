@@ -90,7 +90,7 @@ const Events: React.FC<EventsProps> = ({ events, homeTeamId, status, score }) =>
                                             </div>
                                             <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                                                 <div className="w-4 flex justify-center shrink-0">{eventIcon}</div>
-                                                <div className="text-[10px] sm:text-[11px] font-bold text-gray-400 w-5 sm:w-6 text-right shrink-0">
+                                                <div className="text-[10px] sm:text-[11px] font-bold text-gray-400 text-right shrink-0 whitespace-nowrap min-w-[20px]">
                                                     {event.time?.elapsed || 0}'
                                                     {event.time?.extra ? <span className="text-[9px] text-gray-500 ml-0.5">+{event.time.extra}</span> : ''}
                                                 </div>
@@ -104,7 +104,7 @@ const Events: React.FC<EventsProps> = ({ events, homeTeamId, status, score }) =>
                                     {!isHome && (
                                         <>
                                             <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                                                <div className="text-[10px] sm:text-[11px] font-bold text-gray-400 w-5 sm:w-6 text-left shrink-0">
+                                                <div className="text-[10px] sm:text-[11px] font-bold text-gray-400 text-left shrink-0 whitespace-nowrap min-w-[20px]">
                                                     {event.time?.elapsed || 0}'
                                                     {event.time?.extra ? <span className="text-[9px] text-gray-500 ml-0.5">+{event.time.extra}</span> : ''}
                                                 </div>
