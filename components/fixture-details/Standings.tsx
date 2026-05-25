@@ -180,10 +180,10 @@ const Standings: React.FC<StandingsProps> = ({ standings, homeTeamId, awayTeamId
                         </table>
                     </div>
                     {(hasMore || showAll) && (
-                        <div className="flex justify-center mt-2">
+                        <div className="flex justify-center mt-3 mb-1">
                             <button
                                 onClick={() => setShowAll(!showAll)}
-                                className="px-6 py-2 text-xs font-bold text-gray-800 bg-gray-200 hover:bg-white rounded-full shadow transition-all"
+                                className="px-4 py-1.5 text-[10px] sm:text-xs font-bold text-gray-400 bg-white/5 hover:bg-white/10 hover:text-white rounded-full transition-all"
                             >
                                 {showAll ? "View less" : "View all"}
                             </button>

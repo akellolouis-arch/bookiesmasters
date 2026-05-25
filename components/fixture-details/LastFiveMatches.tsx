@@ -1,6 +1,5 @@
 
 import React, { useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
 
 interface LastMatch {
     date: string;
@@ -163,21 +162,15 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
             )}
 
             {/* Show More Button */}
-            {hasMore && (
-                <button
-                    onClick={() => setShowAll(!showAll)}
-                    className="w-full mt-3 py-2 text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 rounded-lg flex items-center justify-center gap-1 transition-all"
-                >
-                    {showAll ? (
-                        <>
-                            View less <ChevronUp size={14} />
-                        </>
-                    ) : (
-                        <>
-                            View all <ChevronDown size={14} />
-                        </>
-                    )}
-                </button>
+            {(hasMore || showAll) && (
+                <div className="flex justify-center mt-3 mb-1">
+                    <button
+                        onClick={() => setShowAll(!showAll)}
+                        className="px-4 py-1.5 text-[10px] sm:text-xs font-bold text-gray-400 bg-white/5 hover:bg-white/10 hover:text-white rounded-full transition-all"
+                    >
+                        {showAll ? "View less" : "View all"}
+                    </button>
+                </div>
             )}
         </div>
     );
