@@ -81,7 +81,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
 
                             {/* 2️⃣ Home Team */}
                             <div className="flex items-center justify-end gap-2 pr-3 min-w-0">
-                                <span className={`font-medium text-xs md:text-sm whitespace-normal break-words leading-tight text-right ${homeWinner ? 'text-white' : 'text-gray-300'}`}>{m.homeTeam.name}</span>
+                                <span className={`font-medium text-xs md:text-sm whitespace-normal break-words leading-tight text-right ${homeWinner ? 'text-white drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`}>{m.homeTeam.name}</span>
                                 {m.homeTeam.logo && (
                                     <img src={m.homeTeam.logo} alt={m.homeTeam.name} className="w-5 h-5 object-contain flex-shrink-0" />
                                 )}
@@ -107,7 +107,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                                 {m.awayTeam.logo && (
                                     <img src={m.awayTeam.logo} alt={m.awayTeam.name} className="w-5 h-5 object-contain flex-shrink-0" />
                                 )}
-                                <span className={`font-medium text-xs md:text-sm whitespace-normal break-words leading-tight text-left ${awayWinner ? 'text-white' : 'text-gray-300'}`}>{m.awayTeam.name}</span>
+                                <span className={`font-medium text-xs md:text-sm whitespace-normal break-words leading-tight text-left ${awayWinner ? 'text-white drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`}>{m.awayTeam.name}</span>
                             </div>
                         </div>
                     );
