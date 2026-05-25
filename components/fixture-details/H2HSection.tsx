@@ -40,7 +40,7 @@ const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
 
     return (
         <div className="mb-2 w-full animate-in fade-in duration-500">
-            <h3 className="text-[10px] sm:text-xs font-bold tracking-wide capitalize text-left text-emerald-200/70 mb-2 border-b border-white/10 pb-1">Head to Head</h3>
+            <h3 className="text-xs font-bold tracking-wide capitalize text-left text-emerald-200/70 mb-2 border-b border-white/10 pb-1">Head to Head</h3>
             <div className="flex flex-col">
                 {h2h.slice(0, 5).map((match, i) => {
                     const matchDateObj = new Date(match.fixture.date);

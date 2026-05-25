@@ -45,7 +45,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                             className="w-6 h-6 object-contain"
                         />
                     )}
-                    <h4 className="text-[10px] sm:text-xs font-bold text-emerald-200/70 tracking-wide capitalize">
+                    <h4 className="text-xs font-bold text-emerald-200/70 tracking-wide capitalize">
                         {teamName}
                     </h4>
                 </div>
