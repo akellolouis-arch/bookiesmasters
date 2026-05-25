@@ -123,7 +123,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                 <div className="text-center mb-1 px-4">
                     {/* League Badge (Moved to Top) */}
                     {league && (
-                        <div className="mb-1 inline-block px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-gray-200 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide uppercase">
+                        <div className="mb-1 inline-block px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-amber-100 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide uppercase">
                             {league}
                         </div>
                     )}
