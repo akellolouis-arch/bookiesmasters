@@ -96,10 +96,43 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
 
                 </div>
 
+                {/* --- OVERVIEW SECTION --- */}
+                <div className="mt-2">
+                    {/* Match Events */}
+                    {displayEvents && displayEvents.length > 0 && (
+                        <div className="space-y-2">
+                            <div>
+                                <div className="flex justify-center mb-3">
+                                    <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-gray-200 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide uppercase">
+                                        Match Events
+                                    </h3>
+                                </div>
+                                <div>
+                                    <Events events={displayEvents} homeTeamId={data.homeTeam.id} awayTeamId={data.awayTeam.id} status={data.status} score={data.score} />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
                 {/* --- H2H & FORM SECTION --- */}
                 <div className="mt-2">
                     <div className={`grid grid-cols-1 ${data.h2h && data.h2h.length > 0 ? "lg:grid-cols-2" : "lg:grid-cols-1"} gap-2`}>
-                        {/* Column 1: Recent Form */}
+                        {/* Column 1: Head to Head */}
+                        {data.h2h && data.h2h.length > 0 && (
+                            <div className="space-y-2">
+                                <div className="flex justify-center mb-3">
+                                    <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-gray-200 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide uppercase">
+                                        Head to Head
+                                    </h3>
+                                </div>
+                                <div>
+                                    <H2HSection h2h={data.h2h} />
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Column 2: Recent Form */}
                         <div className="space-y-2">
                             <div className="flex justify-center mb-3">
                                 <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-gray-200 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide uppercase">
@@ -120,41 +153,9 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                                 />
                             </div>
                         </div>
-
-                        {/* Column 2: Head to Head */}
-                        {data.h2h && data.h2h.length > 0 && (
-                            <div className="space-y-2">
-                                <div className="flex justify-center mb-3">
-                                    <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-gray-200 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide uppercase">
-                                        Head to Head
-                                    </h3>
-                                </div>
-                                <div>
-                                    <H2HSection h2h={data.h2h} />
-                                </div>
-                            </div>
-                        )}
                     </div>
                 </div>
 
-                {/* --- OVERVIEW SECTION --- */}
-                <div className="mt-2">
-                    {/* Match Events */}
-                    {displayEvents && displayEvents.length > 0 && (
-                        <div className="space-y-2">
-                            <div>
-                                <div className="flex justify-center mb-3">
-                                    <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-gray-200 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide uppercase">
-                                        Match Events
-                                    </h3>
-                                </div>
-                                <div>
-                                    <Events events={displayEvents} homeTeamId={data.homeTeam.id} awayTeamId={data.awayTeam.id} status={data.status} score={data.score} />
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </div>
 
                 {/* --- INJURIES SECTION --- */}
                 {displayInjuries && displayInjuries.length > 0 && (
