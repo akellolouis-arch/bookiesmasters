@@ -78,10 +78,10 @@ const Events: React.FC<EventsProps> = ({ events, homeTeamId, status, score }) =>
                         renderItems.push(
                             <div key={`evt-${idx}`} className="flex items-center w-full">
                                 {/* Home Side */}
-                                <div className="flex-1 flex justify-between pr-1 sm:pr-2 py-1 border-r border-white/5 items-center">
+                                <div className="flex-1 flex justify-between pr-3 sm:pr-5 py-1 border-r border-white/5 items-center">
                                     {isHome && (
                                         <>
-                                            <div className="text-left pl-1">
+                                            <div className="text-left pl-2 sm:pl-4">
                                                 {playerName && <div className="text-xs text-gray-200 font-medium leading-tight">{playerName}</div>}
                                                 {!isGoal && <div className="text-[11px] text-gray-500">{event.detail}</div>}
                                                 {assistName && (
@@ -100,7 +100,7 @@ const Events: React.FC<EventsProps> = ({ events, homeTeamId, status, score }) =>
                                 </div>
 
                                 {/* Away Side */}
-                                <div className="flex-1 flex justify-between pl-1 sm:pl-2 py-1 items-center">
+                                <div className="flex-1 flex justify-between pl-3 sm:pl-5 py-1 items-center">
                                     {!isHome && (
                                         <>
                                             <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
@@ -110,7 +110,7 @@ const Events: React.FC<EventsProps> = ({ events, homeTeamId, status, score }) =>
                                                 </div>
                                                 <div className="w-4 flex justify-center shrink-0">{eventIcon}</div>
                                             </div>
-                                            <div className="text-right pr-1">
+                                            <div className="text-right pr-2 sm:pr-4">
                                                 {playerName && <div className="text-xs text-gray-200 font-medium leading-tight">{playerName}</div>}
                                                 {!isGoal && <div className="text-[11px] text-gray-500">{event.detail}</div>}
                                                 {assistName && (
