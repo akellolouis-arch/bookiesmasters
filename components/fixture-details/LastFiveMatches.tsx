@@ -34,6 +34,19 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
     const visibleMatches = showAll ? matches : matches.slice(0, 5);
     const hasMore = matches.length > 5;
 
+    // Calculate Form Summary
+    const totalMatches = visibleMatches.length;
+    let wins = 0, draws = 0, losses = 0;
+    visibleMatches.forEach(m => {
+        if (m.result === "W") wins++;
+        else if (m.result === "D") draws++;
+        else if (m.result === "L") losses++;
+    });
+
+    const winPct = totalMatches ? Math.round((wins / totalMatches) * 100) : 0;
+    const drawPct = totalMatches ? Math.round((draws / totalMatches) * 100) : 0;
+    const lossPct = totalMatches ? Math.round((losses / totalMatches) * 100) : 0;
+
     return (
         <div className="mb-2 w-full animate-in fade-in duration-500">
             {/* 🏆 Title + Team Logo */}
@@ -114,6 +127,40 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                     );
                 })}
             </div>
+
+            {/* 📊 Form Summary */}
+            {totalMatches > 0 && (
+                <div className="mt-3 px-2 mb-2">
+                    {/* Horizontal Progress Bar */}
+                    <div className="w-full h-1.5 flex rounded-full overflow-hidden mb-3">
+                        {winPct > 0 && <div style={{ width: `${winPct}%` }} className="bg-green-500 h-full" />}
+                        {drawPct > 0 && <div style={{ width: `${drawPct}%` }} className="bg-yellow-500 h-full" />}
+                        {lossPct > 0 && <div style={{ width: `${lossPct}%` }} className="bg-red-500 h-full" />}
+                    </div>
+                    
+                    {/* Stats Columns */}
+                    <div className="flex justify-between text-center px-4 md:px-8">
+                        {/* Win */}
+                        <div className="flex flex-col items-center">
+                            <span className="text-gray-200 text-xs font-bold mb-1">Win {wins}</span>
+                            <span className="text-gray-400 text-xs mb-1">{winPct}%</span>
+                            <div className="w-8 h-1 bg-green-500 rounded-full" />
+                        </div>
+                        {/* Draw */}
+                        <div className="flex flex-col items-center">
+                            <span className="text-gray-200 text-xs font-bold mb-1">Draw {draws}</span>
+                            <span className="text-gray-400 text-xs mb-1">{drawPct}%</span>
+                            <div className="w-8 h-1 bg-yellow-500 rounded-full" />
+                        </div>
+                        {/* Lost */}
+                        <div className="flex flex-col items-center">
+                            <span className="text-gray-200 text-xs font-bold mb-1">Lost {losses}</span>
+                            <span className="text-gray-400 text-xs mb-1">{lossPct}%</span>
+                            <div className="w-8 h-1 bg-red-500 rounded-full" />
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Show More Button */}
             {hasMore && (

@@ -8,7 +8,6 @@ import Events from "@/components/fixture-details/Events";
 import Standings from "@/components/fixture-details/Standings";
 import TeamDisplay from "@/components/fixture-details/TeamDisplay";
 import Injuries from "@/components/fixture-details/Injuries";
-import BetButton from "@/components/BetButton";
 
 type FixtureDetailsData = {
     fixtureId: number;
@@ -54,11 +53,6 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
 
     const data = swrData?.data ? { ...initialData, ...swrData.data } : initialData;
 
-    const isLive = data.status ? (["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(data.status) || data.status.includes("'")) : false;
-    const primaryOdds = (data.odds && data.odds.length > 0 && data.odds[0].markets && data.odds[0].markets.length > 0)
-        ? data.odds[0].markets[0].values
-        : undefined;
-
     const isFinishedCache = ["FT", "AET", "PEN"].includes(initialData.status);
     const hideStaleData = !isFinishedCache && !swrData;
 
@@ -80,21 +74,6 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                     league={data.league}
                     isLoading={hideStaleData}
                 />
-
-                {/* --- ODDS & ADVICE SECTION --- */}
-                <div className="flex flex-col gap-1 my-1">
-                    {/* Call To Action Box (Odds) */}
-                    <div className="flex flex-col items-center justify-center text-center">
-                        <div className="flex justify-center mb-2">
-                            <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-amber-100 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide uppercase">
-                                Prematch odds
-                            </h3>
-                        </div>
-                        <BetButton teamName={data.homeTeam.name} isLive={isLive} odds={primaryOdds} />
-                    </div>
-
-
-                </div>
 
                 {/* --- OVERVIEW SECTION --- */}
                 <div className="mt-2">
