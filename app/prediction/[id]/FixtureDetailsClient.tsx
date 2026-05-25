@@ -157,20 +157,6 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 </div>
 
 
-                {/* --- INJURIES SECTION --- */}
-                {displayInjuries && displayInjuries.length > 0 && (
-                    <div className="mt-2">
-                        <div className="flex justify-center mb-3">
-                            <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-amber-100 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide uppercase">
-                                Injuries & Suspensions
-                            </h3>
-                        </div>
-                        <div>
-                            <Injuries injuries={displayInjuries} />
-                        </div>
-                    </div>
-                )}
-
                 {/* --- STANDINGS SECTION --- */}
                 {data.standings && data.standings.length > 0 && (
                     <div className="mt-2">
@@ -181,6 +167,20 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                         </div>
                         <div>
                             <Standings standings={data.standings || []} />
+                        </div>
+                    </div>
+                )}
+
+                {/* --- INJURIES SECTION --- */}
+                {displayInjuries && displayInjuries.length > 0 && (
+                    <div className="mt-2">
+                        <div className="flex justify-center mb-3">
+                            <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-amber-100 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide uppercase">
+                                Injuries & Suspensions
+                            </h3>
+                        </div>
+                        <div>
+                            <Injuries injuries={displayInjuries} />
                         </div>
                     </div>
                 )}

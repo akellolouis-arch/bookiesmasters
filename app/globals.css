@@ -30,3 +30,8 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), sans-serif;
 }
+
+/* Hide footer globally when a loader is active */
+body:has(.global-loader) footer {
+  display: none !important;
+}
