@@ -63,25 +63,9 @@ export const getFixtureById = async (fixtureId) => {
             calculatedTip = fixtureDoc.customPrediction;
         } else if (fixtureDoc.dbPrediction) {
             calculatedTip = fixtureDoc.dbPrediction;
-        } else if (predictionData) {
-            const { win_or_draw, winner } = predictionData;
-            const homeName = matchData.teams.home.name;
-
-            if (win_or_draw === true) {
-                // Double Chance
-                if (winner && winner.name === homeName) {
-                    calculatedTip = "1X";
-                } else {
-                    calculatedTip = "X2";
-                }
-            } else {
-                // Single Choice
-                if (winner && winner.name === homeName) {
-                    calculatedTip = "1";
-                } else {
-                    calculatedTip = "2";
-                }
-            }
+        } else {
+            // We NO LONGER fall back to API 1X2 logic! If dbPrediction is missing, return N/A
+            calculatedTip = "N/A";
         }
 
         // 🔥 LIVE DATA CHECK

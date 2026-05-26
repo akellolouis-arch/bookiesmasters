@@ -16,13 +16,8 @@ async function runBackfill() {
         await mongoose.connect(MONGO_URI);
         console.log("Connected to MongoDB.");
 
-        // We only care about today and future fixtures
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        
         const fixtures = await Fixture.find({
-            "fixture.fixture.date": { $gte: today.toISOString() },
-            dbPrediction: { $exists: false } // Only backfill those missing it
+            dbPrediction: { $exists: false } // Backfill ALL missing fixtures
         });
 
         console.log(`Found ${fixtures.length} upcoming/recent fixtures missing dbPrediction.`);

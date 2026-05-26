@@ -27,21 +27,9 @@ export function resolvePredictionTip(fixtureDoc) {
     return fixtureDoc.dbPrediction;
   }
 
-  // 3. Fallback to old API logic (1X2) if dbPrediction is missing
-  const pred = fixtureDoc.prediction;
-
-  if (typeof pred === "string") {
-    tip = pred;
-  } else if (pred && typeof pred === "object") {
-    const { win_or_draw, winner } = pred;
-    const homeName = fx.teams.home.name;
-
-    if (win_or_draw === true) {
-      tip = winner && winner.name === homeName ? "1X" : "X2";
-    } else {
-      tip = winner && winner.name === homeName ? "1" : "2";
-    }
-  }
+  // 3. If dbPrediction is missing (e.g. backfill hasn't hit it yet), we do NOT fall back to 1X2.
+  // We simply return N/A until the background job processes it.
+  return "N/A";
 
   return tip;
 }
