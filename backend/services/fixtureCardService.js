@@ -76,6 +76,7 @@ export async function getFixturesGroupedByLeague(date) {
         "fixture.status": 1,
         "livescore": 1,
         "prediction": 1,
+        "dbPrediction": 1,
         "customPrediction": 1,
         customOdds: 1,
         // ⚡ OPTIMIZATION: Slice Odds immediately! Do not carry 50 bookmakers through pipeline.
@@ -147,6 +148,7 @@ export async function getFixturesGroupedByLeague(date) {
         "isVip": { $literal: false }, // Force False
         "creditCost": { $literal: 0 },
         "prediction": { $ifNull: ["$customPrediction", "$prediction"] },
+        "dbPrediction": 1,
         "customOdds": "$customOdds",
 
         "odds": {
@@ -240,6 +242,7 @@ export async function getLiveFixturesGroupedByLeague() {
         "fixture.status": 1,
         livescore: 1,
         prediction: 1,
+        dbPrediction: 1,
         customPrediction: 1,
         customOdds: 1,
         odds: {
