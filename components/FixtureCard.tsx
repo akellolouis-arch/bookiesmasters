@@ -50,88 +50,7 @@ export default function FixtureCard({
   const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(status) || status.includes("'");
   const isFinished = status === "FT";
 
-  function getOddsColor(
-    value: string | null,
-    allOdds: (string | null)[]
-  ): string {
-    if (!value) return "text-gray-400";
-    const num = parseFloat(value);
-    if (isNaN(num)) return "text-[#fb0]";
 
-    // Convert all odds to numbers, ignore nulls
-    const nums = allOdds.map(o => (o ? parseFloat(o) : NaN)).filter(n => !isNaN(n));
-    const max = Math.max(...nums);
-    const min = Math.min(...nums);
-
-    // Check for ties
-    const countMax = nums.filter(n => n === max).length;
-    const countMin = nums.filter(n => n === min).length;
-
-    if (num === min && countMin === 1) return "text-green-400"; // lowest unique → green 
-    if (num === max && countMax === 1) return "text-red-400";   // highest unique → red
-    return "text-[#fb0]"; // middle/tie → orange/gold
-  }
-
-  // ... (getTipStatus remains the same) ...
-  function getTipStatus(tip: string, scoreString: string | null, status: string): "WIN" | "LOSS" | "PENDING" {
-    if (!scoreString || status === "NS") return "PENDING";
-    const parts = scoreString.split(" - ");
-    if (parts.length !== 2) return "PENDING";
-    const h = parseInt(parts[0]);
-    const a = parseInt(parts[1]);
-    const t = tip.trim().toUpperCase();
-    if (t === "1") return h > a ? "WIN" : "LOSS";
-    if (t === "2") return a > h ? "WIN" : "LOSS";
-    if (t === "X") return h === a ? "WIN" : "LOSS";
-    if (t === "1X") return h >= a ? "WIN" : "LOSS";
-    if (t === "X2") return a >= h ? "WIN" : "LOSS";
-    if (t === "12") return h !== a ? "WIN" : "LOSS";
-    if (t.startsWith("OVER")) {
-      const line = parseFloat(t.split(" ")[1]);
-      if (!isNaN(line)) return (h + a) > line ? "WIN" : "LOSS";
-    }
-    if (t.startsWith("UNDER")) {
-      const line = parseFloat(t.split(" ")[1]);
-      if (!isNaN(line)) return (h + a) < line ? "WIN" : "LOSS";
-    }
-    if (t.startsWith("OV")) {
-      const line = parseFloat(t.replace("OV", ""));
-      if (!isNaN(line)) return (h + a) > line ? "WIN" : "LOSS";
-    }
-    if (t.startsWith("UN")) {
-      const line = parseFloat(t.replace("UN", ""));
-      if (!isNaN(line)) return (h + a) < line ? "WIN" : "LOSS";
-    }
-    return "PENDING";
-  }
-
-  const tipStatus = (prediction && prediction !== "N/A")
-    ? getTipStatus(prediction, score, status)
-    : "PENDING";
-
-  let tipColor = "text-orange-300"; // Pale Orange (Pending)
-  if (tipStatus === "WIN") tipColor = "text-green-500";
-  if (tipStatus === "LOSS") tipColor = "text-red-500";
-
-  // Use live odds when available, else pre-match 1X2 odds
-  let effectiveOdds = odds || { home: null, draw: null, away: null };
-  if (isLive && liveOdds && Array.isArray(liveOdds) && liveOdds.length > 0) {
-    const market = (liveOdds[0] as { markets?: Array<{ name?: string; id?: number; values?: Array<{ value?: string; odd?: string }> }> })?.markets?.find(
-      (m: { name?: string; id?: number }) => {
-        if (m?.id === 1) return true;
-        const n = (m?.name || "").trim().toLowerCase();
-        return n === "match winner" || n === "full time result" || n === "1x2";
-      }
-    );
-    if (market?.values) {
-      const homeVal = market.values.find((v: { value?: string }) => ["Home", "1"].includes(String(v?.value)))?.odd;
-      const drawVal = market.values.find((v: { value?: string }) => ["Draw", "X"].includes(String(v?.value)))?.odd;
-      const awayVal = market.values.find((v: { value?: string }) => ["Away", "2"].includes(String(v?.value)))?.odd;
-      if (homeVal != null && awayVal != null) {
-        effectiveOdds = { home: homeVal, draw: drawVal ?? null, away: awayVal };
-      }
-    }
-  }
 
   const href = `/prediction/${fixtureId}`;
 
@@ -156,74 +75,45 @@ export default function FixtureCard({
         }}
         className={`cursor-pointer block ${bgClass} hover:shadow-md ${hoverClass} transition flex items-center justify-between p-2 sm:p-3 gap-2 no-underline text-inherit`}
       >
-        {/* STATUS */}
-        <div className="w-[40px] sm:w-[50px] text-left shrink-0">
-          <div className="flex flex-col leading-none">
-            <p className={`text-[10px] sm:text-xs font-semibold ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
-              {status}
-            </p>
-            {isFinished && kickoffTime && (
-              <p className="text-[9px] sm:text-[10px] text-gray-500 mt-1">
-                {kickoffTime}
-              </p>
-            )}
-          </div>
+        {/* HOME TEAM (Left-aligned) */}
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0 justify-end">
+          <span className="font-normal text-[11px] sm:text-xs truncate text-white text-right block">{homeTeam.name}</span>
+          <Image src={homeTeam.logo} alt={homeTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
         </div>
 
-        {/* TEAMS */}
-        <div className="flex flex-col items-start text-left flex-1 min-w-0 gap-1">
-          <div className="flex items-center gap-1.5 w-full">
-            <div className="flex items-center gap-1.5 max-w-full overflow-hidden">
-              <Image src={homeTeam.logo} alt={homeTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
-              <span className="font-normal text-[11px] sm:text-xs truncate text-white">{homeTeam.name}</span>
+        {/* CENTER BOX (Time / Score) */}
+        <div className="w-[70px] sm:w-[90px] shrink-0 flex flex-col items-center justify-center">
+          {isLive || isFinished ? (
+            <div className={`flex flex-col items-center font-bold text-[12px] sm:text-sm leading-none ${isLive ? "text-red-500 animate-pulse" : "text-white"}`}>
+              {score ? (
+                <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 px-2 py-1 rounded-md shadow-sm">
+                  <span>{score.split(" - ")[0]}</span>
+                  <span className="text-gray-500 text-[10px]">-</span>
+                  <span>{score.split(" - ")[1]}</span>
+                </div>
+              ) : (
+                <span>-</span>
+              )}
+              {isLive && status && (
+                <span className="text-[9px] sm:text-[10px] text-red-500 mt-1 uppercase font-semibold">{status}</span>
+              )}
+              {isFinished && (
+                <span className="text-[9px] sm:text-[10px] text-gray-500 mt-1 font-semibold uppercase">FT</span>
+              )}
             </div>
-          </div>
-          <div className="flex items-center gap-1.5 w-full">
-            <div className="flex items-center gap-1.5 max-w-full overflow-hidden">
-              <Image src={awayTeam.logo} alt={awayTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
-              <span className="font-normal text-[11px] sm:text-xs truncate text-white">{awayTeam.name}</span>
+          ) : (
+            <div className="flex flex-col items-center">
+              <span className="text-[10px] sm:text-[11px] font-semibold text-gray-300 bg-white/5 border border-white/10 px-2 sm:px-3 py-1 rounded-md shadow-sm">
+                {kickoffTime || status}
+              </span>
             </div>
-          </div>
+          )}
         </div>
 
-        {/* 1X2 ODDS */}
-        <div className={`flex flex-row justify-between w-[90px] sm:w-[130px] shrink-0 ${isLive ? "text-white" : ""}`}>
-          <span className={`text-[10px] sm:text-xs font-semibold leading-none ${getOddsColor(effectiveOdds?.home ?? null, [effectiveOdds?.home ?? null, effectiveOdds?.draw ?? null, effectiveOdds?.away ?? null])}`}>
-            {effectiveOdds?.home ?? "-"}
-          </span>
-          <span className={`text-[10px] sm:text-xs font-semibold leading-none ${getOddsColor(effectiveOdds?.draw ?? null, [effectiveOdds?.home ?? null, effectiveOdds?.draw ?? null, effectiveOdds?.away ?? null])}`}>
-            {effectiveOdds?.draw ?? "-"}
-          </span>
-          <span className={`text-[10px] sm:text-xs font-semibold leading-none ${getOddsColor(effectiveOdds?.away ?? null, [effectiveOdds?.home ?? null, effectiveOdds?.draw ?? null, effectiveOdds?.away ?? null])}`}>
-            {effectiveOdds?.away ?? "-"}
-          </span>
-        </div>
-
-        {/* SCORE & TIP */}
-        <div className="flex items-center gap-2 w-[60px] sm:w-[75px] justify-end shrink-0">
-          <div className={`flex flex-col gap-1 items-end justify-center font-bold text-[11px] sm:text-xs leading-none ${isLive ? "text-red-500" : "text-gray-200"}`}>
-            {score ? (
-              <>
-                <span className="h-3.5 flex items-center">{score.split(" - ")[0]}</span>
-                <span className="h-3.5 flex items-center">{score.split(" - ")[1]}</span>
-              </>
-            ) : null}
-          </div>
-          <div className="flex items-center justify-center">
-            {prediction && prediction !== "N/A" ? (
-              <span
-                className={`w-[30px] sm:w-[38px] h-[22px] sm:h-[24px] flex items-center justify-center text-[10px] sm:text-xs font-bold uppercase tracking-wide rounded bg-white/5 border border-white/10 ${tipColor} leading-none overflow-hidden`}
-              >
-                {prediction}
-              </span>
-            ) : (
-              <span
-                className="w-[30px] sm:w-[38px] h-[22px] sm:h-[24px] flex items-center justify-center text-[10px] sm:text-xs font-bold text-gray-600 rounded bg-transparent border border-white/5 leading-none"
-              >
-                -
-              </span>
-            )}
-          </div>
+        {/* AWAY TEAM (Right-aligned) */}
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0 justify-start">
+          <Image src={awayTeam.logo} alt={awayTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
+          <span className="font-normal text-[11px] sm:text-xs truncate text-white text-left block">{awayTeam.name}</span>
         </div>
       </Link>
     </div>
