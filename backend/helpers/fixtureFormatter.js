@@ -15,10 +15,20 @@ export function resolvePredictionTip(fixtureDoc) {
     typeof fixtureDoc.customPrediction === "string"
       ? fixtureDoc.customPrediction.trim()
       : "";
-  const pred =
-    customRaw && VALID_CUSTOM_TIPS.has(customRaw)
-      ? customRaw
-      : fixtureDoc.prediction;
+
+  // 1. Manual Override
+  if (customRaw) {
+    // We allow any custom string now, or we can enforce VALID_CUSTOM_TIPS
+    return customRaw;
+  }
+
+  // 2. Custom Database Binary Prediction (OV1.5 / UN3.5)
+  if (fixtureDoc.dbPrediction) {
+    return fixtureDoc.dbPrediction;
+  }
+
+  // 3. Fallback to old API logic (1X2) if dbPrediction is missing
+  const pred = fixtureDoc.prediction;
 
   if (typeof pred === "string") {
     tip = pred;

@@ -110,8 +110,8 @@ export function getMarketsFromApiPrediction(pred) {
     candidates.push({ market: "1X2", pick: "X", probability: probs1x2.draw });
     candidates.push({ market: "1X2", pick: "2", probability: probs1x2.away });
   }
-  if (over15) candidates.push({ market: "OV15", pick: over15.pick, probability: over15.probability });
-  if (under35) candidates.push({ market: "UN35", pick: under35.pick, probability: under35.probability });
+  if (over15 && over15.probability >= 0.85) candidates.push({ market: "OV15", pick: over15.pick, probability: over15.probability });
+  if (under35 && under35.probability >= 0.85) candidates.push({ market: "UN35", pick: under35.pick, probability: under35.probability });
   if (btts) candidates.push({ market: "BTTS", pick: btts.pick, probability: btts.probability });
 
   if (candidates.length === 0) {

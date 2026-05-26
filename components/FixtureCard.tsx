@@ -94,6 +94,14 @@ export default function FixtureCard({
       const line = parseFloat(t.split(" ")[1]);
       if (!isNaN(line)) return (h + a) < line ? "WIN" : "LOSS";
     }
+    if (t.startsWith("OV")) {
+      const line = parseFloat(t.replace("OV", ""));
+      if (!isNaN(line)) return (h + a) > line ? "WIN" : "LOSS";
+    }
+    if (t.startsWith("UN")) {
+      const line = parseFloat(t.replace("UN", ""));
+      if (!isNaN(line)) return (h + a) < line ? "WIN" : "LOSS";
+    }
     return "PENDING";
   }
 

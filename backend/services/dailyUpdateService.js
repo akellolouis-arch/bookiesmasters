@@ -20,6 +20,7 @@ import {
   getFootballApi,
   isFinishedStatusShort,
 } from "./fixturePredictionOddsApi.js";
+import { generateCustomBinaryPrediction } from "../helpers/dbPredictionEngine.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
@@ -340,6 +341,31 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
         if (prediction && Object.keys(prediction).length > 0) statsPredFilled += 1;
       }
 
+      // 2️⃣ CUSTOM DB PREDICTION (OV1.5 / UN3.5)
+      let dbPrediction = existingDoc?.dbPrediction || null;
+      if (!isFinished || !dbPrediction) {
+          try {
+              const fixDate = f.fixture?.date;
+              if (fixDate && f.teams?.home?.id && f.teams?.away?.id) {
+                  const homeMatches = await Fixture.find({
+                      $or: [ { "fixture.teams.home.id": f.teams.home.id }, { "fixture.teams.away.id": f.teams.home.id } ],
+                      "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] },
+                      "fixture.fixture.date": { $lt: fixDate }
+                  }).sort({ "fixture.fixture.date": -1 }).limit(10).lean();
+
+                  const awayMatches = await Fixture.find({
+                      $or: [ { "fixture.teams.home.id": f.teams.away.id }, { "fixture.teams.away.id": f.teams.away.id } ],
+                      "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] },
+                      "fixture.fixture.date": { $lt: fixDate }
+                  }).sort({ "fixture.fixture.date": -1 }).limit(10).lean();
+
+                  dbPrediction = generateCustomBinaryPrediction(homeMatches, awayMatches);
+              }
+          } catch (err) {
+              console.error(`Failed to generate custom DB prediction for fixture ${fixtureId}:`, err);
+          }
+      }
+
       // 3️⃣ odds — NS/live: refresh. FT: keep DB if non-empty; if empty and kickoff in recent Kenya window, fetch (closing line
       // often still in API). Otherwise FT would persist [] and UI shows no prices — not a separate "clear" script (cleanup only strips >6d).
       if (!isFinished) {
@@ -386,6 +412,7 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
             fixtureId: fixtureId,
             fixture: f,
             prediction,
+            dbPrediction,
             h2h,
             odds: bets,
             injuries: injuryReport

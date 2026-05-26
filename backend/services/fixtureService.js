@@ -56,11 +56,13 @@ export const getFixtureById = async (fixtureId) => {
         // Logic adapted from prev/helpers/predictionMerger.js
 
         // 🧠 PREDICTION LOGIC
-        // Priority: customPrediction > API Logic > null
+        // Priority: customPrediction > dbPrediction (OV15/UN35) > API Logic > null
         let calculatedTip = null;
 
         if (fixtureDoc.customPrediction) {
             calculatedTip = fixtureDoc.customPrediction;
+        } else if (fixtureDoc.dbPrediction) {
+            calculatedTip = fixtureDoc.dbPrediction;
         } else if (predictionData) {
             const { win_or_draw, winner } = predictionData;
             const homeName = matchData.teams.home.name;
