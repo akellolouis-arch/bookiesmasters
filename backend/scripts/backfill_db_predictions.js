@@ -16,9 +16,7 @@ async function runBackfill() {
         await mongoose.connect(MONGO_URI);
         console.log("Connected to MongoDB.");
 
-        const fixtures = await Fixture.find({
-            dbPrediction: { $exists: false } // Backfill ALL missing fixtures
-        });
+        const fixtures = await Fixture.find({}); // Fetch ALL fixtures to recalculate the new math
 
         console.log(`Found ${fixtures.length} upcoming/recent fixtures missing dbPrediction.`);
 

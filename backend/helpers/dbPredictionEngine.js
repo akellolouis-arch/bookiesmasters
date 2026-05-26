@@ -2,7 +2,7 @@ export function calculateScores(matches) {
     if (!matches || matches.length === 0) return { ov15: 0, un35: 0, avgGoals: 0 };
     
     let ov15Count = 0;
-    let un35Count = 0;
+    let un25Count = 0;
     
     matches.forEach(m => {
         // Handle both flattened format (m.goals) and raw API format (m.fixture.goals)
@@ -10,13 +10,13 @@ export function calculateScores(matches) {
         if (goalsObj && typeof goalsObj.home === 'number' && typeof goalsObj.away === 'number') {
             const goals = goalsObj.home + goalsObj.away;
             if (goals >= 2) ov15Count++;
-            if (goals <= 3) un35Count++;
+            if (goals <= 2) un25Count++;
         }
     });
     
     return {
         ov15: ov15Count / matches.length,
-        un35: un35Count / matches.length,
+        un25: un25Count / matches.length,
         avgGoals: matches.reduce((acc, m) => {
             const goalsObj = m.goals || (m.fixture && m.fixture.goals);
             if (goalsObj && typeof goalsObj.home === 'number' && typeof goalsObj.away === 'number') {
@@ -41,11 +41,13 @@ export function generateCustomBinaryPrediction(homeMatches, awayMatches) {
     const awayStats = calculateScores(recentAway);
 
     const combinedOv15 = (homeStats.ov15 + awayStats.ov15) / 2;
-    const combinedUn35 = (homeStats.un35 + awayStats.un35) / 2;
+    const combinedUn25 = (homeStats.un25 + awayStats.un25) / 2;
 
-    if (combinedOv15 > combinedUn35) {
+    // Compare the Over 1.5 hit rate against the Under 2.5 hit rate.
+    // This perfectly splits matches into "High Scoring Lean" vs "Low Scoring Lean".
+    if (combinedOv15 > combinedUn25) {
         return "OV1.5";
-    } else if (combinedUn35 > combinedOv15) {
+    } else if (combinedUn25 > combinedOv15) {
         return "UN3.5";
     } else {
         // Tie breaker
