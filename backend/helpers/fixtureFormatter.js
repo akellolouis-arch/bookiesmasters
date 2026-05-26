@@ -27,9 +27,9 @@ export function resolvePredictionTip(fixtureDoc) {
     return fixtureDoc.dbPrediction;
   }
 
-  // 3. If dbPrediction is missing (e.g. backfill hasn't hit it yet), we do NOT fall back to 1X2.
-  // We simply return N/A until the background job processes it.
-  return "N/A";
+  // 3. If dbPrediction is missing (e.g. backfill hasn't hit it yet), we default to the statistically safer UN3.5
+  // instead of breaking the UI or showing N/A.
+  return "UN3.5";
 
   return tip;
 }

@@ -64,8 +64,8 @@ export const getFixtureById = async (fixtureId) => {
         } else if (fixtureDoc.dbPrediction) {
             calculatedTip = fixtureDoc.dbPrediction;
         } else {
-            // We NO LONGER fall back to API 1X2 logic! If dbPrediction is missing, return N/A
-            calculatedTip = "N/A";
+            // We NO LONGER fall back to API 1X2 logic! If dbPrediction is missing, return UN3.5 as default
+            calculatedTip = "UN3.5";
         }
 
         // 🔥 LIVE DATA CHECK
