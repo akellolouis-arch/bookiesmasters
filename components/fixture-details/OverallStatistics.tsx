@@ -34,29 +34,26 @@ const OverallStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => 
         }
 
         matches.forEach(m => {
-            const isHome = m.teams?.home?.id === teamId;
-            const isAway = m.teams?.away?.id === teamId;
+            const isHome = m.homeTeam?.id === teamId;
+            const isAway = m.awayTeam?.id === teamId;
 
             if (!isHome && !isAway) return;
             if (filterLoc === 'home' && !isHome) return;
             if (filterLoc === 'away' && !isAway) return;
 
-            // Only count finished matches (FT, AET, PEN)
-            const status = m.fixture?.status?.short;
-            if (!["FT", "AET", "PEN"].includes(status)) return;
-
+            // formCalculator.js only returns completed matches, so no status check needed.
             let gHome = 0;
             let gAway = 0;
 
             if (timeframe === 'full') {
-                gHome = m.goals?.home ?? 0;
-                gAway = m.goals?.away ?? 0;
+                gHome = m.score?.home ?? 0;
+                gAway = m.score?.away ?? 0;
             } else if (timeframe === 'first_half') {
                 gHome = m.score?.halftime?.home ?? 0;
                 gAway = m.score?.halftime?.away ?? 0;
             } else if (timeframe === 'second_half') {
-                const ftHome = m.goals?.home ?? 0;
-                const ftAway = m.goals?.away ?? 0;
+                const ftHome = m.score?.home ?? 0;
+                const ftAway = m.score?.away ?? 0;
                 const htHome = m.score?.halftime?.home ?? 0;
                 const htAway = m.score?.halftime?.away ?? 0;
                 gHome = Math.max(0, ftHome - htHome);
