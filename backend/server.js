@@ -12,9 +12,6 @@ import { startDailyScheduler } from "./services/dailyUpdateService.js";
 import { startLiveService } from "./services/liveScoreService.js";
 // import { startStandingsPoller } from "./services/standingsPollingService.js";
 
-import paymentRoutes from "./routes/paymentRoutes.js";
-import userRoutes from "./routes/userRoutes.js";
-
 
 dotenv.config();
 
@@ -59,8 +56,6 @@ app.use("/api", (req, res, next) => {
 // ---------------------------------------------
 app.use("/api/fixtures", fixtureRoutes);
 // app.use("/api/webhooks", webhookRoutes); // Webhooks disabled due to payment removal
-app.use("/api/user", userRoutes);
-app.use("/api/payment", paymentRoutes); // New Manual Payments
 
 // ---------------------------------------------
 // START: Mongo FIRST — then HTTP (fixes buffering timeouts on cold start)
