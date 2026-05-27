@@ -102,6 +102,7 @@ export async function getFixturesGroupedByLeague(date) {
     },
     {
       $project: {
+        fixtureId: 1,
         "fixture.id": 1,
         "fixture.name": 1,
         "fixture.logo": 1,
