@@ -113,7 +113,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                     {/* CENTER INFO */}
                     <div className="flex flex-col items-center justify-start mt-0 min-w-[100px] sm:min-w-[140px]">
                         {/* Date & Time */}
-                        <div className="text-[10px] sm:text-sm text-gray-300 font-semibold mb-1 tracking-wide whitespace-nowrap">
+                        <div className="text-[10px] sm:text-sm text-gray-300 font-semibold mb-4 sm:mb-6 tracking-wide whitespace-nowrap">
                             {formattedDate} <span className="ml-1">{kickoffTime}</span>
                         </div>
 
@@ -126,27 +126,32 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                             </div>
                         ) : score ? (
                             <div className="flex flex-col items-center">
+                                {status !== "NS" && (
+                                    <div className={`mb-1.5 text-[10px] sm:text-xs font-bold tracking-widest uppercase ${isLive ? "text-rose-500 animate-pulse" : "text-gray-400"}`}>
+                                        {status === "HT" ? "HT" : isFinished ? "FT" : (isLive && displayDate ? displayDate : status)}
+                                    </div>
+                                )}
                                 <div className={`bg-white/5 backdrop-blur-sm rounded-xl sm:rounded-2xl px-4 sm:px-6 py-1 sm:py-2 shadow-lg flex items-center justify-center gap-2 sm:gap-4 border border-white/10 ${isLive ? "animate-pulse" : ""}`}>
                                     <span className={`text-xl sm:text-3xl font-bold ${isLive ? "text-rose-500" : "text-white"}`}>{score.home}</span>
                                     <span className="text-lg sm:text-xl font-bold text-gray-400">-</span>
                                     <span className={`text-xl sm:text-3xl font-bold ${isLive ? "text-rose-500" : "text-white"}`}>{score.away}</span>
                                 </div>
-                                {status !== "NS" && (
-                                    <div className={`mt-1 text-[10px] sm:text-xs font-bold tracking-widest uppercase ${isLive ? "text-rose-500 animate-pulse" : "text-gray-400"}`}>
-                                        {status === "HT" ? "HT" : isFinished ? "FT" : (isLive && displayDate ? displayDate : status)}
+                                {score.halftime && score.halftime.home !== null && score.halftime.away !== null && (
+                                    <div className="mt-1.5 text-[9px] sm:text-[10px] text-gray-500 font-semibold tracking-wide uppercase">
+                                        HT: {score.halftime.home} - {score.halftime.away}
                                     </div>
                                 )}
                             </div>
                         ) : (
                             <div className="flex flex-col items-center mt-1">
-                                <div className="bg-white/10 rounded-xl sm:rounded-2xl px-4 sm:px-6 py-1 sm:py-2 flex items-center justify-center border border-white/5 backdrop-blur-md">
-                                    <span className="text-xl sm:text-3xl font-bold text-gray-500">-</span>
-                                </div>
                                 {status && status !== "NS" && (
-                                    <div className="mt-1 text-[10px] sm:text-xs font-bold tracking-widest uppercase text-gray-400">
+                                    <div className="mb-1.5 text-[10px] sm:text-xs font-bold tracking-widest uppercase text-gray-400">
                                         {status}
                                     </div>
                                 )}
+                                <div className="bg-white/10 rounded-xl sm:rounded-2xl px-4 sm:px-6 py-1 sm:py-2 flex items-center justify-center border border-white/5 backdrop-blur-md">
+                                    <span className="text-xl sm:text-3xl font-bold text-gray-500">-</span>
+                                </div>
                             </div>
                         )}
                     </div>
