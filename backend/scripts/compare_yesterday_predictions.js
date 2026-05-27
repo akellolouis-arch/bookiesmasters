@@ -24,12 +24,23 @@ function pickResultFromGoals(goalsHome, goalsAway) {
   return "X";
 }
 
-function isTipCorrect(tip, result) {
-  if (!tip || tip === "N/A" || !result) return null;
-  if (tip === "1") return result === "1";
-  if (tip === "2") return result === "2";
-  if (tip === "1X") return result === "1" || result === "X";
-  if (tip === "X2") return result === "X" || result === "2";
+function isTipCorrect(tip, goalsHome, goalsAway) {
+  if (!tip || tip === "N/A" || goalsHome == null || goalsAway == null) return null;
+  
+  const t = tip.toUpperCase().replace(/\s+/g, '');
+  const totalGoals = goalsHome + goalsAway;
+  
+  if (t === "OV1.5" || t === "OVER1.5") return totalGoals >= 2;
+  if (t === "UN3.5" || t === "UNDER3.5") return totalGoals <= 3;
+  
+  let result = "X";
+  if (goalsHome > goalsAway) result = "1";
+  if (goalsHome < goalsAway) result = "2";
+
+  if (t === "1") return result === "1";
+  if (t === "2") return result === "2";
+  if (t === "1X") return result === "1" || result === "X";
+  if (t === "X2") return result === "X" || result === "2";
   return null;
 }
 
@@ -51,7 +62,7 @@ async function main() {
     const card = formatFixtureCard(d);
     const g = d.fixture?.goals;
     const result = pickResultFromGoals(g?.home, g?.away);
-    const correct = isTipCorrect(card.prediction, result);
+    const correct = isTipCorrect(card.prediction, g?.home, g?.away);
     return {
       fixtureId: d.fixtureId,
       status: d.fixture?.fixture?.status?.short,

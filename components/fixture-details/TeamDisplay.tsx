@@ -17,7 +17,6 @@ interface TeamDisplayProps {
     venue?: string;
     date: string;
     score?: { home: number | null; away: number | null; halftime?: { home: number | null; away: number | null } } | null;
-    tip?: string | null;
     league?: string;
     isLoading?: boolean;
 }
@@ -30,7 +29,6 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
     date,
     venue,
     score,
-    tip,
     league,
     isLoading,
 }) => {
@@ -72,55 +70,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
         );
     };
 
-    const getTipStatus = (tVal: string) => {
-        if (!score || score.home === null || score.away === null || status === "NS") return "PENDING";
-        const h = Number(score.home);
-        const a = Number(score.away);
-        const t = tVal.trim().toUpperCase();
 
-        if (t === "1") return h > a ? "WIN" : "LOSS";
-        if (t === "2") return a > h ? "WIN" : "LOSS";
-        if (t === "X") return h === a ? "WIN" : "LOSS";
-        if (t === "1X") return h >= a ? "WIN" : "LOSS";
-        if (t === "X2") return a >= h ? "WIN" : "LOSS";
-        if (t === "12") return h !== a ? "WIN" : "LOSS";
-
-        if (t.startsWith("OVER")) {
-            const line = parseFloat(t.split(" ")[1]);
-            if (!isNaN(line)) return (h + a) > line ? "WIN" : "LOSS";
-        }
-        if (t.startsWith("UNDER")) {
-            const line = parseFloat(t.split(" ")[1]);
-            if (!isNaN(line)) return (h + a) < line ? "WIN" : "LOSS";
-        }
-        if (t.startsWith("OV")) {
-            const line = parseFloat(t.replace("OV", ""));
-            if (!isNaN(line)) return (h + a) > line ? "WIN" : "LOSS";
-        }
-        if (t.startsWith("UN")) {
-            const line = parseFloat(t.replace("UN", ""));
-            if (!isNaN(line)) return (h + a) < line ? "WIN" : "LOSS";
-        }
-        return "PENDING";
-    };
-
-    let tipBadge = null;
-    if (tip && tip !== "N/A") {
-        const s = getTipStatus(tip);
-        let colors = "border-orange-500 text-orange-400 shadow-[0_0_12px_rgba(249,115,22,0.2)] bg-orange-500/10";
-        if (s === "WIN") {
-            colors = "border-emerald-500 text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.2)] bg-emerald-500/10";
-        }
-        if (s === "LOSS") {
-            colors = "border-[#b91c1c] text-[#f87171] shadow-[0_0_12px_rgba(185,28,28,0.2)] bg-[#7f1d1d]/10";
-        }
-
-        tipBadge = (
-            <div className={`mb-4 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full border-2 font-bold text-[10px] sm:text-sm flex items-center justify-center ${colors}`}>
-                {tip}
-            </div>
-        );
-    }
 
     return (
         <div className="relative w-full pb-2 sm:pb-4 flex flex-col items-center bg-transparent">
@@ -166,9 +116,6 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                         <div className="text-[10px] sm:text-sm text-gray-300 font-semibold mb-1 tracking-wide whitespace-nowrap">
                             {formattedDate} <span className="ml-1">{kickoffTime}</span>
                         </div>
-                        
-                        {/* Tip Badge (Red Circle/Pill) */}
-                        {tipBadge}
 
                         {/* Score Box */}
                         {isLoading ? (

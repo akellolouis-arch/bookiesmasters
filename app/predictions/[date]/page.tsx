@@ -1,8 +1,5 @@
 import PredictionsList from "./predictionList";
 import DateNavigator from "@/components/DateNavigator";
-import { shouldShowMatchOnPredictionsPage } from "@/lib/predictionsMatchVisibility";
-
-
 
 
 export const revalidate = 86400; // Cache for 1 day (ISR)
@@ -147,9 +144,7 @@ export default async function PredictionsPage({
         name: f.league.name,
         logo: f.league.logo,
         country: f.league.country,
-        matches: f.matches.filter((match) =>
-          shouldShowMatchOnPredictionsPage(match)
-        ),
+        matches: f.matches,
       }))
       .filter((league) => league.matches.length > 0);
   }

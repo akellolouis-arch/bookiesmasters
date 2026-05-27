@@ -75,34 +75,6 @@ export async function getFixturesGroupedByLeague(date) {
         "fixture.score": 1,
         "fixture.status": 1,
         "livescore": 1,
-        "prediction": 1,
-        "dbPrediction": 1,
-        "customPrediction": 1,
-        customOdds: 1,
-        // ⚡ OPTIMIZATION: Slice Odds immediately! Do not carry 50 bookmakers through pipeline.
-        odds: {
-          $map: {
-            input: { $slice: ["$odds", 1] }, // Take ONLY the 1st bookmaker (usually enough)
-            as: "bookmaker",
-            in: {
-              id: "$$bookmaker.id",
-              name: "$$bookmaker.name",
-              logo: "$$bookmaker.logo",
-              markets: {
-                $filter: {
-                  input: "$$bookmaker.markets",
-                  as: "market",
-                  cond: {
-                    $or: [
-                      { $eq: ["$$market.id", 1] },
-                      { $in: ["$$market.name", ["Match Winner", "Full Time Result", "1x2"]] }
-                    ]
-                  }
-                }
-              }
-            }
-          }
-        }
       }
     },
     // 🔥 JOIN WITH VIP FIXTURES
@@ -142,61 +114,20 @@ export async function getFixturesGroupedByLeague(date) {
         "fixture.status": 1,
 
         "livescore": 1,
-        "fixtureId": 1,
-
-        // MERGE VIP DATA (Override defaults)
-        "isVip": { $literal: false }, // Force False
-        "creditCost": { $literal: 0 },
-        "prediction": { $ifNull: ["$customPrediction", "$prediction"] },
-        "dbPrediction": 1,
-        "customOdds": "$customOdds",
-
-        "odds": {
-          $map: {
-            input: { $slice: ["$odds", 1] }, // Take 1st bookmaker
-            as: "bookmaker",
-            in: {
-              id: "$$bookmaker.id",
-              name: "$$bookmaker.name",
-              logo: "$$bookmaker.logo",
-              markets: {
-                $filter: {
-                  input: "$$bookmaker.markets", // Iterate over markets
-                  as: "market",
-                  cond: {
-                    $or: [
-                      { $eq: ["$$market.id", 1] },
-                      { $in: ["$$market.name", ["Match Winner", "Full Time Result", "1x2"]] }
-                    ]
-                  }
-                }
-              }
-            }
-          }
-        }
       }
     }
   ]);
   console.timeEnd(fetchLabel);
 
-  // Only list fixtures with Match Winner (1x2) odds; always keep live/finished visible.
-  const fixturesWithOdds = fixtures.filter((f) => {
-    // Prevent displaying Friendlies fixtures
+  // Filter out friendlies
+  const validFixtures = fixtures.filter((f) => {
     if (f.fixture?.league?.name?.toLowerCase().includes("friendlies")) {
       return false;
     }
-
-    const hasOdds =
-      f.odds &&
-      f.odds.length > 0 &&
-      f.odds[0].markets &&
-      f.odds[0].markets.length > 0;
-    const statusShort = f.fixture?.fixture?.status?.short;
-    const isPlayedOrLive = statusShort && !["NS", "TBD"].includes(statusShort);
-    return hasOdds || isPlayedOrLive;
+    return true;
   });
 
-  const orderedDocs = sortDocsByCountryLeagueKickoff(fixturesWithOdds);
+  const orderedDocs = sortDocsByCountryLeagueKickoff(validFixtures);
 
   // Group by league (iteration order = country → league → kickoff)
   const grouped = {};
@@ -241,33 +172,6 @@ export async function getLiveFixturesGroupedByLeague() {
         "fixture.score": 1,
         "fixture.status": 1,
         livescore: 1,
-        prediction: 1,
-        dbPrediction: 1,
-        customPrediction: 1,
-        customOdds: 1,
-        odds: {
-          $map: {
-            input: { $slice: ["$odds", 1] },
-            as: "bookmaker",
-            in: {
-              id: "$$bookmaker.id",
-              name: "$$bookmaker.name",
-              logo: "$$bookmaker.logo",
-              markets: {
-                $filter: {
-                  input: "$$bookmaker.markets",
-                  as: "market",
-                  cond: {
-                    $or: [
-                      { $eq: ["$$market.id", 1] },
-                      { $in: ["$$market.name", ["Match Winner", "Full Time Result", "1x2"]] }
-                    ]
-                  }
-                }
-              }
-            }
-          }
-        }
       }
     },
     {

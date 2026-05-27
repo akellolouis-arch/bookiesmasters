@@ -15,12 +15,10 @@ import {
   getMongoClientOptions,
 } from "../mongoConnectOptions.js";
 import {
-  fetchOdds,
   fetchPrediction,
   getFootballApi,
   isFinishedStatusShort,
 } from "./fixturePredictionOddsApi.js";
-import { generateCustomBinaryPrediction } from "../helpers/dbPredictionEngine.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
@@ -295,9 +293,6 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
     const tomorrowDate = getDatePlus(1);
 
     let processedCount = 0;
-    let statsNsWithOdds = 0;
-    let statsNsOddsStillEmpty = 0;
-    let statsPredFilled = 0;
 
     for (const f of fixtures) {
       const fixtureId = f.fixture.id;
@@ -326,76 +321,18 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
       // Predictions API for finished games only if BACKFILL_RECENT_FINISHED=1 (quota). Odds: see block below.
       const mayCallPredOddsApis = !isFinished || allowFetchForFinished;
 
-      let prediction = null;
       let h2h = null;
-      let bets = [];
 
-      // 1️⃣ predictions — skip API for finished (reuse DB only)
-      if (existingDoc && existingDoc.prediction && Object.keys(existingDoc.prediction).length > 0) {
-        prediction = existingDoc.prediction;
+      // 1️⃣ h2h — skip API for finished (reuse DB only)
+      if (existingDoc && existingDoc.h2h && existingDoc.h2h.length > 0) {
         h2h = existingDoc.h2h;
       } else if (mayCallPredOddsApis) {
         const predResult = await fetchPrediction(fixtureId);
-        prediction = predResult.prediction;
         h2h = predResult.h2h;
-        if (prediction && Object.keys(prediction).length > 0) statsPredFilled += 1;
-      }
-
-      // 2️⃣ CUSTOM DB PREDICTION (OV1.5 / UN3.5)
-      let dbPrediction = existingDoc?.dbPrediction || null;
-      if (!isFinished || !dbPrediction) {
-          try {
-              const fixDate = f.fixture?.date;
-              if (fixDate && f.teams?.home?.id && f.teams?.away?.id) {
-                  const homeMatches = await Fixture.find({
-                      $or: [ { "fixture.teams.home.id": f.teams.home.id }, { "fixture.teams.away.id": f.teams.home.id } ],
-                      "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] },
-                      "fixture.fixture.date": { $lt: fixDate }
-                  }).sort({ "fixture.fixture.date": -1 }).limit(10).lean();
-
-                  const awayMatches = await Fixture.find({
-                      $or: [ { "fixture.teams.home.id": f.teams.away.id }, { "fixture.teams.away.id": f.teams.away.id } ],
-                      "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] },
-                      "fixture.fixture.date": { $lt: fixDate }
-                  }).sort({ "fixture.fixture.date": -1 }).limit(10).lean();
-
-                  dbPrediction = generateCustomBinaryPrediction(homeMatches, awayMatches);
-              }
-          } catch (err) {
-              console.error(`Failed to generate custom DB prediction for fixture ${fixtureId}:`, err);
-          }
-      }
-
-      // 3️⃣ odds — NS/live: refresh. FT: keep DB if non-empty; if empty and kickoff in recent Kenya window, fetch (closing line
-      // often still in API). Otherwise FT would persist [] and UI shows no prices — not a separate "clear" script (cleanup only strips >6d).
-      if (!isFinished) {
-        bets = await fetchOdds(fixtureId);
-      } else if (existingDoc?.odds?.length > 0) {
-        bets = existingDoc.odds;
-      } else if (isRecentFixture) {
-        bets = await fetchOdds(fixtureId);
-      }
-
-      // Never wipe existing odds due to temporary upstream/API issues.
-      if ((!bets || bets.length === 0) && existingDoc && existingDoc.odds && existingDoc.odds.length > 0) {
-        bets = existingDoc.odds;
-      }
-
-      if (!isFinished && statusFromApi === "NS") {
-        if (bets && bets.length > 0) statsNsWithOdds += 1;
-        else statsNsOddsStillEmpty += 1;
       }
 
       // 4️⃣ injuries (Weekly Forecast)
       let injuryReport = injuriesByFixture[fixtureId] || [];
-
-      // 5️⃣ PRESERVE DATA LOGIC
-      if (existingDoc && existingDoc.fixture && existingDoc.fixture.events && existingDoc.fixture.events.length > 0) {
-        // If the NEW data 'f' has no events (or empty), keep the OLD events
-        if (!f.events || f.events.length === 0) {
-          f.events = existingDoc.fixture.events;
-        }
-      }
 
       // 5.1️⃣ PRESERVE INJURIES LOGIC
       if (existingDoc && existingDoc.injuries && existingDoc.injuries.length > 0) {
@@ -411,14 +348,11 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
           $set: {
             fixtureId: fixtureId,
             fixture: f,
-            prediction,
-            dbPrediction,
             h2h,
-            odds: bets,
             injuries: injuryReport
           },
           // 🧹 Ensure we clear any stale live data (if match is truly live, liveScoreService will restore it in 5s)
-          $unset: { livescore: 1, liveOdds: 1 }
+          $unset: { livescore: 1 }
         },
         { upsert: true }
       );
@@ -429,7 +363,7 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
     }
 
     console.log(
-      `📈 Enrichment summary: predictions filled (this run): ${statsPredFilled}; NS fixtures — with odds: ${statsNsWithOdds}, still empty: ${statsNsOddsStillEmpty} (delay ${interFixtureDelayMs}ms/fixture; if “still empty” is huge, increase DAILY_INTER_FIXTURE_DELAY_MS or check API quota / 429 logs)`
+      `📈 Enrichment summary: delay ${interFixtureDelayMs}ms/fixture`
     );
 
     // 6️⃣ Update Standings

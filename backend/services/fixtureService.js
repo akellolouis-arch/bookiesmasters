@@ -25,7 +25,6 @@ export const getFixtureById = async (fixtureId) => {
         }
 
         const matchData = fixtureDoc.fixture;
-        const predictionData = fixtureDoc.prediction; // Embedded prediction
 
         // Safety Check: Ensure critical data exists
         if (!matchData || !matchData.teams || !matchData.league) {
@@ -55,18 +54,7 @@ export const getFixtureById = async (fixtureId) => {
         // Prepare Response Object matching frontend expectations
         // Logic adapted from prev/helpers/predictionMerger.js
 
-        // 🧠 PREDICTION LOGIC
-        // Priority: customPrediction > dbPrediction (OV15/UN35) > API Logic > null
-        let calculatedTip = null;
-
-        if (fixtureDoc.customPrediction) {
-            calculatedTip = fixtureDoc.customPrediction;
-        } else if (fixtureDoc.dbPrediction) {
-            calculatedTip = fixtureDoc.dbPrediction;
-        } else {
-            // We NO LONGER fall back to API 1X2 logic! If dbPrediction is missing, return UN3.5 as default
-            calculatedTip = "UN3.5";
-        }
+        // 🧠 PREDICTION LOGIC DELETED (Per user request)
 
         // 🔥 LIVE DATA CHECK
         const live = fixtureDoc.livescore;
@@ -125,9 +113,7 @@ export const getFixtureById = async (fixtureId) => {
             status: currentStatus.short || "NS",
             venue: matchData.fixture.venue?.name || "Unknown venue",
 
-            // Predictions (Standard + API Data)
-            tip: calculatedTip || "N/A", // Calculated 1X/X2/1/2 or Manual Override
-            apiPrediction: predictionData || null, // Full API object for Details page (Advice, %)
+            // Predictions and Tips removed per user request
 
             // DEBUG: Log counts
             // console.log(`[FixtureService] Home Matches: ${homeData.allMatches?.length}, Away Matches: ${awayData.allMatches?.length}`);
@@ -154,13 +140,7 @@ export const getFixtureById = async (fixtureId) => {
 
             h2h: h2hData,
 
-            // LOGIC: If match is LIVE (or finished recently/HT) AND we have liveOdds, use them.
-            // Otherwise use pre-match odds.
-            odds: fixtureDoc.odds || [],
-            liveOdds: fixtureDoc.liveOdds || [], // ⚡ PASS LIVE ODDS TO FRONTEND
-
-            // Events (Goals, Cards, Subs)
-            events: matchData.events || [],
+            // Odds removed per user request
 
             // Rich Data
             lineups: fixtureDoc.lineups || [],

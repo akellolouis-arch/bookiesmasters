@@ -13,23 +13,7 @@ const BASE_URL = "https://v3.football.api-sports.io";
 // Poll every 1 minute
 const POLL_INTERVAL = 1 * 60 * 1000;
 
-function sanitizeKeyEvents(events) {
-    if (!Array.isArray(events)) return [];
-
-    // Keep only goals and cards for match details timeline.
-    return events
-        .filter((e) => e?.type === "Goal" || e?.type === "Card")
-        .map((e) => ({
-            time: e.time,
-            team: e.team,
-            player: e.player,
-            assist: e.assist || null,
-            type: e.type,
-            detail: e.detail,
-            comments: e.comments
-        }));
-}
-
+// Poller interval 
 export async function pollLiveScores() {
     try {
         console.log("⚡ Live Score Poller: Checking for active or impending matches...");
@@ -81,8 +65,6 @@ export async function pollLiveScores() {
 
         // 2. Build the bulk update operations for everything currently live
         const bulkOps = apiFixtures.map((match) => {
-            const keyEvents = sanitizeKeyEvents(match.events);
-
             return {
                 updateOne: {
                     filter: { fixtureId: match.fixture.id },
@@ -92,7 +74,6 @@ export async function pollLiveScores() {
                             "fixture.goals": match.goals,
                             "fixture.score": match.score,
                             "status": match.fixture.status.short, // redundant cache field
-                            "fixture.events": keyEvents, // Save goals + cards with assist when available
                             "livescore": match.score,
                             "lastLiveUpdate": new Date()
                         }
@@ -136,7 +117,6 @@ export async function pollLiveScores() {
                     });
                     const rows = refreshRes.data?.response || [];
                     rows.forEach((match) => {
-                        const keyEvents = sanitizeKeyEvents(match.events);
                         bulkOps.push({
                             updateOne: {
                                 filter: { fixtureId: match.fixture.id },
@@ -146,7 +126,6 @@ export async function pollLiveScores() {
                                         "fixture.goals": match.goals,
                                         "fixture.score": match.score,
                                         "status": match.fixture.status.short,
-                                        "fixture.events": keyEvents,
                                         "livescore": match.score,
                                         "lastLiveUpdate": new Date()
                                     }
@@ -237,8 +216,6 @@ export async function pollLiveScores() {
                 const finalFixtures = finishRes.data.response || [];
 
                 finalFixtures.forEach(match => {
-                    const keyEvents = sanitizeKeyEvents(match.events);
-
                     // If API still reports a LIVE status long after kickoff, force-close it.
                     const kickoff = new Date(match?.fixture?.date);
                     const isVeryLate = kickoff.toISOString() <= twoHoursTenAgo.toISOString();
@@ -266,7 +243,6 @@ export async function pollLiveScores() {
                                     "fixture.goals": match.goals,
                                     "fixture.score": match.score,
                                     "status": match.fixture.status.short,
-                                    "fixture.events": keyEvents,
                                     "livescore": match.score,
                                     "lastLiveUpdate": new Date()
                                 }

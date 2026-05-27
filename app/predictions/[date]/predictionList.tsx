@@ -4,7 +4,6 @@ import useSWR from "swr";
 import Image from "next/image";
 import FixtureCard from "@/components/FixtureCard";
 import Loader from "@/components/Loader";
-import { shouldShowMatchOnPredictionsPage } from "@/lib/predictionsMatchVisibility";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 
@@ -144,15 +143,7 @@ export default function PredictionsList({
       .filter((league) => league.matches.length > 0);
   }
 
-  // Only fixtures with at least one 1×2 odd (same rule as page.tsx).
-  safeData = safeData
-    .map((league) => ({
-      ...league,
-      matches: league.matches.filter((match: FixtureCardProps) =>
-        shouldShowMatchOnPredictionsPage(match)
-      ),
-    }))
-    .filter((league) => league.matches.length > 0);
+
 
   // FIX: Prevent "shambolic" display on initial load by waiting for mount
   const [mounted, setMounted] = useState(false);

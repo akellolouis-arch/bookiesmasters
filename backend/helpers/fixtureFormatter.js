@@ -1,38 +1,3 @@
-// API-Football prediction only (1, 2, 1X, X2) — no OV15/UN35/BTTS best-pick logic
-
-const VALID_CUSTOM_TIPS = new Set(["1", "2", "X", "1X", "X2"]);
-
-/**
- * Raw API/custom tip before UI formatting (1, 2, X, 1X, X2, or N/A).
- * Shared resolver for scripts/tools; cards use this via formatFixtureCard.
- */
-export function resolvePredictionTip(fixtureDoc) {
-  const fx = fixtureDoc?.fixture;
-  if (!fx?.teams?.home?.name) return "N/A";
-
-  let tip = "N/A";
-  const customRaw =
-    typeof fixtureDoc.customPrediction === "string"
-      ? fixtureDoc.customPrediction.trim()
-      : "";
-
-  // 1. Manual Override
-  if (customRaw) {
-    // We allow any custom string now, or we can enforce VALID_CUSTOM_TIPS
-    return customRaw;
-  }
-
-  // 2. Custom Database Binary Prediction (OV1.5 / UN3.5)
-  if (fixtureDoc.dbPrediction) {
-    return fixtureDoc.dbPrediction;
-  }
-
-  // 3. If dbPrediction is missing (e.g. backfill hasn't hit it yet), we default to the statistically safer UN3.5
-  // instead of breaking the UI or showing N/A.
-  return "UN3.5";
-
-  return tip;
-}
 
 export function formatFixtureCard(fixtureDoc) {
   const fx = fixtureDoc.fixture;
@@ -109,73 +74,6 @@ export function formatFixtureCard(fixtureDoc) {
     }
   }
 
-  // -----------------------------
-  // ODDS HANDLING
-  // -----------------------------
-  let odds = {
-    home: null,
-    draw: null,
-    away: null,
-    bttsYes: null,
-    bttsNo: null,
-    over15: null,
-    under35: null,
-  };
-
-  // Always use Pre-match Odds (from fixtureDoc.odds)
-  if (fixtureDoc.odds && fixtureDoc.odds.length > 0) {
-    const bookmaker = fixtureDoc.odds[0];
-
-    if (bookmaker && bookmaker.markets) {
-      const matchWinner = bookmaker.markets.find((m) => {
-        if (!m) return false;
-        if (m.id === 1) return true;
-        const n = (m.name || "").trim().toLowerCase();
-        return (
-          n === "match winner" ||
-          n === "full time result" ||
-          n === "1x2"
-        );
-      });
-      if (matchWinner && matchWinner.values) {
-        const vals = matchWinner.values;
-        const homeOdd = vals.find(
-          (v) => v.value === "Home" || v.value === "1"
-        )?.odd;
-        const drawOdd = vals.find(
-          (v) => v.value === "Draw" || v.value === "X"
-        )?.odd;
-        const awayOdd = vals.find(
-          (v) => v.value === "Away" || v.value === "2"
-        )?.odd;
-        odds.home = homeOdd != null ? String(homeOdd) : null;
-        odds.draw = drawOdd != null ? String(drawOdd) : null;
-        odds.away = awayOdd != null ? String(awayOdd) : null;
-      }
-
-      const bttsMarket = bookmaker.markets.find(
-        m => m.name && (m.name === "Both Teams To Score" || m.name === "Both teams to score")
-      );
-      if (bttsMarket && bttsMarket.values) {
-        odds.bttsYes = bttsMarket.values.find(v => v.value === "Yes")?.odd || null;
-        odds.bttsNo = bttsMarket.values.find(v => v.value === "No")?.odd || null;
-      }
-
-      const ouMarket = bookmaker.markets.find(
-        m => m.name && (m.name === "Goals Over/Under" || m.name === "Over/Under")
-      );
-      if (ouMarket && ouMarket.values) {
-        odds.over15 = ouMarket.values.find(v => v.value === "Over 1.5")?.odd || null;
-        odds.under35 = ouMarket.values.find(v => v.value === "Under 3.5")?.odd || null;
-      }
-    }
-  }
-
-  // -----------------------------
-  // PREDICTION HANDLING — API-Football only (1, 2, 1X, X2)
-  // -----------------------------
-  const tip = resolvePredictionTip(fixtureDoc);
-
   return {
     fixtureId: fixtureDoc.fixtureId,
     status: displayStatus,
@@ -196,11 +94,6 @@ export function formatFixtureCard(fixtureDoc) {
       name: fx.teams.away.name,
       logo: fx.teams.away.logo
     },
-    odds,
-    isVip: false,
-    creditCost: 0,
-    customOdds: fixtureDoc.customOdds,
-    prediction: tip,
     kickoffTime,
   };
 }

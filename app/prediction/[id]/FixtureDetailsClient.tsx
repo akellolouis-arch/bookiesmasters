@@ -4,7 +4,6 @@ import React from "react";
 import useSWR from "swr";
 import H2HSection from "@/components/fixture-details/H2HSection";
 import LastFiveMatches from "@/components/fixture-details/LastFiveMatches";
-import Events from "@/components/fixture-details/Events";
 import Standings from "@/components/fixture-details/Standings";
 import TeamDisplay from "@/components/fixture-details/TeamDisplay";
 import Injuries from "@/components/fixture-details/Injuries";
@@ -20,13 +19,9 @@ type FixtureDetailsData = {
     status: string;
     venue?: string;
     score?: { home: number | null; away: number | null } | null;
-    tip?: string | null;
-    apiPrediction?: { advice?: string } | null;
-    odds?: any[];
     injuries?: any[];
     h2h?: any[];
     standings?: any[];
-    events?: any[];
     homeTeam: { id: number; name: string; logo: string; last5Matches?: any[]; allMatches?: any[] };
     awayTeam: { id: number; name: string; logo: string; last5Matches?: any[]; allMatches?: any[] };
 };
@@ -56,7 +51,6 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
     const isFinishedCache = ["FT", "AET", "PEN"].includes(initialData.status);
     const hideStaleData = !isFinishedCache && !swrData;
 
-    const displayEvents = hideStaleData ? [] : data.events;
     const displayInjuries = hideStaleData ? [] : data.injuries;
 
     return (
@@ -70,28 +64,12 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                     venue={data.venue}
                     date={data.date}
                     score={data.score}
-                    tip={data.tip}
                     league={data.league}
                     isLoading={hideStaleData}
                 />
 
                 {/* --- OVERVIEW SECTION --- */}
                 <div className="mt-2">
-                    {/* Match Events */}
-                    {displayEvents && displayEvents.length > 0 && (
-                        <div className="space-y-2">
-                            <div>
-                                <div className="flex justify-center mb-3">
-                                    <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-amber-100 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide uppercase">
-                                        Match Events
-                                    </h3>
-                                </div>
-                                <div>
-                                    <Events events={displayEvents} homeTeamId={data.homeTeam.id} awayTeamId={data.awayTeam.id} status={data.status} score={data.score} />
-                                </div>
-                            </div>
-                        </div>
-                    )}
                 </div>
 
                 {/* --- H2H & FORM SECTION --- */}

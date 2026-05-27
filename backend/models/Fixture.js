@@ -8,10 +8,7 @@ const FixtureSchema = new mongoose.Schema(
     // Full API-Football fixture payload
     fixture: { type: Object, required: true },
 
-    prediction: { type: Object, default: null },
     h2h: { type: Array, default: [] },
-    odds: { type: Array, default: [] },
-
 
     // Rich Data
     lineups: { type: Array, default: [] },
@@ -20,16 +17,7 @@ const FixtureSchema = new mongoose.Schema(
 
     // Live-only data
     livescore: { type: Object, default: null },
-    liveOdds: { type: Array, default: null }, // ⚡ Ephemeral live odds
     lastLiveUpdate: { type: Date, default: null },
-
-    // Custom Prediction / Manual Override
-    customPrediction: { type: String, default: null }, // e.g. "Over 2.5", "1X"
-
-    // VIP Settings
-    isVip: { type: Boolean, default: false },
-    creditCost: { type: Number, default: 0 },
-    customOdds: { type: String, default: null },
 
   },
   { timestamps: true, strict: false }

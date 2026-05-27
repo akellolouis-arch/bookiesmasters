@@ -6,15 +6,6 @@ import Link from "next/link";
 // import { useSession, signIn } from "next-auth/react";
 // import { useState } from "react";
 
-export interface Odds {
-  home: string | null;
-  draw: string | null;
-  away: string | null;
-  bttsYes?: string | null;
-  bttsNo?: string | null;
-  over15?: string | null;
-  under35?: string | null;
-}
 
 export interface Team {
   id: number;
@@ -28,10 +19,7 @@ export interface FixtureCardProps {
   kickoffTime?: string;
   homeTeam: Team;
   awayTeam: Team;
-  odds: Odds;
   score: string | null;
-  prediction?: string | null;
-  liveOdds?: unknown;
   index?: number;
 }
 
@@ -41,10 +29,7 @@ export default function FixtureCard({
   kickoffTime,
   homeTeam,
   awayTeam,
-  odds,
   score,
-  prediction,
-  liveOdds,
   index,
 }: FixtureCardProps) {
   const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(status) || status.includes("'");
