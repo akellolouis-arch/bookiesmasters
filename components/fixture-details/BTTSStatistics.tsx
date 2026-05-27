@@ -1,0 +1,124 @@
+"use client";
+
+import React from "react";
+
+interface TeamStatsProps {
+    homeTeam: {
+        id: number;
+        name: string;
+        logo: string;
+        allMatches?: any[];
+    };
+    awayTeam: {
+        id: number;
+        name: string;
+        logo: string;
+        allMatches?: any[];
+    };
+}
+
+const BTTSStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => {
+    
+    const calculateBTTSStats = (matches: any[] | undefined) => {
+        let yes = 0;
+        let no = 0;
+
+        if (!matches || !Array.isArray(matches)) {
+            return { yes: 0, no: 0, yesPct: 0, noPct: 0, total: 0 };
+        }
+
+        matches.forEach(m => {
+            const homeScore = m.score?.home;
+            const awayScore = m.score?.away;
+
+            if (homeScore !== undefined && awayScore !== undefined && homeScore !== null && awayScore !== null) {
+                if (homeScore > 0 && awayScore > 0) {
+                    yes++;
+                } else {
+                    no++;
+                }
+            }
+        });
+
+        const total = yes + no;
+        const yesPct = total ? Math.round((yes / total) * 100) : 0;
+        const noPct = total ? Math.round((no / total) * 100) : 0;
+
+        return { yes, no, yesPct, noPct, total };
+    };
+
+    const homeStats = calculateBTTSStats(homeTeam.allMatches);
+    const awayStats = calculateBTTSStats(awayTeam.allMatches);
+
+    return (
+        <div className="w-full mt-2 animate-in fade-in duration-500 bg-[#0F0F0F] rounded-2xl p-4 sm:p-6 border border-white/10 shadow-lg">
+            
+            <h3 className="text-sm sm:text-base font-bold tracking-wide text-center text-white mb-6">
+                Both scored (Yes/No)
+            </h3>
+
+            <div className="flex justify-between items-center sm:justify-around px-2 sm:px-10">
+                
+                {/* HOME STATS */}
+                <div className="flex items-center gap-2 sm:gap-4">
+                    <div className="flex flex-col items-end mr-1">
+                        <span className="text-xs sm:text-sm font-bold text-white mb-0.5">Yes</span>
+                        <span className="text-sm sm:text-base font-bold text-green-500">{homeStats.yes}</span>
+                    </div>
+
+                    {/* Pie Chart */}
+                    <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full shadow-lg border border-white/5 flex items-center justify-center overflow-hidden" 
+                         style={{ backgroundImage: `conic-gradient(#ef4444 ${homeStats.noPct}%, #22c55e ${homeStats.noPct}% 100%)` }}>
+                        
+                        {/* Labels inside Pie */}
+                        {homeStats.yesPct > 0 && homeStats.yesPct < 100 && (
+                            <>
+                                <span className="absolute bottom-1/4 right-1/4 text-[10px] sm:text-xs font-bold text-white/95 transform translate-x-1/4 translate-y-1/4 drop-shadow-md">{homeStats.yesPct}%</span>
+                                <span className="absolute top-1/4 left-1/4 text-[10px] sm:text-xs font-bold text-white/95 transform -translate-x-1/2 -translate-y-1/2 drop-shadow-md">{homeStats.noPct}%</span>
+                            </>
+                        )}
+                        {homeStats.yesPct === 100 && <span className="text-xs font-bold text-white drop-shadow-md">100%</span>}
+                        {homeStats.yesPct === 0 && <span className="text-xs font-bold text-white drop-shadow-md">100%</span>}
+                    </div>
+
+                    <div className="flex flex-col items-start ml-1">
+                        <span className="text-xs sm:text-sm font-bold text-white mb-0.5">No</span>
+                        <span className="text-sm sm:text-base font-bold text-red-500">{homeStats.no}</span>
+                    </div>
+                </div>
+
+                {/* AWAY STATS */}
+                <div className="flex items-center gap-2 sm:gap-4">
+                    <div className="flex flex-col items-end mr-1">
+                        <span className="text-xs sm:text-sm font-bold text-green-500 mb-0.5">Yes</span>
+                        <span className="text-sm sm:text-base font-bold text-white">{awayStats.yes}</span>
+                    </div>
+
+                    {/* Pie Chart */}
+                    <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full shadow-lg border border-white/5 flex items-center justify-center overflow-hidden" 
+                         style={{ backgroundImage: `conic-gradient(#ef4444 ${awayStats.noPct}%, #22c55e ${awayStats.noPct}% 100%)` }}>
+                        
+                        {/* Labels inside Pie */}
+                        {awayStats.yesPct > 0 && awayStats.yesPct < 100 && (
+                            <>
+                                <span className="absolute bottom-1/4 right-1/4 text-[10px] sm:text-xs font-bold text-white/95 transform translate-x-1/4 translate-y-1/4 drop-shadow-md">{awayStats.yesPct}%</span>
+                                <span className="absolute top-1/4 left-1/4 text-[10px] sm:text-xs font-bold text-white/95 transform -translate-x-1/2 -translate-y-1/2 drop-shadow-md">{awayStats.noPct}%</span>
+                            </>
+                        )}
+                        {awayStats.yesPct === 100 && <span className="text-xs font-bold text-white drop-shadow-md">100%</span>}
+                        {awayStats.yesPct === 0 && <span className="text-xs font-bold text-white drop-shadow-md">100%</span>}
+                    </div>
+
+                    <div className="flex flex-col items-start ml-1">
+                        <span className="text-xs sm:text-sm font-bold text-red-500 mb-0.5">No</span>
+                        <span className="text-sm sm:text-base font-bold text-white">{awayStats.no}</span>
+                    </div>
+                </div>
+
+            </div>
+            
+        </div>
+    );
+};
+
+export default BTTSStatistics;
