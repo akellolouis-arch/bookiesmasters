@@ -8,6 +8,7 @@ import Standings from "@/components/fixture-details/Standings";
 import TeamDisplay from "@/components/fixture-details/TeamDisplay";
 import Injuries from "@/components/fixture-details/Injuries";
 import OverallStatistics from "@/components/fixture-details/OverallStatistics";
+import OverUnderStatistics from "@/components/fixture-details/OverUnderStatistics";
 
 type FixtureDetailsData = {
     fixtureId: number;
@@ -117,6 +118,11 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 {/* --- OVERALL STATISTICS SECTION --- */}
                 <div className="mt-2">
                     <OverallStatistics homeTeam={data.homeTeam} awayTeam={data.awayTeam} />
+                </div>
+
+                {/* --- OVER/UNDER STATISTICS SECTION --- */}
+                <div className="mt-2">
+                    <OverUnderStatistics homeTeam={data.homeTeam} awayTeam={data.awayTeam} />
                 </div>
 
                 {/* --- SPLIT HOME & AWAY MATCHES SECTION --- */}
