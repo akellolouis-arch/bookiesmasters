@@ -67,7 +67,6 @@ async function run() {
 
         for (const l of allLeagues) {
             const currentSeason = Array.isArray(l.seasons) ? l.seasons.find(s => s.current === true) : null;
-
             const hasPredictions = currentSeason?.coverage?.predictions === true;
             const hasOdds = currentSeason?.coverage?.odds === true;
 
