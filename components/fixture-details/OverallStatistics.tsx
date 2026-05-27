@@ -102,6 +102,29 @@ const OverallStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => 
         "second_half": "Second half"
     };
 
+    const generateOverallStory = () => {
+        if (!homeStats.played || !awayStats.played) return null;
+
+        const homeScoredAvg = parseFloat(homeStats.avgScored);
+        const awayScoredAvg = parseFloat(awayStats.avgScored);
+        const homeConcededAvg = parseFloat(homeStats.avgConceded);
+        const awayConcededAvg = parseFloat(awayStats.avgConceded);
+
+        if (homeScoredAvg >= 2.0 && awayScoredAvg >= 2.0) {
+            return `Offensive powerhouses: Both ${homeTeam.name} and ${awayTeam.name} are in formidable goal-scoring form, each averaging 2+ goals per game recently.`;
+        } else if (homeConcededAvg <= 1.0 && awayConcededAvg <= 1.0) {
+            return `Defensive solidity: Both teams boast strong backlines, conceding an average of 1 goal or less in their recent fixtures.`;
+        } else if (homeScoredAvg >= awayScoredAvg + 0.8) {
+            return `Attacking edge: ${homeTeam.name} has been significantly more potent in front of goal, averaging ${homeStats.avgScored} goals per game compared to ${awayTeam.name}'s ${awayStats.avgScored}.`;
+        } else if (awayScoredAvg >= homeScoredAvg + 0.8) {
+            return `Attacking edge: ${awayTeam.name} has been significantly more potent in front of goal, averaging ${awayStats.avgScored} goals per game compared to ${homeTeam.name}'s ${homeStats.avgScored}.`;
+        } else {
+            return `Balanced form: Both teams show comparable offensive form recently. ${homeTeam.name} scores an average of ${homeStats.avgScored} per game, while ${awayTeam.name} averages ${awayStats.avgScored}.`;
+        }
+    };
+
+    const storyText = generateOverallStory();
+
     return (
         <div className="w-full mt-4 animate-in fade-in duration-500">
             <h3 className="text-xs font-bold tracking-wide capitalize text-center text-amber-100 mb-4 border-b border-white/10 pb-2">
@@ -274,6 +297,16 @@ const OverallStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => 
                     </div>
                 </div>
             </div>
+
+            {/* Expert Insight Story */}
+            {storyText && (
+                <div className="mt-4 sm:mt-6 bg-white/5 border-l-2 border-amber-500 rounded-r-xl p-3 sm:p-4 shadow-sm flex items-start gap-3">
+                    <span className="text-amber-500 text-lg leading-none">💡</span>
+                    <p className="text-[11px] sm:text-xs font-medium italic text-gray-300 leading-relaxed">
+                        {storyText}
+                    </p>
+                </div>
+            )}
 
         </div>
     );

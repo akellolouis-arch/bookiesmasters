@@ -53,6 +53,29 @@ const OverUnderStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) =
 
     const lines = [1.5, 2.5, 3.5];
 
+    const generateOverUnderStory = () => {
+        const home25 = calculateLineStats(homeTeam.allMatches, 2.5);
+        const away25 = calculateLineStats(awayTeam.allMatches, 2.5);
+
+        if (!home25.total || !away25.total) return null;
+
+        const avgOver25 = (home25.overPct + away25.overPct) / 2;
+
+        if (avgOver25 >= 70) {
+            return `Expect goals: Over 2.5 goals has hit in a combined ${Math.round(avgOver25)}% of recent matches for these teams, signaling a high-scoring affair.`;
+        } else if (avgOver25 <= 35) {
+            return `Tight game expected: Under 2.5 goals occurred in the vast majority of recent games for both ${homeTeam.name} and ${awayTeam.name}.`;
+        } else if (home25.overPct >= 70 && away25.overPct < 50) {
+            return `Contrasting styles: ${homeTeam.name} frequently sees Over 2.5 goals (${home25.overPct}%), while ${awayTeam.name} tends to play lower-scoring games.`;
+        } else if (away25.overPct >= 70 && home25.overPct < 50) {
+            return `Contrasting styles: ${awayTeam.name} frequently sees Over 2.5 goals (${away25.overPct}%), while ${homeTeam.name} tends to play lower-scoring games.`;
+        } else {
+            return `Over 2.5 goals has hit in ${home25.overPct}% of ${homeTeam.name}'s recent games and ${away25.overPct}% of ${awayTeam.name}'s.`;
+        }
+    };
+
+    const storyText = generateOverUnderStory();
+
     return (
         <div className="w-full mt-4 animate-in fade-in duration-500 bg-[#0F0F0F] rounded-2xl p-3 sm:p-5 border border-white/10 shadow-lg">
             
@@ -161,6 +184,16 @@ const OverUnderStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) =
                 })}
             </div>
             
+            {/* Expert Insight Story */}
+            {storyText && (
+                <div className="mt-4 sm:mt-6 bg-white/5 border-l-2 border-amber-500 rounded-r-xl p-3 sm:p-4 shadow-sm flex items-start gap-3">
+                    <span className="text-amber-500 text-lg leading-none">💡</span>
+                    <p className="text-[11px] sm:text-xs font-medium italic text-gray-300 leading-relaxed">
+                        {storyText}
+                    </p>
+                </div>
+            )}
+
         </div>
     );
 };

@@ -67,6 +67,22 @@ const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
     const drawPct = totalMatches ? Math.round((draws / totalMatches) * 100) : 0;
     const teamBPct = totalMatches ? Math.round((teamBWins / totalMatches) * 100) : 0;
 
+    const generateH2HStory = () => {
+        if (totalMatches === 0) return null;
+
+        if (teamAPct >= 60) {
+            return `Head-to-head dominance: ${teamA} has historically controlled this matchup, winning ${teamAPct}% of the last ${totalMatches} encounters.`;
+        } else if (teamBPct >= 60) {
+            return `Head-to-head dominance: ${teamB} has historically controlled this matchup, winning ${teamBPct}% of the last ${totalMatches} encounters.`;
+        } else if (drawPct >= 60) {
+            return `Fierce rivalry: These two teams frequently neutralize each other, with ${drawPct}% of their last ${totalMatches} meetings ending in a draw.`;
+        } else {
+            return `Evenly matched: Recent head-to-head history is highly competitive, with ${teamA} securing ${teamAWins} win${teamAWins !== 1 ? 's' : ''}, ${teamB} taking ${teamBWins} win${teamBWins !== 1 ? 's' : ''}, and ${draws} draw${draws !== 1 ? 's' : ''}.`;
+        }
+    };
+
+    const storyText = generateH2HStory();
+
     return (
         <div className="mb-2 w-full animate-in fade-in duration-500">
             <h3 className="text-xs font-bold tracking-wide capitalize text-left text-emerald-200/70 mb-2 border-b border-white/10 pb-1">Head to Head</h3>
@@ -153,6 +169,17 @@ const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
                     </div>
                 </div>
             )}
+
+            {/* Expert Insight Story */}
+            {storyText && (
+                <div className="mt-4 bg-white/5 border-l-2 border-amber-500 rounded-r-xl p-3 shadow-sm flex items-start gap-3">
+                    <span className="text-amber-500 text-lg leading-none">💡</span>
+                    <p className="text-[11px] sm:text-xs font-medium italic text-gray-300 leading-relaxed">
+                        {storyText}
+                    </p>
+                </div>
+            )}
+
         </div>
     );
 };
