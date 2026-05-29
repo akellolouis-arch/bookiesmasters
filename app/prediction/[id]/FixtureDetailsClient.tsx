@@ -10,6 +10,7 @@ import Injuries from "@/components/fixture-details/Injuries";
 import OverallStatistics from "@/components/fixture-details/OverallStatistics";
 import OverUnderStatistics from "@/components/fixture-details/OverUnderStatistics";
 import BTTSStatistics from "@/components/fixture-details/BTTSStatistics";
+import MatchIntroduction from "@/components/fixture-details/MatchIntroduction";
 
 type FixtureDetailsData = {
     fixtureId: number;
@@ -81,6 +82,18 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                     league={data.league}
                     isLoading={hideStaleData}
                 />
+
+                {/* --- MATCH INTRODUCTION --- */}
+                <div className="mt-4 max-w-3xl mx-auto">
+                    <MatchIntroduction
+                        homeTeamName={data.homeTeam.name}
+                        awayTeamName={data.awayTeam.name}
+                        venue={data.venue}
+                        homeMatches={data.homeTeam.allMatches}
+                        awayMatches={data.awayTeam.allMatches}
+                        h2hMatches={data.h2h}
+                    />
+                </div>
 
                 {/* --- OVERVIEW SECTION --- */}
                 <div className="mt-2">
