@@ -54,8 +54,8 @@ const MatchIntroduction: React.FC<MatchIntroductionProps> = ({
 
     // 1. Base Sentence
     const baseSentence = venue && venue.trim() !== "" && venue !== "Unknown venue"
-        ? `${homeTeamName} faces ${awayTeamName} at ${venue}.`
-        : `${homeTeamName} faces ${awayTeamName}.`;
+        ? `${homeTeamName} face ${awayTeamName} at ${venue}.`
+        : `${homeTeamName} face ${awayTeamName}.`;
 
     // 2. Home Team Narrative
     let homeNarrative = "";
@@ -90,8 +90,8 @@ const MatchIntroduction: React.FC<MatchIntroductionProps> = ({
     const fullNarrative = [baseSentence, homeNarrative, awayNarrative, h2hNarrative].filter(Boolean).join(" ");
 
     return (
-        <div className="bg-[#1a1a1a] border-l-4 border-emerald-500/50 p-4 rounded-r-lg mb-4 animate-in fade-in duration-500">
-            <p className="text-gray-300 text-sm leading-relaxed font-medium">
+        <div className="bg-white/5 rounded-xl p-3 sm:p-4 shadow-sm flex items-start gap-3 mb-4 animate-in fade-in duration-500">
+            <p className="text-[11px] sm:text-xs font-medium italic text-gray-300 leading-relaxed">
                 {fullNarrative}
             </p>
         </div>
