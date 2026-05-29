@@ -10,6 +10,7 @@ import Injuries from "@/components/fixture-details/Injuries";
 import OverallStatistics from "@/components/fixture-details/OverallStatistics";
 import OverUnderStatistics from "@/components/fixture-details/OverUnderStatistics";
 import BTTSStatistics from "@/components/fixture-details/BTTSStatistics";
+import MatchEvents from "@/components/fixture-details/MatchEvents";
 
 type FixtureDetailsData = {
     fixtureId: number;
@@ -22,6 +23,7 @@ type FixtureDetailsData = {
     status: string;
     venue?: string;
     score?: { home: number | null; away: number | null } | null;
+    events?: any[];
     injuries?: any[];
     h2h?: any[];
     standings?: any[];
@@ -81,6 +83,17 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                     league={data.league}
                     isLoading={hideStaleData}
                 />
+
+                {/* --- MATCH EVENTS SECTION --- */}
+                {data.events && data.events.length > 0 && (
+                    <div className="mt-4 mb-2">
+                        <MatchEvents 
+                            events={data.events} 
+                            homeTeamId={data.homeTeam.id} 
+                            awayTeamId={data.awayTeam.id} 
+                        />
+                    </div>
+                )}
 
                 {/* --- OVERVIEW SECTION --- */}
                 <div className="mt-2">

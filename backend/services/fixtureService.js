@@ -143,9 +143,10 @@ export const getFixtureById = async (fixtureId) => {
             // Odds removed per user request
 
             // Rich Data
-            lineups: fixtureDoc.lineups || [],
+            lineups: fixtureDoc.lineups || matchData.lineups || [],
             injuries: fixtureDoc.injuries || [],
             statistics: fixtureDoc.statistics || [],
+            events: fixtureDoc.events || matchData.events || [],
         };
 
 

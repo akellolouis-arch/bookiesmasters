@@ -19,14 +19,14 @@ const FIELDS_TO_UNSET = {
 
 export async function cleanupOldFixtures() {
     try {
-        console.log("🧹 [Cleanup] Starting database cleanup for matches > 6 days old...");
+        console.log("🧹 [Cleanup] Starting database cleanup for matches > 7 days old...");
 
-        const sixDaysAgo = new Date();
-        sixDaysAgo.setDate(sixDaysAgo.getDate() - 6);
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
         // Find count first
         const count = await Fixture.countDocuments({
-            "fixture.fixture.date": { $lt: sixDaysAgo.toISOString() },
+            "fixture.fixture.date": { $lt: sevenDaysAgo.toISOString() },
             "cleanupDone": { $ne: true } // Avoid reprocessing
         });
 
@@ -39,7 +39,7 @@ export async function cleanupOldFixtures() {
 
         const result = await Fixture.updateMany(
             {
-                "fixture.fixture.date": { $lt: sixDaysAgo.toISOString() },
+                "fixture.fixture.date": { $lt: sevenDaysAgo.toISOString() },
                 "cleanupDone": { $ne: true }
             },
             {
