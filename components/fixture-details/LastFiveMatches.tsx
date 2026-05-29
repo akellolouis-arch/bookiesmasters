@@ -8,6 +8,7 @@ interface LastMatch {
     score: { home: number; away: number };
     result: "W" | "L" | "D";
     color: string;
+    league?: { id: number; name: string; logo?: string };
 }
 
 interface LastFiveMatchesProps {
@@ -19,6 +20,7 @@ interface LastFiveMatchesProps {
 
 const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, matches, subTitle }) => {
     const [showAll, setShowAll] = useState(false);
+    const [activeLeagueId, setActiveLeagueId] = useState<number | "All">("All");
 
     if (!matches || matches.length === 0) {
         return (
@@ -29,9 +31,23 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
         );
     }
 
+    // Extract unique leagues
+    const uniqueLeagues = Array.from(
+        new Map(
+            matches
+                .filter(m => m.league)
+                .map(m => [m.league!.id, m.league])
+        ).values()
+    ) as { id: number; name: string; logo?: string }[];
+
+    // Filter matches by selected league
+    const filteredMatches = activeLeagueId === "All" 
+        ? matches 
+        : matches.filter(m => m.league && m.league.id === activeLeagueId);
+
     // Determine matches to show: first 5 or all
-    const visibleMatches = showAll ? matches : matches.slice(0, 5);
-    const hasMore = matches.length > 5;
+    const visibleMatches = showAll ? filteredMatches : filteredMatches.slice(0, 5);
+    const hasMore = filteredMatches.length > 5;
 
     // Calculate Form Summary
     const totalMatches = visibleMatches.length;
@@ -64,6 +80,35 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                 </div>
             </div>
 
+            {/* 🏷️ League Filter Tabs */}
+            {uniqueLeagues.length > 1 && (
+                <div className="flex items-center justify-center gap-2 mb-3 overflow-x-auto no-scrollbar pb-1">
+                    <button
+                        onClick={() => { setActiveLeagueId("All"); setShowAll(false); }}
+                        className={`px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+                            activeLeagueId === "All"
+                                ? "bg-white/20 text-white shadow-sm"
+                                : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-gray-200"
+                        }`}
+                    >
+                        All
+                    </button>
+                    {uniqueLeagues.map((league) => (
+                        <button
+                            key={league.id}
+                            onClick={() => { setActiveLeagueId(league.id); setShowAll(false); }}
+                            className={`px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+                                activeLeagueId === league.id
+                                    ? "bg-white/20 text-white shadow-sm"
+                                    : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-gray-200"
+                            }`}
+                        >
+                            {league.name}
+                        </button>
+                    ))}
+                </div>
+            )}
+
             {/* 🏟️ Matches List */}
             <div className="flex flex-col">
                 {visibleMatches.map((m, i) => {
@@ -84,7 +129,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                     return (
                         <div
                             key={i}
-                            className={`grid grid-cols-[auto_1fr_auto_1fr] md:grid-cols-4 items-center p-2 text-sm transition-colors ${bgClass} ${hoverClass}`}
+                            className={`flex items-center p-2 text-sm transition-colors ${bgClass} ${hoverClass}`}
                         >
                             {/* 1️⃣ Date */}
                             <div className="flex flex-col items-center justify-center mr-2 w-10 shrink-0">
@@ -93,7 +138,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                             </div>
 
                             {/* 2️⃣ Home Team */}
-                            <div className="flex items-center justify-end gap-2 pr-3 min-w-0">
+                            <div className="flex items-center justify-end gap-2 pr-3 min-w-0 flex-1">
                                 <span className={`font-medium text-xs md:text-sm whitespace-normal break-words leading-tight text-right ${homeWinner ? 'text-white drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`}>{m.homeTeam.name}</span>
                                 {m.homeTeam.logo && (
                                     <img src={m.homeTeam.logo} alt={m.homeTeam.name} className="w-5 h-5 object-contain flex-shrink-0" />
@@ -116,12 +161,21 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                             </div>
 
                             {/* 4️⃣ Away Team */}
-                            <div className="flex items-center justify-start gap-2 pl-3 min-w-0">
+                            <div className="flex items-center justify-start gap-2 pl-3 min-w-0 pr-1 flex-1">
                                 {m.awayTeam.logo && (
                                     <img src={m.awayTeam.logo} alt={m.awayTeam.name} className="w-5 h-5 object-contain flex-shrink-0" />
                                 )}
                                 <span className={`font-medium text-xs md:text-sm whitespace-normal break-words leading-tight text-left ${awayWinner ? 'text-white drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`}>{m.awayTeam.name}</span>
                             </div>
+
+                            {/* 5️⃣ League Short Name (Optional visual flair based on user reference) */}
+                            {m.league && (
+                                <div className="hidden sm:flex flex-col items-end justify-center w-8 shrink-0 opacity-40 ml-auto">
+                                    <span className="text-[9px] font-bold tracking-wider uppercase whitespace-nowrap overflow-hidden text-ellipsis max-w-[40px]" title={m.league.name}>
+                                        {m.league.name.substring(0, 3)}
+                                    </span>
+                                </div>
+                            )}
                         </div>
                     );
                 })}

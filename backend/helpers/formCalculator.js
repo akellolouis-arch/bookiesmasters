@@ -65,6 +65,11 @@ export const calculateTeamForm = async (teamId) => {
                 away: match.goals.away,
                 halftime: match.score?.halftime || null,
             },
+            league: match.league ? {
+                id: match.league.id,
+                name: match.league.name,
+                logo: match.league.logo
+            } : null,
             venue: match.fixture?.venue?.name || "Unknown venue",
             result, // W/D/L from current team's perspective
             color,
