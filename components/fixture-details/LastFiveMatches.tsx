@@ -82,10 +82,10 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
 
             {/* 🏷️ League Filter Tabs */}
             {uniqueLeagues.length > 0 && (
-                <div className="flex items-center justify-center gap-2 mb-3 overflow-x-auto no-scrollbar pb-1">
+                <div className="flex items-center justify-start gap-1 mb-3 overflow-x-auto no-scrollbar pb-1 px-1">
                     <button
                         onClick={() => { setActiveLeagueId("All"); setShowAll(false); }}
-                        className={`px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+                        className={`px-1 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
                             activeLeagueId === "All"
                                 ? "bg-white/20 text-white shadow-sm"
                                 : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-gray-200"
@@ -97,7 +97,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                         <button
                             key={league.id}
                             onClick={() => { setActiveLeagueId(league.id); setShowAll(false); }}
-                            className={`px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+                            className={`px-1 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
                                 activeLeagueId === league.id
                                     ? "bg-white/20 text-white shadow-sm"
                                     : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-gray-200"
