@@ -81,7 +81,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
             </div>
 
             {/* 🏷️ League Filter Tabs */}
-            {uniqueLeagues.length > 1 && (
+            {uniqueLeagues.length > 0 && (
                 <div className="flex items-center justify-center gap-2 mb-3 overflow-x-auto no-scrollbar pb-1">
                     <button
                         onClick={() => { setActiveLeagueId("All"); setShowAll(false); }}
