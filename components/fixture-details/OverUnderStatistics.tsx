@@ -84,11 +84,11 @@ const OverUnderStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) =
             <div className="flex justify-end items-center mb-4 gap-4 px-2">
                 <div className="flex items-center gap-1.5">
                     <div className="w-3 h-3 rounded-full bg-slate-500 shadow-sm"></div>
-                    <span className="text-xs text-gray-400 font-medium tracking-wide">Under</span>
+                    <span className="text-xs text-white font-medium tracking-wide">Under</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                     <div className="w-3 h-3 rounded-full bg-slate-800 border border-white/10 shadow-sm"></div>
-                    <span className="text-xs text-white font-medium tracking-wide">Over</span>
+                    <span className="text-xs text-gray-400 font-medium tracking-wide">Over</span>
                 </div>
             </div>
 
@@ -101,7 +101,7 @@ const OverUnderStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) =
                     </div>
                 </div>
                 <div className="text-xs sm:text-sm font-bold text-amber-100/80 tracking-wide uppercase">
-                    Recent matches
+                    
                 </div>
                 <div className="flex items-center gap-2 flex-row-reverse">
                     <span className="text-[11px] sm:text-sm font-bold text-white uppercase truncate max-w-[60px] sm:max-w-[100px]">{awayTeam.name}</span>
