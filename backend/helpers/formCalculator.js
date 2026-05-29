@@ -11,7 +11,7 @@ export const calculateTeamForm = async (teamId) => {
         "fixture.fixture.status.short": "FT", // Only completed matches
     })
         .sort({ "fixture.fixture.date": -1 }) // Sort by nested date
-        .limit(20); // Fetch 20 for "Show More" functionality
+        .limit(100); // Fetch up to 100 to ensure deep history for cup filters
 
     console.log(`[FormCalc] Found ${fixtures.length} matches for team ${teamId}`);
 
