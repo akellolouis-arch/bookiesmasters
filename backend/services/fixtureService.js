@@ -146,7 +146,6 @@ export const getFixtureById = async (fixtureId) => {
             lineups: fixtureDoc.lineups || matchData.lineups || [],
             injuries: fixtureDoc.injuries || [],
             statistics: fixtureDoc.statistics || [],
-            events: fixtureDoc.events || matchData.events || [],
         };
 
 

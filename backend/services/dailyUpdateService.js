@@ -341,6 +341,11 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
         }
       }
 
+      // 🧹 STRIP HEAVY EVENTS TO SAVE DB STORAGE
+      if (f.events) {
+         delete f.events;
+      }
+
       // 6️⃣ save/update in Mongo
       await Fixture.findOneAndUpdate(
         { fixtureId: fixtureId },
