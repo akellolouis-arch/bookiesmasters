@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import PieChart from "./PieChart";
 
 interface TeamStatsProps {
     homeTeam: {
@@ -131,19 +132,12 @@ const OverUnderStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) =
                                     <span className="text-white">{homeStats.over}</span>
                                 </div>
                                 {/* Pie Chart */}
-                                <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full shadow-lg border border-white/5 flex items-center justify-center overflow-hidden" 
-                                     style={{ backgroundImage: `conic-gradient(#64748b ${homeStats.underPct}%, #1e293b ${homeStats.underPct}% 100%)` }}>
-                                    
-                                    {/* Labels inside Pie */}
-                                    {homeStats.underPct > 0 && homeStats.underPct < 100 && (
-                                        <>
-                                            <span className="absolute top-1/4 left-1/4 text-[8px] sm:text-[10px] font-bold text-white/90 transform -translate-x-1/2 -translate-y-1/2">{homeStats.underPct}%</span>
-                                            <span className="absolute bottom-1/4 right-1/4 text-[8px] sm:text-[10px] font-bold text-white/90 transform translate-x-1/4 translate-y-1/4">{homeStats.overPct}%</span>
-                                        </>
-                                    )}
-                                    {homeStats.underPct === 100 && <span className="text-[10px] font-bold text-white">100%</span>}
-                                    {homeStats.underPct === 0 && <span className="text-[10px] font-bold text-white">100%</span>}
-                                </div>
+                                <PieChart 
+                                    val1={homeStats.underPct} 
+                                    color1="#64748b" 
+                                    val2={homeStats.overPct} 
+                                    color2="#1e293b" 
+                                />
                             </div>
 
                             {/* CENTER LINE */}
@@ -164,19 +158,12 @@ const OverUnderStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) =
                                     <span className="text-white">{awayStats.over}</span>
                                 </div>
                                 {/* Pie Chart */}
-                                <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full shadow-lg border border-white/5 flex items-center justify-center overflow-hidden" 
-                                     style={{ backgroundImage: `conic-gradient(#64748b ${awayStats.underPct}%, #1e293b ${awayStats.underPct}% 100%)` }}>
-                                    
-                                    {/* Labels inside Pie */}
-                                    {awayStats.underPct > 0 && awayStats.underPct < 100 && (
-                                        <>
-                                            <span className="absolute top-1/4 left-1/4 text-[8px] sm:text-[10px] font-bold text-white/90 transform -translate-x-1/2 -translate-y-1/2">{awayStats.underPct}%</span>
-                                            <span className="absolute bottom-1/4 right-1/4 text-[8px] sm:text-[10px] font-bold text-white/90 transform translate-x-1/4 translate-y-1/4">{awayStats.overPct}%</span>
-                                        </>
-                                    )}
-                                    {awayStats.underPct === 100 && <span className="text-[10px] font-bold text-white">100%</span>}
-                                    {awayStats.underPct === 0 && <span className="text-[10px] font-bold text-white">100%</span>}
-                                </div>
+                                <PieChart 
+                                    val1={awayStats.underPct} 
+                                    color1="#64748b" 
+                                    val2={awayStats.overPct} 
+                                    color2="#1e293b" 
+                                />
                             </div>
                             
                         </div>

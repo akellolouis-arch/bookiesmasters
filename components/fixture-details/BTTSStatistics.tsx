@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import PieChart from "./PieChart";
 
 interface TeamStatsProps {
     homeTeam: {
@@ -87,19 +88,12 @@ const BTTSStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => {
                     </div>
 
                     {/* Pie Chart */}
-                    <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full shadow-lg border border-white/5 flex items-center justify-center overflow-hidden" 
-                         style={{ backgroundImage: `conic-gradient(#ef4444 ${homeStats.noPct}%, #22c55e ${homeStats.noPct}% 100%)` }}>
-                        
-                        {/* Labels inside Pie */}
-                        {homeStats.yesPct > 0 && homeStats.yesPct < 100 && (
-                            <>
-                                <span className="absolute bottom-1/4 right-1/4 text-[10px] sm:text-xs font-bold text-white/95 transform translate-x-1/4 translate-y-1/4 drop-shadow-md">{homeStats.yesPct}%</span>
-                                <span className="absolute top-1/4 left-1/4 text-[10px] sm:text-xs font-bold text-white/95 transform -translate-x-1/2 -translate-y-1/2 drop-shadow-md">{homeStats.noPct}%</span>
-                            </>
-                        )}
-                        {homeStats.yesPct === 100 && <span className="text-xs font-bold text-white drop-shadow-md">100%</span>}
-                        {homeStats.yesPct === 0 && <span className="text-xs font-bold text-white drop-shadow-md">100%</span>}
-                    </div>
+                    <PieChart 
+                        val1={homeStats.noPct} 
+                        color1="#ef4444" 
+                        val2={homeStats.yesPct} 
+                        color2="#22c55e" 
+                    />
 
                     <div className="flex flex-col items-start ml-1">
                         <span className="text-xs sm:text-sm font-bold text-white mb-0.5">No</span>
@@ -115,19 +109,12 @@ const BTTSStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => {
                     </div>
 
                     {/* Pie Chart */}
-                    <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full shadow-lg border border-white/5 flex items-center justify-center overflow-hidden" 
-                         style={{ backgroundImage: `conic-gradient(#ef4444 ${awayStats.noPct}%, #22c55e ${awayStats.noPct}% 100%)` }}>
-                        
-                        {/* Labels inside Pie */}
-                        {awayStats.yesPct > 0 && awayStats.yesPct < 100 && (
-                            <>
-                                <span className="absolute bottom-1/4 right-1/4 text-[10px] sm:text-xs font-bold text-white/95 transform translate-x-1/4 translate-y-1/4 drop-shadow-md">{awayStats.yesPct}%</span>
-                                <span className="absolute top-1/4 left-1/4 text-[10px] sm:text-xs font-bold text-white/95 transform -translate-x-1/2 -translate-y-1/2 drop-shadow-md">{awayStats.noPct}%</span>
-                            </>
-                        )}
-                        {awayStats.yesPct === 100 && <span className="text-xs font-bold text-white drop-shadow-md">100%</span>}
-                        {awayStats.yesPct === 0 && <span className="text-xs font-bold text-white drop-shadow-md">100%</span>}
-                    </div>
+                    <PieChart 
+                        val1={awayStats.noPct} 
+                        color1="#ef4444" 
+                        val2={awayStats.yesPct} 
+                        color2="#22c55e" 
+                    />
 
                     <div className="flex flex-col items-start ml-1">
                         <span className="text-xs sm:text-sm font-bold text-red-500 mb-0.5">No</span>
