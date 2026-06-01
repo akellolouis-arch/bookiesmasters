@@ -54,7 +54,10 @@ const getFixture = cache(async (id: string): Promise<FixtureDetailData | null> =
 
         if (!res.ok) {
             console.error(`⚠️ Failed to fetch details for ${id}. Status: ${res.status}`);
-            return null;
+            // Only return null for an actual 404 (fixture doesn't exist).
+            // For 500s, 502s, 504s, throw an error to prevent Next.js from caching a 404 page.
+            if (res.status === 404) return null;
+            throw new Error(`API returned ${res.status}`);
         }
 
         const json = await res.json();
@@ -62,7 +65,9 @@ const getFixture = cache(async (id: string): Promise<FixtureDetailData | null> =
     } catch (e) {
         const msg = e instanceof Error ? e.message : String(e);
         console.error(`⚠️ Fetch failed for fixture ${id}:`, msg);
-        return null;
+        // Throw the error so Next.js does NOT cache a 404 page.
+        // It will trigger error.tsx (or a 500) and try again on next request.
+        throw new Error(`Fetch failed: ${msg}`);
     }
 });
 
