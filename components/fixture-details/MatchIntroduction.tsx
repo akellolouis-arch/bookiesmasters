@@ -22,29 +22,31 @@ const MatchIntroduction: React.FC<MatchIntroductionProps> = ({
     awayMatches = [],
     h2hMatches = [],
 }) => {
-    // Helper to calculate Over/Under 2.5 counts
     const calculateStats = (matches: MatchData[], limit: number) => {
         const recent = matches.slice(0, limit);
-        let over25 = 0;
-        let under25 = 0;
+        let total = 0;
+        let over15 = 0, under15 = 0;
+        let over25 = 0, under25 = 0;
+        let over35 = 0, under35 = 0;
 
         recent.forEach((m) => {
             const homeGoals = m.score?.home ?? m.goals?.home;
             const awayGoals = m.score?.away ?? m.goals?.away;
             
             if (homeGoals !== undefined && homeGoals !== null && awayGoals !== undefined && awayGoals !== null) {
-                if (homeGoals + awayGoals > 2.5) {
-                    over25++;
-                } else {
-                    under25++;
-                }
+                total++;
+                const tg = homeGoals + awayGoals;
+                if (tg > 1.5) over15++; else under15++;
+                if (tg > 2.5) over25++; else under25++;
+                if (tg > 3.5) over35++; else under35++;
             }
         });
 
         return {
-            total: over25 + under25,
-            over25,
-            under25,
+            total,
+            over15, under15,
+            over25, under25,
+            over35, under35,
         };
     };
 
@@ -87,12 +89,33 @@ const MatchIntroduction: React.FC<MatchIntroductionProps> = ({
         }
     }
 
+    // 5. Final Prediction Waterfall Logic
+    let finalPrediction = "";
+    if (homeStats.total > 0 && awayStats.total > 0 && h2hStats.total > 0) {
+        if (homeStats.over35 >= homeStats.under35 && awayStats.over35 >= awayStats.under35 && h2hStats.over35 >= h2hStats.under35) {
+            finalPrediction = "Over 3.5 Goals";
+        } else if (homeStats.over25 >= homeStats.under25 && awayStats.over25 >= awayStats.under25 && h2hStats.over25 >= h2hStats.under25) {
+            finalPrediction = "Over 2.5 Goals";
+        } else if (homeStats.over15 >= homeStats.under15 && awayStats.over15 >= awayStats.under15 && h2hStats.over15 >= h2hStats.under15) {
+            finalPrediction = "Over 1.5 Goals";
+        } else if (homeStats.under25 >= homeStats.over25 && awayStats.under25 >= awayStats.over25 && h2hStats.under25 >= h2hStats.over25) {
+            finalPrediction = "Under 2.5 Goals";
+        } else if (homeStats.under35 >= homeStats.over35 && awayStats.under35 >= awayStats.over35 && h2hStats.under35 >= h2hStats.over35) {
+            finalPrediction = "Under 3.5 Goals";
+        }
+    }
+
     const fullNarrative = [baseSentence, homeNarrative, awayNarrative, h2hNarrative].filter(Boolean).join(" ");
 
     return (
         <div className="bg-white/5 rounded-xl p-3 sm:p-4 shadow-sm flex items-start gap-3 mb-4 animate-in fade-in duration-500">
             <p className="text-[11px] sm:text-xs font-medium italic text-gray-300 leading-relaxed">
                 {fullNarrative}
+                {finalPrediction && (
+                    <span className="not-italic text-teal-400 font-bold ml-1">
+                        Data-Driven Prediction: {finalPrediction}.
+                    </span>
+                )}
             </p>
         </div>
     );
