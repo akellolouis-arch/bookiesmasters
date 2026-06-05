@@ -5,7 +5,7 @@ import Image from "next/image";
 import FixtureCard from "@/components/FixtureCard";
 import Loader from "@/components/Loader";
 import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, usePathname } from "next/navigation";
 
 // ------------------------------
 // TYPES BASED ON YOUR BACKEND RESPONSE
@@ -71,12 +71,17 @@ export default function PredictionsList({
   date,
 }: PredictionsListProps) {
   const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const isTipsPage = pathname.startsWith("/tips");
   const query = (searchParams.get("q") || "").trim().toLowerCase();
 
   // Construct URL dynamically
-  const apiUrl = date === "live"
-    ? `${process.env.NEXT_PUBLIC_API_URL}/api/fixtures/live`
-    : `${process.env.NEXT_PUBLIC_API_URL}/api/fixtures/cards?date=${date}`;
+  let apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/fixtures/cards?date=${date}`;
+  if (date === "live") {
+    apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/fixtures/live`;
+  } else if (isTipsPage) {
+    apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/predictions/cards?date=${date}`;
+  }
 
   const today = new Date().toLocaleDateString("en-CA", { timeZone: "Africa/Nairobi" });
   const isToday = date === today;
