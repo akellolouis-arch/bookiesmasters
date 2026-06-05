@@ -1,5 +1,6 @@
 import PredictionsList from "@/app/predictions/[date]/predictionList";
 import DateNavigator from "@/components/DateNavigator";
+import { Suspense } from "react";
 
 export const revalidate = 86400; // Cache for 1 day (ISR)
 export const dynamicParams = true; // Allow generating pages for new dates
@@ -145,14 +146,19 @@ export default async function TipsPage({
 
   return (
     <>
-      <DateNavigator date={date} />
+      <Suspense fallback={<div className="h-10 w-full bg-[#1F1F1F] animate-pulse border-y border-white/5" />}>
+        <DateNavigator date={date} />
+      </Suspense>
+      
       {initialData.length === 0 ? (
         <div className="flex flex-col items-center justify-center p-8 mt-10">
           <p className="text-gray-400 text-lg font-medium">No strict predictions found for this date.</p>
           <p className="text-gray-500 text-sm mt-2 max-w-md text-center">Our algorithm only predicts when the data is exceptionally strong. Check back tomorrow!</p>
         </div>
       ) : (
-        <PredictionsList initialData={initialData} date={date} />
+        <Suspense fallback={<div className="p-4 text-center text-gray-500 animate-pulse">Loading list...</div>}>
+          <PredictionsList initialData={initialData} date={date} />
+        </Suspense>
       )}
     </>
   );

@@ -1,5 +1,6 @@
 import PredictionsList from "./predictionList";
 import DateNavigator from "@/components/DateNavigator";
+import { Suspense } from "react";
 
 
 export const revalidate = 86400; // Cache for 1 day (ISR)
@@ -151,11 +152,13 @@ export default async function PredictionsPage({
 
   return (
     <>
-      <DateNavigator date={date} />
+      <Suspense fallback={<div className="h-10 w-full bg-[#1F1F1F] animate-pulse border-y border-white/5" />}>
+        <DateNavigator date={date} />
+      </Suspense>
 
-      <PredictionsList initialData={initialData} date={date} />
-
-
+      <Suspense fallback={<div className="p-4 text-center text-gray-500 animate-pulse">Loading list...</div>}>
+        <PredictionsList initialData={initialData} date={date} />
+      </Suspense>
     </>
   );
 }
