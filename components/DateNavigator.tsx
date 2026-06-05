@@ -42,6 +42,7 @@ export default function DateNavigator({ date }: Props) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isLivePage = pathname === "/live";
+  const isTipsPage = pathname.startsWith("/tips");
   const initialQuery = searchParams.get("q") || "";
   const [isSearchOpen, setIsSearchOpen] = useState(Boolean(initialQuery));
   const [searchText, setSearchText] = useState(initialQuery);
@@ -71,21 +72,24 @@ export default function DateNavigator({ date }: Props) {
   const handleDateClick = (d: Date) => {
     const nextDate = toYYYYMMDDUtc(d);
     const q = (searchParams.get("q") || "").trim();
-    const url = q ? `/predictions/${nextDate}?q=${encodeURIComponent(q)}` : `/predictions/${nextDate}`;
+    const baseRoute = isTipsPage ? "/tips" : "/predictions";
+    const url = q ? `${baseRoute}/${nextDate}?q=${encodeURIComponent(q)}` : `${baseRoute}/${nextDate}`;
     router.push(url);
   };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = searchText.trim();
-    const basePath = isLivePage ? "/live" : `/predictions/${date}`;
+    const baseRoute = isTipsPage ? "/tips" : "/predictions";
+    const basePath = isLivePage ? "/live" : `${baseRoute}/${date}`;
     const url = trimmed ? `${basePath}?q=${encodeURIComponent(trimmed)}` : basePath;
     router.push(url);
   };
 
   const clearSearch = () => {
     setSearchText("");
-    const basePath = isLivePage ? "/live" : `/predictions/${date}`;
+    const baseRoute = isTipsPage ? "/tips" : "/predictions";
+    const basePath = isLivePage ? "/live" : `${baseRoute}/${date}`;
     router.push(basePath);
   };
 

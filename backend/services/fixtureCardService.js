@@ -210,3 +210,159 @@ export async function getLiveFixturesGroupedByLeague() {
 
   return sortLeagueGroups(Object.values(grouped));
 }
+
+// -----------------------------------------
+// NEW PREDICTION LOGIC FOR FILTERED CARDS
+// -----------------------------------------
+const calculateStats = (matches, limit) => {
+  const recent = matches.slice(0, limit);
+  let stats = {
+      total: 0,
+      over25: 0, under25: 0,
+  };
+
+  recent.forEach((m) => {
+      const homeGoals = m.fixture?.goals?.home ?? m.fixture?.score?.fulltime?.home;
+      const awayGoals = m.fixture?.goals?.away ?? m.fixture?.score?.fulltime?.away;
+      
+      if (homeGoals !== undefined && homeGoals !== null && awayGoals !== undefined && awayGoals !== null) {
+          const totalGoals = homeGoals + awayGoals;
+          stats.total++;
+          if (totalGoals > 2.5) stats.over25++; else stats.under25++;
+      }
+  });
+
+  return stats;
+};
+
+export async function getPredictedFixturesGroupedByLeague(date) {
+  if (!date) throw new Error("Date parameter is required");
+
+  const startOfDayKenya = new Date(`${date}T00:00:00+03:00`);
+  const endOfDayKenya = new Date(`${date}T23:59:59.999+03:00`);
+
+  const matchFilter = {
+    "fixture.fixture.date": {
+      $gte: startOfDayKenya.toISOString(),
+      $lte: endOfDayKenya.toISOString()
+    }
+  };
+
+  const fixtures = await Fixture.aggregate([
+    { $match: matchFilter },
+    {
+      $project: {
+        fixtureId: 1,
+        "fixture.id": 1,
+        "fixture.name": 1,
+        "fixture.logo": 1,
+        "fixture.country": 1,
+        "fixture.fixture": 1,
+        "fixture.league": 1,
+        "fixture.teams": 1,
+        "fixture.goals": 1,
+        "fixture.score": 1,
+        "fixture.status": 1,
+        "livescore": 1,
+      }
+    },
+    {
+      $lookup: {
+        from: "vipfixtures",
+        localField: "fixtureId",
+        foreignField: "fixtureId",
+        as: "vipData"
+      }
+    },
+    {
+      $unwind: {
+        path: "$vipData",
+        preserveNullAndEmptyArrays: true
+      }
+    },
+    {
+      $sort: {
+        "fixture.league.country": 1,
+        "fixture.league.name": 1,
+        "fixture.fixture.date": 1
+      }
+    }
+  ]);
+
+  const validFixtures = fixtures.filter((f) => {
+    if (f.fixture?.league?.name?.toLowerCase().includes("friendlies")) {
+      return false;
+    }
+    return true;
+  });
+
+  const orderedDocs = sortDocsByCountryLeagueKickoff(validFixtures);
+
+  // Filter using prediction logic (run in parallel)
+  const predictedDocs = [];
+  
+  await Promise.all(orderedDocs.map(async (doc) => {
+      const matchDate = doc.fixture.fixture.date;
+      const homeId = doc.fixture.teams.home.id;
+      const awayId = doc.fixture.teams.away.id;
+
+      const [homeMatches, awayMatches, h2hMatches] = await Promise.all([
+          Fixture.find({
+              $or: [{ "fixture.teams.home.id": homeId }, { "fixture.teams.away.id": homeId }],
+              "fixture.fixture.date": { $lt: matchDate },
+              "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
+          }).sort({ "fixture.fixture.date": -1 }).limit(5),
+          Fixture.find({
+              $or: [{ "fixture.teams.home.id": awayId }, { "fixture.teams.away.id": awayId }],
+              "fixture.fixture.date": { $lt: matchDate },
+              "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
+          }).sort({ "fixture.fixture.date": -1 }).limit(5),
+          Fixture.find({
+              $or: [
+                  { "fixture.teams.home.id": homeId, "fixture.teams.away.id": awayId },
+                  { "fixture.teams.home.id": awayId, "fixture.teams.away.id": homeId }
+              ],
+              "fixture.fixture.date": { $lt: matchDate },
+              "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
+          }).sort({ "fixture.fixture.date": -1 }).limit(5)
+      ]);
+
+      const homeStats = calculateStats(homeMatches, 5);
+      const awayStats = calculateStats(awayMatches, 5);
+      const h2hStats = calculateStats(h2hMatches, 5);
+
+      if (homeStats.total > 0 && awayStats.total > 0 && h2hStats.total > 0) {
+          const passOV25 = homeStats.over25 >= homeStats.under25 && awayStats.over25 >= awayStats.under25 && h2hStats.over25 >= h2hStats.under25;
+          const passUN25 = homeStats.under25 >= homeStats.over25 && awayStats.under25 >= awayStats.over25 && h2hStats.under25 >= h2hStats.over25;
+          
+          if (passOV25 || passUN25) {
+              predictedDocs.push(doc);
+          }
+      }
+  }));
+
+  // Re-sort the predicted docs since Promise.all doesn't guarantee order of push
+  const sortedPredictedDocs = sortDocsByCountryLeagueKickoff(predictedDocs);
+
+  const grouped = {};
+  sortedPredictedDocs.forEach(doc => {
+    const league = doc.fixture.league;
+    const leagueId = league.id;
+
+    if (!grouped[leagueId]) {
+      grouped[leagueId] = {
+        league: {
+          id: league.id,
+          name: league.name,
+          logo: league.logo,
+          country: league.country
+        },
+        matches: []
+      };
+    }
+
+    grouped[leagueId].matches.push(formatFixtureCard(doc));
+  });
+
+  return sortLeagueGroups(Object.values(grouped));
+}

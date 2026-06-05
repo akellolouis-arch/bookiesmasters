@@ -36,116 +36,124 @@ const runTest = async () => {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         });
-        console.log("Connected to DB");
+        console.log("Connected to DB\n");
 
-        // Get yesterday's date in Kenya time (UTC+3)
-        // Today is 2026-06-04, so yesterday was 2026-06-03
-        const dateStr = "2026-06-01";
-        const startOfDay = new Date(`${dateStr}T00:00:00+03:00`);
-        const endOfDay = new Date(`${dateStr}T23:59:59.999+03:00`);
-
-        const yesterdayFixtures = await Fixture.find({
-            "fixture.fixture.date": {
-                $gte: startOfDay.toISOString(),
-                $lte: endOfDay.toISOString()
-            },
-            "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
-        }).sort({ "fixture.fixture.date": 1 });
-
-        console.log(`Found ${yesterdayFixtures.length} FT matches on ${dateStr}`);
-
-        let results = {
-            totalMatches: yesterdayFixtures.length,
+        const datesToTest = ["2026-06-04", "2026-06-03", "2026-06-02", "2026-06-01", "2026-05-31"];
+        
+        let overallResults = {
+            totalMatches: 0,
             predictionsMade: 0,
             markets: {
-                OV35: { predicted: 0, won: 0 },
-                OV25: { predicted: 0, won: 0 },
                 OV15: { predicted: 0, won: 0 },
-                UN25: { predicted: 0, won: 0 },
                 UN35: { predicted: 0, won: 0 }
             }
         };
 
-        for (const f of yesterdayFixtures) {
-            const matchDate = f.fixture.fixture.date;
-            const homeId = f.fixture.teams.home.id;
-            const awayId = f.fixture.teams.away.id;
-            
-            const actualHomeGoals = f.fixture.goals?.home ?? 0;
-            const actualAwayGoals = f.fixture.goals?.away ?? 0;
-            const actualTotal = actualHomeGoals + actualAwayGoals;
+        for (const dateStr of datesToTest) {
+            const startOfDay = new Date(`${dateStr}T00:00:00+03:00`);
+            const endOfDay = new Date(`${dateStr}T23:59:59.999+03:00`);
 
-            // Get last 9 for Home
-            const homeMatches = await Fixture.find({
-                $or: [{ "fixture.teams.home.id": homeId }, { "fixture.teams.away.id": homeId }],
-                "fixture.fixture.date": { $lt: matchDate },
+            const fixtures = await Fixture.find({
+                "fixture.fixture.date": {
+                    $gte: startOfDay.toISOString(),
+                    $lte: endOfDay.toISOString()
+                },
                 "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
-            }).sort({ "fixture.fixture.date": -1 }).limit(9);
+            }).sort({ "fixture.fixture.date": 1 });
 
-            // Get last 9 for Away
-            const awayMatches = await Fixture.find({
-                $or: [{ "fixture.teams.home.id": awayId }, { "fixture.teams.away.id": awayId }],
-                "fixture.fixture.date": { $lt: matchDate },
-                "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
-            }).sort({ "fixture.fixture.date": -1 }).limit(9);
+            let dailyResults = {
+                totalMatches: fixtures.length,
+                predictionsMade: 0,
+                markets: {
+                    OV15: { predicted: 0, won: 0 },
+                    UN35: { predicted: 0, won: 0 }
+                }
+            };
 
-            // Get last 9 H2H
-            const h2hMatches = await Fixture.find({
-                $or: [
-                    { "fixture.teams.home.id": homeId, "fixture.teams.away.id": awayId },
-                    { "fixture.teams.home.id": awayId, "fixture.teams.away.id": homeId }
-                ],
-                "fixture.fixture.date": { $lt: matchDate },
-                "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
-            }).sort({ "fixture.fixture.date": -1 }).limit(9);
-
-            const homeStats = calculateStats(homeMatches, 9);
-            const awayStats = calculateStats(awayMatches, 9);
-            const h2hStats = calculateStats(h2hMatches, 9);
-
-            if (homeStats.total === 0 || awayStats.total === 0 || h2hStats.total === 0) {
-                // Not enough data, skip prediction
-                continue;
-            }
-
-            let prediction = null;
-
-            // Waterfall logic
-            if (homeStats.over35 >= homeStats.under35 && awayStats.over35 >= awayStats.under35 && h2hStats.over35 >= h2hStats.under35) {
-                prediction = "OV35";
-            } else if (homeStats.over25 >= homeStats.under25 && awayStats.over25 >= awayStats.under25 && h2hStats.over25 >= h2hStats.under25) {
-                prediction = "OV25";
-            } else if (homeStats.over15 >= homeStats.under15 && awayStats.over15 >= awayStats.under15 && h2hStats.over15 >= h2hStats.under15) {
-                prediction = "OV15";
-            } else if (homeStats.under25 >= homeStats.over25 && awayStats.under25 >= awayStats.over25 && h2hStats.under25 >= h2hStats.over25) {
-                prediction = "UN25";
-            } else if (homeStats.under35 >= homeStats.over35 && awayStats.under35 >= awayStats.over35 && h2hStats.under35 >= h2hStats.over35) {
-                prediction = "UN35";
-            }
-
-            if (prediction) {
-                results.predictionsMade++;
-                results.markets[prediction].predicted++;
+            for (const f of fixtures) {
+                const matchDate = f.fixture.fixture.date;
+                const homeId = f.fixture.teams.home.id;
+                const awayId = f.fixture.teams.away.id;
                 
-                let won = false;
-                if (prediction === "OV35" && actualTotal > 3.5) won = true;
-                if (prediction === "OV25" && actualTotal > 2.5) won = true;
-                if (prediction === "OV15" && actualTotal > 1.5) won = true;
-                if (prediction === "UN25" && actualTotal < 2.5) won = true;
-                if (prediction === "UN35" && actualTotal < 3.5) won = true;
+                const actualHomeGoals = f.fixture.goals?.home ?? 0;
+                const actualAwayGoals = f.fixture.goals?.away ?? 0;
+                const actualTotal = actualHomeGoals + actualAwayGoals;
 
-                if (won) {
-                    results.markets[prediction].won++;
+                const homeMatches = await Fixture.find({
+                    $or: [{ "fixture.teams.home.id": homeId }, { "fixture.teams.away.id": homeId }],
+                    "fixture.fixture.date": { $lt: matchDate },
+                    "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
+                }).sort({ "fixture.fixture.date": -1 }).limit(5);
+
+                const awayMatches = await Fixture.find({
+                    $or: [{ "fixture.teams.home.id": awayId }, { "fixture.teams.away.id": awayId }],
+                    "fixture.fixture.date": { $lt: matchDate },
+                    "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
+                }).sort({ "fixture.fixture.date": -1 }).limit(5);
+
+                const h2hMatches = await Fixture.find({
+                    $or: [
+                        { "fixture.teams.home.id": homeId, "fixture.teams.away.id": awayId },
+                        { "fixture.teams.home.id": awayId, "fixture.teams.away.id": homeId }
+                    ],
+                    "fixture.fixture.date": { $lt: matchDate },
+                    "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
+                }).sort({ "fixture.fixture.date": -1 }).limit(5);
+
+                const homeStats = calculateStats(homeMatches, 5);
+                const awayStats = calculateStats(awayMatches, 5);
+                const h2hStats = calculateStats(h2hMatches, 5);
+
+                if (homeStats.total === 0 || awayStats.total === 0 || h2hStats.total === 0) {
+                    continue;
+                }
+
+                let prediction = null;
+
+                if (homeStats.over25 >= homeStats.under25 && awayStats.over25 >= awayStats.under25 && h2hStats.over25 >= h2hStats.under25) {
+                    prediction = "OV15";
+                } else if (homeStats.under25 >= homeStats.over25 && awayStats.under25 >= awayStats.over25 && h2hStats.under25 >= h2hStats.over25) {
+                    prediction = "UN35";
+                }
+
+                if (prediction) {
+                    dailyResults.predictionsMade++;
+                    overallResults.predictionsMade++;
+                    
+                    dailyResults.markets[prediction].predicted++;
+                    overallResults.markets[prediction].predicted++;
+                    
+                    let won = false;
+                    if (prediction === "OV15" && actualTotal > 1.5) won = true;
+                    if (prediction === "UN35" && actualTotal < 3.5) won = true;
+
+                    if (won) {
+                        dailyResults.markets[prediction].won++;
+                        overallResults.markets[prediction].won++;
+                    }
                 }
             }
+
+            // Print Daily Results
+            console.log(`[${dateStr}] Matches: ${dailyResults.totalMatches} | Predictions: ${dailyResults.predictionsMade}`);
+            for (const [market, data] of Object.entries(dailyResults.markets)) {
+                if (data.predicted > 0) {
+                    const winRate = ((data.won / data.predicted) * 100).toFixed(1);
+                    console.log(`  -> ${market}: ${data.won}/${data.predicted} (${winRate}%)`);
+                } else {
+                    console.log(`  -> ${market}: No predictions`);
+                }
+            }
+            console.log("-----------------------------------------");
+
+            overallResults.totalMatches += dailyResults.totalMatches;
         }
 
-        console.log("\n=== RESULTS ===");
-        console.log(`Total Matches: ${results.totalMatches}`);
-        console.log(`Predictions Made: ${results.predictionsMade} (${((results.predictionsMade/results.totalMatches)*100).toFixed(1)}%)`);
+        console.log("\n=== 5-DAY OVERALL TOTALS ===");
+        console.log(`Total Matches: ${overallResults.totalMatches}`);
+        console.log(`Predictions Made: ${overallResults.predictionsMade} (${((overallResults.predictionsMade/overallResults.totalMatches)*100).toFixed(1)}%)`);
         
-        console.log("\n--- WIN RATES ---");
-        for (const [market, data] of Object.entries(results.markets)) {
+        for (const [market, data] of Object.entries(overallResults.markets)) {
             if (data.predicted > 0) {
                 const winRate = ((data.won / data.predicted) * 100).toFixed(1);
                 console.log(`${market}: ${data.won} / ${data.predicted} (${winRate}%)`);

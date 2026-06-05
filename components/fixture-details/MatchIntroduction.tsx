@@ -50,9 +50,9 @@ const MatchIntroduction: React.FC<MatchIntroductionProps> = ({
         };
     };
 
-    const homeStats = calculateStats(homeMatches, 9);
-    const awayStats = calculateStats(awayMatches, 9);
-    const h2hStats = calculateStats(h2hMatches, 9);
+    const homeStats = calculateStats(homeMatches, 5);
+    const awayStats = calculateStats(awayMatches, 5);
+    const h2hStats = calculateStats(h2hMatches, 5);
 
     // 1. Base Sentence
     const baseSentence = venue && venue.trim() !== "" && venue !== "Unknown venue"
@@ -89,18 +89,15 @@ const MatchIntroduction: React.FC<MatchIntroductionProps> = ({
         }
     }
 
-    // 5. Final Prediction Waterfall Logic
+    // 5. Final Prediction Waterfall Logic (Safety Net Hybrid)
     let finalPrediction = "";
     if (homeStats.total > 0 && awayStats.total > 0 && h2hStats.total > 0) {
-        if (homeStats.over35 >= homeStats.under35 && awayStats.over35 >= awayStats.under35 && h2hStats.over35 >= h2hStats.under35) {
-            finalPrediction = "Over 3.5 Goals";
-        } else if (homeStats.over25 >= homeStats.under25 && awayStats.over25 >= awayStats.under25 && h2hStats.over25 >= h2hStats.under25) {
-            finalPrediction = "Over 2.5 Goals";
-        } else if (homeStats.over15 >= homeStats.under15 && awayStats.over15 >= awayStats.under15 && h2hStats.over15 >= h2hStats.under15) {
+        // Safety Net Over: Predict OV1.5 only when the harder OV2.5 test passes
+        if (homeStats.over25 >= homeStats.under25 && awayStats.over25 >= awayStats.under25 && h2hStats.over25 >= h2hStats.under25) {
             finalPrediction = "Over 1.5 Goals";
-        } else if (homeStats.under25 >= homeStats.over25 && awayStats.under25 >= awayStats.over25 && h2hStats.under25 >= h2hStats.over25) {
-            finalPrediction = "Under 2.5 Goals";
-        } else if (homeStats.under35 >= homeStats.over35 && awayStats.under35 >= awayStats.over35 && h2hStats.under35 >= h2hStats.over35) {
+        } 
+        // Safety Net Under: Predict UN3.5 only when the harder UN2.5 test passes
+        else if (homeStats.under25 >= homeStats.over25 && awayStats.under25 >= awayStats.over25 && h2hStats.under25 >= h2hStats.over25) {
             finalPrediction = "Under 3.5 Goals";
         }
     }
