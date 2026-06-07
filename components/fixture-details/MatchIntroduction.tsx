@@ -12,6 +12,8 @@ interface MatchIntroductionProps {
     homeMatches?: MatchData[];
     awayMatches?: MatchData[];
     h2hMatches?: MatchData[];
+    status?: string;
+    score?: { home: number | null; away: number | null } | null;
 }
 
 const MatchIntroduction: React.FC<MatchIntroductionProps> = ({
@@ -21,6 +23,8 @@ const MatchIntroduction: React.FC<MatchIntroductionProps> = ({
     homeMatches = [],
     awayMatches = [],
     h2hMatches = [],
+    status,
+    score,
 }) => {
     const calculateStats = (matches: MatchData[], limit: number) => {
         const recent = matches.slice(0, limit);
@@ -102,6 +106,32 @@ const MatchIntroduction: React.FC<MatchIntroductionProps> = ({
         }
     }
 
+    let predictionColorClass = "text-teal-400"; // fallback just in case
+    if (finalPrediction && status) {
+        const isFinished = ["FT", "AET", "PEN"].includes(status);
+        const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE"].includes(status);
+        
+        if (!isFinished && !isLive) {
+            predictionColorClass = "text-orange-300";
+        } else if (isFinished && score && score.home !== null && score.away !== null) {
+            const totalGoals = score.home + score.away;
+            let isWon = false;
+            let isValidTip = false;
+            
+            if (finalPrediction === "Over 1.5 Goals") {
+                isWon = totalGoals > 1.5;
+                isValidTip = true;
+            } else if (finalPrediction === "Under 3.5 Goals") {
+                isWon = totalGoals < 3.5;
+                isValidTip = true;
+            }
+            
+            if (isValidTip) {
+                predictionColorClass = isWon ? "text-[#22c55e]" : "text-[#ef4444]";
+            }
+        }
+    }
+
     const fullNarrative = [baseSentence, homeNarrative, awayNarrative, h2hNarrative].filter(Boolean).join(" ");
 
     return (
@@ -109,7 +139,7 @@ const MatchIntroduction: React.FC<MatchIntroductionProps> = ({
             <p className="text-[11px] sm:text-xs font-medium italic text-gray-300 leading-relaxed">
                 {fullNarrative}
                 {finalPrediction && (
-                    <span className="not-italic text-teal-400 font-bold ml-1">
+                    <span className={`not-italic ${predictionColorClass} font-bold ml-1`}>
                         {finalPrediction}.
                     </span>
                 )}

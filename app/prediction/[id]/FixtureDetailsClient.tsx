@@ -125,6 +125,8 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                         homeMatches={data.homeTeam.allMatches}
                         awayMatches={data.awayTeam.allMatches}
                         h2hMatches={data.h2h}
+                        status={data.status}
+                        score={data.score}
                     />
                 </div>
 
