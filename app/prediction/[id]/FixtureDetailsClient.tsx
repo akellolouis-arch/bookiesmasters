@@ -69,6 +69,37 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
     const hasAwayAwayMatches = awayAwayMatches.length > 0;
     const hasSplitMatches = hasHomeHomeMatches || hasAwayAwayMatches;
 
+    // --- COMPUTE PREDICTION TIP ---
+    const calculateStats = (matches: any[], limit: number) => {
+        const recent = matches.slice(0, limit);
+        let total = 0;
+        let over25 = 0, under25 = 0;
+        recent.forEach((m: any) => {
+            const homeGoals = m.score?.home ?? m.goals?.home;
+            const awayGoals = m.score?.away ?? m.goals?.away;
+            if (homeGoals !== undefined && homeGoals !== null && awayGoals !== undefined && awayGoals !== null) {
+                total++;
+                const tg = homeGoals + awayGoals;
+                if (tg > 2.5) over25++; else under25++;
+            }
+        });
+        return { total, over25, under25 };
+    };
+
+    let computedTip = data.tip || "";
+    if (!computedTip && hasAnyMatches && data.h2h) {
+        const homeStats = calculateStats(homeMatches, 5);
+        const awayStats = calculateStats(awayMatches, 5);
+        const h2hStats = calculateStats(data.h2h, 5);
+        if (homeStats.total > 0 && awayStats.total > 0 && h2hStats.total > 0) {
+            if (homeStats.over25 >= homeStats.under25 && awayStats.over25 >= awayStats.under25 && h2hStats.over25 >= h2hStats.under25) {
+                computedTip = "Over 1.5 Goals";
+            } else if (homeStats.under25 >= homeStats.over25 && awayStats.under25 >= awayStats.over25 && h2hStats.under25 >= h2hStats.over25) {
+                computedTip = "Under 3.5 Goals";
+            }
+        }
+    }
+
     return (
         <div className="text-white pt-1 pb-4 px-2 sm:px-4">
             <div className="max-w-5xl mx-auto">
@@ -82,7 +113,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                     score={data.score}
                     league={data.league}
                     isLoading={hideStaleData}
-                    tip={data.tip}
+                    tip={computedTip}
                 />
 
                 {/* --- MATCH INTRODUCTION --- */}
