@@ -19,6 +19,7 @@ interface TeamDisplayProps {
     score?: { home: number | null; away: number | null; halftime?: { home: number | null; away: number | null } } | null;
     league?: string;
     isLoading?: boolean;
+    tip?: string;
 }
 
 const TeamDisplay: React.FC<TeamDisplayProps> = ({
@@ -31,6 +32,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
     score,
     league,
     isLoading,
+    tip,
 }) => {
     const isLive = status ? ["1H", "HT", "2H", "ET", "BT", "P", "LIVE"].includes(status) : false;
     const isFinished = status ? ["FT", "AET", "PEN"].includes(status) : false;
@@ -48,6 +50,41 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
         year: "numeric",
         timeZone: "Africa/Nairobi",
     });
+
+    let scoreColorClass = "text-white";
+    let dashColorClass = "text-gray-400";
+    let noScoreColorClass = "text-gray-500";
+    
+    if (tip) {
+        if (!isFinished && !isLive) {
+            scoreColorClass = "text-orange-300";
+            dashColorClass = "text-orange-300";
+            noScoreColorClass = "text-orange-300";
+        } else if (isFinished && score && score.home !== null && score.away !== null) {
+            const totalGoals = score.home + score.away;
+            let isWon = false;
+            let isValidTip = false;
+            
+            if (tip.includes("Over 1.5") || tip.includes("OV1.5")) {
+                isWon = totalGoals > 1.5;
+                isValidTip = true;
+            } else if (tip.includes("Over 2.5") || tip.includes("OV2.5")) {
+                isWon = totalGoals > 2.5;
+                isValidTip = true;
+            } else if (tip.includes("Under 2.5") || tip.includes("UN2.5")) {
+                isWon = totalGoals < 2.5;
+                isValidTip = true;
+            } else if (tip.includes("Under 3.5") || tip.includes("UN3.5")) {
+                isWon = totalGoals < 3.5;
+                isValidTip = true;
+            }
+            
+            if (isValidTip) {
+                scoreColorClass = isWon ? "text-[#22c55e]" : "text-[#ef4444]";
+                dashColorClass = scoreColorClass;
+            }
+        }
+    }
 
     // Form bubble renderer
     const renderForm = (last5Matches?: any[]) => {
@@ -132,9 +169,9 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                                     </div>
                                 )}
                                 <div className={`bg-white/5 backdrop-blur-sm rounded-xl sm:rounded-2xl px-4 sm:px-6 py-1 sm:py-2 shadow-lg flex items-center justify-center gap-2 sm:gap-4 border border-white/10 ${isLive ? "animate-pulse" : ""}`}>
-                                    <span className={`text-xl sm:text-3xl font-bold ${isLive ? "text-rose-500" : "text-white"}`}>{score.home}</span>
-                                    <span className="text-lg sm:text-xl font-bold text-gray-400">-</span>
-                                    <span className={`text-xl sm:text-3xl font-bold ${isLive ? "text-rose-500" : "text-white"}`}>{score.away}</span>
+                                    <span className={`text-xl sm:text-3xl font-bold ${isLive ? "text-rose-500" : scoreColorClass}`}>{score.home}</span>
+                                    <span className={`text-lg sm:text-xl font-bold ${isLive ? "text-gray-400" : dashColorClass}`}>-</span>
+                                    <span className={`text-xl sm:text-3xl font-bold ${isLive ? "text-rose-500" : scoreColorClass}`}>{score.away}</span>
                                 </div>
                                 {score.halftime && score.halftime.home !== null && score.halftime.away !== null && (
                                     <div className="mt-1.5 text-[9px] sm:text-[10px] text-gray-500 font-semibold tracking-wide uppercase">
@@ -150,7 +187,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                                     </div>
                                 )}
                                 <div className="bg-white/10 rounded-xl sm:rounded-2xl px-4 sm:px-6 py-1 sm:py-2 flex items-center justify-center border border-white/5 backdrop-blur-md">
-                                    <span className="text-xl sm:text-3xl font-bold text-gray-500">-</span>
+                                    <span className={`text-xl sm:text-3xl font-bold ${noScoreColorClass}`}>-</span>
                                 </div>
                             </div>
                         )}

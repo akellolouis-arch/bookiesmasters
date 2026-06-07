@@ -22,6 +22,7 @@ type FixtureDetailsData = {
     displayDate: string;
     status: string;
     venue?: string;
+    tip?: string;
     score?: { home: number | null; away: number | null } | null;
     injuries?: any[];
     h2h?: any[];
@@ -81,6 +82,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                     score={data.score}
                     league={data.league}
                     isLoading={hideStaleData}
+                    tip={data.tip}
                 />
 
                 {/* --- MATCH INTRODUCTION --- */}

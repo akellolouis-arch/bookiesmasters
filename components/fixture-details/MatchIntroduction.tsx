@@ -110,7 +110,7 @@ const MatchIntroduction: React.FC<MatchIntroductionProps> = ({
                 {fullNarrative}
                 {finalPrediction && (
                     <span className="not-italic text-teal-400 font-bold ml-1">
-                        Data-Driven Prediction: {finalPrediction}.
+                        {finalPrediction}.
                     </span>
                 )}
             </p>
