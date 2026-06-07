@@ -21,6 +21,7 @@ export interface FixtureCardProps {
   awayTeam: Team;
   score: string | null;
   index?: number;
+  prediction?: string | null;
 }
 
 export default function FixtureCard({
@@ -31,9 +32,36 @@ export default function FixtureCard({
   awayTeam,
   score,
   index,
+  prediction,
 }: FixtureCardProps) {
   const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(status) || status.includes("'");
-  const isFinished = status === "FT";
+  const isFinished = status === "FT" || status === "AET" || status === "PEN";
+
+  let predictionColorClass = "text-teal-400";
+  if (prediction) {
+      if (!isFinished && !isLive) {
+          predictionColorClass = "text-orange-300";
+      } else if (isFinished && score) {
+          const parts = score.split("-").map(s => parseInt(s.trim()));
+          if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+              const totalGoals = parts[0] + parts[1];
+              let isWon = false;
+              let isValidTip = false;
+              
+              if (prediction.includes("OV1.5") || prediction.includes("Over 1.5")) {
+                  isWon = totalGoals > 1.5;
+                  isValidTip = true;
+              } else if (prediction.includes("UN3.5") || prediction.includes("Under 3.5")) {
+                  isWon = totalGoals < 3.5;
+                  isValidTip = true;
+              }
+              
+              if (isValidTip) {
+                  predictionColorClass = isWon ? "text-[#22c55e]" : "text-[#ef4444]";
+              }
+          }
+      }
+  }
 
 
 
@@ -92,6 +120,9 @@ export default function FixtureCard({
                 {kickoffTime || status}
               </span>
             </div>
+          )}
+          {prediction && (
+              <span className={`mt-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider ${predictionColorClass}`}>{prediction}</span>
           )}
         </div>
 

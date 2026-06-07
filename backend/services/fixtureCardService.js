@@ -336,6 +336,7 @@ export async function getPredictedFixturesGroupedByLeague(date) {
           const passUN25 = homeStats.under25 >= homeStats.over25 && awayStats.under25 >= awayStats.over25 && h2hStats.under25 >= h2hStats.over25;
           
           if (passOV25 || passUN25) {
+              doc.tip = passOV25 ? "OV1.5" : "UN3.5";
               predictedDocs.push(doc);
           }
       }

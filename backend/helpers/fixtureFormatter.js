@@ -95,5 +95,6 @@ export function formatFixtureCard(fixtureDoc) {
       logo: fx.teams.away.logo
     },
     kickoffTime,
+    ...(fixtureDoc.tip ? { prediction: fixtureDoc.tip } : {}),
   };
 }
