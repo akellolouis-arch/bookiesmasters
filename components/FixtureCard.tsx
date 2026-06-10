@@ -69,6 +69,7 @@ export default function FixtureCard({
 
   const isEven = index !== undefined ? index % 2 === 0 : true;
   const bgClass = isEven ? "bg-[#0A0A0A]" : "bg-[#1E1E1E]";
+  const tipBgClass = isEven ? "bg-[#1E1E1E]" : "bg-[#0A0A0A]";
   const hoverClass = isEven ? "hover:bg-[#151515]" : "hover:bg-[#282828]";
 
   return (
@@ -138,7 +139,7 @@ export default function FixtureCard({
 
         {/* BOTTOM ROW: PREDICTION STRIP */}
         {prediction && (
-          <div className="mt-2 w-full bg-white/5 border border-white/10 rounded py-1 flex justify-center items-center shadow-sm">
+          <div className={`mt-2 w-full ${tipBgClass} border border-white/5 rounded py-1 flex justify-center items-center shadow-sm`}>
             <span className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-widest ${predictionColorClass}`}>
               {prediction}
             </span>
