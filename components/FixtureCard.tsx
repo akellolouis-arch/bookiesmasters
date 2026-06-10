@@ -138,7 +138,7 @@ export default function FixtureCard({
 
         {/* BOTTOM ROW: PREDICTION STRIP */}
         {prediction && (
-          <div className="mt-2 w-full bg-black/40 border border-white/5 rounded py-1 flex justify-center items-center shadow-sm">
+          <div className="mt-2 w-full bg-white/5 border border-white/10 rounded py-1 flex justify-center items-center shadow-sm">
             <span className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-widest ${predictionColorClass}`}>
               {prediction}
             </span>
