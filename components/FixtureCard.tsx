@@ -88,10 +88,10 @@ export default function FixtureCard({
         }}
         className={`cursor-pointer block ${bgClass} hover:shadow-md ${hoverClass} transition flex items-center justify-between p-2 sm:p-3 gap-2 no-underline text-inherit`}
       >
-        {/* HOME TEAM (Left-aligned) */}
-        <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0 justify-end">
-          <span className="font-normal text-[11px] sm:text-xs truncate text-white text-right block">{homeTeam.name}</span>
-          <Image src={homeTeam.logo} alt={homeTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
+        {/* HOME TEAM */}
+        <div className="flex flex-col items-center justify-center gap-1 flex-1 min-w-0">
+          <Image src={homeTeam.logo} alt={homeTeam.name} width={24} height={24} className="w-6 h-6 object-contain shrink-0 drop-shadow-sm" unoptimized />
+          <span className="font-medium text-[10px] sm:text-[11px] truncate text-white text-center block w-full px-1">{homeTeam.name}</span>
         </div>
 
         {/* CENTER BOX (Time / Score) */}
@@ -126,10 +126,10 @@ export default function FixtureCard({
           )}
         </div>
 
-        {/* AWAY TEAM (Right-aligned) */}
-        <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0 justify-start">
-          <Image src={awayTeam.logo} alt={awayTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
-          <span className="font-normal text-[11px] sm:text-xs truncate text-white text-left block">{awayTeam.name}</span>
+        {/* AWAY TEAM */}
+        <div className="flex flex-col items-center justify-center gap-1 flex-1 min-w-0">
+          <Image src={awayTeam.logo} alt={awayTeam.name} width={24} height={24} className="w-6 h-6 object-contain shrink-0 drop-shadow-sm" unoptimized />
+          <span className="font-medium text-[10px] sm:text-[11px] truncate text-white text-center block w-full px-1">{awayTeam.name}</span>
         </div>
       </Link>
     </div>
