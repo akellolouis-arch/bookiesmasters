@@ -90,15 +90,15 @@ export async function generateMetadata({ params }: { params: Promise<{ date?: st
     : date;
 
   return {
-    title: `Expert Predictions for ${readableDate} | BookiesMasters`,
-    description: `Get our filtered expert predictions and tips for matches on ${readableDate}.`,
+    title: `All Fixtures for ${readableDate} | BookiesMasters`,
+    description: `Get all football fixtures, odds, and livescores for matches on ${readableDate}.`,
   };
 }
 
 // ---------------------
 // PAGE COMPONENT
 // ---------------------
-export default async function TipsPage({
+export default async function FixturesPage({
   params,
 }: {
   params: Promise<{ date?: string }>;
@@ -116,9 +116,9 @@ export default async function TipsPage({
   let initialData: LeagueGroup[] = [];
 
   try {
-    // ⭐️ Use the new predictions endpoint instead of fixtures
+    // Fetch all fixtures
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/predictions/cards?date=${date}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/fixtures/cards?date=${date}`,
       { next: { revalidate: 86400 } }
     );
 
@@ -150,16 +150,9 @@ export default async function TipsPage({
         <DateNavigator date={date} />
       </Suspense>
       
-      {initialData.length === 0 ? (
-        <div className="flex flex-col items-center justify-center p-8 mt-10">
-          <p className="text-gray-400 text-lg font-medium">No strict predictions found for this date.</p>
-          <p className="text-gray-500 text-sm mt-2 max-w-md text-center">Our algorithm only predicts when the data is exceptionally strong. Check back tomorrow!</p>
-        </div>
-      ) : (
-        <Suspense fallback={<div className="p-4 text-center text-gray-500 animate-pulse">Loading list...</div>}>
-          <PredictionsList initialData={initialData} date={date} />
-        </Suspense>
-      )}
+      <Suspense fallback={<div className="p-4 text-center text-gray-500 animate-pulse">Loading list...</div>}>
+        <PredictionsList initialData={initialData} date={date} />
+      </Suspense>
     </>
   );
 }

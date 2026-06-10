@@ -94,8 +94,8 @@ export async function generateMetadata({ params }: { params: Promise<{ date?: st
     : date;
 
   return {
-    title: `Football Predictions for ${readableDate} | BookiesMasters`,
-    description: `Get free betting tips, odds, and livescores for matches on ${readableDate}.`,
+    title: `Expert Predictions for ${readableDate} | BookiesMasters`,
+    description: `Get our filtered expert predictions and tips for matches on ${readableDate}.`,
   };
 }
 
@@ -122,7 +122,7 @@ export default async function PredictionsPage({
 
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/fixtures/cards?date=${date}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/predictions/cards?date=${date}`,
       { next: { revalidate: 86400 } } // Cache at the Data Cache level for 1 day
     );
 

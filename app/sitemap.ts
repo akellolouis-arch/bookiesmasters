@@ -21,6 +21,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             changeFrequency: 'daily',
             priority: 0.9,
         },
+        {
+            url: `${baseUrl}/fixtures`,
+            lastModified: new Date(),
+            changeFrequency: 'daily',
+            priority: 0.8,
+        },
     ];
 
     // 2. Dynamic Dates (next 7 days)
@@ -32,12 +38,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         dates.push(d.toLocaleDateString("en-CA", { timeZone: "Africa/Nairobi" }));
     }
 
-    const dateRoutes: MetadataRoute.Sitemap = dates.map((date) => ({
-        url: `${baseUrl}/predictions/${date}`,
-        lastModified: new Date(),
-        changeFrequency: 'hourly',
-        priority: 0.8,
-    }));
+    const dateRoutes: MetadataRoute.Sitemap = dates.flatMap((date) => [
+        {
+            url: `${baseUrl}/predictions/${date}`,
+            lastModified: new Date(),
+            changeFrequency: 'hourly',
+            priority: 0.8,
+        },
+        {
+            url: `${baseUrl}/fixtures/${date}`,
+            lastModified: new Date(),
+            changeFrequency: 'hourly',
+            priority: 0.7,
+        }
+    ]);
 
     // 3. specific Matches (Fetch from DB)
     let matchRoutes: MetadataRoute.Sitemap = [];

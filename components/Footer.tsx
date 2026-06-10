@@ -45,8 +45,8 @@ export default function Footer() {
           <h5 className="text-sm font-bold text-gray-300 tracking-wider">Quick links</h5>
           <ul className="text-xs space-y-1">
             <li>
-              <Link href="/tips" className="hover:text-teal-400 transition-colors text-teal-500 font-medium">
-                Expert Predictions
+              <Link href="/fixtures" className="hover:text-teal-400 transition-colors text-teal-500 font-medium">
+                All Fixtures
               </Link>
             </li>
             <li>

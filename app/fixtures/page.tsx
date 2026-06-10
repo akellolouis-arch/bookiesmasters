@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
-export default function TipsIndex() {
+export default function FixturesIndex() {
   const now = new Date();
   const offset = 3; 
   const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
@@ -13,5 +13,5 @@ export default function TipsIndex() {
   const day = String(nairobiTime.getDate()).padStart(2, '0');
   const kenyaTime = `${year}-${month}-${day}`;
 
-  redirect(`/tips/${kenyaTime}`);
+  redirect(`/fixtures/${kenyaTime}`);
 }
