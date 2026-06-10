@@ -86,50 +86,56 @@ export default function FixtureCard({
             });
           }
         }}
-        className={`cursor-pointer block ${bgClass} hover:shadow-md ${hoverClass} transition flex items-center justify-between p-2 sm:p-3 gap-2 no-underline text-inherit`}
+        className={`cursor-pointer block ${bgClass} hover:shadow-md ${hoverClass} transition flex items-center justify-between p-1.5 sm:p-2 gap-2 no-underline text-inherit`}
       >
         {/* HOME TEAM */}
-        <div className="flex flex-col items-center justify-center gap-1 flex-1 min-w-0">
-          <Image src={homeTeam.logo} alt={homeTeam.name} width={24} height={24} className="w-6 h-6 object-contain shrink-0 drop-shadow-sm" unoptimized />
-          <span className="font-medium text-[10px] sm:text-[11px] truncate text-white text-center block w-full px-1">{homeTeam.name}</span>
+        <div className="flex flex-col items-center justify-center gap-0.5 flex-1 min-w-0">
+          <Image src={homeTeam.logo} alt={homeTeam.name} width={20} height={20} className="w-5 h-5 object-contain shrink-0 drop-shadow-sm" unoptimized />
+          <span className="font-medium text-[9px] sm:text-[10px] truncate text-white text-center block w-full px-1">{homeTeam.name}</span>
         </div>
 
         {/* CENTER BOX (Time / Score) */}
-        <div className="w-[70px] sm:w-[90px] shrink-0 flex flex-col items-center justify-center">
+        <div className="w-[70px] sm:w-[80px] shrink-0 flex flex-col items-center justify-center">
           {isLive || isFinished ? (
-            <div className={`flex flex-col items-center font-bold text-[12px] sm:text-sm leading-none ${isLive ? "text-red-500 animate-pulse" : "text-white"}`}>
-              {score ? (
-                <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 px-2 py-1 rounded-md shadow-sm">
-                  <span>{score.split(" - ")[0]}</span>
-                  <span className="text-gray-500 text-[10px]">-</span>
-                  <span>{score.split(" - ")[1]}</span>
-                </div>
-              ) : (
-                <span>-</span>
-              )}
+            <div className={`flex flex-col items-center leading-none ${isLive ? "text-red-500 animate-pulse" : "text-white"}`}>
+              {/* STATUS ABOVE SCORE */}
               {isLive && status && (
-                <span className="text-[9px] sm:text-[10px] text-red-500 mt-1 uppercase font-semibold">{status}</span>
+                <span className="text-[8px] text-red-500 mb-0.5 uppercase font-bold tracking-wider">{status}</span>
               )}
               {isFinished && (
-                <span className="text-[9px] sm:text-[10px] text-gray-500 mt-1 font-semibold uppercase">FT</span>
+                <span className="text-[8px] text-gray-500 mb-0.5 font-bold uppercase tracking-wider">FT</span>
+              )}
+              
+              {/* SCORE WITHOUT BORDER */}
+              {score ? (
+                <div className="flex items-center gap-1">
+                  <span className="text-[11px] sm:text-[12px] font-bold">{score.split(" - ")[0]}</span>
+                  <span className="text-gray-500 text-[8px] font-normal">-</span>
+                  <span className="text-[11px] sm:text-[12px] font-bold">{score.split(" - ")[1]}</span>
+                </div>
+              ) : (
+                <span className="text-[11px] sm:text-[12px] font-bold">-</span>
               )}
             </div>
           ) : (
             <div className="flex flex-col items-center">
-              <span className="text-[10px] sm:text-[11px] font-semibold text-gray-300 bg-white/5 border border-white/10 px-2 sm:px-3 py-1 rounded-md shadow-sm">
+              {/* TIME WITHOUT BORDER */}
+              <span className="text-[9px] sm:text-[10px] font-semibold text-gray-300">
                 {kickoffTime || status}
               </span>
             </div>
           )}
+          
+          {/* PREDICTION WITH BORDER */}
           {prediction && (
-              <span className={`mt-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider ${predictionColorClass}`}>{prediction}</span>
+              <span className={`mt-1 bg-white/5 border border-white/10 px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-bold uppercase tracking-wider shadow-sm ${predictionColorClass}`}>{prediction}</span>
           )}
         </div>
 
         {/* AWAY TEAM */}
-        <div className="flex flex-col items-center justify-center gap-1 flex-1 min-w-0">
-          <Image src={awayTeam.logo} alt={awayTeam.name} width={24} height={24} className="w-6 h-6 object-contain shrink-0 drop-shadow-sm" unoptimized />
-          <span className="font-medium text-[10px] sm:text-[11px] truncate text-white text-center block w-full px-1">{awayTeam.name}</span>
+        <div className="flex flex-col items-center justify-center gap-0.5 flex-1 min-w-0">
+          <Image src={awayTeam.logo} alt={awayTeam.name} width={20} height={20} className="w-5 h-5 object-contain shrink-0 drop-shadow-sm" unoptimized />
+          <span className="font-medium text-[9px] sm:text-[10px] truncate text-white text-center block w-full px-1">{awayTeam.name}</span>
         </div>
       </Link>
     </div>

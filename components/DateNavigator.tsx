@@ -95,90 +95,93 @@ export default function DateNavigator({ date }: Props) {
 
   return (
     <div className="max-w-[100vw] bg-black border-y border-white/5 mx-auto">
-      <div className="max-w-3xl mx-auto flex items-center gap-1 md:gap-3 px-0 py-1.5 min-w-0">
+      <div className="max-w-3xl mx-auto px-1 sm:px-2 py-1.5">
+        <div className="flex items-stretch w-full h-9 rounded-md border border-white/10 overflow-hidden bg-[#1F1F1F] divide-x divide-white/5 shadow-sm">
 
-        <Link
-          href="/live"
-          className={`shrink-0 w-12 h-8 rounded-md flex flex-col items-center justify-center text-[9px] font-bold transition-colors border ${isLivePage
-            ? "bg-white/20 border-transparent text-amber-100 shadow-lg shadow-white/10"
-            : "bg-[#1F1F1F] border-white/5 text-gray-400 hover:text-white"
-            }`}
-        >
-          LIVE
-        </Link>
+          <Link
+            href="/live"
+            className={`shrink-0 w-12 flex flex-col items-center justify-center text-[9px] font-bold transition-colors ${isLivePage
+              ? "bg-white/20 text-amber-100 shadow-inner"
+              : "text-gray-400 hover:text-white hover:bg-[#252525]"
+              }`}
+          >
+            LIVE
+          </Link>
 
-        <div
-          ref={scrollContainerRef}
-          className="flex-1 min-w-0 overflow-x-auto flex items-center gap-1.5 scrollbar-hide no-scrollbar px-1 min-h-8"
-        >
-          {dates.map((d, i) => {
-            const isActive = toYYYYMMDDUtc(d) === selectedYmd;
-            const dayName = d.toLocaleDateString("en-GB", {
-              weekday: "short",
-              timeZone: KENYA_TZ,
-            });
-            const dateStr = d.toLocaleDateString("en-GB", {
-              day: "2-digit",
-              month: "2-digit",
-              timeZone: KENYA_TZ,
-            });
+          <div
+            ref={scrollContainerRef}
+            className="flex-1 min-w-0 overflow-x-auto flex items-stretch scrollbar-hide no-scrollbar divide-x divide-white/5"
+          >
+            {dates.map((d, i) => {
+              const isActive = toYYYYMMDDUtc(d) === selectedYmd;
+              const dayName = d.toLocaleDateString("en-GB", {
+                weekday: "short",
+                timeZone: KENYA_TZ,
+              });
+              const dateStr = d.toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "2-digit",
+                timeZone: KENYA_TZ,
+              });
 
-            return (
+              return (
+                <button
+                  type="button"
+                  key={`${toYYYYMMDDUtc(d)}-${i}`}
+                  onClick={() => handleDateClick(d)}
+                  data-active={isActive}
+                  className={`flex-1 flex flex-col items-center justify-center min-w-[48px] transition-all ${isActive
+                    ? "bg-white/20 text-amber-100 shadow-inner"
+                    : "text-gray-500 hover:bg-[#252525] hover:text-gray-300"
+                    }`}
+                >
+                  <span className="text-[9px] font-bold uppercase leading-tight">{dayName}</span>
+                  <span className="text-[9px] font-medium leading-tight opacity-90">{dateStr}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {isSearchOpen ? (
+            <form onSubmit={handleSearchSubmit} className="shrink-0 flex items-stretch divide-x divide-white/5 bg-[#1F1F1F]">
+              <input
+                type="text"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                placeholder="Team"
+                className="w-24 sm:w-28 bg-transparent text-white text-xs px-2 outline-none"
+              />
+              <button
+                type="submit"
+                className="w-9 flex items-center justify-center text-white hover:bg-[#2F2F2F] transition-colors"
+                aria-label="Search fixtures"
+              >
+                <Search size={14} />
+              </button>
               <button
                 type="button"
-                key={`${toYYYYMMDDUtc(d)}-${i}`}
-                onClick={() => handleDateClick(d)}
-                data-active={isActive}
-                className={`flex-1 flex flex-col items-center justify-center min-w-[45px] h-8 rounded-md border transition-all ${isActive
-                  ? "bg-white/20 border-transparent text-amber-100 shadow-lg shadow-white/10"
-                  : "bg-[#1F1F1F] border-white/5 text-gray-500 hover:bg-[#252525] hover:text-gray-300"
-                  }`}
+                onClick={() => {
+                  clearSearch();
+                  setIsSearchOpen(false);
+                }}
+                className="w-9 flex items-center justify-center text-gray-300 hover:bg-[#2F2F2F] transition-colors text-xs font-bold"
+                aria-label="Close search"
               >
-                <span className="text-[9px] font-bold uppercase leading-tight">{dayName}</span>
-                <span className="text-[9px] font-medium leading-tight opacity-90">{dateStr}</span>
+                ×
               </button>
-            );
-          })}
-        </div>
-
-        {isSearchOpen ? (
-          <form onSubmit={handleSearchSubmit} className="shrink-0 flex items-center gap-1">
-            <input
-              type="text"
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              placeholder="Team"
-              className="w-28 h-8 bg-[#1F1F1F] text-white text-xs px-2 rounded-md border border-white/10 outline-none focus:border-white/10"
-            />
+            </form>
+          ) : (
             <button
-              type="submit"
-              className="w-8 h-8 bg-[#1F1F1F] text-white rounded-md border border-white/5 flex items-center justify-center hover:bg-[#2F2F2F] transition-colors"
-              aria-label="Search fixtures"
+              type="button"
+              onClick={() => setIsSearchOpen(true)}
+              className="shrink-0 w-10 flex items-center justify-center text-white hover:bg-[#2F2F2F] transition-colors bg-[#1F1F1F]"
+              aria-label="Open fixture search"
             >
               <Search size={14} />
             </button>
-            <button
-              type="button"
-              onClick={() => {
-                clearSearch();
-                setIsSearchOpen(false);
-              }}
-              className="w-8 h-8 bg-[#1F1F1F] text-gray-300 rounded-md border border-white/5 flex items-center justify-center hover:bg-[#2F2F2F] transition-colors text-xs font-bold"
-              aria-label="Close search"
-            >
-              ×
-            </button>
-          </form>
-        ) : (
-          <button
-            type="button"
-            onClick={() => setIsSearchOpen(true)}
-            className="shrink-0 w-8 h-8 bg-[#1F1F1F] text-white rounded-md border border-white/5 flex items-center justify-center hover:bg-[#2F2F2F] transition-colors"
-            aria-label="Open fixture search"
-          >
-            <Search size={14} />
-          </button>
-        )}
+          )}
+
+        </div>
       </div>
 
       <style jsx>{`
