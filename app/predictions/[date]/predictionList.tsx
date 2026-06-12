@@ -186,20 +186,20 @@ export default function PredictionsList({
         let globalIdx = 0;
         return safeData.map((league, idx) => (
           <div key={league.id || idx}>
-            <div className="flex items-center gap-1 bg-gradient-to-r from-emerald-900/40 to-[#121212] py-2 px-1 shadow-md border border-white/5 border-b-0">
+            <div className="flex items-center gap-1 bg-gradient-to-r from-emerald-900/40 to-[#121212] py-0.5 px-1 shadow-md border border-white/5 border-b-0">
               <div className="flex items-center gap-2 w-full">
                 {league.logo && (
                   <Image
                     src={league.logo}
                     alt={league.name}
-                    width={20}
-                    height={20}
-                    className="w-5 h-5 flex-shrink-0 drop-shadow-md"
+                    width={14}
+                    height={14}
+                    className="w-3.5 h-3.5 flex-shrink-0 drop-shadow-md"
                     unoptimized
                   />
                 )}
-                <div className="flex flex-col truncate w-full">
-                  <span className="font-medium text-xs text-amber-100 tracking-wide truncate drop-shadow-sm">
+                <div className="flex flex-col truncate w-full leading-none">
+                  <span className="font-normal text-[10px] sm:text-[11px] text-amber-100 tracking-wide truncate drop-shadow-sm">
                     {league.name}
                   </span>
                   <span className="text-[8px] text-emerald-200/70 font-semibold capitalize tracking-wider truncate">{league.country.toLowerCase()}</span>
