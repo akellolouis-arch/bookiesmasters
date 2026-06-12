@@ -11,20 +11,20 @@ export default function Footer() {
 
 
         {/* Brand */}
-        <div className="space-y-3">
-          <h5 className="text-sm font-bold text-gray-300 tracking-wider">Bookiesmasters</h5>
-          <p className="text-xs leading-relaxed text-gray-400">
+        <div className="space-y-1">
+          <h5 className="text-[10px] font-bold text-gray-300 tracking-wider uppercase">Bookiesmasters</h5>
+          <p className="text-[11px] sm:text-xs leading-snug text-gray-400">
             Get instant access to premium football analytics, livescores, market probabilities, match events, and expert insights.
           </p>
-          <p className="text-[10px] italic text-gray-500 leading-relaxed border-t border-white/5 pt-2">
+          <p className="text-[10px] italic text-gray-500 leading-snug border-t border-white/5 pt-1.5 mt-1.5">
             Disclaimer: Forecasts and data displayed on this platform are for informational and entertainment purposes only and are not guaranteed to be accurate. We accept no liability or financial responsibility for decisions made based on this data. Please use our platform responsibly.
           </p>
         </div>
 
         {/* Contact + Socials */}
-        <div className="space-y-1.5">
-          <h5 className="text-sm font-bold text-gray-300 tracking-wider">Stay connected</h5>
-          <p className="text-xs text-gray-400">
+        <div className="space-y-1">
+          <h5 className="text-[10px] font-bold text-gray-300 tracking-wider uppercase">Stay connected</h5>
+          <p className="text-[11px] sm:text-xs text-gray-400">
             Have questions? Reach us anytime.
           </p>
 
@@ -41,9 +41,9 @@ export default function Footer() {
         </div>
 
         {/* Quick Links */}
-        <div className="space-y-1.5">
-          <h5 className="text-sm font-bold text-gray-300 tracking-wider">Quick links</h5>
-          <ul className="text-xs space-y-1">
+        <div className="space-y-1">
+          <h5 className="text-[10px] font-bold text-gray-300 tracking-wider uppercase">Quick links</h5>
+          <ul className="text-[11px] sm:text-xs space-y-0.5">
 
             <li>
               <Link href="/terms-of-service" className="hover:text-teal-400 transition-colors">
