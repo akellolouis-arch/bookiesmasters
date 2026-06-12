@@ -112,7 +112,7 @@ export default function FixtureCard({
         </div>
 
         {/* BOTTOM ROW: STATUS / PREDICTION / SCORE STRIP */}
-        <div className={`mt-1.5 w-full ${tipBgClass} border border-white/5 rounded py-0.5 flex items-center justify-between px-3 shadow-sm`}>
+        <div className={`mt-1 w-full ${tipBgClass} border border-white/5 rounded h-[18px] flex items-center justify-between px-2 shadow-sm`}>
           {/* LEFT: STATUS */}
           <div className={`text-[9px] sm:text-[10px] font-bold uppercase w-8 text-left ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
             {status}
