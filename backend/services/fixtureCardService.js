@@ -156,11 +156,14 @@ export async function getFixturesGroupedByLeague(date) {
 
 export async function getLiveFixturesGroupedByLeague() {
   const LIVE_STATUSES = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"];
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 2);
 
   const liveFixtures = await Fixture.aggregate([
     {
       $match: {
-        "fixture.fixture.status.short": { $in: LIVE_STATUSES }
+        "fixture.fixture.status.short": { $in: LIVE_STATUSES },
+        "fixture.fixture.date": { $gte: yesterday.toISOString() }
       }
     },
     {

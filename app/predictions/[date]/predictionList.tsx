@@ -161,6 +161,16 @@ export default function PredictionsList({
     return <Loader />;
   }
 
+  // If SWR is fetching fresh data and we currently have nothing to show, display the loader instead of "No predictions"
+  const isFetchingInitial = isLoading || (safeData.length === 0 && isValidating);
+  if (isFetchingInitial) {
+    return (
+      <div className="flex flex-col items-center justify-center p-8 mt-10">
+        <Loader />
+      </div>
+    );
+  }
+
   return (
     <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto sm:px-1 md:px-4">
       {safeData.length === 0 && (
