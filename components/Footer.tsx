@@ -13,7 +13,7 @@ export default function Footer() {
         {/* Brand */}
         <div className="space-y-1">
           <h5 className="text-[10px] font-normal text-gray-300 tracking-wider">Bookiesmasters</h5>
-          <p className="text-[11px] sm:text-xs leading-snug text-gray-400">
+          <p className="text-[10px] leading-snug text-gray-400">
             Get instant access to premium football analytics, livescores, market probabilities, match events, and expert insights.
           </p>
           <p className="text-[10px] text-gray-500 leading-snug border-t border-white/5 pt-1.5 mt-1.5">
@@ -24,7 +24,7 @@ export default function Footer() {
         {/* Contact + Socials */}
         <div className="space-y-1">
           <h5 className="text-[10px] font-normal text-gray-300 tracking-wider">Stay connected</h5>
-          <p className="text-[11px] sm:text-xs text-gray-400">
+          <p className="text-[10px] text-gray-400">
             Have questions? Reach us anytime.
           </p>
 
@@ -43,7 +43,7 @@ export default function Footer() {
         {/* Quick Links */}
         <div className="space-y-1">
           <h5 className="text-[10px] font-normal text-gray-300 tracking-wider">Quick links</h5>
-          <ul className="text-[11px] sm:text-xs space-y-0.5">
+          <ul className="text-[10px] space-y-0.5">
 
             <li>
               <Link href="/terms-of-service" className="hover:text-teal-400 transition-colors">
