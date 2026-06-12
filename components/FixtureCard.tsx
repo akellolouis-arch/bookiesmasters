@@ -87,14 +87,14 @@ export default function FixtureCard({
             });
           }
         }}
-        className={`cursor-pointer block ${bgClass} hover:shadow-md ${hoverClass} transition flex flex-col p-1.5 sm:p-2 no-underline text-inherit`}
+        className={`cursor-pointer block ${bgClass} hover:shadow-md ${hoverClass} transition flex flex-col p-1 sm:p-1.5 no-underline text-inherit`}
       >
         {/* TOP ROW: MATCHUP */}
         <div className="flex items-center justify-between w-full">
           {/* HOME TEAM */}
-          <div className="flex flex-col items-center justify-center gap-0.5 flex-1 min-w-0">
+          <div className="flex items-center justify-end gap-1.5 flex-1 min-w-0">
+            <span className="font-medium text-[9px] sm:text-[10px] truncate text-white text-right px-1">{homeTeam.name}</span>
             <Image src={homeTeam.logo} alt={homeTeam.name} width={16} height={16} className="w-4 h-4 object-contain shrink-0 drop-shadow-sm" unoptimized />
-            <span className="font-medium text-[9px] sm:text-[10px] truncate text-white text-center block w-full px-1">{homeTeam.name}</span>
           </div>
 
           {/* CENTER BOX (Time Only) */}
@@ -105,14 +105,14 @@ export default function FixtureCard({
           </div>
 
           {/* AWAY TEAM */}
-          <div className="flex flex-col items-center justify-center gap-0.5 flex-1 min-w-0">
+          <div className="flex items-center justify-start gap-1.5 flex-1 min-w-0">
             <Image src={awayTeam.logo} alt={awayTeam.name} width={16} height={16} className="w-4 h-4 object-contain shrink-0 drop-shadow-sm" unoptimized />
-            <span className="font-medium text-[9px] sm:text-[10px] truncate text-white text-center block w-full px-1">{awayTeam.name}</span>
+            <span className="font-medium text-[9px] sm:text-[10px] truncate text-white text-left px-1">{awayTeam.name}</span>
           </div>
         </div>
 
         {/* BOTTOM ROW: STATUS / PREDICTION / SCORE STRIP */}
-        <div className={`mt-2 w-full ${tipBgClass} border border-white/5 rounded py-1 flex items-center justify-between px-3 shadow-sm`}>
+        <div className={`mt-1.5 w-full ${tipBgClass} border border-white/5 rounded py-0.5 flex items-center justify-between px-3 shadow-sm`}>
           {/* LEFT: STATUS */}
           <div className={`text-[9px] sm:text-[10px] font-bold uppercase w-8 text-left ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
             {status}

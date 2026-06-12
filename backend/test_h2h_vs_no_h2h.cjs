@@ -4,124 +4,114 @@ const Fixture = require('./models/Fixture.js').default;
 
 const calculateStats = (matches, limit) => {
     const recent = matches.slice(0, limit);
-    let stats = {
-        total: 0,
-        over25: 0, under25: 0,
-    };
-  
+    let stats = { total: 0, over25: 0, under25: 0 };
     recent.forEach((m) => {
         const homeGoals = m.fixture?.goals?.home ?? m.fixture?.score?.fulltime?.home;
         const awayGoals = m.fixture?.goals?.away ?? m.fixture?.score?.fulltime?.away;
-        
         if (homeGoals !== undefined && homeGoals !== null && awayGoals !== undefined && awayGoals !== null) {
             const totalGoals = homeGoals + awayGoals;
             stats.total++;
             if (totalGoals > 2.5) stats.over25++; else stats.under25++;
         }
     });
-  
     return stats;
 };
 
-async function check() {
-  await mongoose.connect(process.env.MONGO_URI);
-  
-  // get last 5000 finished fixtures
-  const fixtures = await Fixture.find({
-    "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
-  }).sort({"fixture.fixture.date": -1}).limit(2000).lean();
+async function run() {
+    await mongoose.connect(process.env.MONGO_URI);
+    
+    // Set up start and end of yesterday
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const yesterday = new Date(today.getTime() - 86400000);
 
-  let withH2H = { total: 0, won: 0 };
-  let withoutH2H = { total: 0, won: 0 };
-
-  console.log(`Evaluating ${fixtures.length} recent matches...`);
-
-  for(let i = 0; i < fixtures.length; i++) {
-      const doc = fixtures[i];
-      const matchDate = doc.fixture.fixture.date;
-      const homeId = doc.fixture.teams.home.id;
-      const awayId = doc.fixture.teams.away.id;
-
-      const homeGoals = doc.fixture?.goals?.home ?? doc.fixture?.score?.fulltime?.home;
-      const awayGoals = doc.fixture?.goals?.away ?? doc.fixture?.score?.fulltime?.away;
-
-      if(homeGoals == null || awayGoals == null) continue;
-      const totalGoals = homeGoals + awayGoals;
-
-      const homeMatches = await Fixture.find({
-        $or: [{ "fixture.teams.home.id": homeId }, { "fixture.teams.away.id": homeId }],
-        "fixture.fixture.date": { $lt: matchDate },
+    const matches = await Fixture.find({
+        "fixture.fixture.date": { $gte: yesterday.toISOString(), $lt: today.toISOString() },
         "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
-      }).sort({ "fixture.fixture.date": -1 }).limit(5).lean();
+    });
 
-      const awayMatches = await Fixture.find({
-        $or: [{ "fixture.teams.home.id": awayId }, { "fixture.teams.away.id": awayId }],
-        "fixture.fixture.date": { $lt: matchDate },
-        "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
-      }).sort({ "fixture.fixture.date": -1 }).limit(5).lean();
+    console.log(`Evaluating ${matches.length} finished matches from yesterday (${yesterday.toISOString().split('T')[0]})...`);
 
-      const h2hMatches = await Fixture.find({
-        $or: [
-            { "fixture.teams.home.id": homeId, "fixture.teams.away.id": awayId },
-            { "fixture.teams.home.id": awayId, "fixture.teams.away.id": homeId }
-        ],
-        "fixture.fixture.date": { $lt: matchDate },
-        "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
-      }).sort({ "fixture.fixture.date": -1 }).limit(5).lean();
+    let withH2H_total = 0;
+    let withH2H_won = 0;
 
-      const homeStats = calculateStats(homeMatches, 5);
-      const awayStats = calculateStats(awayMatches, 5);
-      const h2hStats = calculateStats(h2hMatches, 5);
+    let noH2H_total = 0;
+    let noH2H_won = 0;
 
-      if (homeStats.total > 0 && awayStats.total > 0) {
-          // logic WITHOUT H2H
-          const passOV25_noH2H = homeStats.over25 >= homeStats.under25 && awayStats.over25 >= awayStats.under25;
-          const passUN25_noH2H = homeStats.under25 >= homeStats.over25 && awayStats.under25 >= awayStats.over25;
-          
-          let tipNoH2H = null;
-          if (passOV25_noH2H || passUN25_noH2H) {
-              tipNoH2H = passOV25_noH2H ? "OV1.5" : "UN3.5";
-          }
+    for (let i = 0; i < matches.length; i++) {
+        const doc = matches[i];
+        const matchDate = doc.fixture.fixture.date;
+        const homeId = doc.fixture.teams.home.id;
+        const awayId = doc.fixture.teams.away.id;
+        const actualGoals = doc.fixture.goals.home + doc.fixture.goals.away;
 
-          if(tipNoH2H) {
-              withoutH2H.total++;
-              if(tipNoH2H === "OV1.5" && totalGoals > 1.5) withoutH2H.won++;
-              else if(tipNoH2H === "UN3.5" && totalGoals < 3.5) withoutH2H.won++;
-          }
+        const [homeMatches, awayMatches, h2hMatches] = await Promise.all([
+            Fixture.find({
+                $or: [{ "fixture.teams.home.id": homeId }, { "fixture.teams.away.id": homeId }],
+                "fixture.fixture.date": { $lt: matchDate },
+                "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
+            }).sort({ "fixture.fixture.date": -1 }).limit(5),
+            Fixture.find({
+                $or: [{ "fixture.teams.home.id": awayId }, { "fixture.teams.away.id": awayId }],
+                "fixture.fixture.date": { $lt: matchDate },
+                "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
+            }).sort({ "fixture.fixture.date": -1 }).limit(5),
+            Fixture.find({
+                $or: [
+                    { "fixture.teams.home.id": homeId, "fixture.teams.away.id": awayId },
+                    { "fixture.teams.home.id": awayId, "fixture.teams.away.id": homeId }
+                ],
+                "fixture.fixture.date": { $lt: matchDate },
+                "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
+            }).sort({ "fixture.fixture.date": -1 }).limit(5)
+        ]);
 
-          // logic WITH H2H
-          if(h2hStats.total > 0) {
-              const passOV25 = passOV25_noH2H && h2hStats.over25 >= h2hStats.under25;
-              const passUN25 = passUN25_noH2H && h2hStats.under25 >= h2hStats.over25;
+        const homeStats = calculateStats(homeMatches, 5);
+        const awayStats = calculateStats(awayMatches, 5);
+        const h2hStats = calculateStats(h2hMatches, 5);
 
-              let tipWithH2H = null;
-              if (passOV25 || passUN25) {
-                  tipWithH2H = passOV25 ? "OV1.5" : "UN3.5";
-              }
+        // Logic 1: WITH H2H
+        if (homeStats.total > 0 && awayStats.total > 0 && h2hStats.total > 0) {
+            let tip = null;
+            if (homeStats.over25 >= homeStats.under25 && awayStats.over25 >= awayStats.under25 && h2hStats.over25 >= h2hStats.under25) {
+                tip = "OV1.5";
+            } else if (homeStats.under25 >= homeStats.over25 && awayStats.under25 >= awayStats.over25 && h2hStats.under25 >= h2hStats.over25) {
+                tip = "UN3.5";
+            }
+            if (tip) {
+                withH2H_total++;
+                if (tip === "OV1.5" && actualGoals > 1.5) withH2H_won++;
+                if (tip === "UN3.5" && actualGoals < 3.5) withH2H_won++;
+            }
+        }
 
-              if(tipWithH2H) {
-                  withH2H.total++;
-                  if(tipWithH2H === "OV1.5" && totalGoals > 1.5) withH2H.won++;
-                  else if(tipWithH2H === "UN3.5" && totalGoals < 3.5) withH2H.won++;
-              }
-          }
-      }
-  }
+        // Logic 2: WITHOUT H2H
+        if (homeStats.total > 0 && awayStats.total > 0) {
+            let tip = null;
+            if (homeStats.over25 >= homeStats.under25 && awayStats.over25 >= awayStats.under25) {
+                tip = "OV1.5";
+            } else if (homeStats.under25 >= homeStats.over25 && awayStats.under25 >= awayStats.over25) {
+                tip = "UN3.5";
+            }
+            if (tip) {
+                noH2H_total++;
+                if (tip === "OV1.5" && actualGoals > 1.5) noH2H_won++;
+                if (tip === "UN3.5" && actualGoals < 3.5) noH2H_won++;
+            }
+        }
+    }
 
-  console.log("-----------------------------------------");
-  console.log("WIN RATE COMPARISON (Last 2000 matches)");
-  console.log("-----------------------------------------");
-  console.log(`WITH H2H LOGIC:`);
-  console.log(`Total Predictions: ${withH2H.total}`);
-  console.log(`Wins: ${withH2H.won}`);
-  console.log(`Win Rate: ${((withH2H.won / Math.max(1, withH2H.total)) * 100).toFixed(1)}%`);
-  console.log("");
-  console.log(`WITHOUT H2H LOGIC:`);
-  console.log(`Total Predictions: ${withoutH2H.total}`);
-  console.log(`Wins: ${withoutH2H.won}`);
-  console.log(`Win Rate: ${((withoutH2H.won / Math.max(1, withoutH2H.total)) * 100).toFixed(1)}%`);
-  console.log("-----------------------------------------");
+    console.log(`\n--- RESULTS: WITH H2H REQUIREMENT ---`);
+    console.log(`Total Predictions: ${withH2H_total}`);
+    console.log(`Won: ${withH2H_won}`);
+    console.log(`Win Rate: ${((withH2H_won/withH2H_total)*100).toFixed(1)}%`);
 
-  process.exit(0);
+    console.log(`\n--- RESULTS: WITHOUT H2H REQUIREMENT ---`);
+    console.log(`Total Predictions: ${noH2H_total}`);
+    console.log(`Won: ${noH2H_won}`);
+    console.log(`Win Rate: ${((noH2H_won/noH2H_total)*100).toFixed(1)}%`);
+
+    process.exit(0);
 }
-check().catch(console.error);
+
+run().catch(e => { console.error(e); process.exit(1); });

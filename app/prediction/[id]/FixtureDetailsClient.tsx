@@ -88,14 +88,14 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
     };
 
     let computedTip = data.tip || "";
-    if (!computedTip && hasAnyMatches && hasH2H) {
+    if (!computedTip && hasAnyMatches) {
         const homeStats = calculateStats(homeMatches, 5);
         const awayStats = calculateStats(awayMatches, 5);
-        const h2hStats = calculateStats(filteredH2H, 5);
-        if (homeStats.total > 0 && awayStats.total > 0 && h2hStats.total > 0) {
-            if (homeStats.over25 >= homeStats.under25 && awayStats.over25 >= awayStats.under25 && h2hStats.over25 >= h2hStats.under25) {
+        
+        if (homeStats.total > 0 && awayStats.total > 0) {
+            if (homeStats.over25 >= homeStats.under25 && awayStats.over25 >= awayStats.under25) {
                 computedTip = "Over 1.5 Goals";
-            } else if (homeStats.under25 >= homeStats.over25 && awayStats.under25 >= awayStats.over25 && h2hStats.under25 >= h2hStats.over25) {
+            } else if (homeStats.under25 >= homeStats.over25 && awayStats.under25 >= awayStats.over25) {
                 computedTip = "Under 3.5 Goals";
             }
         }
