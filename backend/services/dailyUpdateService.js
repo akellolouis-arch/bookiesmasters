@@ -10,6 +10,7 @@ import { updateStandings } from "./fetch_standings.js";
 // Duplicate removed
 
 import { cleanupOldFixtures } from "./cleanupService.js";
+import { getPredictedFixturesGroupedByLeague } from "./fixtureCardService.js";
 import {
   applyMongoDnsHints,
   getMongoClientOptions,
@@ -380,6 +381,13 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
 
     // 7.5️⃣ CLEANUP OLD DATA
     await cleanupOldFixtures();
+
+    // 7.8️⃣ PRE-CALCULATE PREDICTIONS (Saves to DB)
+    console.log("🧠 Pre-calculating predictions for Today and Tomorrow...");
+    const todayStr = getKenyaDatePlus(0);
+    const tomorrowStr = getKenyaDatePlus(1);
+    await getPredictedFixturesGroupedByLeague(todayStr).catch(err => console.error("Error pre-calculating today:", err));
+    await getPredictedFixturesGroupedByLeague(tomorrowStr).catch(err => console.error("Error pre-calculating tomorrow:", err));
 
     // 8️⃣ SAVE COMPLETION TIME (LOCK THE RUN UNTIL TOMORROW)
     // Only happens if the *entire* loop finished successfully and recordCompletion is true

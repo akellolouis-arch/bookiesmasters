@@ -176,6 +176,7 @@ export async function getLiveFixturesGroupedByLeague() {
         "fixture.score": 1,
         "fixture.status": 1,
         livescore: 1,
+        predictionTip: 1,
       }
     },
     {
@@ -240,10 +241,25 @@ const calculateStats = (matches, limit) => {
   return stats;
 };
 
+// In-memory cache for prediction calculations.
+// Since historical matches (before kickoff) never change, the prediction tip for a specific fixture ID is mathematically immutable.
+const predictionTipCache = new Map(); // Key: fixtureId, Value: "OV1.5" | "UN3.5" | "NONE"
+
 async function applyPredictionFilter(orderedDocs) {
   const predictedDocs = [];
   
   await Promise.all(orderedDocs.map(async (doc) => {
+      const fixtureId = doc.fixture.id;
+      
+      // 1. Check DB or memory cache first for instant response
+      const precalculatedTip = doc.predictionTip || predictionTipCache.get(fixtureId);
+      if (precalculatedTip) {
+          if (precalculatedTip !== "NONE") {
+              doc.tip = precalculatedTip;
+              predictedDocs.push(doc);
+          }
+          return; // Skip heavy DB queries
+      }
       const matchDate = doc.fixture.fixture.date;
       const homeId = doc.fixture.teams.home.id;
       const awayId = doc.fixture.teams.away.id;
@@ -278,10 +294,19 @@ async function applyPredictionFilter(orderedDocs) {
           const passUN25 = homeStats.under25 >= homeStats.over25 && awayStats.under25 >= awayStats.over25;
           
           if (passOV25 || passUN25) {
-              doc.tip = passOV25 ? "OV1.5" : "UN3.5";
+              const tip = passOV25 ? "OV1.5" : "UN3.5";
+              doc.tip = tip;
+              predictionTipCache.set(fixtureId, tip);
               predictedDocs.push(doc);
+              // Save permanently to database
+              Fixture.updateOne({ fixtureId: doc.fixtureId }, { $set: { predictionTip: tip } }).catch(console.error);
+              return;
           }
       }
+
+      // If it failed the algorithm, cache it as "NONE" so we never query the DB for this fixture again
+      predictionTipCache.set(fixtureId, "NONE");
+      Fixture.updateOne({ fixtureId: doc.fixtureId }, { $set: { predictionTip: "NONE" } }).catch(console.error);
   }));
 
   // Re-sort the predicted docs since Promise.all doesn't guarantee order of push
@@ -317,6 +342,7 @@ export async function getPredictedFixturesGroupedByLeague(date) {
         "fixture.score": 1,
         "fixture.status": 1,
         "livescore": 1,
+        predictionTip: 1,
       }
     },
     {
