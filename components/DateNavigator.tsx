@@ -95,15 +95,12 @@ export default function DateNavigator({ date }: Props) {
 
   return (
     <div className="max-w-[100vw] bg-black border-y border-white/5 mx-auto">
-      <div className="max-w-3xl mx-auto px-1 sm:px-2">
-        <div className="flex items-stretch w-full h-8 border-x border-white/5 overflow-hidden bg-[#0A0A0A] divide-x divide-white/5 shadow-sm">
+      <div className="max-w-3xl mx-auto w-full">
+        <div className="flex items-stretch w-full h-8 overflow-hidden bg-[#0A0A0A] divide-x divide-white/5 shadow-sm">
 
           <Link
             href="/live"
-            className={`shrink-0 w-12 flex flex-col items-center justify-center text-[9px] font-bold transition-colors ${isLivePage
-              ? "bg-white/20 text-amber-100 shadow-inner"
-              : "text-gray-400 hover:text-white hover:bg-[#252525]"
-              }`}
+            className="shrink-0 w-12 flex flex-col items-center justify-center text-[9px] font-bold transition-colors text-gray-400 hover:text-white hover:bg-[#252525]"
           >
             LIVE
           </Link>
