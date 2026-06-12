@@ -49,9 +49,9 @@ export default function Footer() {
               href="https://t.me/+HmtKbG-pVAA1ZTg0"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-400 hover:text-white transition-colors pl-0.5"
+              className="text-gray-400 hover:text-white transition-colors"
             >
-              <Send size={14} strokeWidth={1.5} className="transform -rotate-45 -mt-0.5" />
+              <Send size={14} strokeWidth={1.5} />
             </a>
           </div>
         </div>
