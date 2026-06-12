@@ -199,10 +199,10 @@ export default function PredictionsList({
                   />
                 )}
                 <div className="flex flex-col truncate w-full leading-tight">
-                  <span className="font-medium text-xs text-amber-100 tracking-wide truncate drop-shadow-sm">
+                  <span className="font-normal text-xs text-amber-100 tracking-wide truncate drop-shadow-sm">
                     {league.name}
                   </span>
-                  <span className="text-[8px] text-emerald-200/70 font-semibold capitalize tracking-wider truncate">{league.country.toLowerCase()}</span>
+                  <span className="text-[8px] text-emerald-200/70 font-normal capitalize tracking-wider truncate">{league.country.toLowerCase()}</span>
                 </div>
               </div>
             </div>
