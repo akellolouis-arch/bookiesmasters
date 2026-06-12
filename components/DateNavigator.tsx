@@ -100,7 +100,7 @@ export default function DateNavigator({ date }: Props) {
 
           <Link
             href="/live"
-            className="shrink-0 w-12 flex flex-col items-center justify-center text-[9px] font-bold transition-colors text-gray-400 hover:text-white hover:bg-[#252525]"
+            className="shrink-0 w-12 flex flex-col items-center justify-center text-[9px] font-bold transition-colors text-white bg-[#1F1F1F] hover:bg-[#2F2F2F]"
           >
             LIVE
           </Link>
