@@ -95,8 +95,8 @@ export default function DateNavigator({ date }: Props) {
 
   return (
     <div className="max-w-[100vw] bg-black border-y border-white/5 mx-auto">
-      <div className="max-w-3xl mx-auto px-1 sm:px-2 py-0.5">
-        <div className="flex items-stretch w-full h-9 border border-white/10 overflow-hidden bg-[#1F1F1F] divide-x divide-white/5 shadow-sm">
+      <div className="max-w-3xl mx-auto px-1 sm:px-2">
+        <div className="flex items-stretch w-full h-8 border-x border-white/5 overflow-hidden bg-[#0A0A0A] divide-x divide-white/5 shadow-sm">
 
           <Link
             href="/live"
