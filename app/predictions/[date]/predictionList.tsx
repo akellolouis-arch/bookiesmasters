@@ -72,15 +72,12 @@ export default function PredictionsList({
 }: PredictionsListProps) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const isFixturesPage = pathname.startsWith("/fixtures");
   const query = (searchParams.get("q") || "").trim().toLowerCase();
 
   // Construct URL dynamically
   let apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/predictions/cards?date=${date}`;
   if (date === "live") {
     apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/fixtures/live`;
-  } else if (isFixturesPage) {
-    apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/fixtures/cards?date=${date}`;
   }
 
   const today = new Date().toLocaleDateString("en-CA", { timeZone: "Africa/Nairobi" });
@@ -162,7 +159,7 @@ export default function PredictionsList({
   }
 
   // If SWR is fetching fresh data and we currently have nothing to show, display the loader instead of "No predictions"
-  const isFetchingInitial = isLoading || (safeData.length === 0 && isValidating);
+  const isFetchingInitial = isLoading || (!safeData || safeData.length === 0) && isValidating;
   if (isFetchingInitial) {
     return (
       <div className="flex flex-col items-center justify-center p-8 mt-10">
@@ -173,8 +170,8 @@ export default function PredictionsList({
 
   return (
     <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto sm:px-1 md:px-4">
-      {safeData.length === 0 && (
-        !isFixturesPage && !query ? (
+      {(!safeData || safeData.length === 0) && (
+        !query ? (
           <div className="flex flex-col items-center justify-center p-8 mt-10">
             <p className="text-gray-400 text-lg font-medium">No strict predictions found for this date.</p>
             <p className="text-gray-500 text-sm mt-2 max-w-md text-center">Our algorithm only predicts when the data is exceptionally strong. Check back tomorrow!</p>
