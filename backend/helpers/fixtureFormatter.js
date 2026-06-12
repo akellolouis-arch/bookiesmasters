@@ -47,16 +47,7 @@ export function formatFixtureCard(fixtureDoc) {
     displayStatus = "FT";
   }
 
-  // 3️⃣ NOT STARTED → Show Time (e.g. "22:00")
-  else if (shortStatus === "NS") {
-    const dateObj = new Date(fx.fixture.date);
-    displayStatus = dateObj.toLocaleTimeString("en-GB", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-      timeZone: "Africa/Nairobi",
-    });
-  }
+
 
   // 4️⃣ OTHERS (Postponed, Cancelled, etc.)
   else {
