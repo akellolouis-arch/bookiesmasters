@@ -130,7 +130,7 @@ export default function FixtureCard({
           </div>
 
           {/* RIGHT: SCORE */}
-          <div className={`text-[10px] sm:text-[11px] font-bold w-8 text-right ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
+          <div className={`text-[9px] sm:text-[10px] font-bold w-8 text-right ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
              {score ? score.replace(" - ", "-") : "-"}
           </div>
         </div>
