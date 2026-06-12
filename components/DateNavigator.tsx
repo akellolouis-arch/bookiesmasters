@@ -42,7 +42,6 @@ export default function DateNavigator({ date }: Props) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isLivePage = pathname === "/live";
-  const isFixturesPage = pathname.startsWith("/fixtures");
   const initialQuery = searchParams.get("q") || "";
   const [isSearchOpen, setIsSearchOpen] = useState(Boolean(initialQuery));
   const [searchText, setSearchText] = useState(initialQuery);
@@ -72,7 +71,7 @@ export default function DateNavigator({ date }: Props) {
   const handleDateClick = (d: Date) => {
     const nextDate = toYYYYMMDDUtc(d);
     const q = (searchParams.get("q") || "").trim();
-    const baseRoute = isFixturesPage ? "/fixtures" : "/predictions";
+    const baseRoute = "/predictions";
     const url = q ? `${baseRoute}/${nextDate}?q=${encodeURIComponent(q)}` : `${baseRoute}/${nextDate}`;
     router.push(url);
   };
@@ -80,7 +79,7 @@ export default function DateNavigator({ date }: Props) {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = searchText.trim();
-    const baseRoute = isFixturesPage ? "/fixtures" : "/predictions";
+    const baseRoute = "/predictions";
     const basePath = isLivePage ? "/live" : `${baseRoute}/${date}`;
     const url = trimmed ? `${basePath}?q=${encodeURIComponent(trimmed)}` : basePath;
     router.push(url);
@@ -88,7 +87,7 @@ export default function DateNavigator({ date }: Props) {
 
   const clearSearch = () => {
     setSearchText("");
-    const baseRoute = isFixturesPage ? "/fixtures" : "/predictions";
+    const baseRoute = "/predictions";
     const basePath = isLivePage ? "/live" : `${baseRoute}/${date}`;
     router.push(basePath);
   };

@@ -16,7 +16,6 @@ export default function Navbar() {
 
   const links = [
     { name: "Home", path: "/" },
-    { name: "Fixtures", path: "/fixtures" },
   ];
 
   return (

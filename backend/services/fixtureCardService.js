@@ -188,8 +188,10 @@ export async function getLiveFixturesGroupedByLeague() {
     liveFixtures.filter(f => !f.fixture?.league?.name?.toLowerCase().includes("friendlies"))
   );
 
+  const sortedPredictedLiveDocs = await applyPredictionFilter(orderedLive);
+
   const grouped = {};
-  orderedLive.forEach((doc) => {
+  sortedPredictedLiveDocs.forEach((doc) => {
     const league = doc.fixture.league;
     const leagueId = league.id;
 
@@ -234,6 +236,54 @@ const calculateStats = (matches, limit) => {
 
   return stats;
 };
+
+async function applyPredictionFilter(orderedDocs) {
+  const predictedDocs = [];
+  
+  await Promise.all(orderedDocs.map(async (doc) => {
+      const matchDate = doc.fixture.fixture.date;
+      const homeId = doc.fixture.teams.home.id;
+      const awayId = doc.fixture.teams.away.id;
+
+      const [homeMatches, awayMatches, h2hMatches] = await Promise.all([
+          Fixture.find({
+              $or: [{ "fixture.teams.home.id": homeId }, { "fixture.teams.away.id": homeId }],
+              "fixture.fixture.date": { $lt: matchDate },
+              "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
+          }).sort({ "fixture.fixture.date": -1 }).limit(5),
+          Fixture.find({
+              $or: [{ "fixture.teams.home.id": awayId }, { "fixture.teams.away.id": awayId }],
+              "fixture.fixture.date": { $lt: matchDate },
+              "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
+          }).sort({ "fixture.fixture.date": -1 }).limit(5),
+          Fixture.find({
+              $or: [
+                  { "fixture.teams.home.id": homeId, "fixture.teams.away.id": awayId },
+                  { "fixture.teams.home.id": awayId, "fixture.teams.away.id": homeId }
+              ],
+              "fixture.fixture.date": { $lt: matchDate },
+              "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
+          }).sort({ "fixture.fixture.date": -1 }).limit(5)
+      ]);
+
+      const homeStats = calculateStats(homeMatches, 5);
+      const awayStats = calculateStats(awayMatches, 5);
+      const h2hStats = calculateStats(h2hMatches, 5);
+
+      if (homeStats.total > 0 && awayStats.total > 0) {
+          const passOV25 = homeStats.over25 >= homeStats.under25 && awayStats.over25 >= awayStats.under25;
+          const passUN25 = homeStats.under25 >= homeStats.over25 && awayStats.under25 >= awayStats.over25;
+          
+          if (passOV25 || passUN25) {
+              doc.tip = passOV25 ? "OV1.5" : "UN3.5";
+              predictedDocs.push(doc);
+          }
+      }
+  }));
+
+  // Re-sort the predicted docs since Promise.all doesn't guarantee order of push
+  return sortDocsByCountryLeagueKickoff(predictedDocs);
+}
 
 export async function getPredictedFixturesGroupedByLeague(date) {
   if (!date) throw new Error("Date parameter is required");
@@ -298,52 +348,7 @@ export async function getPredictedFixturesGroupedByLeague(date) {
 
   const orderedDocs = sortDocsByCountryLeagueKickoff(validFixtures);
 
-  // Filter using prediction logic (run in parallel)
-  const predictedDocs = [];
-  
-  await Promise.all(orderedDocs.map(async (doc) => {
-      const matchDate = doc.fixture.fixture.date;
-      const homeId = doc.fixture.teams.home.id;
-      const awayId = doc.fixture.teams.away.id;
-
-      const [homeMatches, awayMatches, h2hMatches] = await Promise.all([
-          Fixture.find({
-              $or: [{ "fixture.teams.home.id": homeId }, { "fixture.teams.away.id": homeId }],
-              "fixture.fixture.date": { $lt: matchDate },
-              "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
-          }).sort({ "fixture.fixture.date": -1 }).limit(5),
-          Fixture.find({
-              $or: [{ "fixture.teams.home.id": awayId }, { "fixture.teams.away.id": awayId }],
-              "fixture.fixture.date": { $lt: matchDate },
-              "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
-          }).sort({ "fixture.fixture.date": -1 }).limit(5),
-          Fixture.find({
-              $or: [
-                  { "fixture.teams.home.id": homeId, "fixture.teams.away.id": awayId },
-                  { "fixture.teams.home.id": awayId, "fixture.teams.away.id": homeId }
-              ],
-              "fixture.fixture.date": { $lt: matchDate },
-              "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
-          }).sort({ "fixture.fixture.date": -1 }).limit(5)
-      ]);
-
-      const homeStats = calculateStats(homeMatches, 5);
-      const awayStats = calculateStats(awayMatches, 5);
-      const h2hStats = calculateStats(h2hMatches, 5);
-
-      if (homeStats.total > 0 && awayStats.total > 0) {
-          const passOV25 = homeStats.over25 >= homeStats.under25 && awayStats.over25 >= awayStats.under25;
-          const passUN25 = homeStats.under25 >= homeStats.over25 && awayStats.under25 >= awayStats.over25;
-          
-          if (passOV25 || passUN25) {
-              doc.tip = passOV25 ? "OV1.5" : "UN3.5";
-              predictedDocs.push(doc);
-          }
-      }
-  }));
-
-  // Re-sort the predicted docs since Promise.all doesn't guarantee order of push
-  const sortedPredictedDocs = sortDocsByCountryLeagueKickoff(predictedDocs);
+  const sortedPredictedDocs = await applyPredictionFilter(orderedDocs);
 
   const grouped = {};
   sortedPredictedDocs.forEach(doc => {
