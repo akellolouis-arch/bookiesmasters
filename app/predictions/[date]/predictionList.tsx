@@ -83,7 +83,7 @@ export default function PredictionsList({
   const today = new Date().toLocaleDateString("en-CA", { timeZone: "Africa/Nairobi" });
   const isToday = date === today;
 
-  const { data: swrData, isValidating } = useSWR(
+  const { data: swrData, isValidating, isLoading } = useSWR(
     apiUrl,
     fetcher,
     {
