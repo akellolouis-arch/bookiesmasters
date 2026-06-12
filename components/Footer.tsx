@@ -104,7 +104,7 @@ export default function Footer() {
       </div>
 
       {/* Footer bottom */}
-      <div className="text-center text-gray-600 text-[10px] mt-4 pt-3 border-t border-white/5 tracking-widest">
+      <div className="text-center text-gray-600 text-[10px] mt-2 tracking-widest">
         © {new Date().getFullYear()} Bookiesmasters. All rights reserved.
       </div>
     </footer>
