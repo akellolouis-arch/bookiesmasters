@@ -15,7 +15,7 @@ import {
   getMongoClientOptions,
 } from "../mongoConnectOptions.js";
 import {
-  fetchPrediction,
+  fetchHeadToHead,
   getFootballApi,
   isFinishedStatusShort,
 } from "./fixturePredictionOddsApi.js";
@@ -327,8 +327,9 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
       if (existingDoc && existingDoc.h2h && existingDoc.h2h.length > 0) {
         h2h = existingDoc.h2h;
       } else if (mayCallPredOddsApis) {
-        const predResult = await fetchPrediction(fixtureId);
-        h2h = predResult.h2h;
+        const homeId = f.teams.home.id;
+        const awayId = f.teams.away.id;
+        h2h = await fetchHeadToHead(homeId, awayId);
       }
 
       // 4️⃣ injuries (Weekly Forecast)

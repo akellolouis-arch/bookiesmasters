@@ -28,21 +28,17 @@ export function isFinishedStatusShort(short) {
 
 
 
-export async function fetchPrediction(fixtureId) {
+export async function fetchHeadToHead(homeTeamId, awayTeamId) {
   try {
-    const res = await getFootballApi().get(`/predictions`, {
-      params: { fixture: fixtureId },
+    const res = await getFootballApi().get(`/fixtures/headtohead`, {
+      params: { h2h: `${homeTeamId}-${awayTeamId}` },
     });
 
-    const data = res.data?.response?.[0];
-    if (!data) return { h2h: null };
-
-    return {
-      h2h: data.h2h || null,
-    };
+    const h2hArray = res.data?.response || [];
+    return h2hArray;
   } catch (err) {
-    console.log(`⚠ Prediction not available for fixture ${fixtureId}: ${err.message}`);
-    return { h2h: null };
+    console.log(`⚠ H2H not available for ${homeTeamId}-${awayTeamId}: ${err.message}`);
+    return [];
   }
 }
 

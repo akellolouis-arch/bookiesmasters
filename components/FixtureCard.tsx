@@ -93,58 +93,47 @@ export default function FixtureCard({
         <div className="flex items-center justify-between w-full">
           {/* HOME TEAM */}
           <div className="flex flex-col items-center justify-center gap-0.5 flex-1 min-w-0">
-            <Image src={homeTeam.logo} alt={homeTeam.name} width={20} height={20} className="w-5 h-5 object-contain shrink-0 drop-shadow-sm" unoptimized />
+            <Image src={homeTeam.logo} alt={homeTeam.name} width={16} height={16} className="w-4 h-4 object-contain shrink-0 drop-shadow-sm" unoptimized />
             <span className="font-medium text-[9px] sm:text-[10px] truncate text-white text-center block w-full px-1">{homeTeam.name}</span>
           </div>
 
-          {/* CENTER BOX (Time / Score) */}
-          <div className="w-[70px] sm:w-[80px] shrink-0 flex flex-col items-center justify-center">
-            {isLive || isFinished ? (
-              <div className={`flex flex-col items-center leading-none ${isLive ? "text-red-500 animate-pulse" : "text-white"}`}>
-                {/* STATUS ABOVE SCORE */}
-                {isLive && status && (
-                  <span className="text-[8px] text-red-500 mb-0.5 uppercase font-bold tracking-wider">{status}</span>
-                )}
-                {isFinished && (
-                  <span className="text-[8px] text-gray-500 mb-0.5 font-bold uppercase tracking-wider">FT</span>
-                )}
-                
-                {/* SCORE WITHOUT BORDER */}
-                {score ? (
-                  <div className="flex items-center gap-1">
-                    <span className="text-[11px] sm:text-[12px] font-bold">{score.split(" - ")[0]}</span>
-                    <span className="text-gray-500 text-[8px] font-normal">-</span>
-                    <span className="text-[11px] sm:text-[12px] font-bold">{score.split(" - ")[1]}</span>
-                  </div>
-                ) : (
-                  <span className="text-[11px] sm:text-[12px] font-bold">-</span>
-                )}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center">
-                {/* TIME WITHOUT BORDER */}
-                <span className="text-[9px] sm:text-[10px] font-semibold text-gray-300">
-                  {kickoffTime || status}
-                </span>
-              </div>
-            )}
+          {/* CENTER BOX (Time Only) */}
+          <div className="w-[50px] shrink-0 flex flex-col items-center justify-center">
+             <span className="text-[9px] sm:text-[10px] font-semibold text-gray-400">
+               {kickoffTime || "--:--"}
+             </span>
           </div>
 
           {/* AWAY TEAM */}
           <div className="flex flex-col items-center justify-center gap-0.5 flex-1 min-w-0">
-            <Image src={awayTeam.logo} alt={awayTeam.name} width={20} height={20} className="w-5 h-5 object-contain shrink-0 drop-shadow-sm" unoptimized />
+            <Image src={awayTeam.logo} alt={awayTeam.name} width={16} height={16} className="w-4 h-4 object-contain shrink-0 drop-shadow-sm" unoptimized />
             <span className="font-medium text-[9px] sm:text-[10px] truncate text-white text-center block w-full px-1">{awayTeam.name}</span>
           </div>
         </div>
 
-        {/* BOTTOM ROW: PREDICTION STRIP */}
-        {prediction && (
-          <div className={`mt-2 w-full ${tipBgClass} border border-white/5 rounded py-1 flex justify-center items-center shadow-sm`}>
-            <span className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-widest ${predictionColorClass}`}>
-              {prediction}
-            </span>
+        {/* BOTTOM ROW: STATUS / PREDICTION / SCORE STRIP */}
+        <div className={`mt-2 w-full ${tipBgClass} border border-white/5 rounded py-1 flex items-center justify-between px-3 shadow-sm`}>
+          {/* LEFT: STATUS */}
+          <div className={`text-[9px] sm:text-[10px] font-bold uppercase w-8 text-left ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
+            {status}
           </div>
-        )}
+
+          {/* MIDDLE: PREDICTION */}
+          <div className="flex-1 text-center">
+            {prediction ? (
+              <span className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-widest ${predictionColorClass}`}>
+                {prediction}
+              </span>
+            ) : (
+              <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-gray-600">-</span>
+            )}
+          </div>
+
+          {/* RIGHT: SCORE */}
+          <div className={`text-[10px] sm:text-[11px] font-bold w-8 text-right ${isLive ? "text-red-500 animate-pulse" : "text-white"}`}>
+             {score ? score.replace(" - ", "-") : "-"}
+          </div>
+        </div>
       </Link>
     </div>
   );

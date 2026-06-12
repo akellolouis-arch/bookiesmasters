@@ -58,7 +58,8 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
 
     const displayInjuries = hideStaleData ? [] : data.injuries;
 
-    const hasH2H = data.h2h && data.h2h.length > 0;
+    const filteredH2H = data.h2h ? data.h2h.filter((m: any) => ["FT", "AET", "PEN", "AWD", "WO"].includes(m.fixture?.status?.short)) : [];
+    const hasH2H = filteredH2H.length > 0;
     const homeMatches = data.homeTeam.allMatches || data.homeTeam.last5Matches || [];
     const awayMatches = data.awayTeam.allMatches || data.awayTeam.last5Matches || [];
     const hasAnyMatches = homeMatches.length > 0 || awayMatches.length > 0;
@@ -87,10 +88,10 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
     };
 
     let computedTip = data.tip || "";
-    if (!computedTip && hasAnyMatches && data.h2h) {
+    if (!computedTip && hasAnyMatches && hasH2H) {
         const homeStats = calculateStats(homeMatches, 5);
         const awayStats = calculateStats(awayMatches, 5);
-        const h2hStats = calculateStats(data.h2h, 5);
+        const h2hStats = calculateStats(filteredH2H, 5);
         if (homeStats.total > 0 && awayStats.total > 0 && h2hStats.total > 0) {
             if (homeStats.over25 >= homeStats.under25 && awayStats.over25 >= awayStats.under25 && h2hStats.over25 >= h2hStats.under25) {
                 computedTip = "Over 1.5 Goals";
@@ -124,7 +125,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                         venue={data.venue}
                         homeMatches={data.homeTeam.allMatches}
                         awayMatches={data.awayTeam.allMatches}
-                        h2hMatches={data.h2h}
+                        h2hMatches={filteredH2H}
                         status={data.status}
                         score={data.score}
                     />
@@ -147,7 +148,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                                         </h3>
                                     </div>
                                     <div>
-                                        <H2HSection h2h={data.h2h!} />
+                                        <H2HSection h2h={filteredH2H} />
                                     </div>
                                 </div>
                             )}
