@@ -100,7 +100,7 @@ export default function DateNavigator({ date }: Props) {
 
           <Link
             href="/live"
-            className="shrink-0 w-12 flex flex-col items-center justify-center text-[9px] font-bold transition-colors text-white bg-[#1F1F1F] hover:bg-[#2F2F2F]"
+            className="shrink-0 w-10 flex flex-col items-center justify-center text-[9px] font-bold transition-colors text-white bg-[#1F1F1F] hover:bg-[#2F2F2F]"
           >
             LIVE
           </Link>
@@ -127,7 +127,7 @@ export default function DateNavigator({ date }: Props) {
                   key={`${toYYYYMMDDUtc(d)}-${i}`}
                   onClick={() => handleDateClick(d)}
                   data-active={isActive}
-                  className={`flex-1 flex flex-col items-center justify-center min-w-[48px] transition-all ${isActive
+                  className={`flex-1 flex flex-col items-center justify-center min-w-[40px] transition-all ${isActive
                     ? "bg-white/20 text-amber-100 shadow-inner"
                     : "text-gray-500 hover:bg-[#252525] hover:text-gray-300"
                     }`}
