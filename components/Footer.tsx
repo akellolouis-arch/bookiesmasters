@@ -28,7 +28,7 @@ export default function Footer() {
             Have questions? Reach us anytime.
           </p>
 
-          <div className="flex space-x-4 mt-0.5 md:justify-center">
+          <div className="flex items-center space-x-4 mt-0.5 pb-1 md:justify-center">
             <a
               href="https://www.facebook.com/profile.php?id=61556994182742"
               target="_blank"
