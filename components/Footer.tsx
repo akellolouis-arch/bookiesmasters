@@ -7,7 +7,7 @@ export default function Footer() {
   return (
     <footer className="bg-[#1F1F1F] text-gray-400 md:justify-center px-4 pt-1 pb-3 md:pt-2 md:pb-4 border-t border-white/5">
       {/* Main section */}
-      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-2.5 md:gap-4 md:text-center">
+      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-4 md:text-center">
 
 
         {/* Brand */}
@@ -16,7 +16,7 @@ export default function Footer() {
           <p className="text-[10px] leading-snug text-gray-400">
             Get instant access to premium football analytics, livescores, market probabilities, match events, and expert insights.
           </p>
-          <p className="text-[10px] text-gray-500 leading-snug mt-1">
+          <p className="text-[10px] text-gray-500 leading-snug mt-0.5">
             Disclaimer: Forecasts and data displayed on this platform are for informational and entertainment purposes only and are not guaranteed to be accurate. We accept no liability or financial responsibility for decisions made based on this data. Please use our platform responsibly.
           </p>
         </div>
@@ -28,7 +28,7 @@ export default function Footer() {
             Have questions? Reach us anytime.
           </p>
 
-          <div className="flex space-x-4 mt-2 md:justify-center">
+          <div className="flex space-x-4 mt-0.5 md:justify-center">
             <a
               href="https://www.facebook.com/profile.php?id=61556994182742"
               target="_blank"
