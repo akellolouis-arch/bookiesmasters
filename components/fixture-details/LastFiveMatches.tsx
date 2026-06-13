@@ -64,7 +64,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
 
     return (
         <div className="mb-2 w-full animate-in fade-in duration-500">
-            {/* 🏆 Title + Team Logo */}
+            {/* 🏆 Title + Team Logo (Handled by Parent)
             <div className={`flex flex-col mb-2 border-b border-white/10 pb-1 items-center`}>
                 <div className={`flex items-center gap-2 justify-center`}>
                     {teamLogo && (
@@ -79,6 +79,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                     </h4>
                 </div>
             </div>
+            */}
 
             {/* 🏷️ League Filter Tabs */}
             {uniqueLeagues.length > 0 && (
