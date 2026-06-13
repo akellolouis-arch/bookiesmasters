@@ -180,31 +180,26 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                 })}
             </div>
 
-            {/* 📊 Form Summary */}
+            {/* 📊 Form Summary 
             {totalMatches > 0 && (
                 <div className="mt-3 px-2 mb-2">
-                    {/* Horizontal Progress Bar */}
                     <div className="w-full h-1.5 flex rounded-full overflow-hidden mb-3">
                         <div className="flex-1 bg-green-500 h-full" />
                         <div className="flex-1 bg-yellow-500 h-full" />
                         <div className="flex-1 bg-red-500 h-full" />
                     </div>
                     
-                    {/* Stats Columns */}
                     <div className="flex justify-between text-center px-4 md:px-8">
-                        {/* Win */}
                         <div className="flex flex-col items-center">
                             <span className="text-gray-200 text-xs font-bold mb-1">Win {wins}</span>
                             <span className="text-gray-400 text-xs mb-1">{winPct}%</span>
                             <div className="w-8 h-1 bg-green-500 rounded-full" />
                         </div>
-                        {/* Draw */}
                         <div className="flex flex-col items-center">
                             <span className="text-gray-200 text-xs font-bold mb-1">Draw {draws}</span>
                             <span className="text-gray-400 text-xs mb-1">{drawPct}%</span>
                             <div className="w-8 h-1 bg-yellow-500 rounded-full" />
                         </div>
-                        {/* Lost */}
                         <div className="flex flex-col items-center">
                             <span className="text-gray-200 text-xs font-bold mb-1">Lost {losses}</span>
                             <span className="text-gray-400 text-xs mb-1">{lossPct}%</span>
@@ -213,6 +208,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                     </div>
                 </div>
             )}
+            */}
 
             {/* Show More Button */}
             {(hasMore || showAll) && (

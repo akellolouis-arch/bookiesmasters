@@ -135,54 +135,15 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 <div className="mt-2">
                 </div>
 
-                {/* --- H2H & FORM SECTION --- */}
-                {(hasH2H || hasAnyMatches) && (
+                {/* --- H2H SECTION --- */}
+                {hasH2H && (
                     <div className="mt-2">
-                        <div className={`grid grid-cols-1 ${hasH2H && hasAnyMatches ? "lg:grid-cols-2" : "lg:grid-cols-1"} gap-2`}>
-                            {/* Column 1: Head to Head */}
-                            {hasH2H && (
-                                <div className="space-y-2">
-                                    <div className="flex justify-center mb-3">
-                                        <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-amber-100 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold shadow-lg tracking-wide uppercase">
-                                            Head to Head
-                                        </h3>
-                                    </div>
-                                    <div>
-                                        <H2HSection h2h={filteredH2H} />
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Column 2: Recent Form */}
-                            {hasAnyMatches && (
-                                <div className="space-y-2">
-                                    <div className="flex justify-center mb-3">
-                                        <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-amber-100 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold shadow-lg tracking-wide uppercase">
-                                            Recent Form
-                                        </h3>
-                                    </div>
-                                    <div className="space-y-2">
-                                        {homeMatches.length > 0 && (
-                                            <LastFiveMatches
-                                                teamName={data.homeTeam.name}
-                                                teamLogo={data.homeTeam.logo}
-                                                matches={homeMatches}
-                                            />
-                                        )}
-                                        {homeMatches.length > 0 && awayMatches.length > 0 && (
-                                            <div className="w-full h-px bg-white/5"></div>
-                                        )}
-                                        {awayMatches.length > 0 && (
-                                            <LastFiveMatches
-                                                teamName={data.awayTeam.name}
-                                                teamLogo={data.awayTeam.logo}
-                                                matches={awayMatches}
-                                            />
-                                        )}
-                                    </div>
-                                </div>
-                            )}
+                        <div className="flex justify-center mb-3">
+                            <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-amber-100 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold shadow-lg tracking-wide uppercase">
+                                Head to Head
+                            </h3>
                         </div>
+                        <H2HSection h2h={filteredH2H} />
                     </div>
                 )}
 
@@ -204,6 +165,36 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 {hasAnyMatches && (
                     <div className="mt-2">
                         <BTTSStatistics homeTeam={data.homeTeam} awayTeam={data.awayTeam} />
+                    </div>
+                )}
+
+                {/* --- RECENT FORM SECTION --- */}
+                {hasAnyMatches && (
+                    <div className="mt-2">
+                        <div className="flex justify-center mb-3">
+                            <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-amber-100 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold shadow-lg tracking-wide uppercase">
+                                Recent Form
+                            </h3>
+                        </div>
+                        <div className="space-y-2">
+                            {homeMatches.length > 0 && (
+                                <LastFiveMatches
+                                    teamName={data.homeTeam.name}
+                                    teamLogo={data.homeTeam.logo}
+                                    matches={homeMatches}
+                                />
+                            )}
+                            {homeMatches.length > 0 && awayMatches.length > 0 && (
+                                <div className="w-full h-px bg-white/5"></div>
+                            )}
+                            {awayMatches.length > 0 && (
+                                <LastFiveMatches
+                                    teamName={data.awayTeam.name}
+                                    teamLogo={data.awayTeam.logo}
+                                    matches={awayMatches}
+                                />
+                            )}
+                        </div>
                     </div>
                 )}
 

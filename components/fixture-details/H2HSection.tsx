@@ -135,31 +135,26 @@ const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
                 })}
             </div>
 
-            {/* 📊 Form Summary */}
+            {/* 📊 Form Summary 
             {totalMatches > 0 && (
                 <div className="mt-3 px-2 mb-2">
-                    {/* Horizontal Progress Bar */}
                     <div className="w-full h-1.5 flex rounded-full overflow-hidden mb-3">
                         <div className="flex-1 bg-green-500 h-full" />
                         <div className="flex-1 bg-yellow-500 h-full" />
                         <div className="flex-1 bg-blue-500 h-full" />
                     </div>
                     
-                    {/* Stats Columns */}
                     <div className="flex justify-between text-center px-1 md:px-4">
-                        {/* Team A */}
                         <div className="flex flex-col items-center">
                             <span className="text-gray-200 text-[10px] sm:text-xs font-bold mb-1 max-w-[80px] sm:max-w-[100px] truncate">{teamA} {teamAWins}</span>
                             <span className="text-gray-400 text-xs mb-1">{teamAPct}%</span>
                             <div className="w-8 h-1 bg-green-500 rounded-full" />
                         </div>
-                        {/* Draw */}
                         <div className="flex flex-col items-center">
                             <span className="text-gray-200 text-[10px] sm:text-xs font-bold mb-1">Draw {draws}</span>
                             <span className="text-gray-400 text-xs mb-1">{drawPct}%</span>
                             <div className="w-8 h-1 bg-yellow-500 rounded-full" />
                         </div>
-                        {/* Team B */}
                         <div className="flex flex-col items-center">
                             <span className="text-gray-200 text-[10px] sm:text-xs font-bold mb-1 max-w-[80px] sm:max-w-[100px] truncate">{teamB} {teamBWins}</span>
                             <span className="text-gray-400 text-xs mb-1">{teamBPct}%</span>
@@ -168,8 +163,9 @@ const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
                     </div>
                 </div>
             )}
+            */}
 
-            {/* Expert Insight Story */}
+            {/* Expert Insight Story 
             {storyText && (
                 <div className="mt-2 bg-white/5 rounded-xl p-1 sm:p-1.5 shadow-sm flex items-start gap-2">
                     <p className="text-[11px] sm:text-xs font-medium text-gray-300 leading-relaxed text-justify">
@@ -177,6 +173,7 @@ const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
                     </p>
                 </div>
             )}
+            */}
 
         </div>
     );
