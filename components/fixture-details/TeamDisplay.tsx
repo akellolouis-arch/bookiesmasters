@@ -119,7 +119,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                 <div className="flex items-start justify-between w-full px-0 sm:px-2 md:px-6 lg:px-10">
                     
                     {/* HOME TEAM */}
-                    <div className="flex flex-col items-center min-w-0">
+                    <div className="flex flex-col items-start min-w-0">
                         {/* Form */}
                         {renderForm(homeTeam.last5Matches)}
                         {/* Logo Card */}
@@ -128,7 +128,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                                 <Image src={homeTeam?.logo} alt={homeTeam?.name} fill className="object-contain" unoptimized />
                             </div>
                         </div>
-                        <span className="mt-1.5 text-[8px] font-bold text-white capitalize text-center max-w-[70px] sm:max-w-[100px] truncate tracking-wider">{homeTeam.name}</span>
+                        <span className="mt-1.5 text-[8px] font-bold text-white capitalize text-left leading-tight break-words max-w-[100px] sm:max-w-[120px] tracking-wider px-1">{homeTeam.name}</span>
                     </div>
 
                     {/* CENTER INFO */}
@@ -178,7 +178,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                     </div>
 
                     {/* AWAY TEAM */}
-                    <div className="flex flex-col items-center min-w-0">
+                    <div className="flex flex-col items-end min-w-0">
                         {/* Form */}
                         {renderForm(awayTeam.last5Matches)}
                         {/* Logo Card */}
@@ -187,7 +187,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                                 <Image src={awayTeam?.logo} alt={awayTeam?.name} fill className="object-contain" unoptimized />
                             </div>
                         </div>
-                        <span className="mt-1.5 text-[8px] font-bold text-white capitalize text-center max-w-[70px] sm:max-w-[100px] truncate tracking-wider">{awayTeam.name}</span>
+                        <span className="mt-1.5 text-[8px] font-bold text-white capitalize text-right leading-tight break-words max-w-[100px] sm:max-w-[120px] tracking-wider px-1">{awayTeam.name}</span>
                     </div>
                 </div>
 
