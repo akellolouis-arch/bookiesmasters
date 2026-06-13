@@ -114,15 +114,6 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
 
             <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
                 
-                {/* TOP HEADER: Names & Venue */}
-                <div className="text-center mb-1 px-4">
-
-                    {venue && (
-                        <div className="mt-0.5 text-[9px] sm:text-[10px] text-gray-400 font-medium flex items-center justify-center gap-1.5 capitalize">
-                            <span>🏟</span> {venue.toLowerCase().includes('unknown') ? '' : venue}
-                        </div>
-                    )}
-                </div>
 
                 {/* MIDDLE ROW: Logos & Score */}
                 <div className="flex items-start justify-between w-full px-0 sm:px-2 md:px-6 lg:px-10">
@@ -149,8 +140,8 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                         {/* Score Box */}
                         {isLoading ? (
                             <div className="flex flex-col items-center mt-2">
-                                <div className="bg-white/5 backdrop-blur-sm rounded-xl sm:rounded-2xl px-4 sm:px-6 py-1 sm:py-2 shadow-lg flex items-center justify-center border border-white/10 animate-pulse">
-                                    <span className="text-xl sm:text-3xl font-bold text-gray-500">-</span>
+                                <div className="bg-white/5 backdrop-blur-sm rounded-xl px-4 sm:px-6 py-1 sm:py-2 shadow-lg flex items-center justify-center border border-white/10 animate-pulse">
+                                    <span className="text-base sm:text-lg font-bold text-gray-500">-</span>
                                 </div>
                             </div>
                         ) : score ? (
@@ -161,9 +152,9 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                                     </div>
                                 )}
                                 <div className={`bg-white/5 backdrop-blur-sm rounded-xl px-4 py-1 shadow-lg flex items-center justify-center gap-2 sm:gap-3 border border-white/10 ${isLive ? "animate-pulse" : ""}`}>
-                                    <span className={`text-lg sm:text-xl md:text-2xl font-bold ${isLive ? "text-rose-500" : scoreColorClass}`}>{score.home}</span>
-                                    <span className={`text-base sm:text-lg font-bold ${isLive ? "text-gray-400" : dashColorClass}`}>-</span>
-                                    <span className={`text-lg sm:text-xl md:text-2xl font-bold ${isLive ? "text-rose-500" : scoreColorClass}`}>{score.away}</span>
+                                    <span className={`text-base sm:text-lg md:text-xl font-bold ${isLive ? "text-rose-500" : scoreColorClass}`}>{score.home}</span>
+                                    <span className={`text-sm sm:text-base font-bold ${isLive ? "text-gray-400" : dashColorClass}`}>-</span>
+                                    <span className={`text-base sm:text-lg md:text-xl font-bold ${isLive ? "text-rose-500" : scoreColorClass}`}>{score.away}</span>
                                 </div>
                                 {score.halftime && score.halftime.home !== null && score.halftime.away !== null && (
                                     <div className="mt-1.5 text-[9px] sm:text-[10px] text-gray-500 font-semibold tracking-wide uppercase">
@@ -179,7 +170,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                                     </div>
                                 )}
                                 <div className="bg-white/10 rounded-xl px-4 py-1 flex items-center justify-center border border-white/5 backdrop-blur-md">
-                                    <span className={`text-lg sm:text-xl md:text-2xl font-bold ${noScoreColorClass}`}>-</span>
+                                    <span className={`text-base sm:text-lg md:text-xl font-bold ${noScoreColorClass}`}>-</span>
                                 </div>
                             </div>
                         )}
