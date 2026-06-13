@@ -138,8 +138,8 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                             </div>
 
                             {/* 2️⃣ Home Team */}
-                            <div className="flex items-center justify-end gap-2 pr-3 min-w-0 flex-1">
-                                <span className={`font-medium text-xs md:text-sm whitespace-normal break-words leading-tight text-right ${homeWinner ? 'text-white drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`}>{m.homeTeam.name}</span>
+                            <div className="flex items-center justify-end gap-1.5 flex-1 min-w-0 pr-3">
+                                <span className={`font-medium text-[9px] sm:text-[10px] truncate text-right px-1 ${homeWinner ? 'text-white drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`}>{m.homeTeam.name}</span>
                                 {m.homeTeam.logo && (
                                     <img src={m.homeTeam.logo} alt={m.homeTeam.name} className="w-5 h-5 object-contain flex-shrink-0" />
                                 )}
@@ -160,12 +160,11 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                                 )}
                             </div>
 
-                            {/* 4️⃣ Away Team */}
-                            <div className="flex items-center justify-start gap-2 pl-3 min-w-0 pr-1 flex-1">
+                            <div className="flex items-center justify-start gap-1.5 min-w-0 pl-3 pr-1 flex-1">
                                 {m.awayTeam.logo && (
                                     <img src={m.awayTeam.logo} alt={m.awayTeam.name} className="w-5 h-5 object-contain flex-shrink-0" />
                                 )}
-                                <span className={`font-medium text-xs md:text-sm whitespace-normal break-words leading-tight text-left ${awayWinner ? 'text-white drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`}>{m.awayTeam.name}</span>
+                                <span className={`font-medium text-[9px] sm:text-[10px] truncate text-left px-1 ${awayWinner ? 'text-white drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`}>{m.awayTeam.name}</span>
                             </div>
 
                             {/* 5️⃣ League Short Name (Optional visual flair based on user reference) */}

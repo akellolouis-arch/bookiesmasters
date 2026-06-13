@@ -111,7 +111,7 @@ const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
                             </div>
 
                             {/* 2️⃣ Home Team */}
-                            <div className={`font-medium text-right pr-3 text-xs md:text-sm whitespace-normal break-words leading-tight ${match.teams.home.winner ? 'text-white drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`}>
+                            <div className={`font-medium text-[9px] sm:text-[10px] truncate text-right px-1 pr-3 flex-1 min-w-0 ${match.teams.home.winner ? 'text-white drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`}>
                                 {match.teams.home.name}
                             </div>
 
@@ -128,7 +128,7 @@ const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
                             </div>
 
                             {/* 4️⃣ Away Team */}
-                            <div className={`font-medium text-left pl-3 text-xs md:text-sm whitespace-normal break-words leading-tight ${match.teams.away.winner ? 'text-white drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`}>
+                            <div className={`font-medium text-[9px] sm:text-[10px] truncate text-left px-1 pl-3 flex-1 min-w-0 ${match.teams.away.winner ? 'text-white drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`}>
                                 {match.teams.away.name}
                             </div>
                         </div>
