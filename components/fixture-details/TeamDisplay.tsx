@@ -128,7 +128,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                                 <Image src={homeTeam?.logo} alt={homeTeam?.name} fill className="object-contain" unoptimized />
                             </div>
                         </div>
-                        <span className="mt-1.5 text-[10px] font-bold text-white capitalize text-center max-w-[70px] sm:max-w-[100px] truncate tracking-wider">{homeTeam.name}</span>
+                        <span className="mt-1.5 text-[8px] font-bold text-white capitalize text-center max-w-[70px] sm:max-w-[100px] truncate tracking-wider">{homeTeam.name}</span>
                     </div>
 
                     {/* CENTER INFO */}
@@ -187,7 +187,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                                 <Image src={awayTeam?.logo} alt={awayTeam?.name} fill className="object-contain" unoptimized />
                             </div>
                         </div>
-                        <span className="mt-1.5 text-[10px] font-bold text-white capitalize text-center max-w-[70px] sm:max-w-[100px] truncate tracking-wider">{awayTeam.name}</span>
+                        <span className="mt-1.5 text-[8px] font-bold text-white capitalize text-center max-w-[70px] sm:max-w-[100px] truncate tracking-wider">{awayTeam.name}</span>
                     </div>
                 </div>
 
