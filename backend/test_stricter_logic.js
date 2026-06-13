@@ -55,7 +55,7 @@ async function testStricterLogic() {
   const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/bookiesmasters";
   await mongoose.connect(MONGO_URI);
 
-  const yesterdayDate = getKenyaDatePlus(-1);
+  const yesterdayDate = getKenyaDatePlus(-2);
   const start = new Date(`${yesterdayDate}T00:00:00+03:00`).toISOString();
   const end = new Date(`${yesterdayDate}T23:59:59.999+03:00`).toISOString();
 
