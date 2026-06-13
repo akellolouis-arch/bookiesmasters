@@ -174,7 +174,7 @@ const OverUnderStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) =
             {/* Expert Insight Story */}
             {storyText && (
                 <div className="mt-3 sm:mt-4 bg-white/5 rounded-xl p-1 sm:p-1.5 shadow-sm flex items-start gap-2">
-                    <p className="text-[10px] sm:text-[11px] font-medium text-gray-300 leading-relaxed">
+                    <p className="text-[10px] sm:text-[11px] font-medium text-gray-300 leading-relaxed text-justify">
                         {storyText}
                     </p>
                 </div>
