@@ -116,11 +116,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                 
                 {/* TOP HEADER: Names & Venue */}
                 <div className="text-center mb-1 px-4">
-                    {league && (
-                        <div className="mb-1 inline-block px-3 sm:px-4 py-0.5 bg-white/5 backdrop-blur-sm border border-white/10 text-amber-100 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold shadow-lg tracking-wide uppercase">
-                            {league}
-                        </div>
-                    )}
+
                     <h1 className="text-sm sm:text-base md:text-lg font-normal text-white tracking-wide">
                         {homeTeam.name} <span className="font-bold mx-1 sm:mx-2 text-white">VS</span> {awayTeam.name}
                     </h1>

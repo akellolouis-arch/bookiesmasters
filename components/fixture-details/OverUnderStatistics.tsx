@@ -93,7 +93,7 @@ const OverUnderStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) =
             </div>
 
             {/* Teams Header Row */}
-            <div className="flex justify-between items-center mb-4 px-1 sm:px-2">
+            <div className="flex justify-between items-center mb-2 px-1 sm:px-2">
                 <div className="flex items-center gap-2">
                     <span className="text-[9px] sm:text-[10px] font-bold text-white uppercase truncate max-w-[60px] sm:max-w-[100px]">{homeTeam.name}</span>
                     <div className="w-5 h-5 sm:w-6 sm:h-6 relative filter drop-shadow-md bg-white/5 rounded-full p-0.5">
@@ -112,13 +112,13 @@ const OverUnderStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) =
             </div>
 
             {/* Goal Lines */}
-            <div className="flex flex-col gap-4 sm:gap-5">
+            <div className="flex flex-col gap-2">
                 {lines.map((line, index) => {
                     const homeStats = calculateLineStats(homeTeam.allMatches, line);
                     const awayStats = calculateLineStats(awayTeam.allMatches, line);
 
                     return (
-                        <div key={line} className={`flex justify-between items-center px-1 sm:px-2 relative ${index !== lines.length - 1 ? 'border-b border-white/5 pb-4 sm:pb-5' : ''}`}>
+                        <div key={line} className={`flex justify-between items-center px-1 sm:px-2 relative ${index !== lines.length - 1 ? 'border-b border-white/5 pb-2' : ''}`}>
                             
                             {/* HOME STATS */}
                             <div className="flex flex-col items-center w-24 sm:w-32">
@@ -173,7 +173,7 @@ const OverUnderStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) =
             
             {/* Expert Insight Story */}
             {storyText && (
-                <div className="mt-3 sm:mt-4 bg-white/5 rounded-xl p-1 sm:p-1.5 shadow-sm flex items-start gap-2">
+                <div className="mt-2 bg-white/5 rounded-xl p-1 sm:p-1.5 shadow-sm flex items-start gap-2">
                     <p className="text-[10px] sm:text-[11px] font-medium text-gray-300 leading-relaxed text-justify">
                         {storyText}
                     </p>
