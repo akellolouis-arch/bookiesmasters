@@ -51,7 +51,7 @@ export default function Navbar() {
           ))}
           <Link
             href="/vip"
-            className="px-4 py-1.5 bg-gradient-to-r from-amber-500 to-yellow-400 text-black font-bold rounded-full text-xs hover:scale-105 transition-transform shadow-[0_0_10px_rgba(245,158,11,0.5)]"
+            className="px-4 py-1.5 bg-gradient-to-r from-[#63FF79] to-[#4CE060] text-black font-bold rounded-full text-xs hover:scale-105 transition-transform shadow-[0_0_10px_rgba(99,255,121,0.4)]"
           >
             GO PRO
           </Link>
@@ -59,7 +59,7 @@ export default function Navbar() {
 
         <Link
           href="/vip"
-          className="flex md:hidden items-center justify-center shrink-0 px-3 py-1 bg-gradient-to-r from-amber-500 to-yellow-400 text-black font-bold tracking-wide rounded-full text-[10px] shadow-[0_0_8px_rgba(245,158,11,0.4)]"
+          className="flex md:hidden items-center justify-center shrink-0 px-3 py-1 bg-gradient-to-r from-[#63FF79] to-[#4CE060] text-black font-bold tracking-wide rounded-full text-[10px] shadow-[0_0_8px_rgba(99,255,121,0.3)]"
         >
           GO PRO
         </Link>
