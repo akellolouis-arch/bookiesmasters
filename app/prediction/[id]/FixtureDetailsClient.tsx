@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import useSWR from "swr";
 import H2HSection from "@/components/fixture-details/H2HSection";
 import LastFiveMatches from "@/components/fixture-details/LastFiveMatches";
@@ -38,6 +38,8 @@ interface FixtureDetailsClientProps {
 const fetcher = (url: string) => fetch(url, { cache: "no-store" }).then((res) => res.json());
 
 const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initialData }) => {
+    const [homeTab, setHomeTab] = useState<"all" | "home">("all");
+    const [awayTab, setAwayTab] = useState<"all" | "away">("all");
 
     const isMatchLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(initialData.status) || initialData.status.includes("'");
 
@@ -170,74 +172,74 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
 
                 {/* --- RECENT FORM SECTION --- */}
                 {hasAnyMatches && (
-                    <div className="mt-2">
-                        <div className="flex justify-center mb-3">
+                    <div className="mt-2 space-y-4">
+                        <div className="flex justify-center mb-1">
                             <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-amber-100 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold shadow-lg tracking-wide uppercase">
                                 Recent Form
                             </h3>
                         </div>
-                        <div className="space-y-2">
-                            {homeMatches.length > 0 && (
+
+                        {/* Home Team Form */}
+                        {homeMatches.length > 0 && (
+                            <div className="space-y-2">
+                                <div className="flex justify-between items-center px-1">
+                                    <div className="flex items-center gap-2">
+                                        {data.homeTeam.logo && <img src={data.homeTeam.logo} alt={data.homeTeam.name} className="w-5 h-5 object-contain" />}
+                                        <span className="text-[10px] sm:text-[11px] font-bold text-gray-200 uppercase truncate max-w-[150px]">{data.homeTeam.name}</span>
+                                    </div>
+                                    <div className="flex gap-1 bg-[#0F0F0F] p-0.5 rounded border border-white/10 shadow-sm">
+                                        <button 
+                                            onClick={() => setHomeTab("all")}
+                                            className={`px-2 py-1 rounded text-[9px] font-bold transition-colors ${homeTab === "all" ? "bg-white/10 text-white" : "text-gray-400 hover:text-gray-200"}`}
+                                        >
+                                            Recent Form
+                                        </button>
+                                        <button 
+                                            onClick={() => setHomeTab("home")}
+                                            className={`px-2 py-1 rounded text-[9px] font-bold transition-colors ${homeTab === "home" ? "bg-white/10 text-white" : "text-gray-400 hover:text-gray-200"}`}
+                                        >
+                                            Home Form
+                                        </button>
+                                    </div>
+                                </div>
                                 <LastFiveMatches
                                     teamName={data.homeTeam.name}
                                     teamLogo={data.homeTeam.logo}
-                                    matches={homeMatches}
+                                    matches={homeTab === "all" ? homeMatches : homeHomeMatches}
                                 />
-                            )}
-                            {homeMatches.length > 0 && awayMatches.length > 0 && (
-                                <div className="w-full h-px bg-white/5"></div>
-                            )}
-                            {awayMatches.length > 0 && (
+                            </div>
+                        )}
+
+                        {/* Away Team Form */}
+                        {awayMatches.length > 0 && (
+                            <div className="space-y-2 mt-4">
+                                <div className="flex justify-between items-center px-1">
+                                    <div className="flex items-center gap-2">
+                                        {data.awayTeam.logo && <img src={data.awayTeam.logo} alt={data.awayTeam.name} className="w-5 h-5 object-contain" />}
+                                        <span className="text-[10px] sm:text-[11px] font-bold text-gray-200 uppercase truncate max-w-[150px]">{data.awayTeam.name}</span>
+                                    </div>
+                                    <div className="flex gap-1 bg-[#0F0F0F] p-0.5 rounded border border-white/10 shadow-sm">
+                                        <button 
+                                            onClick={() => setAwayTab("all")}
+                                            className={`px-2 py-1 rounded text-[9px] font-bold transition-colors ${awayTab === "all" ? "bg-white/10 text-white" : "text-gray-400 hover:text-gray-200"}`}
+                                        >
+                                            Recent Form
+                                        </button>
+                                        <button 
+                                            onClick={() => setAwayTab("away")}
+                                            className={`px-2 py-1 rounded text-[9px] font-bold transition-colors ${awayTab === "away" ? "bg-white/10 text-white" : "text-gray-400 hover:text-gray-200"}`}
+                                        >
+                                            Away Form
+                                        </button>
+                                    </div>
+                                </div>
                                 <LastFiveMatches
                                     teamName={data.awayTeam.name}
                                     teamLogo={data.awayTeam.logo}
-                                    matches={awayMatches}
+                                    matches={awayTab === "all" ? awayMatches : awayAwayMatches}
                                 />
-                            )}
-                        </div>
-                    </div>
-                )}
-
-                {/* --- SPLIT HOME & AWAY MATCHES SECTION --- */}
-                {hasSplitMatches && (
-                    <div className="mt-2">
-                        <div className={`grid grid-cols-1 ${hasHomeHomeMatches && hasAwayAwayMatches ? "lg:grid-cols-2" : "lg:grid-cols-1"} gap-2`}>
-                            {/* Home Matches Section */}
-                            {hasHomeHomeMatches && (
-                                <div className="space-y-2">
-                                    <div className="flex justify-center mb-3">
-                                        <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-amber-100 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold shadow-lg tracking-wide uppercase">
-                                            Home Matches
-                                        </h3>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <LastFiveMatches
-                                            teamName={data.homeTeam.name}
-                                            teamLogo={data.homeTeam.logo}
-                                            matches={homeHomeMatches}
-                                        />
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Away Matches Section */}
-                            {hasAwayAwayMatches && (
-                                <div className="space-y-2">
-                                    <div className="flex justify-center mb-3">
-                                        <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-amber-100 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold shadow-lg tracking-wide uppercase">
-                                            Away Matches
-                                        </h3>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <LastFiveMatches
-                                            teamName={data.awayTeam.name}
-                                            teamLogo={data.awayTeam.logo}
-                                            matches={awayAwayMatches}
-                                        />
-                                    </div>
-                                </div>
-                            )}
-                        </div>
+                            </div>
+                        )}
                     </div>
                 )}
 

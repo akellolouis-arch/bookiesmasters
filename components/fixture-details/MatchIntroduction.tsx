@@ -67,9 +67,9 @@ const MatchIntroduction: React.FC<MatchIntroductionProps> = ({
     let homeNarrative = "";
     if (homeStats.total >= 4) {
         if (homeStats.over25 >= 4) {
-            homeNarrative = `Recent form suggests a reliable scoring tendency for the hosts, with ${homeStats.over25} of ${homeTeamName}'s last ${homeStats.total} matches producing over 2.5 goals.`;
+            homeNarrative = `Recent form suggests a reliable scoring tendency for ${homeTeamName}, with ${homeStats.over25} of their last ${homeStats.total} matches producing over 2.5 goals.`;
         } else if (homeStats.under25 >= 4) {
-            homeNarrative = `The hosts have been involved in relatively tight affairs recently, with ${homeStats.under25} of ${homeTeamName}'s last ${homeStats.total} matches ending under 2.5 goals.`;
+            homeNarrative = `${homeTeamName} has been involved in relatively tight affairs recently, with ${homeStats.under25} of their last ${homeStats.total} matches ending under 2.5 goals.`;
         }
     }
 
