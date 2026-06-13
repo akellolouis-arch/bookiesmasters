@@ -173,7 +173,7 @@ const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
             {/* Expert Insight Story */}
             {storyText && (
                 <div className="mt-4 bg-white/5 rounded-xl p-3 shadow-sm flex items-start gap-3">
-                    <p className="text-[11px] sm:text-xs font-medium italic text-gray-300 leading-relaxed">
+                    <p className="text-[11px] sm:text-xs font-medium text-gray-300 leading-relaxed">
                         {storyText}
                     </p>
                 </div>

@@ -23,7 +23,7 @@ const PredictionDisplay: React.FC<PredictionDisplayProps> = ({ advice, tip, winn
                 {advice && (
                     <div className="text-right max-w-[60%]">
                         <div className="text-xs text-gray-400 uppercase tracking-widest mb-1">Advice</div>
-                        <div className="text-sm text-gray-200 font-medium italic">"{advice}"</div>
+                        <div className="text-sm text-gray-200 font-medium">"{advice}"</div>
                     </div>
                 )}
             </div>

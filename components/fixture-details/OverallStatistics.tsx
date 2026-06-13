@@ -300,7 +300,7 @@ const OverallStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => 
 
             {storyText && (
                 <div className="mt-4 sm:mt-6 bg-white/5 rounded-xl p-3 sm:p-4 shadow-sm flex items-start gap-3">
-                    <p className="text-[10px] sm:text-[11px] font-medium italic text-gray-300 leading-relaxed">
+                    <p className="text-[10px] sm:text-[11px] font-medium text-gray-300 leading-relaxed">
                         {storyText}
                     </p>
                 </div>
