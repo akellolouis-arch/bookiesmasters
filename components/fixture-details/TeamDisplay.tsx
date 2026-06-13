@@ -90,7 +90,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
     const renderForm = (last5Matches?: any[]) => {
         if (!last5Matches || last5Matches.length === 0) return null;
         return (
-            <div className="flex flex-wrap justify-center gap-1 sm:gap-1.5 mt-2 px-1">
+            <div className="flex flex-wrap justify-center gap-1 sm:gap-1.5 mb-2 px-1">
                 {last5Matches.map((m, i) => {
                     const res = m.result || "D";
                     let bgClass = "bg-[#eab308]"; // Yellow for Draw
@@ -117,9 +117,6 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                 {/* TOP HEADER: Names & Venue */}
                 <div className="text-center mb-1 px-4">
 
-                    <h1 className="text-sm sm:text-base md:text-lg font-normal text-white tracking-wide">
-                        {homeTeam.name} <span className="font-bold mx-1 sm:mx-2 text-white">VS</span> {awayTeam.name}
-                    </h1>
                     {venue && (
                         <div className="mt-0.5 text-[9px] sm:text-[10px] text-gray-400 font-medium flex items-center justify-center gap-1.5 capitalize">
                             <span>🏟</span> {venue.toLowerCase().includes('unknown') ? '' : venue}
@@ -132,14 +129,14 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                     
                     {/* HOME TEAM */}
                     <div className="flex flex-col items-center min-w-0">
+                        {/* Form */}
+                        {renderForm(homeTeam.last5Matches)}
                         {/* Logo Card */}
                         <div className="w-14 h-16 sm:w-16 sm:h-20 md:w-20 md:h-24 bg-white/5 rounded-2xl sm:rounded-[2rem] border border-white/10 flex items-center justify-center p-1 shadow-lg backdrop-blur-sm">
                             <div className="relative w-full h-full filter drop-shadow-md">
                                 <Image src={homeTeam?.logo} alt={homeTeam?.name} fill className="object-contain" unoptimized />
                             </div>
                         </div>
-                        {/* Form */}
-                        {renderForm(homeTeam.last5Matches)}
                     </div>
 
                     {/* CENTER INFO */}
@@ -190,14 +187,14 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
 
                     {/* AWAY TEAM */}
                     <div className="flex flex-col items-center min-w-0">
+                        {/* Form */}
+                        {renderForm(awayTeam.last5Matches)}
                         {/* Logo Card */}
                         <div className="w-14 h-16 sm:w-16 sm:h-20 md:w-20 md:h-24 bg-white/5 rounded-2xl sm:rounded-[2rem] border border-white/10 flex items-center justify-center p-1 shadow-lg backdrop-blur-sm">
                             <div className="relative w-full h-full filter drop-shadow-md">
                                 <Image src={awayTeam?.logo} alt={awayTeam?.name} fill className="object-contain" unoptimized />
                             </div>
                         </div>
-                        {/* Form */}
-                        {renderForm(awayTeam.last5Matches)}
                     </div>
                 </div>
 
