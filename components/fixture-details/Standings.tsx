@@ -113,7 +113,7 @@ const Standings: React.FC<StandingsProps> = ({ standings, homeTeamId, awayTeamId
                                 {visibleGroup.map((team, idx) => {
                                     const isTarget = team.team.id === homeTeamId || team.team.id === awayTeamId;
                                     const bgColor = "bg-[#0a0a0a] group-hover:bg-[#121212]";
-                                    const textColorPrimary = isTarget ? "text-white drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]" : "text-gray-400";
+                                    const textColorPrimary = isTarget ? "text-white font-bold" : "text-gray-400";
                                     const textColorSecondary = isTarget ? "text-white/70" : "text-gray-400";
                                     const textColorTertiary = isTarget ? "text-white/90" : "text-gray-300";
 
