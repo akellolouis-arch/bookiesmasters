@@ -49,38 +49,21 @@ export default function Navbar() {
               {link.name}
             </Link>
           ))}
+          <Link
+            href="/vip"
+            className="px-4 py-1.5 bg-gradient-to-r from-amber-500 to-yellow-400 text-black font-bold rounded-full text-xs hover:scale-105 transition-transform shadow-[0_0_10px_rgba(245,158,11,0.5)]"
+          >
+            GO PRO
+          </Link>
         </div>
 
-        <button
-          type="button"
-          className="flex h-8 w-8 shrink-0 items-center justify-center text-[#63FF79] hover:text-[#4CE060] md:hidden font-bold"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle Menu"
+        <Link
+          href="/vip"
+          className="flex md:hidden items-center justify-center shrink-0 px-3 py-1 bg-gradient-to-r from-amber-500 to-yellow-400 text-black font-bold tracking-wide rounded-full text-[10px] shadow-[0_0_8px_rgba(245,158,11,0.4)]"
         >
-          {menuOpen ? <X size={20} strokeWidth={4} /> : <Menu width={30} height={18} strokeWidth={4} preserveAspectRatio="none" className="-skew-x-[10deg]" />}
-        </button>
+          GO PRO
+        </Link>
       </div>
-
-      {/* Mobile Dropdown */}
-      {menuOpen && (
-        <div className="md:hidden bg-gradient-to-r from-emerald-900/40 to-[#121212] border-t border-white/5">
-          <div className="flex flex-col pl-3 pr-2 py-1.5 space-y-1">
-            {links.map((link) => (
-              <Link
-                key={link.name}
-                href={link.path}
-                onClick={() => setMenuOpen(false)}
-                className="text-emerald-200/70 hover:text-white transition font-medium text-[13px] tracking-wide drop-shadow-sm"
-              >
-                {link.name}
-              </Link>
-            ))}
-
-          </div>
-        </div>
-      )
-      }
-
 
     </nav>
   );
