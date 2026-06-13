@@ -87,7 +87,7 @@ export default function FixtureCard({
             });
           }
         }}
-        className={`cursor-pointer block ${bgClass} hover:shadow-md ${hoverClass} transition flex flex-col p-1 sm:p-1.5 no-underline text-inherit`}
+        className={`cursor-pointer block ${bgClass} hover:shadow-md ${hoverClass} transition flex flex-col p-0.5 sm:p-1 no-underline text-inherit`}
       >
         {/* TOP ROW: MATCHUP */}
         <div className="flex items-center justify-between w-full">
@@ -112,7 +112,7 @@ export default function FixtureCard({
         </div>
 
         {/* BOTTOM ROW: STATUS / PREDICTION / SCORE STRIP */}
-        <div className={`mt-1 w-full ${tipBgClass} border border-white/5 rounded h-[18px] flex items-center justify-between px-2 shadow-sm`}>
+        <div className={`mt-0.5 w-full ${tipBgClass} border border-white/5 rounded h-[16px] flex items-center justify-between px-2 shadow-sm`}>
           {/* LEFT: STATUS */}
           <div className={`text-[9px] sm:text-[10px] font-bold uppercase w-8 text-left ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
             {status}

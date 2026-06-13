@@ -50,7 +50,7 @@ const getInjuryIcon = (reason: string) => {
 export default function Injuries({ injuries }: InjuriesProps) {
     if (!injuries || injuries.length === 0) {
         return (
-            <div className="p-6 text-center text-gray-500">
+            <div className="p-2 text-center text-gray-500">
                 <p>No reported injuries or suspensions.</p>
             </div>
         );
@@ -63,7 +63,7 @@ export default function Injuries({ injuries }: InjuriesProps) {
     const teams = Array.from(new Set(uniqueInjuries.map(i => i.team.name)));
 
     return (
-        <div className="w-full flex flex-col gap-4 sm:gap-6 animate-in fade-in duration-500">
+        <div className="w-full flex flex-col gap-2 sm:gap-4 animate-in fade-in duration-500">
             {teams.map(teamName => {
                 const teamInjuries = uniqueInjuries.filter(i => i.team.name === teamName);
                 const teamLogo = teamInjuries[0].team.logo;

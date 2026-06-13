@@ -78,10 +78,10 @@ const OverUnderStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) =
     const storyText = generateOverUnderStory();
 
     return (
-        <div className="w-full mt-4 animate-in fade-in duration-500 bg-[#0F0F0F] rounded-2xl p-3 sm:p-5 border border-white/10 shadow-lg">
+        <div className="w-full mt-1 animate-in fade-in duration-500 bg-[#0F0F0F] rounded-2xl p-1 sm:p-1.5 border border-white/10 shadow-lg">
             
             {/* Header / Legend */}
-            <div className="flex justify-end items-center mb-4 gap-4 px-2">
+            <div className="flex justify-end items-center mb-2 gap-3 px-1">
                 <div className="flex items-center gap-1.5">
                     <div className="w-3 h-3 rounded-full bg-slate-500 shadow-sm"></div>
                     <span className="text-[10px] sm:text-[11px] text-white font-medium tracking-wide">Under</span>
@@ -93,7 +93,7 @@ const OverUnderStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) =
             </div>
 
             {/* Teams Header Row */}
-            <div className="flex justify-between items-center mb-6 px-2 sm:px-6">
+            <div className="flex justify-between items-center mb-4 px-1 sm:px-2">
                 <div className="flex items-center gap-2">
                     <span className="text-[9px] sm:text-[10px] font-bold text-white uppercase truncate max-w-[60px] sm:max-w-[100px]">{homeTeam.name}</span>
                     <div className="w-5 h-5 sm:w-6 sm:h-6 relative filter drop-shadow-md bg-white/5 rounded-full p-0.5">
@@ -112,13 +112,13 @@ const OverUnderStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) =
             </div>
 
             {/* Goal Lines */}
-            <div className="flex flex-col gap-6 sm:gap-8">
+            <div className="flex flex-col gap-4 sm:gap-5">
                 {lines.map((line, index) => {
                     const homeStats = calculateLineStats(homeTeam.allMatches, line);
                     const awayStats = calculateLineStats(awayTeam.allMatches, line);
 
                     return (
-                        <div key={line} className={`flex justify-between items-center px-1 sm:px-6 relative ${index !== lines.length - 1 ? 'border-b border-white/5 pb-6 sm:pb-8' : ''}`}>
+                        <div key={line} className={`flex justify-between items-center px-1 sm:px-2 relative ${index !== lines.length - 1 ? 'border-b border-white/5 pb-4 sm:pb-5' : ''}`}>
                             
                             {/* HOME STATS */}
                             <div className="flex flex-col items-center w-24 sm:w-32">
@@ -127,7 +127,7 @@ const OverUnderStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) =
                                     <span className="text-white/30 mx-0.5">/</span>
                                     <span className="text-[#1e293b]">Over</span>
                                 </div>
-                                <div className="flex gap-4 sm:gap-6 text-[11px] sm:text-xs font-bold mb-3">
+                                <div className="flex gap-3 sm:gap-4 text-[11px] sm:text-xs font-bold mb-2">
                                     <span className="text-slate-400">{homeStats.under}</span>
                                     <span className="text-white">{homeStats.over}</span>
                                 </div>
@@ -153,7 +153,7 @@ const OverUnderStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) =
                                     <span className="text-white/30 mx-0.5">/</span>
                                     <span className="text-[#1e293b]">Over</span>
                                 </div>
-                                <div className="flex gap-4 sm:gap-6 text-[11px] sm:text-xs font-bold mb-3">
+                                <div className="flex gap-3 sm:gap-4 text-[11px] sm:text-xs font-bold mb-2">
                                     <span className="text-slate-400">{awayStats.under}</span>
                                     <span className="text-white">{awayStats.over}</span>
                                 </div>
@@ -173,7 +173,7 @@ const OverUnderStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) =
             
             {/* Expert Insight Story */}
             {storyText && (
-                <div className="mt-4 sm:mt-6 bg-white/5 rounded-xl p-3 sm:p-4 shadow-sm flex items-start gap-3">
+                <div className="mt-3 sm:mt-4 bg-white/5 rounded-xl p-1 sm:p-1.5 shadow-sm flex items-start gap-2">
                     <p className="text-[10px] sm:text-[11px] font-medium text-gray-300 leading-relaxed">
                         {storyText}
                     </p>

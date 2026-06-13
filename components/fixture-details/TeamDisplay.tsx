@@ -110,7 +110,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
 
 
     return (
-        <div className="relative w-full pb-2 sm:pb-4 flex flex-col items-center bg-transparent">
+        <div className="relative w-full pb-1 sm:pb-2 flex flex-col items-center bg-transparent">
 
             <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
                 
@@ -137,7 +137,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                     {/* HOME TEAM */}
                     <div className="flex flex-col items-center min-w-0">
                         {/* Logo Card */}
-                        <div className="w-16 h-20 sm:w-20 sm:h-24 md:w-24 md:h-28 bg-white/5 rounded-2xl sm:rounded-[2rem] border border-white/10 flex items-center justify-center p-3 shadow-lg backdrop-blur-sm">
+                        <div className="w-14 h-16 sm:w-16 sm:h-20 md:w-20 md:h-24 bg-white/5 rounded-2xl sm:rounded-[2rem] border border-white/10 flex items-center justify-center p-1 shadow-lg backdrop-blur-sm">
                             <div className="relative w-full h-full filter drop-shadow-md">
                                 <Image src={homeTeam?.logo} alt={homeTeam?.name} fill className="object-contain" unoptimized />
                             </div>
@@ -149,7 +149,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                     {/* CENTER INFO */}
                     <div className="flex flex-col items-center justify-start mt-0 min-w-[100px] sm:min-w-[140px]">
                         {/* Date & Time */}
-                        <div className="text-[9px] sm:text-[10px] text-gray-300 font-semibold mb-4 sm:mb-6 tracking-wide whitespace-nowrap">
+                        <div className="text-[9px] sm:text-[10px] text-gray-300 font-semibold mb-2 sm:mb-4 tracking-wide whitespace-nowrap">
                             {formattedDate} <span className="ml-1">{kickoffTime}</span>
                         </div>
 
@@ -195,7 +195,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                     {/* AWAY TEAM */}
                     <div className="flex flex-col items-center min-w-0">
                         {/* Logo Card */}
-                        <div className="w-16 h-20 sm:w-20 sm:h-24 md:w-24 md:h-28 bg-white/5 rounded-2xl sm:rounded-[2rem] border border-white/10 flex items-center justify-center p-3 shadow-lg backdrop-blur-sm">
+                        <div className="w-14 h-16 sm:w-16 sm:h-20 md:w-20 md:h-24 bg-white/5 rounded-2xl sm:rounded-[2rem] border border-white/10 flex items-center justify-center p-1 shadow-lg backdrop-blur-sm">
                             <div className="relative w-full h-full filter drop-shadow-md">
                                 <Image src={awayTeam?.logo} alt={awayTeam?.name} fill className="object-contain" unoptimized />
                             </div>

@@ -72,13 +72,13 @@ const BTTSStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => {
     const storyText = generateBTTSStory();
 
     return (
-        <div className="w-full mt-2 animate-in fade-in duration-500 bg-[#0F0F0F] rounded-2xl p-4 sm:p-6 border border-white/10 shadow-lg">
+        <div className="w-full mt-1 animate-in fade-in duration-500 bg-[#0F0F0F] rounded-2xl p-1 sm:p-1.5 border border-white/10 shadow-lg">
             
-            <h3 className="text-xs sm:text-sm font-bold tracking-wide text-center text-white mb-6">
+            <h3 className="text-xs sm:text-sm font-bold tracking-wide text-center text-white mb-3">
                 Both scored (Yes/No)
             </h3>
 
-            <div className="flex justify-between items-center sm:justify-around px-2 sm:px-10">
+            <div className="flex justify-between items-center sm:justify-around px-1 sm:px-2">
                 
                 {/* HOME STATS */}
                 <div className="flex items-center gap-2 sm:gap-4">
@@ -126,7 +126,7 @@ const BTTSStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => {
 
             {/* Expert Insight Story */}
             {storyText && (
-                <div className="mt-6 sm:mt-8 bg-white/5 rounded-xl p-3 sm:p-4 shadow-sm flex items-start gap-3">
+                <div className="mt-3 sm:mt-4 bg-white/5 rounded-xl p-1 sm:p-1.5 shadow-sm flex items-start gap-2">
                     <p className="text-[10px] sm:text-[11px] font-medium text-gray-300 leading-relaxed">
                         {storyText}
                     </p>

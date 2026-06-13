@@ -126,7 +126,7 @@ const MatchIntroduction: React.FC<MatchIntroductionProps> = ({
     const fullNarrative = [baseSentence, homeNarrative, awayNarrative, h2hNarrative].filter(Boolean).join(" ");
 
     return (
-        <div className="bg-white/5 rounded-xl p-3 sm:p-4 shadow-sm flex items-start gap-3 mb-4 animate-in fade-in duration-500">
+        <div className="bg-white/5 rounded-xl p-1 sm:p-1.5 shadow-sm flex items-start gap-2 mb-2 animate-in fade-in duration-500">
             <p className="text-[10px] sm:text-[11px] font-medium text-gray-300 leading-relaxed">
                 {fullNarrative}
                 {finalPrediction && (
