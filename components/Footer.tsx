@@ -13,10 +13,10 @@ export default function Footer() {
         {/* Brand */}
         <div>
           <h5 className="text-[10px] font-normal text-gray-300 tracking-wider">Bookiesmasters</h5>
-          <p className="text-[10px] leading-snug text-gray-400">
+          <p className="text-[10px] leading-snug text-gray-400 text-justify">
             Get instant access to premium football analytics, livescores, market probabilities, match events, and expert insights.
           </p>
-          <p className="text-[10px] text-gray-500 leading-snug mt-0.5">
+          <p className="text-[10px] text-gray-500 leading-snug mt-0.5 text-justify">
             Disclaimer: Forecasts and data displayed on this platform are for informational and entertainment purposes only and are not guaranteed to be accurate. We accept no liability or financial responsibility for decisions made based on this data. Please use our platform responsibly.
           </p>
         </div>
