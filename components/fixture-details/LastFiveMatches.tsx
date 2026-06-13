@@ -129,7 +129,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                     return (
                         <div
                             key={i}
-                            className={`flex items-center p-2 text-sm transition-colors ${bgClass} ${hoverClass}`}
+                            className={`flex items-center py-1 px-2 text-sm transition-colors ${bgClass} ${hoverClass}`}
                         >
                             {/* 1️⃣ Date */}
                             <div className="flex flex-col items-center justify-center mr-2 w-10 shrink-0">

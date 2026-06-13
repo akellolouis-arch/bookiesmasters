@@ -142,7 +142,7 @@ const Standings: React.FC<StandingsProps> = ({ standings, homeTeamId, awayTeamId
                                                             alt={team.team.name + ""}
                                                             className="w-5 h-5 object-contain"
                                                         />
-                                                        <span className={`font-bold truncate max-w-[100px] sm:max-w-[140px] text-[10px] sm:text-[11px] leading-tight ${textColorPrimary}`}>
+                                                        <span className={`font-medium truncate max-w-[100px] sm:max-w-[140px] text-[10px] sm:text-[11px] leading-tight ${textColorPrimary}`}>
                                                             {team.team.name}
                                                         </span>
                                                     </div>

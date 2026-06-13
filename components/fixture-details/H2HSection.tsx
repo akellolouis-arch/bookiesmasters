@@ -85,7 +85,6 @@ const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
 
     return (
         <div className="mb-2 w-full animate-in fade-in duration-500">
-            <h3 className="text-xs font-bold tracking-wide capitalize text-left text-emerald-200/70 mb-2 border-b border-white/10 pb-1">Head to Head</h3>
             <div className="flex flex-col">
                 {visibleMatches.map((match, i) => {
                     const matchDateObj = new Date(match.fixture.date);
@@ -102,7 +101,7 @@ const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
                     return (
                         <div
                             key={match.fixture.id}
-                            className={`grid grid-cols-[auto_1fr_auto_1fr] md:grid-cols-4 items-center p-2 text-sm transition-colors ${bgClass} ${hoverClass}`}
+                            className={`grid grid-cols-[auto_1fr_auto_1fr] md:grid-cols-4 items-center py-1 px-2 text-sm transition-colors ${bgClass} ${hoverClass}`}
                         >
                             {/* 1️⃣ Date */}
                             <div className="flex flex-col items-center justify-center mr-2 w-10 shrink-0">
