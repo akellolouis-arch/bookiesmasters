@@ -8,15 +8,15 @@ async function debugFixture() {
         console.log('Connected to MongoDB');
 
         // Search for specific teams with CORRECT PATH
-        console.log('\n--- Searching for Bishop/Harborough with nested path ---');
+        console.log('\n--- Searching for USA vs Paraguay ---');
         const specific = await Fixture.find({
             $or: [
-                { 'fixture.teams.home.name': { $regex: 'Bishop', $options: 'i' } },
-                { 'fixture.teams.away.name': { $regex: 'Bishop', $options: 'i' } },
-                { 'fixture.teams.home.name': { $regex: 'Harborough', $options: 'i' } },
-                { 'fixture.teams.away.name': { $regex: 'Harborough', $options: 'i' } }
+                { 'fixture.teams.home.name': { $regex: 'USA', $options: 'i' } },
+                { 'fixture.teams.away.name': { $regex: 'USA', $options: 'i' } },
+                { 'fixture.teams.home.name': { $regex: 'Paraguay', $options: 'i' } },
+                { 'fixture.teams.away.name': { $regex: 'Paraguay', $options: 'i' } }
             ]
-        }).limit(5);
+        }).sort({ 'fixture.fixture.date': -1 }).limit(5);
 
         specific.forEach(f => {
              const home = f.fixture?.teams?.home?.name;
@@ -26,11 +26,9 @@ async function debugFixture() {
              console.log(`\n[FOUND] ${home} vs ${away}`);
              console.log(`Date: ${date}`);
              console.log(`Status: ${f.fixture?.fixture?.status?.long} (${f.fixture?.fixture?.status?.short})`);
-             console.log(`Elapsed: ${f.fixture?.fixture?.status?.elapsed}`);
-             console.log(`Timestamp: ${f.fixture?.fixture?.timestamp}`);
              
-             console.log(`LIVESCORE FIELD:`);
-             console.log(JSON.stringify(f.livescore, null, 2));
+             console.log(`PREDICTION FIELD:`);
+             console.log(JSON.stringify(f.prediction, null, 2));
              console.log('-------------------------');
         });
 

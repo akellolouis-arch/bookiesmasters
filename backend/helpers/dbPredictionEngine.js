@@ -1,61 +1,45 @@
 export function calculateScores(matches) {
-    if (!matches || matches.length === 0) return { ov15: 0, un35: 0, avgGoals: 0 };
+    if (!matches || matches.length === 0) return { total: 0, over25: 0, under25: 0 };
     
-    let ov15Count = 0;
-    let un25Count = 0;
+    let over25Count = 0;
+    let under25Count = 0;
     
     matches.forEach(m => {
         // Handle both flattened format (m.goals) and raw API format (m.fixture.goals)
         const goalsObj = m.goals || (m.fixture && m.fixture.goals);
         if (goalsObj && typeof goalsObj.home === 'number' && typeof goalsObj.away === 'number') {
             const goals = goalsObj.home + goalsObj.away;
-            if (goals >= 2) ov15Count++;
-            if (goals <= 2) un25Count++;
+            if (goals > 2.5) over25Count++;
+            if (goals < 2.5) under25Count++;
         }
     });
     
     return {
-        ov15: ov15Count / matches.length,
-        un25: un25Count / matches.length,
-        avgGoals: matches.reduce((acc, m) => {
-            const goalsObj = m.goals || (m.fixture && m.fixture.goals);
-            if (goalsObj && typeof goalsObj.home === 'number' && typeof goalsObj.away === 'number') {
-                return acc + goalsObj.home + goalsObj.away;
-            }
-            return acc;
-        }, 0) / matches.length
+        total: matches.length,
+        over25: over25Count,
+        under25: under25Count,
     };
 }
 
 export function generateCustomBinaryPrediction(homeMatches, awayMatches) {
-    // If not enough data, default to UN3.5 as a safe fallback
-    if (!homeMatches || !awayMatches || homeMatches.length < 3 || awayMatches.length < 3) {
-        return "UN3.5";
+    // If not enough data, return NONE
+    if (!homeMatches || !awayMatches || homeMatches.length < 4 || awayMatches.length < 4) {
+        return "NONE";
     }
 
-    // Only consider the last 10 matches for the prediction window
-    const recentHome = homeMatches.slice(0, 10);
-    const recentAway = awayMatches.slice(0, 10);
+    // Only consider the last 5 matches for the prediction window
+    const recentHome = homeMatches.slice(0, 5);
+    const recentAway = awayMatches.slice(0, 5);
 
     const homeStats = calculateScores(recentHome);
     const awayStats = calculateScores(recentAway);
 
-    const combinedOv15 = (homeStats.ov15 + awayStats.ov15) / 2;
-    const combinedUn25 = (homeStats.un25 + awayStats.un25) / 2;
+    const passOV15 = homeStats.over25 >= 4 && awayStats.over25 >= 4;
+    const passUN35 = homeStats.under25 >= 4 && awayStats.under25 >= 4;
 
-    // Compare the Over 1.5 hit rate against the Under 2.5 hit rate.
-    // This perfectly splits matches into "High Scoring Lean" vs "Low Scoring Lean".
-    if (combinedOv15 > combinedUn25) {
-        return "OV1.5";
-    } else if (combinedUn25 > combinedOv15) {
-        return "UN3.5";
-    } else {
-        // Tie breaker
-        const combinedAvgGoals = (homeStats.avgGoals + awayStats.avgGoals) / 2;
-        if (combinedAvgGoals > 2.5) {
-            return "OV1.5";
-        } else {
-            return "UN3.5";
-        }
+    if (passOV15 || passUN35) {
+        return passOV15 ? "OV1.5" : "UN3.5";
     }
+
+    return "NONE";
 }

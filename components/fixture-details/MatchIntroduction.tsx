@@ -65,43 +65,34 @@ const MatchIntroduction: React.FC<MatchIntroductionProps> = ({
 
     // 2. Home Team Narrative
     let homeNarrative = "";
-    if (homeStats.total > 0) {
-        if (homeStats.over25 >= homeStats.under25) {
-            homeNarrative = `Recent form suggests a high-scoring tendency for the hosts, with ${homeStats.over25} of ${homeTeamName}'s last ${homeStats.total} matches producing over 2.5 goals.`;
-        } else {
-            homeNarrative = `The hosts have been involved in tight affairs recently, with ${homeStats.under25} of ${homeTeamName}'s last ${homeStats.total} matches ending under 2.5 goals.`;
+    if (homeStats.total >= 4) {
+        if (homeStats.over25 >= 4) {
+            homeNarrative = `Recent form suggests a reliable scoring tendency for the hosts, with ${homeStats.over25} of ${homeTeamName}'s last ${homeStats.total} matches producing over 2.5 goals.`;
+        } else if (homeStats.under25 >= 4) {
+            homeNarrative = `The hosts have been involved in relatively tight affairs recently, with ${homeStats.under25} of ${homeTeamName}'s last ${homeStats.total} matches ending under 2.5 goals.`;
         }
     }
 
     // 3. Away Team Narrative
     let awayNarrative = "";
-    if (awayStats.total > 0) {
-        if (awayStats.over25 >= awayStats.under25) {
-            awayNarrative = `Similarly, ${awayTeamName} matches have been full of goals, seeing over 2.5 goals in ${awayStats.over25} of their last ${awayStats.total} outings.`;
-        } else {
+    if (awayStats.total >= 4) {
+        if (awayStats.over25 >= 4) {
+            awayNarrative = `Similarly, ${awayTeamName} matches have consistently seen goals, with over 2.5 goals in ${awayStats.over25} of their last ${awayStats.total} outings.`;
+        } else if (awayStats.under25 >= 4) {
             awayNarrative = `Conversely, ${awayTeamName} has leaned towards defensive battles, seeing under 2.5 goals in ${awayStats.under25} of their last ${awayStats.total} outings.`;
         }
     }
 
-    // 4. H2H Narrative
+    // 4. H2H Narrative (Hidden because H2H logic was removed from predictions)
     let h2hNarrative = "";
-    if (h2hStats.total > 0) {
-        if (h2hStats.over25 >= h2hStats.under25) {
-            h2hNarrative = `When these two sides meet, history favors attackers—${h2hStats.over25} of their last ${h2hStats.total} head-to-head encounters have crossed the over 2.5 goal mark.`;
-        } else {
-            h2hNarrative = `Historically, this matchup is tightly contested; ${h2hStats.under25} of their last ${h2hStats.total} head-to-head meetings have stayed under 2.5 goals.`;
-        }
-    }
 
     // 5. Final Prediction Waterfall Logic (Safety Net Hybrid)
     let finalPrediction = "";
-    if (homeStats.total > 0 && awayStats.total > 0 && h2hStats.total > 0) {
-        // Safety Net Over: Predict OV1.5 only when the harder OV2.5 test passes
-        if (homeStats.over25 >= homeStats.under25 && awayStats.over25 >= awayStats.under25 && h2hStats.over25 >= h2hStats.under25) {
+    if (homeStats.total >= 4 && awayStats.total >= 4) {
+        if (homeStats.over25 >= 4 && awayStats.over25 >= 4) {
             finalPrediction = "Over 1.5 Goals";
         } 
-        // Safety Net Under: Predict UN3.5 only when the harder UN2.5 test passes
-        else if (homeStats.under25 >= homeStats.over25 && awayStats.under25 >= awayStats.over25 && h2hStats.under25 >= h2hStats.over25) {
+        else if (homeStats.under25 >= 4 && awayStats.under25 >= 4) {
             finalPrediction = "Under 3.5 Goals";
         }
     }

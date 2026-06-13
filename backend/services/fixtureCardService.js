@@ -224,7 +224,9 @@ const calculateStats = (matches, limit) => {
   const recent = matches.slice(0, limit);
   let stats = {
       total: 0,
+      over15: 0, under15: 0,
       over25: 0, under25: 0,
+      over35: 0, under35: 0,
   };
 
   recent.forEach((m) => {
@@ -234,7 +236,9 @@ const calculateStats = (matches, limit) => {
       if (homeGoals !== undefined && homeGoals !== null && awayGoals !== undefined && awayGoals !== null) {
           const totalGoals = homeGoals + awayGoals;
           stats.total++;
+          if (totalGoals > 1.5) stats.over15++; else stats.under15++;
           if (totalGoals > 2.5) stats.over25++; else stats.under25++;
+          if (totalGoals > 3.5) stats.over35++; else stats.under35++;
       }
   });
 
@@ -289,12 +293,12 @@ async function applyPredictionFilter(orderedDocs) {
       const awayStats = calculateStats(awayMatches, 5);
       const h2hStats = calculateStats(h2hMatches, 5);
 
-      if (homeStats.total > 0 && awayStats.total > 0) {
-          const passOV25 = homeStats.over25 >= homeStats.under25 && awayStats.over25 >= awayStats.under25;
-          const passUN25 = homeStats.under25 >= homeStats.over25 && awayStats.under25 >= awayStats.over25;
+      if (homeStats.total >= 4 && awayStats.total >= 4) {
+          const passOV15 = homeStats.over25 >= 4 && awayStats.over25 >= 4;
+          const passUN35 = homeStats.under25 >= 4 && awayStats.under25 >= 4;
           
-          if (passOV25 || passUN25) {
-              const tip = passOV25 ? "OV1.5" : "UN3.5";
+          if (passOV15 || passUN35) {
+              const tip = passOV15 ? "OV1.5" : "UN3.5";
               doc.tip = tip;
               predictionTipCache.set(fixtureId, tip);
               predictedDocs.push(doc);
