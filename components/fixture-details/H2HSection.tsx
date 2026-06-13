@@ -117,7 +117,7 @@ const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
 
                             {/* 3️⃣ Score */}
                             <div className="flex flex-col items-center justify-center shrink-0 w-14">
-                                <div className="flex justify-center w-full font-bold text-white bg-black/40 px-2 py-0.5 rounded text-xs">
+                                <div className="flex justify-center w-full font-bold text-white bg-black/40 px-2 py-0.5 rounded text-[9px] sm:text-[10px]">
                                     {match.goals.home} - {match.goals.away}
                                 </div>
                                 {match.score?.halftime && match.score.halftime.home !== null && match.score.halftime.away !== null && (

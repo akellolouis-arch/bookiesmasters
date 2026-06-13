@@ -74,7 +74,7 @@ const BTTSStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => {
     return (
         <div className="w-full mt-2 animate-in fade-in duration-500 bg-[#0F0F0F] rounded-2xl p-4 sm:p-6 border border-white/10 shadow-lg">
             
-            <h3 className="text-sm sm:text-base font-bold tracking-wide text-center text-white mb-6">
+            <h3 className="text-xs sm:text-sm font-bold tracking-wide text-center text-white mb-6">
                 Both scored (Yes/No)
             </h3>
 
@@ -83,8 +83,8 @@ const BTTSStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => {
                 {/* HOME STATS */}
                 <div className="flex items-center gap-2 sm:gap-4">
                     <div className="flex flex-col items-end mr-1">
-                        <span className="text-xs sm:text-sm font-bold text-white mb-0.5">Yes</span>
-                        <span className="text-sm sm:text-base font-bold text-green-500">{homeStats.yes}</span>
+                        <span className="text-[10px] sm:text-xs font-bold text-white mb-0.5">Yes</span>
+                        <span className="text-xs sm:text-sm font-bold text-green-500">{homeStats.yes}</span>
                     </div>
 
                     {/* Pie Chart */}
@@ -96,16 +96,16 @@ const BTTSStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => {
                     />
 
                     <div className="flex flex-col items-start ml-1">
-                        <span className="text-xs sm:text-sm font-bold text-white mb-0.5">No</span>
-                        <span className="text-sm sm:text-base font-bold text-red-500">{homeStats.no}</span>
+                        <span className="text-[10px] sm:text-xs font-bold text-white mb-0.5">No</span>
+                        <span className="text-xs sm:text-sm font-bold text-red-500">{homeStats.no}</span>
                     </div>
                 </div>
 
                 {/* AWAY STATS */}
                 <div className="flex items-center gap-2 sm:gap-4">
                     <div className="flex flex-col items-end mr-1">
-                        <span className="text-xs sm:text-sm font-bold text-green-500 mb-0.5">Yes</span>
-                        <span className="text-sm sm:text-base font-bold text-white">{awayStats.yes}</span>
+                        <span className="text-[10px] sm:text-xs font-bold text-green-500 mb-0.5">Yes</span>
+                        <span className="text-xs sm:text-sm font-bold text-white">{awayStats.yes}</span>
                     </div>
 
                     {/* Pie Chart */}
@@ -117,8 +117,8 @@ const BTTSStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => {
                     />
 
                     <div className="flex flex-col items-start ml-1">
-                        <span className="text-xs sm:text-sm font-bold text-red-500 mb-0.5">No</span>
-                        <span className="text-sm sm:text-base font-bold text-white">{awayStats.no}</span>
+                        <span className="text-[10px] sm:text-xs font-bold text-red-500 mb-0.5">No</span>
+                        <span className="text-xs sm:text-sm font-bold text-white">{awayStats.no}</span>
                     </div>
                 </div>
 
@@ -127,7 +127,7 @@ const BTTSStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => {
             {/* Expert Insight Story */}
             {storyText && (
                 <div className="mt-6 sm:mt-8 bg-white/5 rounded-xl p-3 sm:p-4 shadow-sm flex items-start gap-3">
-                    <p className="text-[11px] sm:text-xs font-medium italic text-gray-300 leading-relaxed">
+                    <p className="text-[10px] sm:text-[11px] font-medium italic text-gray-300 leading-relaxed">
                         {storyText}
                     </p>
                 </div>

@@ -141,14 +141,14 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                             <div className="flex items-center justify-end gap-1.5 flex-1 min-w-0 pr-3">
                                 <span className={`font-medium text-[9px] sm:text-[10px] truncate text-right px-1 ${homeWinner ? 'text-white drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`}>{m.homeTeam.name}</span>
                                 {m.homeTeam.logo && (
-                                    <img src={m.homeTeam.logo} alt={m.homeTeam.name} className="w-5 h-5 object-contain flex-shrink-0" />
+                                    <img src={m.homeTeam.logo} alt={m.homeTeam.name} className="w-4 h-4 object-contain flex-shrink-0" />
                                 )}
                             </div>
 
                             {/* 3️⃣ Score with perspective-based badge */}
                             <div className="flex flex-col items-center justify-center shrink-0 w-14">
                                 <span
-                                    className="w-full text-center px-1.5 py-0.5 rounded font-bold text-[10px]"
+                                    className="w-full text-center px-1.5 py-0.5 rounded font-bold text-[9px] sm:text-[10px]"
                                     style={{ backgroundColor: m.color, color: m.result === "D" ? "#7c2d12" : (m.result === "W" ? "#14532d" : "#7f1d1d") }}
                                 >
                                     {m.score.home} - {m.score.away}
@@ -162,7 +162,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
 
                             <div className="flex items-center justify-start gap-1.5 min-w-0 pl-3 pr-1 flex-1">
                                 {m.awayTeam.logo && (
-                                    <img src={m.awayTeam.logo} alt={m.awayTeam.name} className="w-5 h-5 object-contain flex-shrink-0" />
+                                    <img src={m.awayTeam.logo} alt={m.awayTeam.name} className="w-4 h-4 object-contain flex-shrink-0" />
                                 )}
                                 <span className={`font-medium text-[9px] sm:text-[10px] truncate text-left px-1 ${awayWinner ? 'text-white drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`}>{m.awayTeam.name}</span>
                             </div>

@@ -127,7 +127,7 @@ const OverallStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => 
 
     return (
         <div className="w-full mt-4 animate-in fade-in duration-500">
-            <h3 className="text-xs font-bold tracking-wide capitalize text-center text-amber-100 mb-4 border-b border-white/10 pb-2">
+            <h3 className="text-[10px] sm:text-[11px] font-bold tracking-wide capitalize text-center text-amber-100 mb-4 border-b border-white/10 pb-2">
                 OVERALL STATISTICS
             </h3>
 
@@ -136,13 +136,13 @@ const OverallStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => 
                 <div className="flex bg-white/5 rounded-full p-1 border border-white/10">
                     <button
                         onClick={() => setLocationMode("overall")}
-                        className={`px-4 py-1.5 rounded-full text-[10px] sm:text-xs font-bold transition-all ${locationMode === "overall" ? "bg-white text-black" : "text-gray-400 hover:text-white"}`}
+                        className={`px-4 py-1.5 rounded-full text-[9px] sm:text-[10px] font-bold transition-all ${locationMode === "overall" ? "bg-white text-black" : "text-gray-400 hover:text-white"}`}
                     >
                         Overall
                     </button>
                     <button
                         onClick={() => setLocationMode("home_away")}
-                        className={`px-4 py-1.5 rounded-full text-[10px] sm:text-xs font-bold transition-all ${locationMode === "home_away" ? "bg-white text-black" : "text-gray-400 hover:text-white"}`}
+                        className={`px-4 py-1.5 rounded-full text-[9px] sm:text-[10px] font-bold transition-all ${locationMode === "home_away" ? "bg-white text-black" : "text-gray-400 hover:text-white"}`}
                     >
                         Home/Away
                     </button>
@@ -151,7 +151,7 @@ const OverallStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => 
                 <div className="relative">
                     <button
                         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                        className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-gray-200 px-4 py-1.5 rounded-full text-[10px] sm:text-xs font-medium transition-all"
+                        className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-gray-200 px-4 py-1.5 rounded-full text-[9px] sm:text-[10px] font-medium transition-all"
                     >
                         {timeframeLabels[timeframe]}
                         <span className="text-[8px]">▼</span>
@@ -180,22 +180,22 @@ const OverallStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => 
                     {/* Home Team */}
                     <div className="flex items-center justify-between bg-white/5 rounded-xl border border-white/10 px-3 py-2 sm:px-4 sm:py-3">
                         <div className="flex items-center gap-2">
-                            <div className="w-5 h-5 sm:w-6 sm:h-6 relative">
+                            <div className="w-4 h-4 sm:w-5 sm:h-5 relative">
                                 <Image src={homeTeam.logo} alt={homeTeam.name} fill className="object-contain filter drop-shadow-md" unoptimized />
                             </div>
-                            <span className="text-[10px] sm:text-xs font-bold text-gray-300 truncate max-w-[60px] sm:max-w-[100px]">{homeTeam.name}</span>
+                            <span className="text-[9px] sm:text-[10px] font-bold text-gray-300 truncate max-w-[60px] sm:max-w-[100px]">{homeTeam.name}</span>
                         </div>
-                        <span className="text-lg sm:text-2xl font-bold text-white">{homeStats.played}</span>
+                        <span className="text-base sm:text-xl font-bold text-white">{homeStats.played}</span>
                     </div>
                     {/* Away Team */}
                     <div className="flex items-center justify-between bg-white/5 rounded-xl border border-white/10 px-3 py-2 sm:px-4 sm:py-3">
                         <div className="flex items-center gap-2">
-                            <div className="w-5 h-5 sm:w-6 sm:h-6 relative">
+                            <div className="w-4 h-4 sm:w-5 sm:h-5 relative">
                                 <Image src={awayTeam.logo} alt={awayTeam.name} fill className="object-contain filter drop-shadow-md" unoptimized />
                             </div>
-                            <span className="text-[10px] sm:text-xs font-bold text-gray-300 truncate max-w-[60px] sm:max-w-[100px]">{awayTeam.name}</span>
+                            <span className="text-[9px] sm:text-[10px] font-bold text-gray-300 truncate max-w-[60px] sm:max-w-[100px]">{awayTeam.name}</span>
                         </div>
-                        <span className="text-lg sm:text-2xl font-bold text-white">{awayStats.played}</span>
+                        <span className="text-base sm:text-xl font-bold text-white">{awayStats.played}</span>
                     </div>
                 </div>
             </div>
@@ -209,22 +209,22 @@ const OverallStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => 
                     <div className="flex flex-col bg-white/5 rounded-xl border border-white/10 p-3 sm:p-4">
                         <div className="flex justify-between items-start mb-4">
                             <div>
-                                <span className="text-[10px] sm:text-xs font-bold text-gray-300 block mb-1">Scored</span>
-                                <span className="text-2xl sm:text-3xl font-bold text-white">{homeStats.scored}</span>
+                                <span className="text-[9px] sm:text-[10px] font-bold text-gray-300 block mb-1">Scored</span>
+                                <span className="text-xl sm:text-2xl font-bold text-white">{homeStats.scored}</span>
                             </div>
                             <div className="text-right">
-                                <span className="text-[9px] sm:text-[10px] text-gray-500 block mb-1">Avg. p/game</span>
-                                <span className="text-base sm:text-lg font-bold text-gray-400">{homeStats.avgScored}</span>
+                                <span className="text-[8px] sm:text-[9px] text-gray-500 block mb-1">Avg. p/game</span>
+                                <span className="text-sm sm:text-base font-bold text-gray-400">{homeStats.avgScored}</span>
                             </div>
                         </div>
                         <div className="flex justify-between items-start">
                             <div>
-                                <span className="text-[10px] sm:text-xs font-bold text-gray-300 block mb-1">Conceded</span>
-                                <span className="text-2xl sm:text-3xl font-bold text-white">{homeStats.conceded}</span>
+                                <span className="text-[9px] sm:text-[10px] font-bold text-gray-300 block mb-1">Conceded</span>
+                                <span className="text-xl sm:text-2xl font-bold text-white">{homeStats.conceded}</span>
                             </div>
                             <div className="text-right">
-                                <span className="text-[9px] sm:text-[10px] text-gray-500 block mb-1">Avg. p/game</span>
-                                <span className="text-base sm:text-lg font-bold text-gray-400">{homeStats.avgConceded}</span>
+                                <span className="text-[8px] sm:text-[9px] text-gray-500 block mb-1">Avg. p/game</span>
+                                <span className="text-sm sm:text-base font-bold text-gray-400">{homeStats.avgConceded}</span>
                             </div>
                         </div>
                     </div>
@@ -233,22 +233,22 @@ const OverallStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => 
                     <div className="flex flex-col bg-white/5 rounded-xl border border-white/10 p-3 sm:p-4">
                         <div className="flex justify-between items-start mb-4">
                             <div>
-                                <span className="text-[10px] sm:text-xs font-bold text-gray-300 block mb-1">Scored</span>
-                                <span className="text-2xl sm:text-3xl font-bold text-white">{awayStats.scored}</span>
+                                <span className="text-[9px] sm:text-[10px] font-bold text-gray-300 block mb-1">Scored</span>
+                                <span className="text-xl sm:text-2xl font-bold text-white">{awayStats.scored}</span>
                             </div>
                             <div className="text-right">
-                                <span className="text-[9px] sm:text-[10px] text-gray-500 block mb-1">Avg. p/game</span>
-                                <span className="text-base sm:text-lg font-bold text-gray-400">{awayStats.avgScored}</span>
+                                <span className="text-[8px] sm:text-[9px] text-gray-500 block mb-1">Avg. p/game</span>
+                                <span className="text-sm sm:text-base font-bold text-gray-400">{awayStats.avgScored}</span>
                             </div>
                         </div>
                         <div className="flex justify-between items-start">
                             <div>
-                                <span className="text-[10px] sm:text-xs font-bold text-gray-300 block mb-1">Conceded</span>
-                                <span className="text-2xl sm:text-3xl font-bold text-white">{awayStats.conceded}</span>
+                                <span className="text-[9px] sm:text-[10px] font-bold text-gray-300 block mb-1">Conceded</span>
+                                <span className="text-xl sm:text-2xl font-bold text-white">{awayStats.conceded}</span>
                             </div>
                             <div className="text-right">
-                                <span className="text-[9px] sm:text-[10px] text-gray-500 block mb-1">Avg. p/game</span>
-                                <span className="text-base sm:text-lg font-bold text-gray-400">{awayStats.avgConceded}</span>
+                                <span className="text-[8px] sm:text-[9px] text-gray-500 block mb-1">Avg. p/game</span>
+                                <span className="text-sm sm:text-base font-bold text-gray-400">{awayStats.avgConceded}</span>
                             </div>
                         </div>
                     </div>
@@ -262,9 +262,9 @@ const OverallStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => 
                     <div className="flex flex-col">
                         <div className="flex justify-between items-end mb-1">
                             <span className="text-[9px] sm:text-[10px] text-gray-500">in last {homeStats.played} matches</span>
-                            <span className="text-[10px] sm:text-xs font-bold text-gray-300">Scored a goal</span>
+                            <span className="text-[9px] sm:text-[10px] font-bold text-gray-300">Scored a goal</span>
                         </div>
-                        <div className="flex justify-between items-center text-[10px] sm:text-xs font-bold text-gray-400 mb-1.5">
+                        <div className="flex justify-between items-center text-[9px] sm:text-[10px] font-bold text-gray-400 mb-1.5">
                             <span>Yes</span>
                             <span>No</span>
                         </div>
@@ -280,10 +280,10 @@ const OverallStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => 
                     {/* Away Scored a goal */}
                     <div className="flex flex-col">
                         <div className="flex justify-between items-end mb-1">
-                            <span className="text-[10px] sm:text-xs font-bold text-gray-300 opacity-0">Scored a goal</span>
+                            <span className="text-[9px] sm:text-[10px] font-bold text-gray-300 opacity-0">Scored a goal</span>
                             <span className="text-[9px] sm:text-[10px] text-gray-500">in last {awayStats.played} matches</span>
                         </div>
-                        <div className="flex justify-between items-center text-[10px] sm:text-xs font-bold text-gray-400 mb-1.5">
+                        <div className="flex justify-between items-center text-[9px] sm:text-[10px] font-bold text-gray-400 mb-1.5">
                             <span>Yes</span>
                             <span>No</span>
                         </div>
@@ -300,7 +300,7 @@ const OverallStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => 
 
             {storyText && (
                 <div className="mt-4 sm:mt-6 bg-white/5 rounded-xl p-3 sm:p-4 shadow-sm flex items-start gap-3">
-                    <p className="text-[11px] sm:text-xs font-medium italic text-gray-300 leading-relaxed">
+                    <p className="text-[10px] sm:text-[11px] font-medium italic text-gray-300 leading-relaxed">
                         {storyText}
                     </p>
                 </div>

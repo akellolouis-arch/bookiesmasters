@@ -87,13 +87,13 @@ const Standings: React.FC<StandingsProps> = ({ standings, homeTeamId, awayTeamId
                 <div key={groupIndex} className="w-full">
                     {/* Only show group name if there are multiple groups (e.g. AFCON) */}
                     {standings.length > 1 && (
-                        <h3 className="text-xs font-bold tracking-wide capitalize text-amber-100 mb-2 px-1">
+                        <h3 className="text-[10px] sm:text-[11px] font-bold tracking-wide capitalize text-amber-100 mb-2 px-1">
                             {group[0].group}
                         </h3>
                     )}
 
                     <div className="overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-                        <table className="w-full text-xs text-left min-w-[500px]">
+                        <table className="w-full text-[10px] sm:text-[11px] text-left min-w-[500px]">
                             <thead>
                                 <tr className="text-gray-400 border-b border-white/5">
                                     <th className="sticky left-0 z-20 bg-[#0a0a0a] py-1 px-1 w-8 text-center shadow-[2px_0_5px_-2px_rgba(0,0,0,0.5)]">#</th>
@@ -142,7 +142,7 @@ const Standings: React.FC<StandingsProps> = ({ standings, homeTeamId, awayTeamId
                                                             alt={team.team.name + ""}
                                                             className="w-5 h-5 object-contain"
                                                         />
-                                                        <span className={`font-bold truncate max-w-[100px] sm:max-w-[140px] text-xs leading-tight ${textColorPrimary}`}>
+                                                        <span className={`font-bold truncate max-w-[100px] sm:max-w-[140px] text-[10px] sm:text-[11px] leading-tight ${textColorPrimary}`}>
                                                             {team.team.name}
                                                         </span>
                                                     </div>

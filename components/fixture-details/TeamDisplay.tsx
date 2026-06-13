@@ -116,17 +116,16 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                 
                 {/* TOP HEADER: Names & Venue */}
                 <div className="text-center mb-1 px-4">
-                    {/* League Badge (Moved to Top) */}
                     {league && (
-                        <div className="mb-1 inline-block px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-amber-100 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold shadow-lg tracking-wide uppercase">
+                        <div className="mb-1 inline-block px-3 sm:px-4 py-0.5 bg-white/5 backdrop-blur-sm border border-white/10 text-amber-100 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold shadow-lg tracking-wide uppercase">
                             {league}
                         </div>
                     )}
-                    <h1 className="text-base sm:text-lg md:text-xl font-normal text-white tracking-wide">
-                        {homeTeam.name} <span className="font-bold mx-1 sm:mx-3 text-white">VS</span> {awayTeam.name}
+                    <h1 className="text-sm sm:text-base md:text-lg font-normal text-white tracking-wide">
+                        {homeTeam.name} <span className="font-bold mx-1 sm:mx-2 text-white">VS</span> {awayTeam.name}
                     </h1>
                     {venue && (
-                        <div className="mt-0.5 text-[10px] sm:text-xs text-gray-400 font-medium flex items-center justify-center gap-1.5 capitalize">
+                        <div className="mt-0.5 text-[9px] sm:text-[10px] text-gray-400 font-medium flex items-center justify-center gap-1.5 capitalize">
                             <span>🏟</span> {venue.toLowerCase().includes('unknown') ? '' : venue}
                         </div>
                     )}
@@ -138,7 +137,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                     {/* HOME TEAM */}
                     <div className="flex flex-col items-center min-w-0">
                         {/* Logo Card */}
-                        <div className="w-20 h-24 sm:w-28 sm:h-32 md:w-32 md:h-36 bg-white/5 rounded-[1.5rem] sm:rounded-[2rem] border border-white/10 flex items-center justify-center p-3 sm:p-4 shadow-lg backdrop-blur-sm">
+                        <div className="w-16 h-20 sm:w-20 sm:h-24 md:w-24 md:h-28 bg-white/5 rounded-2xl sm:rounded-[2rem] border border-white/10 flex items-center justify-center p-3 shadow-lg backdrop-blur-sm">
                             <div className="relative w-full h-full filter drop-shadow-md">
                                 <Image src={homeTeam?.logo} alt={homeTeam?.name} fill className="object-contain" unoptimized />
                             </div>
@@ -150,7 +149,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                     {/* CENTER INFO */}
                     <div className="flex flex-col items-center justify-start mt-0 min-w-[100px] sm:min-w-[140px]">
                         {/* Date & Time */}
-                        <div className="text-[10px] sm:text-sm text-gray-300 font-semibold mb-4 sm:mb-6 tracking-wide whitespace-nowrap">
+                        <div className="text-[9px] sm:text-[10px] text-gray-300 font-semibold mb-4 sm:mb-6 tracking-wide whitespace-nowrap">
                             {formattedDate} <span className="ml-1">{kickoffTime}</span>
                         </div>
 
@@ -164,14 +163,14 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                         ) : score ? (
                             <div className="flex flex-col items-center">
                                 {status !== "NS" && (
-                                    <div className={`mb-1.5 text-[10px] sm:text-xs font-bold tracking-widest uppercase ${isLive ? "text-rose-500 animate-pulse" : "text-gray-400"}`}>
+                                    <div className={`mb-1.5 text-[9px] sm:text-[10px] font-bold tracking-widest uppercase ${isLive ? "text-rose-500 animate-pulse" : "text-gray-400"}`}>
                                         {status === "HT" ? "HT" : isFinished ? "FT" : (isLive && displayDate ? displayDate : status)}
                                     </div>
                                 )}
-                                <div className={`bg-white/5 backdrop-blur-sm rounded-xl sm:rounded-2xl px-4 sm:px-6 py-1 sm:py-2 shadow-lg flex items-center justify-center gap-2 sm:gap-4 border border-white/10 ${isLive ? "animate-pulse" : ""}`}>
-                                    <span className={`text-xl sm:text-3xl font-bold ${isLive ? "text-rose-500" : scoreColorClass}`}>{score.home}</span>
-                                    <span className={`text-lg sm:text-xl font-bold ${isLive ? "text-gray-400" : dashColorClass}`}>-</span>
-                                    <span className={`text-xl sm:text-3xl font-bold ${isLive ? "text-rose-500" : scoreColorClass}`}>{score.away}</span>
+                                <div className={`bg-white/5 backdrop-blur-sm rounded-xl px-4 py-1 shadow-lg flex items-center justify-center gap-2 sm:gap-3 border border-white/10 ${isLive ? "animate-pulse" : ""}`}>
+                                    <span className={`text-lg sm:text-xl md:text-2xl font-bold ${isLive ? "text-rose-500" : scoreColorClass}`}>{score.home}</span>
+                                    <span className={`text-base sm:text-lg font-bold ${isLive ? "text-gray-400" : dashColorClass}`}>-</span>
+                                    <span className={`text-lg sm:text-xl md:text-2xl font-bold ${isLive ? "text-rose-500" : scoreColorClass}`}>{score.away}</span>
                                 </div>
                                 {score.halftime && score.halftime.home !== null && score.halftime.away !== null && (
                                     <div className="mt-1.5 text-[9px] sm:text-[10px] text-gray-500 font-semibold tracking-wide uppercase">
@@ -182,12 +181,12 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                         ) : (
                             <div className="flex flex-col items-center mt-1">
                                 {status && status !== "NS" && (
-                                    <div className="mb-1.5 text-[10px] sm:text-xs font-bold tracking-widest uppercase text-gray-400">
+                                    <div className="mb-1.5 text-[9px] sm:text-[10px] font-bold tracking-widest uppercase text-gray-400">
                                         {status}
                                     </div>
                                 )}
-                                <div className="bg-white/10 rounded-xl sm:rounded-2xl px-4 sm:px-6 py-1 sm:py-2 flex items-center justify-center border border-white/5 backdrop-blur-md">
-                                    <span className={`text-xl sm:text-3xl font-bold ${noScoreColorClass}`}>-</span>
+                                <div className="bg-white/10 rounded-xl px-4 py-1 flex items-center justify-center border border-white/5 backdrop-blur-md">
+                                    <span className={`text-lg sm:text-xl md:text-2xl font-bold ${noScoreColorClass}`}>-</span>
                                 </div>
                             </div>
                         )}
@@ -196,7 +195,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                     {/* AWAY TEAM */}
                     <div className="flex flex-col items-center min-w-0">
                         {/* Logo Card */}
-                        <div className="w-20 h-24 sm:w-28 sm:h-32 md:w-32 md:h-36 bg-white/5 rounded-[1.5rem] sm:rounded-[2rem] border border-white/10 flex items-center justify-center p-3 sm:p-4 shadow-lg backdrop-blur-sm">
+                        <div className="w-16 h-20 sm:w-20 sm:h-24 md:w-24 md:h-28 bg-white/5 rounded-2xl sm:rounded-[2rem] border border-white/10 flex items-center justify-center p-3 shadow-lg backdrop-blur-sm">
                             <div className="relative w-full h-full filter drop-shadow-md">
                                 <Image src={awayTeam?.logo} alt={awayTeam?.name} fill className="object-contain" unoptimized />
                             </div>

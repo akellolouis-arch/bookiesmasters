@@ -127,7 +127,7 @@ const MatchIntroduction: React.FC<MatchIntroductionProps> = ({
 
     return (
         <div className="bg-white/5 rounded-xl p-3 sm:p-4 shadow-sm flex items-start gap-3 mb-4 animate-in fade-in duration-500">
-            <p className="text-[11px] sm:text-xs font-medium italic text-gray-300 leading-relaxed">
+            <p className="text-[10px] sm:text-[11px] font-medium italic text-gray-300 leading-relaxed">
                 {fullNarrative}
                 {finalPrediction && (
                     <span className={`not-italic ${predictionColorClass} font-bold ml-1`}>

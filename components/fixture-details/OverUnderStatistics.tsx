@@ -84,19 +84,19 @@ const OverUnderStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) =
             <div className="flex justify-end items-center mb-4 gap-4 px-2">
                 <div className="flex items-center gap-1.5">
                     <div className="w-3 h-3 rounded-full bg-slate-500 shadow-sm"></div>
-                    <span className="text-xs text-white font-medium tracking-wide">Under</span>
+                    <span className="text-[10px] sm:text-[11px] text-white font-medium tracking-wide">Under</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                     <div className="w-3 h-3 rounded-full bg-slate-800 border border-white/10 shadow-sm"></div>
-                    <span className="text-xs text-gray-400 font-medium tracking-wide">Over</span>
+                    <span className="text-[10px] sm:text-[11px] text-gray-400 font-medium tracking-wide">Over</span>
                 </div>
             </div>
 
             {/* Teams Header Row */}
             <div className="flex justify-between items-center mb-6 px-2 sm:px-6">
                 <div className="flex items-center gap-2">
-                    <span className="text-[11px] sm:text-sm font-bold text-white uppercase truncate max-w-[60px] sm:max-w-[100px]">{homeTeam.name}</span>
-                    <div className="w-6 h-6 sm:w-8 sm:h-8 relative filter drop-shadow-md bg-white/5 rounded-full p-0.5">
+                    <span className="text-[9px] sm:text-[10px] font-bold text-white uppercase truncate max-w-[60px] sm:max-w-[100px]">{homeTeam.name}</span>
+                    <div className="w-5 h-5 sm:w-6 sm:h-6 relative filter drop-shadow-md bg-white/5 rounded-full p-0.5">
                         <Image src={homeTeam.logo} alt={homeTeam.name} fill className="object-contain" unoptimized />
                     </div>
                 </div>
@@ -104,8 +104,8 @@ const OverUnderStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) =
                     
                 </div>
                 <div className="flex items-center gap-2 flex-row-reverse">
-                    <span className="text-[11px] sm:text-sm font-bold text-white uppercase truncate max-w-[60px] sm:max-w-[100px]">{awayTeam.name}</span>
-                    <div className="w-6 h-6 sm:w-8 sm:h-8 relative filter drop-shadow-md bg-white/5 rounded-full p-0.5">
+                    <span className="text-[9px] sm:text-[10px] font-bold text-white uppercase truncate max-w-[60px] sm:max-w-[100px]">{awayTeam.name}</span>
+                    <div className="w-5 h-5 sm:w-6 sm:h-6 relative filter drop-shadow-md bg-white/5 rounded-full p-0.5">
                         <Image src={awayTeam.logo} alt={awayTeam.name} fill className="object-contain" unoptimized />
                     </div>
                 </div>
@@ -122,12 +122,12 @@ const OverUnderStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) =
                             
                             {/* HOME STATS */}
                             <div className="flex flex-col items-center w-24 sm:w-32">
-                                <div className="text-[11px] sm:text-sm font-bold tracking-wide mb-1">
+                                <div className="text-[9px] sm:text-[10px] font-bold tracking-wide mb-1">
                                     <span className="text-[#64748b]">Under</span>
                                     <span className="text-white/30 mx-0.5">/</span>
                                     <span className="text-[#1e293b]">Over</span>
                                 </div>
-                                <div className="flex gap-4 sm:gap-6 text-sm sm:text-base font-bold mb-3">
+                                <div className="flex gap-4 sm:gap-6 text-[11px] sm:text-xs font-bold mb-3">
                                     <span className="text-slate-400">{homeStats.under}</span>
                                     <span className="text-white">{homeStats.over}</span>
                                 </div>
@@ -142,18 +142,18 @@ const OverUnderStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) =
 
                             {/* CENTER LINE */}
                             <div className="flex flex-col items-center justify-center">
-                                <span className="text-2xl sm:text-4xl font-light text-white mb-1">{line}</span>
-                                <span className="text-[10px] sm:text-xs text-gray-500 font-medium tracking-widest uppercase">Goals</span>
+                                <span className="text-xl sm:text-2xl font-light text-white mb-1">{line}</span>
+                                <span className="text-[9px] sm:text-[10px] text-gray-500 font-medium tracking-widest uppercase">Goals</span>
                             </div>
 
                             {/* AWAY STATS */}
                             <div className="flex flex-col items-center w-24 sm:w-32">
-                                <div className="text-[11px] sm:text-sm font-bold tracking-wide mb-1">
+                                <div className="text-[9px] sm:text-[10px] font-bold tracking-wide mb-1">
                                     <span className="text-[#64748b]">Under</span>
                                     <span className="text-white/30 mx-0.5">/</span>
                                     <span className="text-[#1e293b]">Over</span>
                                 </div>
-                                <div className="flex gap-4 sm:gap-6 text-sm sm:text-base font-bold mb-3">
+                                <div className="flex gap-4 sm:gap-6 text-[11px] sm:text-xs font-bold mb-3">
                                     <span className="text-slate-400">{awayStats.under}</span>
                                     <span className="text-white">{awayStats.over}</span>
                                 </div>
@@ -174,7 +174,7 @@ const OverUnderStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) =
             {/* Expert Insight Story */}
             {storyText && (
                 <div className="mt-4 sm:mt-6 bg-white/5 rounded-xl p-3 sm:p-4 shadow-sm flex items-start gap-3">
-                    <p className="text-[11px] sm:text-xs font-medium italic text-gray-300 leading-relaxed">
+                    <p className="text-[10px] sm:text-[11px] font-medium italic text-gray-300 leading-relaxed">
                         {storyText}
                     </p>
                 </div>
