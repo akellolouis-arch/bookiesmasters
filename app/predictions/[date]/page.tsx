@@ -156,7 +156,7 @@ export default async function PredictionsPage({
         <DateNavigator date={date} />
       </Suspense>
 
-      <Suspense fallback={<div className="p-4 text-center text-gray-500 animate-pulse">Loading list...</div>}>
+      <Suspense fallback={<div className="p-4"></div>}>
         <PredictionsList initialData={initialData} date={date} />
       </Suspense>
     </>
