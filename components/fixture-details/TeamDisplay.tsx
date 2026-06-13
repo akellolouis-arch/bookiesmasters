@@ -123,7 +123,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                         {/* Form */}
                         {renderForm(homeTeam.last5Matches)}
                         {/* Logo Card */}
-                        <div className="w-14 h-16 sm:w-16 sm:h-20 md:w-20 md:h-24 bg-white/5 rounded-2xl sm:rounded-[2rem] border border-white/10 flex items-center justify-center p-1 shadow-lg backdrop-blur-sm">
+                        <div className="mx-2 w-14 h-16 sm:w-16 sm:h-20 md:w-20 md:h-24 bg-white/5 rounded-2xl sm:rounded-[2rem] border border-white/10 flex items-center justify-center p-1 shadow-lg backdrop-blur-sm">
                             <div className="relative w-full h-full filter drop-shadow-md">
                                 <Image src={homeTeam?.logo} alt={homeTeam?.name} fill className="object-contain" unoptimized />
                             </div>
@@ -182,7 +182,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                         {/* Form */}
                         {renderForm(awayTeam.last5Matches)}
                         {/* Logo Card */}
-                        <div className="w-14 h-16 sm:w-16 sm:h-20 md:w-20 md:h-24 bg-white/5 rounded-2xl sm:rounded-[2rem] border border-white/10 flex items-center justify-center p-1 shadow-lg backdrop-blur-sm">
+                        <div className="mx-2 w-14 h-16 sm:w-16 sm:h-20 md:w-20 md:h-24 bg-white/5 rounded-2xl sm:rounded-[2rem] border border-white/10 flex items-center justify-center p-1 shadow-lg backdrop-blur-sm">
                             <div className="relative w-full h-full filter drop-shadow-md">
                                 <Image src={awayTeam?.logo} alt={awayTeam?.name} fill className="object-contain" unoptimized />
                             </div>
