@@ -72,7 +72,7 @@ const BTTSStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => {
     const storyText = generateBTTSStory();
 
     return (
-        <div className="w-full mt-1 animate-in fade-in duration-500 bg-[#0F0F0F] rounded-2xl p-1 sm:p-1.5 border border-white/10 shadow-lg">
+        <div className="w-full mt-1 animate-in fade-in duration-500 bg-[#0F0F0F] p-1 sm:p-1.5 border border-white/10 shadow-lg">
             
             <h3 className="text-xs sm:text-sm font-bold tracking-wide text-center text-white mb-3">
                 Both scored (Yes/No)
