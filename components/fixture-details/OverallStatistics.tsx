@@ -127,9 +127,11 @@ const OverallStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => 
 
     return (
         <div className="w-full mt-1 animate-in fade-in duration-500">
-            <h3 className="text-[10px] sm:text-[11px] font-bold tracking-wide capitalize text-center text-amber-100 mb-2 border-b border-white/10 pb-1">
-                OVERALL STATISTICS
-            </h3>
+            <div className="flex justify-center mb-3">
+                <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-amber-100 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold shadow-lg tracking-wide uppercase">
+                    Overall Statistics
+                </h3>
+            </div>
 
             {/* Controls */}
             <div className="flex flex-wrap items-center justify-between gap-2 mb-3 px-1">
@@ -178,7 +180,7 @@ const OverallStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => 
                 <h4 className="text-[10px] font-bold tracking-widest uppercase text-center text-gray-500 mb-1">Played Games</h4>
                 <div className="grid grid-cols-2 gap-2 px-1 sm:px-2">
                     {/* Home Team */}
-                    <div className="flex items-center justify-between bg-white/5 rounded-xl border border-white/10 px-1 py-1 sm:px-1.5 sm:py-1.5">
+                    <div className="flex items-center justify-between px-1 py-1 sm:px-1.5 sm:py-1.5">
                         <div className="flex items-center gap-2">
                             <div className="w-4 h-4 sm:w-5 sm:h-5 relative">
                                 <Image src={homeTeam.logo} alt={homeTeam.name} fill className="object-contain filter drop-shadow-md" unoptimized />
@@ -188,7 +190,7 @@ const OverallStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => 
                         <span className="text-base sm:text-xl font-bold text-white">{homeStats.played}</span>
                     </div>
                     {/* Away Team */}
-                    <div className="flex items-center justify-between bg-white/5 rounded-xl border border-white/10 px-1 py-1 sm:px-1.5 sm:py-1.5">
+                    <div className="flex items-center justify-between px-1 py-1 sm:px-1.5 sm:py-1.5">
                         <div className="flex items-center gap-2">
                             <div className="w-4 h-4 sm:w-5 sm:h-5 relative">
                                 <Image src={awayTeam.logo} alt={awayTeam.name} fill className="object-contain filter drop-shadow-md" unoptimized />
@@ -206,7 +208,7 @@ const OverallStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => 
                 <div className="grid grid-cols-2 gap-2 px-1 sm:px-2">
                     
                     {/* Home Goals */}
-                    <div className="flex flex-col bg-white/5 rounded-xl border border-white/10 p-1 sm:p-1.5">
+                    <div className="flex flex-col p-1 sm:p-1.5">
                         <div className="flex justify-between items-start mb-2">
                             <div>
                                 <span className="text-[9px] sm:text-[10px] font-bold text-gray-300 block mb-1">Scored</span>
@@ -230,7 +232,7 @@ const OverallStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => 
                     </div>
 
                     {/* Away Goals */}
-                    <div className="flex flex-col bg-white/5 rounded-xl border border-white/10 p-1 sm:p-1.5">
+                    <div className="flex flex-col p-1 sm:p-1.5">
                         <div className="flex justify-between items-start mb-2">
                             <div>
                                 <span className="text-[9px] sm:text-[10px] font-bold text-gray-300 block mb-1">Scored</span>
