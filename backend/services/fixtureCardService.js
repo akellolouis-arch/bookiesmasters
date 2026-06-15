@@ -245,6 +245,29 @@ const calculateStats = (matches, limit) => {
   return stats;
 };
 
+const calculateWDL = (matches, teamId) => {
+  let stats = { total: 0, wins: 0, draws: 0, losses: 0 };
+  
+  matches.forEach(m => {
+      const hId = m.fixture.teams.home.id;
+      const aId = m.fixture.teams.away.id;
+      const hGoals = m.fixture?.goals?.home ?? m.fixture?.score?.fulltime?.home;
+      const aGoals = m.fixture?.goals?.away ?? m.fixture?.score?.fulltime?.away;
+      
+      if (hGoals !== undefined && aGoals !== undefined && hGoals !== null && aGoals !== null) {
+          stats.total++;
+          const isHome = (teamId === hId);
+          const teamGoals = isHome ? hGoals : aGoals;
+          const oppGoals = isHome ? aGoals : hGoals;
+          
+          if (teamGoals > oppGoals) stats.wins++;
+          else if (teamGoals < oppGoals) stats.losses++;
+          else stats.draws++;
+      }
+  });
+  return stats;
+};
+
 // In-memory cache for prediction calculations.
 // Since historical matches (before kickoff) never change, the prediction tip for a specific fixture ID is mathematically immutable.
 const predictionTipCache = new Map(); // Key: fixtureId, Value: "OV1.5" | "UN3.5" | "NONE"
@@ -292,13 +315,23 @@ async function applyPredictionFilter(orderedDocs) {
       const homeStats = calculateStats(homeMatches, 5);
       const awayStats = calculateStats(awayMatches, 5);
       const h2hStats = calculateStats(h2hMatches, 5);
+      
+      const homeForm = calculateWDL(homeMatches, homeId);
+      const awayForm = calculateWDL(awayMatches, awayId);
 
       if (homeStats.total >= 4 && awayStats.total >= 4) {
+          const passHomeWin = homeForm.wins >= 4 && awayForm.losses >= 4;
+          const passAwayWin = awayForm.wins >= 4 && homeForm.losses >= 4;
           const passOV15 = homeStats.over25 >= 4 && awayStats.over25 >= 4;
           const passUN35 = homeStats.under25 >= 4 && awayStats.under25 >= 4;
           
-          if (passOV15 || passUN35) {
-              const tip = passOV15 ? "OV1.5" : "UN3.5";
+          let tip = null;
+          if (passHomeWin) tip = "HOME WIN";
+          else if (passAwayWin) tip = "AWAY WIN";
+          else if (passOV15) tip = "OV1.5";
+          else if (passUN35) tip = "UN3.5";
+
+          if (tip) {
               doc.tip = tip;
               predictionTipCache.set(fixtureId, tip);
               predictedDocs.push(doc);
