@@ -113,7 +113,7 @@ export const getFixtureById = async (fixtureId) => {
             status: currentStatus.short || "NS",
             venue: matchData.fixture.venue?.name || "Unknown venue",
 
-            // Predictions and Tips removed per user request
+            tip: fixtureDoc.predictionTip !== "NONE" ? fixtureDoc.predictionTip : null,
 
             // DEBUG: Log counts
             // console.log(`[FixtureService] Home Matches: ${homeData.allMatches?.length}, Away Matches: ${awayData.allMatches?.length}`);

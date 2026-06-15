@@ -99,7 +99,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
     const renderForm = (last5Matches?: any[]) => {
         if (!last5Matches || last5Matches.length === 0) return null;
         return (
-            <div className="flex flex-wrap justify-center gap-1 sm:gap-1.5 mb-2 px-1">
+            <div className="flex flex-wrap justify-center gap-[2px] sm:gap-1 mb-1.5 px-0">
                 {last5Matches.map((m, i) => {
                     const res = m.result || "D";
                     let bgClass = "bg-[#eab308]"; // Yellow for Draw
@@ -107,7 +107,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                     if (res === "L") bgClass = "bg-[#dc2626]"; // Red for Loss
 
                     return (
-                        <div key={i} className={`w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 rounded-full text-[7px] sm:text-[8px] font-bold flex items-center justify-center text-white ${bgClass} shadow-sm`}>
+                        <div key={i} className={`w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 rounded-full text-[6px] sm:text-[7px] font-bold flex items-center justify-center text-white ${bgClass} shadow-sm`}>
                             {res}
                         </div>
                     );
