@@ -322,12 +322,16 @@ async function applyPredictionFilter(orderedDocs) {
       if (homeStats.total >= 4 && awayStats.total >= 4) {
           const passHomeWin = homeForm.wins >= 4 && awayForm.losses >= 4;
           const passAwayWin = awayForm.wins >= 4 && homeForm.losses >= 4;
+          const passOV25 = homeStats.over35 >= 4 && awayStats.over35 >= 4;
           const passOV15 = homeStats.over25 >= 4 && awayStats.over25 >= 4;
+          const passUN25 = homeStats.under15 >= 4 && awayStats.under15 >= 4;
           const passUN35 = homeStats.under25 >= 4 && awayStats.under25 >= 4;
           
           let tip = null;
           if (passHomeWin) tip = "1";
           else if (passAwayWin) tip = "2";
+          else if (passUN25) tip = "UN2.5";
+          else if (passOV25) tip = "OV2.5";
           else if (passOV15) tip = "OV1.5";
           else if (passUN35) tip = "UN3.5";
 

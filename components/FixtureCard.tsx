@@ -50,6 +50,12 @@ export default function FixtureCard({
               if (prediction.includes("OV1.5") || prediction.includes("Over 1.5")) {
                   isWon = totalGoals > 1.5;
                   isValidTip = true;
+              } else if (prediction.includes("OV2.5") || prediction.includes("Over 2.5")) {
+                  isWon = totalGoals > 2.5;
+                  isValidTip = true;
+              } else if (prediction.includes("UN2.5") || prediction.includes("Under 2.5")) {
+                  isWon = totalGoals < 2.5;
+                  isValidTip = true;
               } else if (prediction.includes("UN3.5") || prediction.includes("Under 3.5")) {
                   isWon = totalGoals < 3.5;
                   isValidTip = true;
