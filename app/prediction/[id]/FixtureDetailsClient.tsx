@@ -97,6 +97,27 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
     return (
         <div className="text-white pt-1 pb-4 px-2 sm:px-4">
             <div className="max-w-5xl mx-auto">
+                {/* --- LEAGUE HEADER --- */}
+                <div className="flex items-center gap-1 bg-gradient-to-r from-emerald-900/40 to-[#121212] py-0.5 px-0.5 shadow-md border border-white/5 border-b-0 mb-2 rounded-t max-w-4xl mx-auto">
+                    <div className="flex items-center gap-1 w-full">
+                        {data.leagueLogo && (
+                            <img
+                                src={data.leagueLogo}
+                                alt={data.league}
+                                className="w-4 h-4 flex-shrink-0 drop-shadow-md"
+                            />
+                        )}
+                        <div className="flex flex-col truncate w-full leading-tight">
+                            <span className="font-normal text-[10px] text-amber-100 tracking-wide truncate drop-shadow-sm">
+                                {data.league}
+                            </span>
+                            <span className="text-[8px] text-emerald-200/70 font-normal capitalize tracking-wider truncate">
+                                {data.country?.toLowerCase()}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
                 <TeamDisplay
                     homeTeam={data.homeTeam}
                     awayTeam={data.awayTeam}
