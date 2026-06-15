@@ -80,25 +80,32 @@ const MatchIntroduction: React.FC<MatchIntroductionProps> = ({
     const displayTip = computedTip.replace(" Goals", "");
 
     if (displayTip === "1" || displayTip === "HOME WIN") {
-        narrative = `Based on recent form, ${homeTeamName} enters this match as strong favorites, having secured victory in ${homeStats.wins} of their last ${homeStats.total} matches. Meanwhile, ${awayTeamName} has struggled recently, suffering defeat in ${awayStats.losses} of their last ${awayStats.total} matches.`;
+        narrative = `${homeTeamName} has won ${homeStats.wins} of their last ${homeStats.total} matches, while ${awayTeamName} has lost ${awayStats.losses} of their last ${awayStats.total} matches.`;
     } else if (displayTip === "2" || displayTip === "AWAY WIN") {
-        narrative = `Based on recent form, ${awayTeamName} enters this match as strong favorites, having secured victory in ${awayStats.wins} of their last ${awayStats.total} matches. Meanwhile, ${homeTeamName} has struggled recently, suffering defeat in ${homeStats.losses} of their last ${homeStats.total} matches.`;
+        narrative = `${awayTeamName} has won ${awayStats.wins} of their last ${awayStats.total} matches, while ${homeTeamName} has lost ${homeStats.losses} of their last ${homeStats.total} matches.`;
     } else if (displayTip === "UN2.5" || displayTip === "Under 2.5") {
-        narrative = `This matchup points towards a highly defensive affair. ${homeTeamName} has seen under 1.5 goals in ${homeStats.under15} of their last ${homeStats.total} matches, and similarly, ${awayTeamName} has recorded under 1.5 goals in ${awayStats.under15} of their last ${awayStats.total} games, strongly indicating a low-scoring encounter.`;
+        narrative = `${homeTeamName} has seen under 1.5 goals in ${homeStats.under15} of their last ${homeStats.total} matches, while ${awayTeamName} has seen under 1.5 goals in ${awayStats.under15} of their last ${awayStats.total} matches.`;
     } else if (displayTip === "OV2.5" || displayTip === "Over 2.5") {
-        narrative = `Expect an explosive, high-scoring match. Both teams have consistently produced highly entertaining games recently, with ${homeTeamName} seeing over 3.5 goals in ${homeStats.over35} of their last ${homeStats.total} matches, and ${awayTeamName} doing the same in ${awayStats.over35} of their recent fixtures.`;
+        narrative = `${homeTeamName} has seen over 3.5 goals in ${homeStats.over35} of their last ${homeStats.total} matches, while ${awayTeamName} has seen over 3.5 goals in ${awayStats.over35} of their last ${awayStats.total} matches.`;
     } else if (displayTip === "BTTS" || displayTip === "GG") {
-        narrative = `Expect goals at both ends of the pitch today. Both teams have a strong recent track record of high-scoring games where both sides find the net, with ${homeTeamName} recording BTTS and Over 2.5 in ${Math.min(homeStats.btts, homeStats.over25)} of their last ${homeStats.total} matches, and ${awayTeamName} doing the same in ${Math.min(awayStats.btts, awayStats.over25)} of theirs.`;
+        narrative = `${homeTeamName} has seen both teams score and over 2.5 goals in ${Math.min(homeStats.btts, homeStats.over25)} of their last ${homeStats.total} matches, while ${awayTeamName} has seen both teams score and over 2.5 goals in ${Math.min(awayStats.btts, awayStats.over25)} of their last ${awayStats.total} matches.`;
     } else if (displayTip === "UN3.5" || displayTip === "Under 3.5") {
-        narrative = `This matchup is expected to be relatively tight. ${homeTeamName} has seen under 2.5 goals in ${homeStats.under25} of their last ${homeStats.total} matches, and ${awayTeamName} has followed a similar defensive trend in ${awayStats.under25} of their last ${awayStats.total} matches.`;
+        narrative = `${homeTeamName} has seen under 2.5 goals in ${homeStats.under25} of their last ${homeStats.total} matches, while ${awayTeamName} has seen under 2.5 goals in ${awayStats.under25} of their last ${awayStats.total} matches.`;
     } else if (displayTip === "OV1.5" || displayTip === "Over 1.5") {
-        narrative = `Goals are highly expected in this fixture. ${homeTeamName} has seen over 2.5 goals in ${homeStats.over25} of their last ${homeStats.total} matches, and ${awayTeamName} shares the same attacking tendency, producing over 2.5 goals in ${awayStats.over25} of their recent games.`;
+        narrative = `${homeTeamName} has seen over 2.5 goals in ${homeStats.over25} of their last ${homeStats.total} matches, while ${awayTeamName} has seen over 2.5 goals in ${awayStats.over25} of their last ${awayStats.total} matches.`;
     } else {
-        // Fallback narrative if no prediction is present
-        if (homeStats.total >= 4 && awayStats.total >= 4) {
-             narrative = `Both teams come into this fixture looking to establish dominance. ${homeTeamName} has seen over 2.5 goals in ${homeStats.over25} of their last ${homeStats.total} matches, while ${awayTeamName} has recorded over 2.5 goals in ${awayStats.over25} of theirs.`;
+        if (homeStats.total > 0) {
+            narrative = `This matchup will test both teams' recent form, as ${homeTeamName} and ${awayTeamName} look to establish dominance.`;
         }
     }
+
+    let formattedTip = computedTip;
+    if (computedTip === "1") formattedTip = "HOME WIN";
+    else if (computedTip === "2") formattedTip = "AWAY WIN";
+    else if (computedTip === "UN2.5") formattedTip = "UNDER 2.5 GOALS";
+    else if (computedTip === "OV2.5") formattedTip = "OVER 2.5 GOALS";
+    else if (computedTip === "UN3.5") formattedTip = "UNDER 3.5 GOALS";
+    else if (computedTip === "OV1.5") formattedTip = "OVER 1.5 GOALS";
 
     // 3. Color Logic for the UI
     let predictionColorClass = "text-teal-400"; // fallback
@@ -148,9 +155,9 @@ const MatchIntroduction: React.FC<MatchIntroductionProps> = ({
         <div className="bg-white/5 rounded-xl p-2 sm:p-3 shadow-sm flex items-start gap-2 mb-2 animate-in fade-in duration-500">
             <p className="text-[11px] sm:text-[12px] font-medium text-gray-300 leading-relaxed text-justify">
                 {fullNarrative}
-                {computedTip && (
+                {formattedTip && (
                     <span className={`${predictionColorClass} font-bold ml-1`}>
-                        {computedTip}
+                        {formattedTip}
                     </span>
                 )}
             </p>
