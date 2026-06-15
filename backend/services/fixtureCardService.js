@@ -325,7 +325,7 @@ async function applyPredictionFilter(orderedDocs) {
           const passHomeWin = homeForm.wins >= 4 && awayForm.losses >= 4;
           const passAwayWin = awayForm.wins >= 4 && homeForm.losses >= 4;
           const passOV25 = homeStats.over35 >= 4 && awayStats.over35 >= 4;
-          const passBTTS = homeStats.btts >= 4 && awayStats.btts >= 4;
+          const passBTTS = homeStats.btts >= 4 && awayStats.btts >= 4 && homeStats.over25 >= 4 && awayStats.over25 >= 4;
           const passOV15 = homeStats.over25 >= 4 && awayStats.over25 >= 4;
           const passUN25 = homeStats.under15 >= 4 && awayStats.under15 >= 4;
           const passUN35 = homeStats.under25 >= 4 && awayStats.under25 >= 4;
