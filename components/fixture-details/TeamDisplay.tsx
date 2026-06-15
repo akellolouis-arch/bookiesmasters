@@ -98,7 +98,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                     if (res === "L") bgClass = "bg-[#dc2626]"; // Red for Loss
 
                     return (
-                        <div key={i} className={`w-4 h-4 sm:w-5 sm:h-5 shrink-0 rounded-full text-[8px] sm:text-[10px] font-bold flex items-center justify-center text-white ${bgClass} shadow-sm`}>
+                        <div key={i} className={`w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 rounded-full text-[7px] sm:text-[8px] font-bold flex items-center justify-center text-white ${bgClass} shadow-sm`}>
                             {res}
                         </div>
                     );
