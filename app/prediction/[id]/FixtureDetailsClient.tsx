@@ -130,6 +130,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                         h2hMatches={filteredH2H}
                         status={data.status}
                         score={data.score}
+                        computedTip={computedTip}
                     />
                 </div>
 
