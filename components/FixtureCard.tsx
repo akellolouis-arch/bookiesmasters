@@ -47,12 +47,17 @@ export default function FixtureCard({
               const totalGoals = parts[0] + parts[1];
               let isWon = false;
               let isValidTip = false;
-              
               if (prediction.includes("OV1.5") || prediction.includes("Over 1.5")) {
                   isWon = totalGoals > 1.5;
                   isValidTip = true;
               } else if (prediction.includes("UN3.5") || prediction.includes("Under 3.5")) {
                   isWon = totalGoals < 3.5;
+                  isValidTip = true;
+              } else if (prediction === "1" || prediction === "HOME WIN") {
+                  isWon = parts[0] > parts[1];
+                  isValidTip = true;
+              } else if (prediction === "2" || prediction === "AWAY WIN") {
+                  isWon = parts[1] > parts[0];
                   isValidTip = true;
               }
               

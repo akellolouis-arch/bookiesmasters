@@ -77,6 +77,12 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
             } else if (tip.includes("Under 3.5") || tip.includes("UN3.5")) {
                 isWon = totalGoals < 3.5;
                 isValidTip = true;
+            } else if (tip === "1" || tip === "HOME WIN") {
+                isWon = score.home > score.away;
+                isValidTip = true;
+            } else if (tip === "2" || tip === "AWAY WIN") {
+                isWon = score.away > score.home;
+                isValidTip = true;
             }
             
             if (isValidTip) {
