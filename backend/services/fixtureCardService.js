@@ -335,23 +335,23 @@ async function applyPredictionFilter(orderedDocs) {
           else if (passAwayWin) tip = "2";
           else if (passUN25) tip = "UN2.5";
           else if (passOV25) tip = "OV2.5";
+          else if (passUN35) tip = "UN3.5";
           else if (passBTTS) tip = "BTTS";
           else if (passOV15) tip = "OV1.5";
-          else if (passUN35) tip = "UN3.5";
 
           if (tip) {
               doc.tip = tip;
               predictionTipCache.set(fixtureId, tip);
               predictedDocs.push(doc);
               // Save permanently to database
-              Fixture.updateOne({ fixtureId: doc.fixtureId }, { $set: { predictionTip: tip } }).catch(console.error);
+              await Fixture.updateOne({ fixtureId: doc.fixtureId }, { $set: { predictionTip: tip } }).catch(console.error);
               return;
           }
       }
 
       // If it failed the algorithm, cache it as "NONE" so we never query the DB for this fixture again
       predictionTipCache.set(fixtureId, "NONE");
-      Fixture.updateOne({ fixtureId: doc.fixtureId }, { $set: { predictionTip: "NONE" } }).catch(console.error);
+      await Fixture.updateOne({ fixtureId: doc.fixtureId }, { $set: { predictionTip: "NONE" } }).catch(console.error);
   }));
 
   // Re-sort the predicted docs since Promise.all doesn't guarantee order of push
