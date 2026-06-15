@@ -95,7 +95,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
     }
 
     return (
-        <div className="text-white pt-1 pb-4 px-2 sm:px-4">
+        <div className="text-white pt-0 pb-4 px-2 sm:px-4">
             <div className="max-w-5xl mx-auto">
                 {/* --- LEAGUE HEADER --- */}
                 <div className="flex items-center gap-1 bg-gradient-to-r from-emerald-900/40 to-[#121212] py-0.5 px-1.5 sm:px-0.5 shadow-md border-y sm:border-x border-white/5 sm:border-b-0 mb-2 -mx-2 sm:mx-auto sm:rounded-t max-w-4xl">
