@@ -138,13 +138,13 @@ const OverallStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => 
                 <div className="flex bg-white/5 rounded-full p-1 border border-white/10">
                     <button
                         onClick={() => setLocationMode("overall")}
-                        className={`px-4 py-1.5 rounded-full text-[9px] sm:text-[10px] font-bold transition-all ${locationMode === "overall" ? "bg-white text-black" : "text-gray-400 hover:text-white"}`}
+                        className={`px-4 py-1.5 rounded-full text-[9px] sm:text-[10px] font-bold transition-all ${locationMode === "overall" ? "bg-white/20 text-amber-100 shadow-inner" : "text-gray-400 hover:text-white"}`}
                     >
                         Overall
                     </button>
                     <button
                         onClick={() => setLocationMode("home_away")}
-                        className={`px-4 py-1.5 rounded-full text-[9px] sm:text-[10px] font-bold transition-all ${locationMode === "home_away" ? "bg-white text-black" : "text-gray-400 hover:text-white"}`}
+                        className={`px-4 py-1.5 rounded-full text-[9px] sm:text-[10px] font-bold transition-all ${locationMode === "home_away" ? "bg-white/20 text-amber-100 shadow-inner" : "text-gray-400 hover:text-white"}`}
                     >
                         Home/Away
                     </button>
