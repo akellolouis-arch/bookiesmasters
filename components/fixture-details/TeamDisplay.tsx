@@ -68,6 +68,9 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
             if (tip.includes("Over 1.5") || tip.includes("OV1.5")) {
                 isWon = totalGoals > 1.5;
                 isValidTip = true;
+            } else if (tip === "BTTS" || tip.includes("GG")) {
+                isWon = score.home > 0 && score.away > 0;
+                isValidTip = true;
             } else if (tip.includes("Over 2.5") || tip.includes("OV2.5")) {
                 isWon = totalGoals > 2.5;
                 isValidTip = true;
