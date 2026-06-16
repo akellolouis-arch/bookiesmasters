@@ -123,26 +123,26 @@ export default function FixtureCard({
           </div>
         </div>
 
-        {/* BOTTOM STRIP (Flat & Flush - Housed in bg-white/5 block) */}
-        <div className="w-full flex items-center justify-between bg-white/5 rounded-lg py-0.5 px-1 sm:py-1 sm:px-1.5 mt-0.5">
+        {/* BOTTOM STRIP (Flat & Flush - Housed in three separate pills) */}
+        <div className="w-full flex items-center justify-between gap-1 sm:gap-1.5 mt-1">
           {/* LEFT: STATUS */}
-          <div className={`text-[10px] font-bold uppercase w-24 text-left leading-none tracking-widest ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
+          <div className={`w-24 text-center bg-white/5 rounded-lg py-0.5 px-1 sm:py-1 sm:px-1.5 text-[10px] font-bold uppercase leading-none tracking-widest ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
             {status}
           </div>
 
           {/* MIDDLE: SCORE */}
-          <div className={`flex-1 text-center text-[10px] font-bold leading-none tracking-widest ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
-            {score ? score.replace(" - ", "-") : ""}
+          <div className={`flex-1 text-center bg-white/5 rounded-lg py-0.5 px-1 sm:py-1 sm:px-1.5 text-[10px] font-bold leading-none tracking-widest ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
+            {score ? score.replace(" - ", "-") : "-"}
           </div>
 
           {/* RIGHT: PREDICTION */}
-          <div className="w-24 text-right leading-none">
+          <div className="w-24 text-center bg-white/5 rounded-lg py-0.5 px-1 sm:py-1 sm:px-1.5 text-[10px] font-bold uppercase tracking-widest leading-none">
             {prediction ? (
-              <span className={`text-[10px] font-bold uppercase tracking-widest leading-none ${predictionColorClass}`}>
+              <span className={predictionColorClass}>
                 {prediction}
               </span>
             ) : (
-              <span className="text-[10px] font-bold uppercase tracking-widest leading-none text-gray-600">-</span>
+              <span className="text-gray-600">-</span>
             )}
           </div>
         </div>
