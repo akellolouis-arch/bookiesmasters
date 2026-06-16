@@ -1,3 +1,5 @@
+import Footer from "@/components/Footer";
+
 export default function ContactPage() {
     return (
         <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto px-1 sm:px-4 md:px-4 pt-2 pb-4 font-sans text-gray-300">
@@ -17,6 +19,9 @@ export default function ContactPage() {
                         support@bookiesmasters.com
                     </a>
                 </div>
+            </div>
+            <div className="mt-8">
+                <Footer />
             </div>
         </div>
     );

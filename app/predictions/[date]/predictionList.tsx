@@ -4,6 +4,7 @@ import useSWR from "swr";
 import Image from "next/image";
 import FixtureCard from "@/components/FixtureCard";
 import Loader from "@/components/Loader";
+import Footer from "@/components/Footer";
 import { useState, useEffect } from "react";
 import { useSearchParams, usePathname } from "next/navigation";
 
@@ -233,6 +234,9 @@ export default function PredictionsList({
       })()}
 
       {children}
+      <div className="mt-8">
+        <Footer />
+      </div>
     </div>
   );
 }

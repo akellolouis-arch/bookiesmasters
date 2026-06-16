@@ -1,3 +1,5 @@
+import Footer from "@/components/Footer";
+
 export default function TermsPage() {
     return (
         <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto px-1 sm:px-4 md:px-4 pt-2 pb-4 font-sans text-gray-300">
@@ -21,6 +23,9 @@ export default function TermsPage() {
                 <p className="text-[11px] sm:text-xs leading-normal text-gray-400">
                     All content, design, and statistics on this site are the property of Bookiesmasters or its data providers.
                 </p>
+            </div>
+            <div className="mt-8">
+                <Footer />
             </div>
         </div>
     );

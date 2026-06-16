@@ -1,3 +1,5 @@
+import Footer from "@/components/Footer";
+
 export default function AboutPage() {
     return (
         <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto px-1 sm:px-4 md:px-4 pt-2 pb-4 font-sans text-gray-300">
@@ -16,6 +18,9 @@ export default function AboutPage() {
                     To demystify football data and make professional-grade statistics accessible to everyone.
                     We believe that better data leads to better decisions, whether you are predicting match outcomes or simply following your favorite league.
                 </p>
+            </div>
+            <div className="mt-8">
+                <Footer />
             </div>
         </div>
     );

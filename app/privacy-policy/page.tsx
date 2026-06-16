@@ -1,3 +1,5 @@
+import Footer from "@/components/Footer";
+
 export default function PrivacyPage() {
     return (
         <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto px-1 sm:px-4 md:px-4 pt-2 pb-4 font-sans text-gray-300">
@@ -18,6 +20,9 @@ export default function PrivacyPage() {
                 <p className="text-[11px] sm:text-xs leading-normal text-gray-400">
                     We use third-party APIs to provide football data. These services may have their own privacy policies.
                 </p>
+            </div>
+            <div className="mt-8">
+                <Footer />
             </div>
         </div>
     );

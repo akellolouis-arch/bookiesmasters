@@ -11,6 +11,7 @@ import OverallStatistics from "@/components/fixture-details/OverallStatistics";
 import OverUnderStatistics from "@/components/fixture-details/OverUnderStatistics";
 import BTTSStatistics from "@/components/fixture-details/BTTSStatistics";
 import MatchIntroduction from "@/components/fixture-details/MatchIntroduction";
+import Footer from "@/components/Footer";
 
 type FixtureDetailsData = {
     fixtureId: number;
@@ -285,6 +286,9 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                         </div>
                     </div>
                 )}
+            </div>
+            <div className="mt-8">
+                <Footer />
             </div>
         </div>
     );
