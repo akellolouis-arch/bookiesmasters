@@ -52,7 +52,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${montserrat.variable} antialiased bg-black`}
+        className={`${montserrat.variable} antialiased bg-black flex flex-col min-h-screen`}
       >
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-N2MSB811W7"
@@ -111,7 +111,7 @@ export default function RootLayout({
         </Script>
 
         <Navbar />
-        <main className="min-h-screen">{children}</main>
+        <main className="flex-1">{children}</main>
 
         <Footer />
       </body>
