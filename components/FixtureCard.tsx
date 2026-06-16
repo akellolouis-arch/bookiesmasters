@@ -87,7 +87,7 @@ export default function FixtureCard({
   const hoverClass = isEven ? "hover:bg-[#151515]" : "hover:bg-[#282828]";
 
   return (
-    <div className="relative group w-full md:max-w-2xl lg:max-w-2xl mx-auto mb-1">
+    <div className="relative group w-full md:max-w-2xl lg:max-w-2xl mx-auto mb-0">
       <Link
         href={href}
         prefetch={true}
@@ -101,7 +101,7 @@ export default function FixtureCard({
             });
           }
         }}
-        className="cursor-pointer block bg-[#121212] border border-white/5 rounded-lg py-1 px-1.5 sm:py-1.5 sm:px-2 hover:border-white/10 transition-all duration-300 flex flex-col no-underline text-inherit"
+        className="cursor-pointer block bg-[#121212] border border-white/5 rounded-none py-1 px-1.5 sm:py-1.5 sm:px-2 hover:border-white/10 transition-all duration-300 flex flex-col no-underline text-inherit"
       >
         {/* Matchup Header */}
         <div className="flex items-center justify-between w-full mb-1">
