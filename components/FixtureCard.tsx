@@ -123,27 +123,33 @@ export default function FixtureCard({
           </div>
         </div>
 
-        {/* BOTTOM STRIP (Flat & Flush - Content-sized rounded pills) */}
-        <div className="w-full flex items-center justify-between gap-1 sm:gap-1.5 mt-1">
-          {/* LEFT: STATUS */}
-          <div className={`px-2 py-0.5 bg-white/5 rounded-lg text-[10px] font-bold uppercase leading-none tracking-widest ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
-            {status}
+        {/* BOTTOM STRIP (Flat & Flush - Symmetrically aligned content-sized pills) */}
+        <div className="w-full flex items-center justify-between mt-1">
+          {/* LEFT: STATUS CONTAINER */}
+          <div className="flex-1 flex justify-start">
+            <div className={`px-2 py-0.5 bg-white/5 rounded-lg text-[10px] font-bold uppercase leading-none tracking-widest ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
+              {status}
+            </div>
           </div>
 
-          {/* MIDDLE: SCORE */}
-          <div className={`px-4 py-0.5 bg-white/5 rounded-lg text-[10px] font-bold leading-none tracking-widest ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
-            {score ? score.replace(" - ", "-") : "-"}
+          {/* MIDDLE: SCORE CONTAINER */}
+          <div className="flex shrink-0 justify-center px-2">
+            <div className={`px-4 py-0.5 bg-white/5 rounded-lg text-[10px] font-bold leading-none tracking-widest ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
+              {score ? score.replace(" - ", "-") : "-"}
+            </div>
           </div>
 
-          {/* RIGHT: PREDICTION */}
-          <div className="px-2 py-0.5 bg-white/5 rounded-lg text-[10px] font-bold uppercase tracking-widest leading-none">
-            {prediction ? (
-              <span className={predictionColorClass}>
-                {prediction}
-              </span>
-            ) : (
-              <span className="text-gray-600">-</span>
-            )}
+          {/* RIGHT: PREDICTION CONTAINER */}
+          <div className="flex-1 flex justify-end">
+            <div className="px-2 py-0.5 bg-white/5 rounded-lg text-[10px] font-bold uppercase tracking-widest leading-none">
+              {prediction ? (
+                <span className={predictionColorClass}>
+                  {prediction}
+                </span>
+              ) : (
+                <span className="text-gray-600">-</span>
+              )}
+            </div>
           </div>
         </div>
       </Link>
