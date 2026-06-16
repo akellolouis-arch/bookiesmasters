@@ -17,6 +17,10 @@ interface MatchIntroductionProps {
     status?: string;
     score?: { home: number | null; away: number | null } | null;
     computedTip?: string;
+    rounded?: string;
+    bg?: string;
+    padding?: string;
+    margin?: string;
 }
 
 const MatchIntroduction: React.FC<MatchIntroductionProps> = ({
@@ -28,7 +32,11 @@ const MatchIntroduction: React.FC<MatchIntroductionProps> = ({
     h2hMatches = [],
     status,
     score,
-    computedTip = ""
+    computedTip = "",
+    rounded = "rounded-xl",
+    bg = "bg-white/5",
+    padding = "p-2 sm:p-3",
+    margin = "mb-2"
 }) => {
     const calculateFormAndStats = (matches: MatchData[], limit: number, teamName: string) => {
         const recent = matches.slice(0, limit);
@@ -152,7 +160,7 @@ const MatchIntroduction: React.FC<MatchIntroductionProps> = ({
     const fullNarrative = [baseSentence, narrative].filter(Boolean).join(" ");
 
     return (
-        <div className="bg-white/5 rounded-xl p-2 sm:p-3 shadow-sm flex items-start gap-2 mb-2 animate-in fade-in duration-500">
+        <div className={`${bg} ${rounded} ${padding} ${margin} shadow-sm flex items-start gap-2 animate-in fade-in duration-500`}>
             <p className="text-[11px] sm:text-[12px] font-medium text-gray-300 leading-relaxed text-justify">
                 {fullNarrative}
                 {formattedTip && (

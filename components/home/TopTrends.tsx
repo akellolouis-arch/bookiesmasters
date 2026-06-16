@@ -59,71 +59,71 @@ export default async function TopTrends() {
   }
 
   return (
-    <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto px-2 sm:px-1 md:px-4 mt-8 mb-8">
+    <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto px-2 sm:px-1 md:px-4 mt-4 mb-4">
       {/* Title */}
-      <div className="flex items-center gap-2 mb-4">
-        <span className="text-sm font-bold text-amber-100 tracking-wider uppercase">
-          🔥 Top Trends & Insights
+      <div className="flex items-center gap-1.5 mb-2">
+        <span className="text-[9px] font-bold text-amber-100/90 tracking-wider uppercase">
+          top trends
         </span>
-        <div className="flex-1 h-[1px] bg-gradient-to-r from-amber-500/30 to-transparent" />
+        <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent" />
       </div>
 
       {/* Cards List */}
-      <div className="space-y-4">
+      <div className="space-y-2">
         {trends.map((match) => {
           const formattedTip = match.tip || "";
           
           return (
             <div
               key={match.fixtureId}
-              className="bg-[#121212] border border-white/5 rounded-xl p-3 sm:p-4 hover:border-white/10 transition-all duration-300"
+              className="bg-[#121212] border border-white/5 rounded-none p-2 sm:p-2.5 hover:border-white/10 transition-all duration-300"
             >
               {/* League Header */}
-              <div className="flex items-center gap-1.5 mb-2.5">
+              <div className="flex items-center gap-1 mb-1.5">
                 {match.leagueLogo && (
                   <img
                     src={match.leagueLogo}
                     alt={match.league}
-                    className="w-3.5 h-3.5 object-contain opacity-80"
+                    className="w-3 h-3 object-contain opacity-70"
                   />
                 )}
-                <span className="text-[9px] text-gray-500 font-medium tracking-wide uppercase">
+                <span className="text-[8px] text-gray-500 font-medium tracking-wide uppercase">
                   {match.league} • {match.country}
                 </span>
               </div>
 
               {/* Match Teams Header */}
-              <div className="flex items-center justify-between mb-3 bg-white/5 rounded-lg p-2">
+              <div className="flex items-center justify-between mb-2 bg-white/5 rounded-none p-1.5">
                 <div className="flex items-center gap-1.5 truncate">
                   {match.homeTeam.logo && (
                     <img
                       src={match.homeTeam.logo}
                       alt={match.homeTeam.name}
-                      className="w-4 h-4 object-contain"
+                      className="w-3.5 h-3.5 object-contain"
                     />
                   )}
-                  <span className="text-[10px] sm:text-xs font-semibold text-gray-200 truncate uppercase">
+                  <span className="text-[9px] sm:text-[10px] font-semibold text-gray-200 truncate uppercase">
                     {match.homeTeam.name}
                   </span>
                 </div>
                 
-                <span className="text-[10px] font-bold text-gray-500 px-2">VS</span>
+                <span className="text-[8px] font-bold text-gray-500 px-1">VS</span>
 
                 <div className="flex items-center gap-1.5 truncate">
-                  <span className="text-[10px] sm:text-xs font-semibold text-gray-200 truncate uppercase">
+                  <span className="text-[9px] sm:text-[10px] font-semibold text-gray-200 truncate uppercase">
                     {match.awayTeam.name}
                   </span>
                   {match.awayTeam.logo && (
                     <img
                       src={match.awayTeam.logo}
                       alt={match.awayTeam.name}
-                      className="w-4 h-4 object-contain"
+                      className="w-3.5 h-3.5 object-contain"
                     />
                   )}
                 </div>
               </div>
 
-              {/* Match Introduction Narrative */}
+              {/* Match Introduction Narrative (No background, flat edges, tight padding/margins) */}
               <MatchIntroduction
                 homeTeamName={match.homeTeam.name}
                 awayTeamName={match.awayTeam.name}
@@ -134,15 +134,19 @@ export default async function TopTrends() {
                 status={match.status}
                 score={match.score}
                 computedTip={formattedTip}
+                bg="bg-transparent"
+                rounded="rounded-none"
+                padding="p-0"
+                margin="mb-1"
               />
 
               {/* View Full Analysis Link */}
-              <div className="flex justify-end mt-2">
+              <div className="flex justify-end mt-1">
                 <Link
                   href={`/prediction/${match.fixtureId}`}
-                  className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-100/80 hover:text-amber-100 transition-colors uppercase tracking-wider bg-white/5 hover:bg-white/10 px-2.5 py-1 rounded-md"
+                  className="inline-flex items-center gap-0.5 text-[8px] font-bold text-amber-100/70 hover:text-amber-100 transition-colors uppercase tracking-wider bg-white/5 hover:bg-white/10 px-2 py-0.5 rounded-none"
                 >
-                  View Details & Stats →
+                  View Details →
                 </Link>
               </div>
             </div>
