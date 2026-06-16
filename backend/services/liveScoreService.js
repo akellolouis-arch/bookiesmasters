@@ -24,6 +24,7 @@ export async function pollLiveScores() {
         const fortyEightHoursAgo = new Date(now.getTime() - 48 * 60 * 60 * 1000);
         const twoHoursAgo = new Date(now.getTime() - 120 * 60 * 1000);
         const twoHoursTenAgo = new Date(now.getTime() - 130 * 60 * 1000);
+        const threeHoursAgo = new Date(now.getTime() - 180 * 60 * 1000);
         const sixHoursAgo = new Date(now.getTime() - 6 * 60 * 60 * 1000);
 
         const LIVE_STATUSES = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"];
@@ -183,6 +184,23 @@ export async function pollLiveScores() {
             finishedIds = [...new Set([...finishedIds, ...stuckLiveIds])];
         }
 
+        // 2.5) Matches stuck at LIVE/HT for over 3 hours
+        // Sometimes lower-tier matches (e.g. Lebanon) drop off the API at HT and elapsed never hits 90.
+        const stuckAnyLiveMatches = await Fixture.find({
+            "fixture.fixture.status.short": { $in: LIVE_STATUSES },
+            "fixture.fixture.date": {
+                $lte: threeHoursAgo.toISOString(),
+                $gte: fortyEightHoursAgo.toISOString()
+            }
+        }).select("fixtureId").lean();
+
+        if (stuckAnyLiveMatches.length > 0) {
+            console.log(`   🚨 Detected ${stuckAnyLiveMatches.length} matches stuck LIVE past 3 hours. Force-fetching final score.`);
+            const stuckAnyIds = stuckAnyLiveMatches.map(m => m.fixtureId);
+            finishedIds = [...new Set([...finishedIds, ...stuckAnyIds])];
+        }
+
+
         // 3) Hard safety finalizer:
         // Any non-finished fixture older than 6 hours should be force-checked once more.
         const nonFinishedStatuses = ["NS", ...LIVE_STATUSES];
@@ -219,8 +237,9 @@ export async function pollLiveScores() {
                     // If API still reports a LIVE status long after kickoff, force-close it.
                     const kickoff = new Date(match?.fixture?.date);
                     const isVeryLate = kickoff.toISOString() <= twoHoursTenAgo.toISOString();
+                    const isExtremelyLate = kickoff.toISOString() <= threeHoursAgo.toISOString();
                     const isStillLive = LIVE_STATUSES.includes(match?.fixture?.status?.short);
-                    if (isVeryLate && isStillLive && (match?.fixture?.status?.elapsed ?? 0) >= 90) {
+                    if (isVeryLate && isStillLive && ((match?.fixture?.status?.elapsed ?? 0) >= 90 || isExtremelyLate)) {
                         match.fixture.status = {
                             ...match.fixture.status,
                             long: "Match Finished",
