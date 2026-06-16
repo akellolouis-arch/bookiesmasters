@@ -87,7 +87,7 @@ export default function FixtureCard({
   const hoverClass = isEven ? "hover:bg-[#151515]" : "hover:bg-[#282828]";
 
   return (
-    <div className="relative group w-full md:max-w-2xl lg:max-w-2xl mx-auto">
+    <div className="relative group w-full md:max-w-2xl lg:max-w-2xl mx-auto mb-1">
       <Link
         href={href}
         prefetch={true}
@@ -101,43 +101,41 @@ export default function FixtureCard({
             });
           }
         }}
-        className={`cursor-pointer block ${bgClass} hover:shadow-md ${hoverClass} transition flex flex-col p-0.5 sm:p-1 no-underline text-inherit`}
+        className="cursor-pointer block bg-[#121212] border border-white/5 rounded-none p-1.5 sm:p-2 hover:border-white/10 transition-all duration-300 flex flex-col no-underline text-inherit"
       >
-        {/* TOP ROW: MATCHUP */}
-        <div className="flex items-center justify-between w-full">
+        {/* Matchup Header (Slick TopTrends style) */}
+        <div className="flex items-center justify-between mb-1.5 bg-white/5 rounded-none p-1 sm:p-1.5">
           {/* HOME TEAM */}
           <div className="flex items-center justify-start gap-1.5 flex-1 min-w-0">
-            <Image src={homeTeam.logo} alt={homeTeam.name} width={16} height={16} className="w-4 h-4 object-contain shrink-0 drop-shadow-sm" unoptimized />
-            <span className="font-semibold text-[11px] sm:text-[12px] truncate text-white text-left px-1 capitalize">{homeTeam.name}</span>
+            <Image src={homeTeam.logo} alt={homeTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
+            <span className="font-semibold text-[11px] sm:text-[12px] truncate text-gray-200 capitalize">{homeTeam.name}</span>
           </div>
 
-          {/* CENTER BOX (Time Only) */}
-          <div className="w-[50px] shrink-0 flex flex-col items-center justify-center">
-             <span className="text-[9px] sm:text-[10px] font-semibold text-gray-400">
-               {kickoffTime || "--:--"}
-             </span>
-          </div>
+          {/* KICKOFF / VS CENTER BOX */}
+          <span className="text-[9px] sm:text-[10px] font-bold text-gray-500 px-2 shrink-0">
+            {kickoffTime || "VS"}
+          </span>
 
           {/* AWAY TEAM */}
           <div className="flex items-center justify-end gap-1.5 flex-1 min-w-0">
-            <span className="font-semibold text-[11px] sm:text-[12px] truncate text-white text-right px-1 capitalize">{awayTeam.name}</span>
-            <Image src={awayTeam.logo} alt={awayTeam.name} width={16} height={16} className="w-4 h-4 object-contain shrink-0 drop-shadow-sm" unoptimized />
+            <span className="font-semibold text-[11px] sm:text-[12px] truncate text-gray-200 text-right capitalize">{awayTeam.name}</span>
+            <Image src={awayTeam.logo} alt={awayTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
           </div>
         </div>
 
-        {/* BOTTOM ROW: STATUS / PREDICTION / SCORE STRIP */}
-        <div className={`mt-0.5 w-full ${tipBgClass} border border-white/5 rounded h-[16px] flex items-center justify-between px-2 shadow-sm`}>
+        {/* BOTTOM STRIP (Flat & Flush) */}
+        <div className="w-full flex items-center justify-between px-1.5 mt-0.5">
           {/* LEFT: STATUS */}
           <div className={`text-[9px] sm:text-[10px] font-bold uppercase w-24 text-left ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
             {status}
           </div>
 
-          {/* MIDDLE: SCORE (Centered) */}
+          {/* MIDDLE: SCORE */}
           <div className={`flex-1 text-center text-[9px] sm:text-[10px] font-bold ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
-             {score ? score.replace(" - ", "-") : "-"}
+            {score ? score.replace(" - ", "-") : "-"}
           </div>
 
-          {/* RIGHT: PREDICTION (Pushed to Right) */}
+          {/* RIGHT: PREDICTION */}
           <div className="w-24 text-right">
             {prediction ? (
               <span className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-widest ${predictionColorClass}`}>
