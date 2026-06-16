@@ -5,26 +5,26 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-[#1F1F1F] text-gray-400 text-[10px] font-medium md:justify-center px-1 pt-1 pb-3 md:pt-2 md:pb-4 border-t border-white/5">
+    <footer className="bg-[#1F1F1F] text-gray-400 text-[11px] font-medium md:justify-center px-1 pt-1 pb-3 md:pt-2 md:pb-4 border-t border-white/5">
       {/* Main section */}
       <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-4 md:text-center">
 
 
         {/* Brand */}
         <div>
-          <h5 className="text-[10px] font-medium text-gray-300 tracking-wider">Bookiesmasters</h5>
-          <p className="text-[10px] leading-snug text-gray-400 text-justify">
+          <h5 className="text-[11px] font-medium text-gray-300 tracking-wider">Bookiesmasters</h5>
+          <p className="text-[11px] leading-snug text-gray-400 text-justify">
             Get instant access to premium football analytics, livescores, market probabilities, match events, and expert insights.
           </p>
-          <p className="text-[10px] text-gray-500 leading-snug mt-0.5 text-justify">
+          <p className="text-[11px] text-gray-500 leading-snug mt-0.5 text-justify">
             Disclaimer: Forecasts and data displayed on this platform are for informational and entertainment purposes only and are not guaranteed to be accurate. We accept no liability or financial responsibility for decisions made based on this data. Please use our platform responsibly.
           </p>
         </div>
 
         {/* Contact + Socials */}
         <div>
-          <h5 className="text-[10px] font-medium text-gray-300 tracking-wider">Stay connected</h5>
-          <p className="text-[10px] text-gray-400">
+          <h5 className="text-[11px] font-medium text-gray-300 tracking-wider">Stay connected</h5>
+          <p className="text-[11px] text-gray-400">
             Have questions? Reach us anytime.
           </p>
 
@@ -66,8 +66,8 @@ export default function Footer() {
 
         {/* Quick Links */}
         <div>
-          <h5 className="text-[10px] font-medium text-gray-300 tracking-wider">Quick links</h5>
-          <ul className="text-[10px] space-y-0.5">
+          <h5 className="text-[11px] font-medium text-gray-300 tracking-wider">Quick links</h5>
+          <ul className="text-[11px] space-y-0.5">
 
             <li>
               <Link href="/terms-of-service" className="hover:text-teal-400 transition-colors">
