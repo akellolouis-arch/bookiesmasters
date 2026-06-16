@@ -103,7 +103,7 @@ export default async function TopTrends() {
                       className="w-3.5 h-3.5 object-contain"
                     />
                   )}
-                  <span className="text-[9px] sm:text-[10px] font-semibold text-gray-200 truncate uppercase">
+                  <span className="text-[9px] sm:text-[10px] font-semibold text-gray-200 truncate capitalize">
                     {match.homeTeam.name}
                   </span>
                 </div>
@@ -111,7 +111,7 @@ export default async function TopTrends() {
                 <span className="text-[8px] font-bold text-gray-500 px-1">VS</span>
 
                 <div className="flex items-center gap-1.5 truncate">
-                  <span className="text-[9px] sm:text-[10px] font-semibold text-gray-200 truncate uppercase">
+                  <span className="text-[9px] sm:text-[10px] font-semibold text-gray-200 truncate capitalize">
                     {match.awayTeam.name}
                   </span>
                   {match.awayTeam.logo && (
