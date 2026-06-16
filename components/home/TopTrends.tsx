@@ -63,14 +63,14 @@ export default async function TopTrends() {
       {/* Title */}
       <div className="flex items-center justify-center gap-2 mb-1.5 px-1 sm:px-0">
         <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent to-white/10" />
-        <span className="text-[10px] font-bold text-amber-100/90 tracking-wider uppercase whitespace-nowrap">
+        <span className="text-[11px] font-medium text-amber-100/90 tracking-wider uppercase whitespace-nowrap">
           top trends
         </span>
         <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent" />
       </div>
 
       {/* Cards List */}
-      <div className="space-y-1">
+      <div className="space-y-0">
         {trends.map((match) => {
           const formattedTip = match.tip || "";
           
