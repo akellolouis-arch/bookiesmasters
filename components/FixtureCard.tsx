@@ -128,12 +128,17 @@ export default function FixtureCard({
         {/* BOTTOM ROW: STATUS / PREDICTION / SCORE STRIP */}
         <div className={`mt-0.5 w-full ${tipBgClass} border border-white/5 rounded h-[16px] flex items-center justify-between px-2 shadow-sm`}>
           {/* LEFT: STATUS */}
-          <div className={`text-[9px] sm:text-[10px] font-bold uppercase w-8 text-left ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
+          <div className={`text-[9px] sm:text-[10px] font-bold uppercase w-24 text-left ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
             {status}
           </div>
 
-          {/* MIDDLE: PREDICTION */}
-          <div className="flex-1 text-center">
+          {/* MIDDLE: SCORE (Centered) */}
+          <div className={`flex-1 text-center text-[9px] sm:text-[10px] font-bold ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
+             {score ? score.replace(" - ", "-") : "-"}
+          </div>
+
+          {/* RIGHT: PREDICTION (Pushed to Right) */}
+          <div className="w-24 text-right">
             {prediction ? (
               <span className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-widest ${predictionColorClass}`}>
                 {prediction}
@@ -141,11 +146,6 @@ export default function FixtureCard({
             ) : (
               <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-gray-600">-</span>
             )}
-          </div>
-
-          {/* RIGHT: SCORE */}
-          <div className={`text-[9px] sm:text-[10px] font-bold w-8 text-right ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
-             {score ? score.replace(" - ", "-") : "-"}
           </div>
         </div>
       </Link>
