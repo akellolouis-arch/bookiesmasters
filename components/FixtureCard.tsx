@@ -126,23 +126,23 @@ export default function FixtureCard({
         {/* BOTTOM STRIP (Flat & Flush - Housed in bg-white/5 block) */}
         <div className="w-full flex items-center justify-between bg-white/5 rounded-lg py-0.5 px-1 sm:py-1 sm:px-1.5 mt-0.5">
           {/* LEFT: STATUS */}
-          <div className={`text-[9px] sm:text-[10px] font-bold uppercase w-24 text-left leading-none tracking-widest ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
+          <div className={`text-[10px] font-bold uppercase w-24 text-left leading-none tracking-widest ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
             {status}
           </div>
 
           {/* MIDDLE: SCORE */}
-          <div className={`flex-1 text-center text-[9px] sm:text-[10px] font-bold leading-none tracking-widest ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
+          <div className={`flex-1 text-center text-[10px] font-bold leading-none tracking-widest ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
             {score ? score.replace(" - ", "-") : ""}
           </div>
 
           {/* RIGHT: PREDICTION */}
           <div className="w-24 text-right leading-none">
             {prediction ? (
-              <span className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-widest leading-none ${predictionColorClass}`}>
+              <span className={`text-[10px] font-bold uppercase tracking-widest leading-none ${predictionColorClass}`}>
                 {prediction}
               </span>
             ) : (
-              <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest leading-none text-gray-600">-</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest leading-none text-gray-600">-</span>
             )}
           </div>
         </div>
