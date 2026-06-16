@@ -108,10 +108,10 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                             />
                         )}
                         <div className="flex flex-col truncate w-full leading-tight">
-                            <span className="font-normal text-[10px] text-amber-100 tracking-wide truncate drop-shadow-sm">
+                            <span className="font-medium text-[11px] text-amber-100 tracking-wide truncate drop-shadow-sm">
                                 {data.league}
                             </span>
-                            <span className="text-[8px] text-emerald-200/70 font-normal capitalize tracking-wider truncate">
+                            <span className="text-[9px] text-emerald-200/70 font-normal capitalize tracking-wider truncate">
                                 {data.country?.toLowerCase()}
                             </span>
                         </div>
@@ -175,7 +175,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 {hasH2H && (
                     <div className="mt-2">
                         <div className="flex justify-center mb-3">
-                            <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-amber-100 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold shadow-lg tracking-wide uppercase">
+                            <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-amber-100 rounded-lg sm:rounded-xl text-[11px] font-bold shadow-lg tracking-wide uppercase">
                                 Head to Head
                             </h3>
                         </div>
@@ -187,7 +187,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 {hasAnyMatches && (
                     <div className="mt-2 space-y-4">
                         <div className="flex justify-center mb-1">
-                            <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-amber-100 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold shadow-lg tracking-wide uppercase">
+                            <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-amber-100 rounded-lg sm:rounded-xl text-[11px] font-bold shadow-lg tracking-wide uppercase">
                                 Recent Form
                             </h3>
                         </div>

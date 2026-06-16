@@ -134,13 +134,13 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                         >
                             {/* 1️⃣ Date */}
                             <div className="flex flex-col items-center justify-center mr-2 w-10 shrink-0">
-                                <span className="text-gray-500 text-[10px] font-medium leading-none mb-0.5">{monthDay}</span>
-                                <span className="text-gray-600 text-[9px] leading-none">{year}</span>
+                                <span className="text-gray-500 text-[11px] font-medium leading-none mb-0.5">{monthDay}</span>
+                                <span className="text-gray-600 text-[10px] leading-none">{year}</span>
                             </div>
 
                             {/* 2️⃣ Home Team */}
                             <div className="flex items-center justify-end gap-1.5 flex-1 min-w-0 pr-3">
-                                <span className={`font-medium text-[9px] sm:text-[10px] truncate text-right px-1 ${homeWinner ? 'text-white drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`}>{m.homeTeam.name}</span>
+                                <span className={`font-medium text-[11px] sm:text-[12px] truncate text-right px-1 ${homeWinner ? 'text-white drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`}>{m.homeTeam.name}</span>
                                 {m.homeTeam.logo && (
                                     <img src={m.homeTeam.logo} alt={m.homeTeam.name} className="w-4 h-4 object-contain flex-shrink-0" />
                                 )}
@@ -149,13 +149,13 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                             {/* 3️⃣ Score with perspective-based badge */}
                             <div className="flex flex-col items-center justify-center shrink-0 w-14">
                                 <span
-                                    className="w-full text-center px-1.5 py-0.5 rounded font-bold text-[9px] sm:text-[10px]"
+                                    className="w-full text-center px-1.5 py-0.5 rounded font-bold text-[10px] sm:text-[11px]"
                                     style={{ backgroundColor: m.color, color: m.result === "D" ? "#7c2d12" : (m.result === "W" ? "#14532d" : "#7f1d1d") }}
                                 >
                                     {m.score.home} - {m.score.away}
                                 </span>
                                 {(m as any).score?.halftime && (m as any).score.halftime.home !== null && (m as any).score.halftime.away !== null && (
-                                    <span className="text-[10px] text-gray-500 mt-0.5 font-medium tracking-wide">
+                                    <span className="text-[11px] text-gray-500 mt-0.5 font-medium tracking-wide">
                                         {(m as any).score.halftime.home}-{(m as any).score.halftime.away}
                                     </span>
                                 )}
@@ -165,13 +165,13 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                                 {m.awayTeam.logo && (
                                     <img src={m.awayTeam.logo} alt={m.awayTeam.name} className="w-4 h-4 object-contain flex-shrink-0" />
                                 )}
-                                <span className={`font-medium text-[9px] sm:text-[10px] truncate text-left px-1 ${awayWinner ? 'text-white drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`}>{m.awayTeam.name}</span>
+                                <span className={`font-medium text-[11px] sm:text-[12px] truncate text-left px-1 ${awayWinner ? 'text-white drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`}>{m.awayTeam.name}</span>
                             </div>
 
                             {/* 5️⃣ League Short Name (Optional visual flair based on user reference) */}
                             {m.league && (
                                 <div className="hidden sm:flex flex-col items-end justify-center w-8 shrink-0 opacity-40 ml-auto">
-                                    <span className="text-[9px] font-bold tracking-wider uppercase whitespace-nowrap overflow-hidden text-ellipsis max-w-[40px]" title={m.league.name}>
+                                    <span className="text-[10px] font-bold tracking-wider uppercase whitespace-nowrap overflow-hidden text-ellipsis max-w-[40px]" title={m.league.name}>
                                         {m.league.name.substring(0, 3)}
                                     </span>
                                 </div>

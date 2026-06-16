@@ -103,31 +103,31 @@ const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
                             key={match.fixture.id}
                             className={`grid grid-cols-[auto_1fr_auto_1fr] md:grid-cols-4 items-center py-1 px-2 text-sm transition-colors ${bgClass} ${hoverClass}`}
                         >
-                            {/* 1️⃣ Date */}
+                             {/* 1️⃣ Date */}
                             <div className="flex flex-col items-center justify-center mr-2 w-10 shrink-0">
-                                <span className="text-gray-500 text-[10px] font-medium leading-none mb-0.5">{monthDay}</span>
-                                <span className="text-gray-600 text-[9px] leading-none">{year}</span>
+                                <span className="text-gray-500 text-[11px] font-medium leading-none mb-0.5">{monthDay}</span>
+                                <span className="text-gray-600 text-[10px] leading-none">{year}</span>
                             </div>
 
                             {/* 2️⃣ Home Team */}
-                            <div className={`font-medium text-[9px] sm:text-[10px] truncate text-right px-1 pr-3 flex-1 min-w-0 ${match.teams.home.winner ? 'text-white drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`}>
+                            <div className={`font-medium text-[11px] sm:text-[12px] truncate text-right px-1 pr-3 flex-1 min-w-0 ${match.teams.home.winner ? 'text-white drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`}>
                                 {match.teams.home.name}
                             </div>
 
                             {/* 3️⃣ Score */}
                             <div className="flex flex-col items-center justify-center shrink-0 w-14">
-                                <div className="flex justify-center w-full font-bold text-white bg-black/40 px-2 py-0.5 rounded text-[9px] sm:text-[10px]">
+                                <div className="flex justify-center w-full font-bold text-white bg-black/40 px-2 py-0.5 rounded text-[10px] sm:text-[11px]">
                                     {match.goals.home} - {match.goals.away}
                                 </div>
                                 {match.score?.halftime && match.score.halftime.home !== null && match.score.halftime.away !== null && (
-                                    <span className="text-[10px] text-gray-500 mt-0.5 font-medium tracking-wide">
+                                    <span className="text-[11px] text-gray-500 mt-0.5 font-medium tracking-wide">
                                         {match.score.halftime.home}-{match.score.halftime.away}
                                     </span>
                                 )}
                             </div>
 
                             {/* 4️⃣ Away Team */}
-                            <div className={`font-medium text-[9px] sm:text-[10px] truncate text-left px-1 pl-3 flex-1 min-w-0 ${match.teams.away.winner ? 'text-white drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`}>
+                            <div className={`font-medium text-[11px] sm:text-[12px] truncate text-left px-1 pl-3 flex-1 min-w-0 ${match.teams.away.winner ? 'text-white drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`}>
                                 {match.teams.away.name}
                             </div>
                         </div>

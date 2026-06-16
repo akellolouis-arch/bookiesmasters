@@ -128,7 +128,7 @@ const OverallStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => 
     return (
         <div className="w-full mt-1 animate-in fade-in duration-500">
             <div className="flex justify-center mb-3">
-                <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-amber-100 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold shadow-lg tracking-wide uppercase">
+                <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-amber-100 rounded-lg sm:rounded-xl text-[11px] font-bold shadow-lg tracking-wide uppercase">
                     Overall Statistics
                 </h3>
             </div>
@@ -138,13 +138,13 @@ const OverallStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => 
                 <div className="flex bg-white/5 rounded-full p-1 border border-white/10">
                     <button
                         onClick={() => setLocationMode("overall")}
-                        className={`px-4 py-1.5 rounded-full text-[9px] sm:text-[10px] font-bold transition-all ${locationMode === "overall" ? "bg-white/20 text-amber-100 shadow-inner" : "text-gray-400 hover:text-white"}`}
+                        className={`px-4 py-1.5 rounded-full text-[10px] sm:text-[11px] font-bold transition-all ${locationMode === "overall" ? "bg-white/20 text-amber-100 shadow-inner" : "text-gray-400 hover:text-white"}`}
                     >
                         Overall
                     </button>
                     <button
                         onClick={() => setLocationMode("home_away")}
-                        className={`px-4 py-1.5 rounded-full text-[9px] sm:text-[10px] font-bold transition-all ${locationMode === "home_away" ? "bg-white/20 text-amber-100 shadow-inner" : "text-gray-400 hover:text-white"}`}
+                        className={`px-4 py-1.5 rounded-full text-[10px] sm:text-[11px] font-bold transition-all ${locationMode === "home_away" ? "bg-white/20 text-amber-100 shadow-inner" : "text-gray-400 hover:text-white"}`}
                     >
                         Home/Away
                     </button>
@@ -153,7 +153,7 @@ const OverallStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => 
                 <div className="relative">
                     <button
                         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                        className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-gray-200 px-4 py-1.5 rounded-full text-[9px] sm:text-[10px] font-medium transition-all"
+                        className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-gray-200 px-4 py-1.5 rounded-full text-[10px] sm:text-[11px] font-medium transition-all"
                     >
                         {timeframeLabels[timeframe]}
                         <span className="text-[8px]">▼</span>

@@ -59,7 +59,7 @@ export default async function TopTrends() {
   }
 
   return (
-    <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto px-0 mt-2 mb-2">
+    <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto px-0 mt-2 mb-0">
       {/* Title */}
       <div className="flex items-center justify-center gap-2 mb-1.5 px-1 sm:px-0">
         <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent to-white/10" />

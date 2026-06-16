@@ -137,13 +137,13 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                                 <Image src={homeTeam?.logo} alt={homeTeam?.name} fill className="object-contain" unoptimized />
                             </div>
                         </div>
-                        <span className="mt-1.5 text-[8px] font-bold text-white capitalize text-center leading-tight break-words max-w-[100px] sm:max-w-[120px] tracking-wider px-1">{homeTeam.name}</span>
+                        <span className="mt-1.5 text-[11px] sm:text-[12px] font-bold text-white capitalize text-center leading-tight break-words max-w-[100px] sm:max-w-[120px] tracking-wider px-1">{homeTeam.name}</span>
                     </div>
 
                     {/* CENTER INFO */}
                     <div className="flex flex-col items-center justify-start mt-0 min-w-[100px] sm:min-w-[140px]">
                         {/* Date & Time */}
-                        <div className="text-[9px] sm:text-[10px] text-gray-300 font-semibold mb-2 sm:mb-4 tracking-wide whitespace-nowrap">
+                        <div className="text-[11px] sm:text-[12px] text-gray-300 font-semibold mb-2 sm:mb-4 tracking-wide whitespace-nowrap">
                             {formattedDate} <span className="ml-1">{kickoffTime}</span>
                         </div>
 
@@ -157,7 +157,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                         ) : score ? (
                             <div className="flex flex-col items-center">
                                 {status !== "NS" && (
-                                    <div className={`mb-1.5 text-[9px] sm:text-[10px] font-bold tracking-widest uppercase ${isLive ? "text-rose-500 animate-pulse" : "text-gray-400"}`}>
+                                    <div className={`mb-1.5 text-[10px] sm:text-[11px] font-bold tracking-widest uppercase ${isLive ? "text-rose-500 animate-pulse" : "text-gray-400"}`}>
                                         {status === "HT" ? "HT" : isFinished ? "FT" : (isLive && displayDate ? displayDate : status)}
                                     </div>
                                 )}
@@ -167,7 +167,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                                     <span className={`text-base sm:text-lg md:text-xl font-bold ${isLive ? "text-rose-500" : scoreColorClass}`}>{score.away}</span>
                                 </div>
                                 {score.halftime && score.halftime.home !== null && score.halftime.away !== null && (
-                                    <div className="mt-1.5 text-[9px] sm:text-[10px] text-gray-500 font-semibold tracking-wide uppercase">
+                                    <div className="mt-1.5 text-[10px] sm:text-[11px] text-gray-500 font-semibold tracking-wide uppercase">
                                         HT: {score.halftime.home} - {score.halftime.away}
                                     </div>
                                 )}
@@ -175,7 +175,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                         ) : (
                             <div className="flex flex-col items-center mt-1">
                                 {status && status !== "NS" && (
-                                    <div className="mb-1.5 text-[9px] sm:text-[10px] font-bold tracking-widest uppercase text-gray-400">
+                                    <div className="mb-1.5 text-[10px] sm:text-[11px] font-bold tracking-widest uppercase text-gray-400">
                                         {status}
                                     </div>
                                 )}
@@ -196,7 +196,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                                 <Image src={awayTeam?.logo} alt={awayTeam?.name} fill className="object-contain" unoptimized />
                             </div>
                         </div>
-                        <span className="mt-1.5 text-[8px] font-bold text-white capitalize text-center leading-tight break-words max-w-[100px] sm:max-w-[120px] tracking-wider px-1">{awayTeam.name}</span>
+                        <span className="mt-1.5 text-[11px] sm:text-[12px] font-bold text-white capitalize text-center leading-tight break-words max-w-[100px] sm:max-w-[120px] tracking-wider px-1">{awayTeam.name}</span>
                     </div>
                 </div>
 
