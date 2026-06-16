@@ -103,8 +103,8 @@ export default function FixtureCard({
         }}
         className="cursor-pointer block bg-[#121212] border border-white/5 rounded-none py-1 px-1.5 sm:py-1.5 sm:px-2 hover:border-white/10 transition-all duration-300 flex flex-col no-underline text-inherit"
       >
-        {/* Matchup Header (Slick TopTrends style) */}
-        <div className="flex items-center justify-between mb-0.5 bg-white/5 rounded-none py-0.5 px-1 sm:py-1 sm:px-1.5">
+        {/* Matchup Header */}
+        <div className="flex items-center justify-between w-full mb-1">
           {/* HOME TEAM */}
           <div className="flex items-center justify-start gap-1.5 flex-1 min-w-0">
             <Image src={homeTeam.logo} alt={homeTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
@@ -123,8 +123,8 @@ export default function FixtureCard({
           </div>
         </div>
 
-        {/* BOTTOM STRIP (Flat & Flush) */}
-        <div className="w-full flex items-center justify-between px-1.5 py-0 mt-0">
+        {/* BOTTOM STRIP (Flat & Flush - Housed in bg-white/5 block) */}
+        <div className="w-full flex items-center justify-between bg-white/5 rounded-none py-0.5 px-1 sm:py-1 sm:px-1.5 mt-0.5">
           {/* LEFT: STATUS */}
           <div className={`text-[9px] sm:text-[10px] font-bold uppercase w-24 text-left leading-none tracking-widest ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
             {status}
