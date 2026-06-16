@@ -77,7 +77,7 @@ export default async function TopTrends() {
           return (
             <div
               key={match.fixtureId}
-              className="bg-[#121212] border border-white/5 rounded-lg p-1.5 sm:p-2 hover:border-white/10 transition-all duration-300"
+              className="bg-[#121212] border border-white/5 rounded-none p-1.5 sm:p-2 hover:border-white/10 transition-all duration-300"
             >
               {/* League Header */}
               <div className="flex items-center gap-1 mb-1">
@@ -145,7 +145,7 @@ export default async function TopTrends() {
               <div className="flex justify-end mt-0.5">
                 <Link
                   href={`/prediction/${match.fixtureId}`}
-                  className="inline-flex items-center gap-0.5 text-[8px] font-bold text-amber-100/70 hover:text-amber-100 transition-colors uppercase tracking-wider bg-white/5 hover:bg-white/10 px-2 py-0.5 rounded-lg"
+                  className="inline-flex items-center gap-0.5 text-[8px] font-bold text-amber-100/70 hover:text-amber-100 transition-colors uppercase tracking-wider bg-white/5 hover:bg-white/10 px-2 py-0.5 rounded-none"
                 >
                   View Details →
                 </Link>
