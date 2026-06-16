@@ -123,20 +123,20 @@ export default function FixtureCard({
           </div>
         </div>
 
-        {/* BOTTOM STRIP (Flat & Flush - Housed in three separate pills) */}
+        {/* BOTTOM STRIP (Flat & Flush - Content-sized rounded pills) */}
         <div className="w-full flex items-center justify-between gap-1 sm:gap-1.5 mt-1">
           {/* LEFT: STATUS */}
-          <div className={`w-24 text-center bg-white/5 rounded-lg py-0.5 px-1 sm:py-1 sm:px-1.5 text-[10px] font-bold uppercase leading-none tracking-widest ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
+          <div className={`px-2 py-0.5 bg-white/5 rounded-lg text-[10px] font-bold uppercase leading-none tracking-widest ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
             {status}
           </div>
 
           {/* MIDDLE: SCORE */}
-          <div className={`flex-1 text-center bg-white/5 rounded-lg py-0.5 px-1 sm:py-1 sm:px-1.5 text-[10px] font-bold leading-none tracking-widest ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
+          <div className={`px-2 py-0.5 bg-white/5 rounded-lg text-[10px] font-bold leading-none tracking-widest ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
             {score ? score.replace(" - ", "-") : "-"}
           </div>
 
           {/* RIGHT: PREDICTION */}
-          <div className="w-24 text-center bg-white/5 rounded-lg py-0.5 px-1 sm:py-1 sm:px-1.5 text-[10px] font-bold uppercase tracking-widest leading-none">
+          <div className="px-2 py-0.5 bg-white/5 rounded-lg text-[10px] font-bold uppercase tracking-widest leading-none">
             {prediction ? (
               <span className={predictionColorClass}>
                 {prediction}
