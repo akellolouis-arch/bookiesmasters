@@ -158,11 +158,11 @@ export default async function PredictionsPage({
       </Suspense>
 
       <Suspense fallback={<div className="p-4"></div>}>
-        <PredictionsList initialData={initialData} date={date} />
-      </Suspense>
-
-      <Suspense fallback={<div className="h-20 w-full" />}>
-        <TopTrends />
+        <PredictionsList initialData={initialData} date={date}>
+          <Suspense fallback={<div className="h-20 w-full" />}>
+            <TopTrends />
+          </Suspense>
+        </PredictionsList>
       </Suspense>
     </>
   );

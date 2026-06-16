@@ -61,6 +61,7 @@ const fetcher = (url: string) =>
 interface PredictionsListProps {
   initialData: LeagueGroup[];
   date: string;
+  children?: React.ReactNode;
 }
 
 // ------------------------------
@@ -69,6 +70,7 @@ interface PredictionsListProps {
 export default function PredictionsList({
   initialData,
   date,
+  children,
 }: PredictionsListProps) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -156,7 +158,7 @@ export default function PredictionsList({
 
   if (!mounted) {
     return (
-      <div className="min-h-[70vh] flex items-center justify-center">
+      <div className="min-h-[70vh] flex items-center justify-center global-loader">
         <Loader />
       </div>
     );
@@ -166,7 +168,7 @@ export default function PredictionsList({
   const isFetchingInitial = isLoading || (!safeData || safeData.length === 0) && isValidating;
   if (isFetchingInitial) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center p-8">
+      <div className="min-h-[70vh] flex flex-col items-center justify-center p-8 global-loader">
         <Loader />
       </div>
     );
@@ -229,6 +231,8 @@ export default function PredictionsList({
           </div>
         ));
       })()}
+
+      {children}
     </div>
   );
 }

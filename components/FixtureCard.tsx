@@ -107,7 +107,7 @@ export default function FixtureCard({
         <div className="flex items-center justify-between w-full">
           {/* HOME TEAM */}
           <div className="flex items-center justify-end gap-1.5 flex-1 min-w-0">
-            <span className="font-medium text-[9px] sm:text-[10px] truncate text-white text-right px-1">{homeTeam.name}</span>
+            <span className="font-medium text-[11px] sm:text-[12px] truncate text-white text-right px-1">{homeTeam.name}</span>
             <Image src={homeTeam.logo} alt={homeTeam.name} width={16} height={16} className="w-4 h-4 object-contain shrink-0 drop-shadow-sm" unoptimized />
           </div>
 
@@ -121,7 +121,7 @@ export default function FixtureCard({
           {/* AWAY TEAM */}
           <div className="flex items-center justify-start gap-1.5 flex-1 min-w-0">
             <Image src={awayTeam.logo} alt={awayTeam.name} width={16} height={16} className="w-4 h-4 object-contain shrink-0 drop-shadow-sm" unoptimized />
-            <span className="font-medium text-[9px] sm:text-[10px] truncate text-white text-left px-1">{awayTeam.name}</span>
+            <span className="font-medium text-[11px] sm:text-[12px] truncate text-white text-left px-1">{awayTeam.name}</span>
           </div>
         </div>
 
