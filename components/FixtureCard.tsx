@@ -104,22 +104,22 @@ export default function FixtureCard({
         className="cursor-pointer block bg-[#121212] border border-white/5 rounded-none py-1 px-1.5 sm:py-1.5 sm:px-2 hover:border-white/10 transition-all duration-300 flex flex-col no-underline text-inherit"
       >
         {/* Matchup Header */}
-        <div className="flex items-center justify-between w-full mb-1">
+        <div className="grid grid-cols-[1fr_auto_1fr] items-center w-full mb-1 gap-1">
           {/* HOME TEAM */}
-          <div className="flex items-center justify-start gap-1.5 flex-1 min-w-0">
+          <div className="flex items-center justify-end gap-1.5 min-w-0">
+            <span className="font-medium text-[11px] sm:text-[12px] truncate text-gray-200 capitalize text-right">{homeTeam.name}</span>
             <Image src={homeTeam.logo} alt={homeTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
-            <span className="font-medium text-[11px] sm:text-[12px] truncate text-gray-200 capitalize">{homeTeam.name}</span>
           </div>
 
           {/* KICKOFF / VS CENTER BOX */}
-          <span className="text-[9px] sm:text-[10px] font-bold text-gray-500 px-2 shrink-0">
+          <span className="text-[9px] sm:text-[10px] font-bold text-gray-500 px-2 shrink-0 text-center min-w-[32px]">
             {kickoffTime || "VS"}
           </span>
 
           {/* AWAY TEAM */}
-          <div className="flex items-center justify-end gap-1.5 flex-1 min-w-0">
-            <span className="font-medium text-[11px] sm:text-[12px] truncate text-gray-200 text-right capitalize">{awayTeam.name}</span>
+          <div className="flex items-center justify-start gap-1.5 min-w-0">
             <Image src={awayTeam.logo} alt={awayTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
+            <span className="font-medium text-[11px] sm:text-[12px] truncate text-gray-200 capitalize text-left">{awayTeam.name}</span>
           </div>
         </div>
 

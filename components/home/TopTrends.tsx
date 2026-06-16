@@ -94,33 +94,36 @@ export default async function TopTrends() {
               </div>
 
               {/* Match Teams Header */}
-              <div className="flex items-center justify-between w-full mb-1">
-                <div className="flex items-center gap-1.5 truncate">
+              <div className="grid grid-cols-[1fr_auto_1fr] items-center w-full mb-1 gap-1">
+                {/* HOME TEAM */}
+                <div className="flex items-center justify-end gap-1.5 min-w-0">
+                  <span className="text-[9px] sm:text-[10px] font-semibold text-gray-200 truncate capitalize text-right">
+                    {match.homeTeam.name}
+                  </span>
                   {match.homeTeam.logo && (
                     <img
                       src={match.homeTeam.logo}
                       alt={match.homeTeam.name}
-                      className="w-3.5 h-3.5 object-contain"
+                      className="w-3.5 h-3.5 object-contain shrink-0"
                     />
                   )}
-                  <span className="text-[9px] sm:text-[10px] font-semibold text-gray-200 truncate capitalize">
-                    {match.homeTeam.name}
-                  </span>
                 </div>
                 
-                <span className="text-[8px] font-bold text-gray-500 px-1">VS</span>
+                {/* VS */}
+                <span className="text-[8px] font-bold text-gray-500 px-1 text-center min-w-[20px]">VS</span>
 
-                <div className="flex items-center gap-1.5 truncate">
-                  <span className="text-[9px] sm:text-[10px] font-semibold text-gray-200 truncate capitalize">
-                    {match.awayTeam.name}
-                  </span>
+                {/* AWAY TEAM */}
+                <div className="flex items-center justify-start gap-1.5 min-w-0">
                   {match.awayTeam.logo && (
                     <img
                       src={match.awayTeam.logo}
                       alt={match.awayTeam.name}
-                      className="w-3.5 h-3.5 object-contain"
+                      className="w-3.5 h-3.5 object-contain shrink-0"
                     />
                   )}
+                  <span className="text-[9px] sm:text-[10px] font-semibold text-gray-200 truncate capitalize text-left">
+                    {match.awayTeam.name}
+                  </span>
                 </div>
               </div>
 
