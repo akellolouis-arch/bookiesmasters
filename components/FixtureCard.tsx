@@ -101,7 +101,7 @@ export default function FixtureCard({
             });
           }
         }}
-        className="cursor-pointer block bg-[#121212] border border-white/5 rounded-none py-1 px-1.5 sm:py-1.5 sm:px-2 hover:border-white/10 transition-all duration-300 flex flex-col no-underline text-inherit"
+        className="cursor-pointer block bg-[#121212] border border-white/5 rounded-lg py-1 px-1.5 sm:py-1.5 sm:px-2 hover:border-white/10 transition-all duration-300 flex flex-col no-underline text-inherit"
       >
         {/* Matchup Header */}
         <div className="flex items-center justify-between w-full mb-1">
@@ -124,7 +124,7 @@ export default function FixtureCard({
         </div>
 
         {/* BOTTOM STRIP (Flat & Flush - Housed in bg-white/5 block) */}
-        <div className="w-full flex items-center justify-between bg-white/5 rounded-none py-0.5 px-1 sm:py-1 sm:px-1.5 mt-0.5">
+        <div className="w-full flex items-center justify-between bg-white/5 rounded-lg py-0.5 px-1 sm:py-1 sm:px-1.5 mt-0.5">
           {/* LEFT: STATUS */}
           <div className={`text-[9px] sm:text-[10px] font-bold uppercase w-24 text-left leading-none tracking-widest ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
             {status}
