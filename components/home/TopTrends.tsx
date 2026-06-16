@@ -94,7 +94,7 @@ export default async function TopTrends() {
               </div>
 
               {/* Match Teams Header */}
-              <div className="flex items-center justify-between mb-1.5 bg-white/5 rounded-none p-1 sm:p-1.5">
+              <div className="flex items-center justify-between w-full mb-1">
                 <div className="flex items-center gap-1.5 truncate">
                   {match.homeTeam.logo && (
                     <img
@@ -124,7 +124,7 @@ export default async function TopTrends() {
                 </div>
               </div>
 
-              {/* Match Introduction Narrative (No background, flat edges, tight padding/margins) */}
+              {/* Match Introduction Narrative (Housed in bg-white/5 block) */}
               <MatchIntroduction
                 homeTeamName={match.homeTeam.name}
                 awayTeamName={match.awayTeam.name}
@@ -135,10 +135,10 @@ export default async function TopTrends() {
                 status={match.status}
                 score={match.score}
                 computedTip={formattedTip}
-                bg="bg-transparent"
+                bg="bg-white/5"
                 rounded="rounded-none"
-                padding="p-0"
-                margin="mb-0"
+                padding="py-0.5 px-1 sm:py-1 sm:px-1.5"
+                margin="mb-0 mt-0.5"
               />
 
               {/* View Full Analysis Link */}
