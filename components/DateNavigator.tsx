@@ -99,7 +99,7 @@ export default function DateNavigator({ date }: Props) {
 
           <Link
             href="/live"
-            className="shrink-0 w-10 flex flex-col items-center justify-center text-[10px] font-medium transition-colors text-white bg-[#1F1F1F] hover:bg-[#2F2F2F]"
+            className="shrink-0 w-10 flex flex-col items-center justify-center text-[10px] font-bold transition-colors text-white bg-[#1F1F1F] hover:bg-[#2F2F2F]"
           >
             LIVE
           </Link>
@@ -131,8 +131,8 @@ export default function DateNavigator({ date }: Props) {
                     : "text-gray-500 hover:bg-[#252525] hover:text-gray-300"
                     }`}
                 >
-                  <span className="text-[10px] font-medium uppercase leading-tight">{dayName}</span>
-                  <span className="text-[10px] font-medium leading-tight opacity-90">{dateStr}</span>
+                  <span className="text-[10px] font-bold uppercase leading-tight">{dayName}</span>
+                  <span className="text-[10px] font-bold leading-tight opacity-90">{dateStr}</span>
                 </button>
               );
             })}
@@ -160,7 +160,7 @@ export default function DateNavigator({ date }: Props) {
                   clearSearch();
                   setIsSearchOpen(false);
                 }}
-                className="w-9 flex items-center justify-center text-gray-300 hover:bg-[#2F2F2F] transition-colors text-xs font-medium"
+                className="w-9 flex items-center justify-center text-gray-300 hover:bg-[#2F2F2F] transition-colors text-xs font-bold"
                 aria-label="Close search"
               >
                 ×
