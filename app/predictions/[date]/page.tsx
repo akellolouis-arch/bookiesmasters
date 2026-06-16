@@ -1,5 +1,6 @@
 import PredictionsList from "./predictionList";
 import DateNavigator from "@/components/DateNavigator";
+import TopTrends from "@/components/home/TopTrends";
 import { Suspense } from "react";
 
 
@@ -158,6 +159,10 @@ export default async function PredictionsPage({
 
       <Suspense fallback={<div className="p-4"></div>}>
         <PredictionsList initialData={initialData} date={date} />
+      </Suspense>
+
+      <Suspense fallback={<div className="h-20 w-full" />}>
+        <TopTrends />
       </Suspense>
     </>
   );

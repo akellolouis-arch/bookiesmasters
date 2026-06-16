@@ -36,7 +36,7 @@ export default function Footer() {
               <Mail size={14} strokeWidth={1.5} />
             </a>
             <a
-              href="https://www.facebook.com/profile.php?id=61556994182742"
+              href="https://m.facebook.com/profile.php?id=61586995581547"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-white transition-colors"

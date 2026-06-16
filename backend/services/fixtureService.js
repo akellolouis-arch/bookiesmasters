@@ -169,3 +169,33 @@ export const getFixtureById = async (fixtureId) => {
         throw error;
     }
 };
+
+export const getTopTrends = async () => {
+    try {
+        const now = new Date();
+        const upcoming = await Fixture.find({
+            "fixture.fixture.date": { $gte: now.toISOString() },
+            predictionTip: { $exists: true, $nin: ["NONE", null] }
+        }, { fixtureId: 1 }).lean();
+
+        if (!upcoming || upcoming.length === 0) {
+            return [];
+        }
+
+        const shuffled = upcoming.sort(() => 0.5 - Math.random());
+        const selected = shuffled.slice(0, 5);
+
+        const hydrated = await Promise.all(
+            selected.map(item => getFixtureById(item.fixtureId).catch(err => {
+                console.error(`Error hydrating fixture ${item.fixtureId}:`, err);
+                return null;
+            }))
+        );
+
+        return hydrated.filter(item => item !== null);
+    } catch (error) {
+        console.error("Error in getTopTrends service:", error);
+        throw error;
+    }
+};
+
