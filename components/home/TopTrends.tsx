@@ -145,7 +145,7 @@ export default async function TopTrends() {
               <div className="flex justify-end mt-0.5">
                 <Link
                   href={`/prediction/${match.fixtureId}`}
-                  className="inline-flex items-center gap-0.5 text-[8px] font-bold text-amber-100/70 hover:text-amber-100 transition-colors uppercase tracking-wider bg-white/5 hover:bg-white/10 px-2 py-0.5 rounded-none"
+                  className="inline-flex items-center gap-0.5 text-[8px] font-bold text-amber-100/70 hover:text-amber-100 transition-colors uppercase tracking-wider bg-white/5 hover:bg-white/10 px-2 py-0.5 rounded-lg"
                 >
                   View Details →
                 </Link>
