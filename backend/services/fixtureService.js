@@ -183,7 +183,7 @@ export const getTopTrends = async () => {
         }
 
         const shuffled = upcoming.sort(() => 0.5 - Math.random());
-        const selected = shuffled.slice(0, 5);
+        const selected = shuffled.slice(0, 7);
 
         const hydrated = await Promise.all(
             selected.map(item => getFixtureById(item.fixtureId).catch(err => {
