@@ -1,9 +1,38 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Facebook, Send, Mail } from "lucide-react";
 import Link from "next/link";
 
 export default function Footer() {
+  const [mounted, setMounted] = useState(false);
+  const [shouldShow, setShouldShow] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+
+    const checkLoader = () => {
+      const loader = document.querySelector(".global-loader");
+      setShouldShow(!loader);
+    };
+
+    // Initial check
+    checkLoader();
+
+    // Set up MutationObserver to watch for when the loader is added/removed
+    const observer = new MutationObserver(checkLoader);
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  if (!mounted || !shouldShow) {
+    return null;
+  }
+
   return (
     <footer className="bg-[#1F1F1F] text-gray-400 text-[11px] font-semibold md:justify-center px-1 pt-1 pb-3 md:pt-2 md:pb-4 border-t border-white/5">
       {/* Main section */}
