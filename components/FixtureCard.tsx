@@ -108,7 +108,7 @@ export default function FixtureCard({
           {/* HOME TEAM */}
           <div className="flex items-center justify-start gap-1.5 flex-1 min-w-0">
             <Image src={homeTeam.logo} alt={homeTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
-            <span className="font-normal text-[11px] sm:text-[12px] truncate text-gray-200 capitalize">{homeTeam.name}</span>
+            <span className="font-medium text-[11px] sm:text-[12px] truncate text-gray-200 capitalize">{homeTeam.name}</span>
           </div>
 
           {/* KICKOFF / VS CENTER BOX */}
@@ -118,7 +118,7 @@ export default function FixtureCard({
 
           {/* AWAY TEAM */}
           <div className="flex items-center justify-end gap-1.5 flex-1 min-w-0">
-            <span className="font-normal text-[11px] sm:text-[12px] truncate text-gray-200 text-right capitalize">{awayTeam.name}</span>
+            <span className="font-medium text-[11px] sm:text-[12px] truncate text-gray-200 text-right capitalize">{awayTeam.name}</span>
             <Image src={awayTeam.logo} alt={awayTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
           </div>
         </div>
