@@ -152,7 +152,7 @@ export default function DateNavigator({ date }: Props) {
                 className="w-9 flex items-center justify-center text-white hover:bg-[#2F2F2F] transition-colors"
                 aria-label="Search fixtures"
               >
-                <Search size={14} />
+                <Search size={14} strokeWidth={2.5} />
               </button>
               <button
                 type="button"
@@ -173,7 +173,7 @@ export default function DateNavigator({ date }: Props) {
               className="shrink-0 w-10 flex items-center justify-center text-white hover:bg-[#2F2F2F] transition-colors bg-[#1F1F1F]"
               aria-label="Open fixture search"
             >
-              <Search size={14} />
+              <Search size={14} strokeWidth={2.5} />
             </button>
           )}
 
