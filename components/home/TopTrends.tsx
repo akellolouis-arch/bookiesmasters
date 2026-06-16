@@ -59,32 +59,33 @@ export default async function TopTrends() {
   }
 
   return (
-    <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto px-2 sm:px-1 md:px-4 mt-4 mb-4">
+    <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto px-0 mt-2 mb-2">
       {/* Title */}
-      <div className="flex items-center gap-1.5 mb-2">
-        <span className="text-[9px] font-bold text-amber-100/90 tracking-wider uppercase">
+      <div className="flex items-center justify-center gap-2 mb-1.5 px-1 sm:px-0">
+        <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent to-white/10" />
+        <span className="text-[9px] font-bold text-amber-100/90 tracking-wider uppercase whitespace-nowrap">
           top trends
         </span>
         <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent" />
       </div>
 
       {/* Cards List */}
-      <div className="space-y-2">
+      <div className="space-y-1">
         {trends.map((match) => {
           const formattedTip = match.tip || "";
           
           return (
             <div
               key={match.fixtureId}
-              className="bg-[#121212] border border-white/5 rounded-none p-2 sm:p-2.5 hover:border-white/10 transition-all duration-300"
+              className="bg-[#121212] border border-white/5 rounded-none p-1.5 sm:p-2 hover:border-white/10 transition-all duration-300"
             >
               {/* League Header */}
-              <div className="flex items-center gap-1 mb-1.5">
+              <div className="flex items-center gap-1 mb-1">
                 {match.leagueLogo && (
                   <img
                     src={match.leagueLogo}
                     alt={match.league}
-                    className="w-3 h-3 object-contain opacity-70"
+                    className="w-3.5 h-3.5 object-contain opacity-70"
                   />
                 )}
                 <span className="text-[8px] text-gray-500 font-medium tracking-wide uppercase">
@@ -93,7 +94,7 @@ export default async function TopTrends() {
               </div>
 
               {/* Match Teams Header */}
-              <div className="flex items-center justify-between mb-2 bg-white/5 rounded-none p-1.5">
+              <div className="flex items-center justify-between mb-1.5 bg-white/5 rounded-none p-1 sm:p-1.5">
                 <div className="flex items-center gap-1.5 truncate">
                   {match.homeTeam.logo && (
                     <img
@@ -137,11 +138,11 @@ export default async function TopTrends() {
                 bg="bg-transparent"
                 rounded="rounded-none"
                 padding="p-0"
-                margin="mb-1"
+                margin="mb-0"
               />
 
               {/* View Full Analysis Link */}
-              <div className="flex justify-end mt-1">
+              <div className="flex justify-end mt-0.5">
                 <Link
                   href={`/prediction/${match.fixtureId}`}
                   className="inline-flex items-center gap-0.5 text-[8px] font-bold text-amber-100/70 hover:text-amber-100 transition-colors uppercase tracking-wider bg-white/5 hover:bg-white/10 px-2 py-0.5 rounded-none"
