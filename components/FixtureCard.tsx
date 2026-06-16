@@ -101,14 +101,14 @@ export default function FixtureCard({
             });
           }
         }}
-        className="cursor-pointer block bg-[#121212] border border-white/5 rounded-none p-1.5 sm:p-2 hover:border-white/10 transition-all duration-300 flex flex-col no-underline text-inherit"
+        className="cursor-pointer block bg-[#121212] border border-white/5 rounded-none py-1 px-1.5 sm:py-1.5 sm:px-2 hover:border-white/10 transition-all duration-300 flex flex-col no-underline text-inherit"
       >
         {/* Matchup Header (Slick TopTrends style) */}
-        <div className="flex items-center justify-between mb-1.5 bg-white/5 rounded-none p-1 sm:p-1.5">
+        <div className="flex items-center justify-between mb-0.5 bg-white/5 rounded-none py-0.5 px-1 sm:py-1 sm:px-1.5">
           {/* HOME TEAM */}
           <div className="flex items-center justify-start gap-1.5 flex-1 min-w-0">
             <Image src={homeTeam.logo} alt={homeTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
-            <span className="font-semibold text-[11px] sm:text-[12px] truncate text-gray-200 capitalize">{homeTeam.name}</span>
+            <span className="font-normal text-[11px] sm:text-[12px] truncate text-gray-200 capitalize">{homeTeam.name}</span>
           </div>
 
           {/* KICKOFF / VS CENTER BOX */}
@@ -118,7 +118,7 @@ export default function FixtureCard({
 
           {/* AWAY TEAM */}
           <div className="flex items-center justify-end gap-1.5 flex-1 min-w-0">
-            <span className="font-semibold text-[11px] sm:text-[12px] truncate text-gray-200 text-right capitalize">{awayTeam.name}</span>
+            <span className="font-normal text-[11px] sm:text-[12px] truncate text-gray-200 text-right capitalize">{awayTeam.name}</span>
             <Image src={awayTeam.logo} alt={awayTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
           </div>
         </div>
