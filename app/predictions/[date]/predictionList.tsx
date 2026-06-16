@@ -234,9 +234,7 @@ export default function PredictionsList({
       })()}
 
       {children}
-      <div className="mt-8">
-        <Footer />
-      </div>
+      <Footer />
     </div>
   );
 }
