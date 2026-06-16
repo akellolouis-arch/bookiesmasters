@@ -5,14 +5,14 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-[#1F1F1F] text-gray-400 text-[11px] font-medium md:justify-center px-1 pt-1 pb-3 md:pt-2 md:pb-4 border-t border-white/5">
+    <footer className="bg-[#1F1F1F] text-gray-400 text-[11px] font-semibold md:justify-center px-1 pt-1 pb-3 md:pt-2 md:pb-4 border-t border-white/5">
       {/* Main section */}
       <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-4 md:text-center">
 
 
         {/* Brand */}
         <div>
-          <h5 className="text-[11px] font-medium text-gray-300 tracking-wider">Bookiesmasters</h5>
+          <h5 className="text-[11px] font-semibold text-gray-300 tracking-wider">Bookiesmasters</h5>
           <p className="text-[11px] leading-snug text-gray-400 text-justify">
             Get instant access to premium football analytics, livescores, market probabilities, match events, and expert insights.
           </p>
@@ -23,7 +23,7 @@ export default function Footer() {
 
         {/* Contact + Socials */}
         <div>
-          <h5 className="text-[11px] font-medium text-gray-300 tracking-wider">Stay connected</h5>
+          <h5 className="text-[11px] font-semibold text-gray-300 tracking-wider">Stay connected</h5>
           <p className="text-[11px] text-gray-400">
             Have questions? Reach us anytime.
           </p>
@@ -66,7 +66,7 @@ export default function Footer() {
 
         {/* Quick Links */}
         <div>
-          <h5 className="text-[11px] font-medium text-gray-300 tracking-wider">Quick links</h5>
+          <h5 className="text-[11px] font-semibold text-gray-300 tracking-wider">Quick links</h5>
           <ul className="text-[11px] space-y-0.5">
 
             <li>
@@ -94,7 +94,7 @@ export default function Footer() {
 
         {/* Partners (Temporarily Hidden for Payment Gateway Review)
         <div className="space-y-1.5">
-          <h5 className="text-sm font-bold text-gray-300 tracking-wider">Betting sites</h5>
+          <h5 className="text-sm font-semibold text-gray-300 tracking-wider">Betting sites</h5>
           <ul className="text-xs space-y-1">
             <li>
               <a href="https://reffpa.com/L?tag=d_5148910m_97c_telegram&site=5148910&ad=97&r=registration" target="_blank" rel="noopener noreferrer" className="hover:text-teal-400 transition-colors">
@@ -112,7 +112,7 @@ export default function Footer() {
       </div>
 
       {/* Footer bottom */}
-      <div className="text-center text-gray-600 text-[10px] mt-2 tracking-widest">
+      <div className="text-center text-gray-600 text-[11px] mt-2 tracking-widest">
         © {new Date().getFullYear()} Bookiesmasters. All rights reserved.
       </div>
     </footer>
