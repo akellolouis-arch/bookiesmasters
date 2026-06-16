@@ -131,7 +131,7 @@ export default function FixtureCard({
           </div>
 
           {/* MIDDLE: SCORE */}
-          <div className={`px-2 py-0.5 bg-white/5 rounded-lg text-[10px] font-bold leading-none tracking-widest ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
+          <div className={`px-4 py-0.5 bg-white/5 rounded-lg text-[10px] font-bold leading-none tracking-widest ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
             {score ? score.replace(" - ", "-") : "-"}
           </div>
 
