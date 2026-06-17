@@ -1,6 +1,5 @@
 import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
-import { MongoDBAdapter } from "@auth/mongodb-adapter"
 import clientPromise from "./lib/mongodb"
 import fs from "fs"
 
@@ -15,8 +14,8 @@ console.log("DEBUG: First 5 chars ID:", clientId.substring(0, 5));
 console.log("---------------------------------------------------");
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-    adapter: MongoDBAdapter(clientPromise),
     secret: process.env.AUTH_SECRET,
+    session: { strategy: "jwt" },
     trustHost: true,
     providers: [
         Google({
@@ -37,26 +36,64 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     debug: true,
     callbacks: {
-        async session({ session, user, token }) {
-            // Pass the user's ID, VIP status, and Role to the session
-            if (session.user) {
-                // If using database strategy, 'user' is populated. If JWT, 'token' might be used.
-                const userId = user?.id || token?.sub;
-                const dbUser = user || token;
+        async signIn({ user, account, profile }) {
+            try {
+                if (!user.email) return false;
                 
-                session.user.id = userId as string;
-                // @ts-ignore - Valid dynamic properties from DB
-                session.user.isVip = dbUser?.isVip || false;
+                const client = await clientPromise;
+                const db = client.db('test');
+                const users = db.collection('users');
+                
+                const existingUser = await users.findOne({ email: user.email });
+                if (!existingUser) {
+                    await users.insertOne({
+                        name: user.name,
+                        email: user.email,
+                        image: user.image,
+                        role: user.email === 'emoitakelo@gmail.com' ? 'admin' : 'user',
+                        isVip: false,
+                        vipExpiry: null,
+                        createdAt: new Date(),
+                        updatedAt: new Date()
+                    });
+                }
+                return true;
+            } catch (err) {
+                console.error("NextAuth SignIn DB Error:", err);
+                // Allow sign in even if DB connection is slightly delayed or fails
+                return true;
+            }
+        },
+        async jwt({ token, user, trigger, session }) {
+            // Fetch the latest user info from the database to inject into token
+            if (token.email) {
+                try {
+                    const client = await clientPromise;
+                    const db = client.db('test');
+                    const dbUser = await db.collection('users').findOne({ email: token.email });
+                    
+                    if (dbUser) {
+                        token.sub = dbUser._id.toString();
+                        token.isVip = dbUser.isVip || false;
+                        token.role = dbUser.role || 'user';
+                        token.vipExpiry = dbUser.vipExpiry || null;
+                    }
+                } catch (err) {
+                    console.error("NextAuth JWT DB fetch Error:", err);
+                }
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            // Pass the token properties to the session
+            if (session.user) {
+                session.user.id = token.sub as string;
                 // @ts-ignore
-                session.user.role = dbUser?.role || (session.user.email === 'emoitakelo@gmail.com' ? 'admin' : 'user');
+                session.user.isVip = token.isVip || false;
                 // @ts-ignore
-                session.user.vipExpiry = dbUser?.vipExpiry || null;
+                session.user.role = token.role || (session.user.email === 'emoitakelo@gmail.com' ? 'admin' : 'user');
                 // @ts-ignore
-                session.user.stripeCustomerId = dbUser?.stripeCustomerId;
-                // @ts-ignore
-                session.user.credits = dbUser?.credits || 0;
-                // @ts-ignore
-                session.user.unlockedTips = dbUser?.unlockedTips || [];
+                session.user.vipExpiry = token.vipExpiry || null;
             }
             return session
         },
