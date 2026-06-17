@@ -49,24 +49,20 @@ export default function Navbar() {
               {link.name}
             </Link>
           ))}
-          <a
-            href="https://t.me/+HmtKbG-pVAA1ZTg0"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href="/pro"
             className="px-4 py-1.5 bg-[#1F1F1F] border border-[#63FF79]/30 text-[#63FF79] font-bold rounded-full text-xs hover:scale-105 transition-transform shadow-[0_0_10px_rgba(99,255,121,0.15)]"
           >
             GO PRO
-          </a>
+          </Link>
         </div>
 
-        <a
-          href="https://t.me/+HmtKbG-pVAA1ZTg0"
-          target="_blank"
-          rel="noopener noreferrer"
+        <Link
+          href="/pro"
           className="flex md:hidden items-center justify-center shrink-0 px-3 py-1 bg-[#1F1F1F] border border-[#63FF79]/30 text-[#63FF79] font-bold tracking-wide rounded-full text-[10px] shadow-[0_0_8px_rgba(99,255,121,0.15)]"
         >
           GO PRO
-        </a>
+        </Link>
       </div>
 
     </nav>

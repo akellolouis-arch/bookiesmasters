@@ -5,6 +5,7 @@ import "./globals.css";
 
 
 import Navbar from "@/components/Navbar";
+import { Providers } from "@/components/Providers";
 
 
 const montserrat = Montserrat({
@@ -109,8 +110,10 @@ export default function RootLayout({
           `}
         </Script>
 
-        <Navbar />
-        <main className="flex-1">{children}</main>
+        <Providers>
+          <Navbar />
+          <main className="flex-1">{children}</main>
+        </Providers>
       </body>
     </html>
   );

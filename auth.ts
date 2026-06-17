@@ -36,11 +36,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     callbacks: {
         async session({ session, user }) {
-            // Pass the user's ID and VIP status to the session
+            // Pass the user's ID, VIP status, and Role to the session
             if (session.user) {
                 session.user.id = user.id;
                 // @ts-ignore - Valid dynamic properties from DB
                 session.user.isVip = user.isVip || false;
+                // @ts-ignore
+                session.user.role = user.role || (user.email === 'emoitakelo@gmail.com' ? 'admin' : 'user');
+                // @ts-ignore
+                session.user.vipExpiry = user.vipExpiry || null;
                 // @ts-ignore
                 session.user.stripeCustomerId = user.stripeCustomerId;
                 // @ts-ignore
