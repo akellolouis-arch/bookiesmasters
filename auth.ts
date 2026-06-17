@@ -15,6 +15,8 @@ console.log("---------------------------------------------------");
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
     adapter: MongoDBAdapter(clientPromise),
+    secret: process.env.AUTH_SECRET,
+    trustHost: true,
     providers: [
         Google({
             clientId: clientId,
@@ -35,22 +37,26 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         },
     },
     callbacks: {
-        async session({ session, user }) {
+        async session({ session, user, token }) {
             // Pass the user's ID, VIP status, and Role to the session
             if (session.user) {
-                session.user.id = user.id;
+                // If using database strategy, 'user' is populated. If JWT, 'token' might be used.
+                const userId = user?.id || token?.sub;
+                const dbUser = user || token;
+                
+                session.user.id = userId as string;
                 // @ts-ignore - Valid dynamic properties from DB
-                session.user.isVip = user.isVip || false;
+                session.user.isVip = dbUser?.isVip || false;
                 // @ts-ignore
-                session.user.role = user.role || (user.email === 'emoitakelo@gmail.com' ? 'admin' : 'user');
+                session.user.role = dbUser?.role || (session.user.email === 'emoitakelo@gmail.com' ? 'admin' : 'user');
                 // @ts-ignore
-                session.user.vipExpiry = user.vipExpiry || null;
+                session.user.vipExpiry = dbUser?.vipExpiry || null;
                 // @ts-ignore
-                session.user.stripeCustomerId = user.stripeCustomerId;
+                session.user.stripeCustomerId = dbUser?.stripeCustomerId;
                 // @ts-ignore
-                session.user.credits = user.credits || 0;
+                session.user.credits = dbUser?.credits || 0;
                 // @ts-ignore
-                session.user.unlockedTips = user.unlockedTips || [];
+                session.user.unlockedTips = dbUser?.unlockedTips || [];
             }
             return session
         },
