@@ -12,10 +12,10 @@ let client: MongoClient;
 let clientPromise: Promise<MongoClient>;
 
 if (!process.env.MONGO_URI) {
-    // In build environment (Netlify) without secrets, this allows the file to load.
-    // The promise will resolve to null, which will throw inside the route handler's try/catch
-    // when accessed (e.g. `client.db()`). This avoids "Unhandled Promise Rejection" crashes.
-    clientPromise = Promise.resolve(null as unknown as MongoClient);
+    console.warn('MONGO_URI is missing. Please ensure it is set in your Vercel/Render environment variables.');
+    // Delay throwing so that some static pages can build if they don't use DB,
+    // but if NextAuth awaits this, it will throw a clear error instead of a null crash.
+    clientPromise = Promise.reject(new Error("MONGO_URI is not defined."));
 } else {
     if (process.env.NODE_ENV === "development") {
         // In development mode, use a global variable so that the value
