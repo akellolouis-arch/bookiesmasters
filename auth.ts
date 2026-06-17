@@ -1,7 +1,6 @@
 import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
 import clientPromise from "./lib/mongodb"
-import fs from "fs"
 
 // DEBUG: Check environment variables
 const clientId = (process.env.GOOGLE_CLIENT_ID || "").replace(/\s/g, "");
@@ -24,16 +23,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             allowDangerousEmailAccountLinking: true,
         }),
     ],
-    logger: {
-        error(err) {
-            try {
-                fs.appendFileSync('nextauth-error.log', new Date().toISOString() + ': ' + (err?.message || err) + '\n' + (err?.stack || '') + '\n\n');
-            } catch (e) {
-                console.error("Failed to write to nextauth-error.log", e);
-            }
-            console.error(err);
-        }
-    },
     debug: true,
     callbacks: {
         async signIn({ user, account, profile }) {
