@@ -11,7 +11,7 @@ export const revalidate = 0;
 
 export default async function AdminTipsPage() {
   if (mongoose.connection.readyState !== 1) {
-    await mongoose.connect(process.env.MONGODB_URI || "");
+    await mongoose.connect(process.env.MONGO_URI || "");
   }
 
   const tips = await PremiumTip.find().sort({ matchDate: -1 }).lean();

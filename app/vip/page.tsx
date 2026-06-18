@@ -47,7 +47,7 @@ export default async function VIPPage() {
 
   // User is VIP (or Admin), fetch premium tips
   if (mongoose.connection.readyState !== 1) {
-    await mongoose.connect(process.env.MONGODB_URI || "");
+    await mongoose.connect(process.env.MONGO_URI || "");
   }
 
   // Get tips from the last 2 days and future tips
