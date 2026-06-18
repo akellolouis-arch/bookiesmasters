@@ -12,9 +12,19 @@ export const metadata = {
 export default async function ProPage() {
   const session = await auth();
 
-  // @ts-ignore
-  if (session?.user?.role === 'admin') {
-    redirect("/admin");
+  if (session?.user) {
+    // @ts-ignore
+    if (session.user.role === 'admin') {
+      redirect("/admin");
+    }
+
+    // @ts-ignore
+    const vipExpiry = session.user.vipExpiry ? new Date(session.user.vipExpiry) : null;
+    const isVIP = vipExpiry && vipExpiry > new Date();
+    
+    if (isVIP) {
+      redirect("/vip");
+    }
   }
 
   return (
@@ -90,11 +100,19 @@ export default async function ProPage() {
           <h2 className="text-xl font-bold text-white mb-2">Verify Payment</h2>
           <p className="text-sm text-gray-400 mb-6">Have you already made your payment? Upload your screenshot to gain access to premium tips.</p>
           
-          <Link href="/submit-payment" className="w-full">
-            <button className="w-full bg-[#63FF79] hover:bg-[#4ade80] text-black font-bold py-4 px-6 rounded-lg transition-colors shadow-[0_0_20px_rgba(99,255,121,0.2)]">
-              Submit Payment Proof
-            </button>
-          </Link>
+          {session?.user ? (
+            <Link href="/submit-payment" className="w-full">
+              <button className="w-full bg-[#63FF79] hover:bg-[#4ade80] text-black font-bold py-4 px-6 rounded-lg transition-colors shadow-[0_0_20px_rgba(99,255,121,0.2)]">
+                Submit Payment Proof
+              </button>
+            </Link>
+          ) : (
+            <Link href="/api/auth/signin?callbackUrl=/submit-payment" className="w-full">
+              <button className="w-full bg-[#63FF79] hover:bg-[#4ade80] text-black font-bold py-4 px-6 rounded-lg transition-colors shadow-[0_0_20px_rgba(99,255,121,0.2)]">
+                Login to Submit Payment
+              </button>
+            </Link>
+          )}
         </div>
       </div>
     </div>

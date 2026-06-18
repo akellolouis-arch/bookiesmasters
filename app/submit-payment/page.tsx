@@ -12,12 +12,20 @@ export default async function SubmitPaymentPage() {
   const session = await auth();
 
   if (!session?.user) {
-    redirect("/login?callbackUrl=/submit-payment");
+    redirect("/api/auth/signin?callbackUrl=/submit-payment");
   }
 
   // @ts-ignore
   if (session.user.role === 'admin') {
     redirect("/admin");
+  }
+
+  // @ts-ignore
+  const vipExpiry = session.user.vipExpiry ? new Date(session.user.vipExpiry) : null;
+  const isVIP = vipExpiry && vipExpiry > new Date();
+  
+  if (isVIP) {
+    redirect("/vip");
   }
 
   const firstName = session.user.name ? session.user.name.split(" ")[0] : "there";
