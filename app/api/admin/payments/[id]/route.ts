@@ -13,7 +13,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     }
 
     const { action } = await req.json(); // 'approve' or 'reject'
-    const paymentId = params.id;
+    const { id } = await params;
+    const paymentId = id;
 
     if (mongoose.connection.readyState !== 1) {
       await mongoose.connect(process.env.MONGO_URI || "");

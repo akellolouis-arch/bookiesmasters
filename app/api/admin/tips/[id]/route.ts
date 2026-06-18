@@ -15,7 +15,8 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
       await mongoose.connect(process.env.MONGO_URI || "");
     }
 
-    await PremiumTip.findByIdAndDelete(params.id);
+    const { id } = await params;
+    await PremiumTip.findByIdAndDelete(id);
     return NextResponse.json({ success: true });
 
   } catch (error: any) {
