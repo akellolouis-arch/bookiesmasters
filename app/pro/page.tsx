@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { auth, signOut } from "@/auth";
 
 export const metadata = {
@@ -10,6 +11,11 @@ export const metadata = {
 
 export default async function ProPage() {
   const session = await auth();
+
+  // @ts-ignore
+  if (session?.user?.role === 'admin') {
+    redirect("/admin");
+  }
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 py-8 md:py-12 relative">

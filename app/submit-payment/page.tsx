@@ -15,6 +15,11 @@ export default async function SubmitPaymentPage() {
     redirect("/login?callbackUrl=/submit-payment");
   }
 
+  // @ts-ignore
+  if (session.user.role === 'admin') {
+    redirect("/admin");
+  }
+
   const firstName = session.user.name ? session.user.name.split(" ")[0] : "there";
 
   return (
