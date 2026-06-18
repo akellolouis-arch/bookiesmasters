@@ -98,10 +98,15 @@ export default async function VIPPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 bg-[#121212] p-4 rounded-lg border border-white/5">
-                  <div className="flex-1 text-center px-4">
+                <div className="flex items-center gap-4 bg-[#121212] p-4 rounded-lg border border-white/5 min-w-[200px]">
+                  <div className="flex-1">
                     <div className="text-[10px] text-gray-500 uppercase font-bold mb-1">Our Pick</div>
-                    <div className="text-[#63FF79] font-black text-lg">{tip.prediction}</div>
+                    <div className="text-white font-bold">{tip.prediction}</div>
+                  </div>
+                  <div className="w-px h-8 bg-white/10 mx-2"></div>
+                  <div className="text-right">
+                    <div className="text-[10px] text-gray-500 uppercase font-bold mb-1">Odds</div>
+                    <div className="text-[#63FF79] font-black text-lg">{tip.odds}</div>
                   </div>
                 </div>
               </div>

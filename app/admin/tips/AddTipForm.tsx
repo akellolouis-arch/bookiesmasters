@@ -13,7 +13,8 @@ export default function AddTipForm() {
     country: "",
     league: "",
     matchDate: "",
-    prediction: ""
+    prediction: "",
+    odds: ""
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -33,7 +34,7 @@ export default function AddTipForm() {
 
       if (res.ok) {
         setFormData({
-          homeTeam: "", awayTeam: "", country: "", league: "", matchDate: "", prediction: ""
+          homeTeam: "", awayTeam: "", country: "", league: "", matchDate: "", prediction: "", odds: ""
         });
         router.refresh();
       } else {
@@ -76,9 +77,15 @@ export default function AddTipForm() {
         <input required type="datetime-local" name="matchDate" value={formData.matchDate} onChange={handleChange} className="w-full bg-[#121212] border border-white/10 rounded p-2 text-sm text-white" />
       </div>
 
-      <div>
-        <label className="block text-xs text-gray-400 mb-1">Prediction (e.g. Home Win)</label>
-        <input required name="prediction" value={formData.prediction} onChange={handleChange} className="w-full bg-[#121212] border border-white/10 rounded p-2 text-sm text-white" />
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-xs text-gray-400 mb-1">Prediction (e.g. Home Win)</label>
+          <input required name="prediction" value={formData.prediction} onChange={handleChange} className="w-full bg-[#121212] border border-white/10 rounded p-2 text-sm text-white" />
+        </div>
+        <div>
+          <label className="block text-xs text-gray-400 mb-1">Odds</label>
+          <input required name="odds" value={formData.odds} onChange={handleChange} className="w-full bg-[#121212] border border-white/10 rounded p-2 text-sm text-white" />
+        </div>
       </div>
 
       <button type="submit" disabled={loading} className="w-full bg-[#63FF79] hover:bg-[#4ade80] text-black font-bold py-2 rounded flex justify-center items-center disabled:opacity-50">

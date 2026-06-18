@@ -48,6 +48,9 @@ export default async function AdminTipsPage() {
                       <span className="bg-black/50 px-3 py-1 rounded text-sm text-gray-300 font-bold border border-white/10">
                         Pick: <span className="text-white">{tip.prediction}</span>
                       </span>
+                      <span className="bg-black/50 px-3 py-1 rounded text-sm text-gray-300 font-bold border border-white/10">
+                        Odds: <span className="text-[#63FF79]">{tip.odds}</span>
+                      </span>
                     </div>
                   </div>
                   

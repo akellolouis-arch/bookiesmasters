@@ -7,6 +7,7 @@ const PremiumTipSchema = new mongoose.Schema({
   country: { type: String, required: true },
   matchDate: { type: Date, required: true },
   prediction: { type: String, required: true },
+  odds: { type: String, required: true },
   status: { type: String, enum: ['pending', 'won', 'lost'], default: 'pending' }
 }, { timestamps: true });
 
