@@ -1,17 +1,33 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { auth, signOut } from "@/auth";
 
 export const metadata = {
   title: "Go Pro | BookiesMasters",
   description: "Get weekly VIP predictions and insights",
 };
 
-export default function ProPage() {
+export default async function ProPage() {
+  const session = await auth();
+
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 py-8 md:py-12">
+    <div className="w-full max-w-4xl mx-auto px-4 py-8 md:py-12 relative">
+      {session?.user && (
+        <div className="absolute top-4 right-4 md:top-8 md:right-4">
+          <form action={async () => {
+            "use server";
+            await signOut({ redirectTo: "/pro" });
+          }}>
+            <button type="submit" className="text-xs text-gray-400 hover:text-white border border-gray-600 hover:border-white px-3 py-1 rounded transition-colors">
+              Log out
+            </button>
+          </form>
+        </div>
+      )}
+
       <div className="text-center mb-8">
-        <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 tracking-tight">
+        <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 tracking-tight mt-6 md:mt-0">
           Upgrade to <span className="text-[#63FF79]">VIP</span>
         </h1>
         <p className="text-gray-400 text-sm md:text-base max-w-2xl mx-auto">
