@@ -76,7 +76,7 @@ export default function PaymentUploadForm() {
       <div className="text-center p-6 bg-[#121212] rounded-lg border border-white/5">
         <p className="text-gray-400 text-sm mb-4">You must be logged in to submit a payment screenshot.</p>
         <button
-          onClick={() => router.push('/login?callbackUrl=/pro')}
+          onClick={() => router.push('/login?callbackUrl=/submit-payment')}
           className="bg-[#63FF79] text-black font-bold py-2 px-6 rounded hover:bg-[#4ade80] transition-colors"
         >
           Login to Continue

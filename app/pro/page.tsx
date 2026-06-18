@@ -1,7 +1,6 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import PaymentUploadForm from "./PaymentUploadForm";
 
 export const metadata = {
   title: "Go Pro | BookiesMasters",
@@ -65,11 +64,15 @@ export default function ProPage() {
         </div>
 
         {/* Upload Form Column */}
-        <div className="bg-[#1F1F1F] rounded-xl p-6 border border-white/5 shadow-xl">
+        <div className="bg-[#1F1F1F] rounded-xl p-6 border border-white/5 shadow-xl flex flex-col items-center justify-center text-center">
           <h2 className="text-xl font-bold text-white mb-2">Verify Payment</h2>
-          <p className="text-xs text-gray-400 mb-6">Upload a screenshot of your successful transaction to gain access immediately.</p>
+          <p className="text-sm text-gray-400 mb-6">Have you already made your payment? Upload your screenshot to gain access to premium tips.</p>
           
-          <PaymentUploadForm />
+          <Link href="/submit-payment" className="w-full">
+            <button className="w-full bg-[#63FF79] hover:bg-[#4ade80] text-black font-bold py-4 px-6 rounded-lg transition-colors shadow-[0_0_20px_rgba(99,255,121,0.2)]">
+              Submit Payment Proof
+            </button>
+          </Link>
         </div>
       </div>
     </div>
