@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
 
     // Connect to DB via Mongoose if not connected
     if (mongoose.connection.readyState !== 1) {
-      await mongoose.connect(process.env.MONGODB_URI || "");
+      await mongoose.connect(process.env.MONGO_URI || "");
     }
 
     // Upload to Cloudinary
