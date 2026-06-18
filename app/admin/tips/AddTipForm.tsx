@@ -10,11 +10,10 @@ export default function AddTipForm() {
   const [formData, setFormData] = useState({
     homeTeam: "",
     awayTeam: "",
+    country: "",
     league: "",
     matchDate: "",
-    prediction: "",
-    odds: "",
-    analysis: ""
+    prediction: ""
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -34,7 +33,7 @@ export default function AddTipForm() {
 
       if (res.ok) {
         setFormData({
-          homeTeam: "", awayTeam: "", league: "", matchDate: "", prediction: "", odds: "", analysis: ""
+          homeTeam: "", awayTeam: "", country: "", league: "", matchDate: "", prediction: ""
         });
         router.refresh();
       } else {
@@ -61,9 +60,15 @@ export default function AddTipForm() {
         </div>
       </div>
       
-      <div>
-        <label className="block text-xs text-gray-400 mb-1">League</label>
-        <input required name="league" value={formData.league} onChange={handleChange} className="w-full bg-[#121212] border border-white/10 rounded p-2 text-sm text-white" />
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-xs text-gray-400 mb-1">Country</label>
+          <input required name="country" value={formData.country} onChange={handleChange} className="w-full bg-[#121212] border border-white/10 rounded p-2 text-sm text-white" />
+        </div>
+        <div>
+          <label className="block text-xs text-gray-400 mb-1">League</label>
+          <input required name="league" value={formData.league} onChange={handleChange} className="w-full bg-[#121212] border border-white/10 rounded p-2 text-sm text-white" />
+        </div>
       </div>
 
       <div>
@@ -71,20 +76,9 @@ export default function AddTipForm() {
         <input required type="datetime-local" name="matchDate" value={formData.matchDate} onChange={handleChange} className="w-full bg-[#121212] border border-white/10 rounded p-2 text-sm text-white" />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-xs text-gray-400 mb-1">Prediction (e.g. Home Win)</label>
-          <input required name="prediction" value={formData.prediction} onChange={handleChange} className="w-full bg-[#121212] border border-white/10 rounded p-2 text-sm text-white" />
-        </div>
-        <div>
-          <label className="block text-xs text-gray-400 mb-1">Odds</label>
-          <input required name="odds" value={formData.odds} onChange={handleChange} className="w-full bg-[#121212] border border-white/10 rounded p-2 text-sm text-white" />
-        </div>
-      </div>
-
       <div>
-        <label className="block text-xs text-gray-400 mb-1">Analysis (Optional)</label>
-        <textarea name="analysis" value={formData.analysis} onChange={handleChange} rows={3} className="w-full bg-[#121212] border border-white/10 rounded p-2 text-sm text-white"></textarea>
+        <label className="block text-xs text-gray-400 mb-1">Prediction (e.g. Home Win)</label>
+        <input required name="prediction" value={formData.prediction} onChange={handleChange} className="w-full bg-[#121212] border border-white/10 rounded p-2 text-sm text-white" />
       </div>
 
       <button type="submit" disabled={loading} className="w-full bg-[#63FF79] hover:bg-[#4ade80] text-black font-bold py-2 rounded flex justify-center items-center disabled:opacity-50">

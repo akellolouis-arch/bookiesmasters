@@ -91,32 +91,22 @@ export default async function VIPPage() {
 
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="flex-1">
-                  <div className="text-xs text-[#63FF79] font-bold uppercase tracking-wider mb-2">{tip.league}</div>
+                  <div className="text-xs text-[#63FF79] font-bold uppercase tracking-wider mb-2">{tip.country} - {tip.league}</div>
                   <h3 className="text-xl font-bold text-white mb-1">{tip.homeTeam} <span className="text-gray-500 font-normal">vs</span> {tip.awayTeam}</h3>
                   <div className="text-sm text-gray-400 flex items-center gap-2">
                     <Clock size={14} /> {new Date(tip.matchDate).toLocaleString([], { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 bg-[#121212] p-4 rounded-lg border border-white/5 min-w-[200px]">
-                  <div className="flex-1">
+                <div className="flex items-center gap-4 bg-[#121212] p-4 rounded-lg border border-white/5">
+                  <div className="flex-1 text-center px-4">
                     <div className="text-[10px] text-gray-500 uppercase font-bold mb-1">Our Pick</div>
-                    <div className="text-white font-bold">{tip.prediction}</div>
-                  </div>
-                  <div className="w-px h-8 bg-white/10 mx-2"></div>
-                  <div className="text-right">
-                    <div className="text-[10px] text-gray-500 uppercase font-bold mb-1">Odds</div>
-                    <div className="text-[#63FF79] font-black text-lg">{tip.odds}</div>
+                    <div className="text-[#63FF79] font-black text-lg">{tip.prediction}</div>
                   </div>
                 </div>
               </div>
 
-              {tip.analysis && (
-                <div className="mt-6 pt-4 border-t border-white/5">
-                  <div className="text-[10px] text-gray-500 uppercase font-bold mb-2">Expert Analysis</div>
-                  <p className="text-sm text-gray-300 leading-relaxed italic border-l-2 border-[#63FF79]/50 pl-3">{tip.analysis}</p>
-                </div>
-              )}
+
             </div>
           ))
         )}
