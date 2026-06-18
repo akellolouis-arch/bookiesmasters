@@ -1,5 +1,5 @@
 import React from "react";
-import { auth } from "@/auth";
+import { auth, signOut } from "@/auth";
 import { redirect } from "next/navigation";
 import PaymentUploadForm from "@/app/pro/PaymentUploadForm";
 
@@ -19,8 +19,19 @@ export default async function SubmitPaymentPage() {
 
   return (
     <div className="w-full max-w-2xl mx-auto px-4 py-12">
-      <div className="bg-[#1F1F1F] rounded-xl p-8 border border-white/5 shadow-xl text-center">
-        <h1 className="text-3xl font-bold text-white mb-4">
+      <div className="bg-[#1F1F1F] rounded-xl p-8 border border-white/5 shadow-xl text-center relative">
+        <div className="absolute top-4 right-4">
+          <form action={async () => {
+            "use server";
+            await signOut({ redirectTo: "/" });
+          }}>
+            <button type="submit" className="text-xs text-gray-400 hover:text-white border border-gray-600 hover:border-white px-3 py-1 rounded transition-colors">
+              Log out
+            </button>
+          </form>
+        </div>
+
+        <h1 className="text-3xl font-bold text-white mb-4 mt-4">
           Hi, <span className="text-[#63FF79]">{firstName}</span>!
         </h1>
         
