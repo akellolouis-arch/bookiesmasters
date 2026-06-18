@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
 
     if (mongoose.connection.readyState !== 1) {
-      await mongoose.connect(process.env.MONGODB_URI || "");
+      await mongoose.connect(process.env.MONGO_URI || "");
     }
 
     const newTip = await PremiumTip.create(body);

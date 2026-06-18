@@ -16,7 +16,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     const paymentId = params.id;
 
     if (mongoose.connection.readyState !== 1) {
-      await mongoose.connect(process.env.MONGODB_URI || "");
+      await mongoose.connect(process.env.MONGO_URI || "");
     }
 
     const payment = await PaymentRequest.findById(paymentId);
