@@ -10,7 +10,7 @@ export const revalidate = 0; // Disable caching
 
 export default async function AdminPaymentsPage() {
   if (mongoose.connection.readyState !== 1) {
-    await mongoose.connect(process.env.MONGODB_URI || "");
+    await mongoose.connect(process.env.MONGO_URI || "");
   }
 
   const payments = await PaymentRequest.find({ status: "pending" }).sort({ createdAt: -1 }).lean();
