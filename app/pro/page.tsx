@@ -59,37 +59,30 @@ export default async function ProPage() {
           <div className="space-y-6">
             {/* M-Pesa */}
             <div className="bg-[#121212] p-4 rounded-lg border border-[#63FF79]/20 relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-[#63FF79] text-black text-[10px] font-bold px-2 py-1 rounded-bl-lg">
-                For Kenyans
-              </div>
               <h3 className="text-[#63FF79] font-bold mb-2 flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-[#63FF79] animate-pulse"></span>
                 M-Pesa
               </h3>
               <div className="text-gray-300 text-sm space-y-2">
-                <p>Send exactly <strong className="text-white">Ksh 2,500</strong> (equivalent to $19) to:</p>
+                <p>Send exactly <strong className="text-white">Ksh 2,500</strong> to:</p>
                 <div className="bg-black/50 p-3 rounded font-mono text-center text-lg tracking-widest border border-white/10">
-                  07XX XXX XXX
+                  +254745676267
                 </div>
-                <p className="text-xs text-gray-500 mt-2">* Replace with your actual till/paybill or phone number.</p>
               </div>
             </div>
 
-            {/* Binance */}
+            {/* Crypto Wallet */}
             <div className="bg-[#121212] p-4 rounded-lg border border-yellow-500/20 relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-yellow-500 text-black text-[10px] font-bold px-2 py-1 rounded-bl-lg">
-                International
-              </div>
               <h3 className="text-yellow-500 font-bold mb-2 flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span>
-                Binance Pay
+                Crypto Wallet (USDT / BNB)
               </h3>
               <div className="text-gray-300 text-sm space-y-2">
-                <p>Send exactly <strong className="text-white">19 USDT</strong> to:</p>
-                <div className="bg-black/50 p-3 rounded font-mono text-center text-sm border border-white/10 break-all">
-                  Pay ID: 123456789
+                <p>Send exactly <strong className="text-white">19 USDT</strong> on the <strong className="text-white">BEP-20 Network</strong> to:</p>
+                <div className="bg-black/50 p-3 rounded font-mono text-center text-xs sm:text-sm border border-white/10 break-all">
+                  0x84Cb45E605722EFFa9896d689C53972ccAC50242
                 </div>
-                <p className="text-xs text-gray-500 mt-2">* Replace with your actual Binance Pay ID or Wallet address.</p>
+                <p className="text-xs text-gray-500 mt-2">* Ensure you select the BNB Smart Chain (BEP-20) network to avoid losing funds.</p>
               </div>
             </div>
           </div>
