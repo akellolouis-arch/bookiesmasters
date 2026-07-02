@@ -82,7 +82,7 @@ export default function FootballPitch({ home, away }: FootballPitchProps) {
                                     w-7 h-7 sm:w-8 sm:h-8 rounded-full 
                                     flex items-center justify-center 
                                     text-[10px] font-bold shadow-md border-2
-                                    ${isHome ? "bg-white text-black border-gray-300" : "bg-main-accent text-white border-blue-900"}
+                                    ${isHome ? "bg-white text-black border-gray-300" : "bg-main-accent text-gray-900 border-blue-900"}
                                     transition-transform transform group-hover:scale-110
                                 `}
                             >
@@ -90,7 +90,7 @@ export default function FootballPitch({ home, away }: FootballPitchProps) {
                             </div>
 
                             {/* Name Label */}
-                            <span className="mt-1 text-[9px] sm:text-[10px] text-white font-medium bg-black/50 px-1 rounded truncate max-w-[80px]">
+                            <span className="mt-1 text-[9px] sm:text-[10px] text-gray-900 font-medium bg-gray-50/50 px-1 rounded truncate max-w-[80px]">
                                 {player.name.split(" ").pop()} {/* Last name only for compactness */}
                             </span>
                         </div>
@@ -121,11 +121,11 @@ export default function FootballPitch({ home, away }: FootballPitchProps) {
             {/* Penalty Areas */}
             {/* Top (Away) */}
             <div className="absolute top-0 left-1/2 w-48 h-24 border-b-2 border-x-2 border-white/40 transform -translate-x-1/2 rounded-b-md"></div>
-            <div className="absolute top-0 left-1/2 w-20 h-8 border-b-2 border-x-2 border-white/40 transform -translate-x-1/2 rounded-b-sm bg-white/5"></div>
+            <div className="absolute top-0 left-1/2 w-20 h-8 border-b-2 border-x-2 border-white/40 transform -translate-x-1/2 rounded-b-sm bg-gray-100"></div>
 
             {/* Bottom (Home) */}
             <div className="absolute bottom-0 left-1/2 w-48 h-24 border-t-2 border-x-2 border-white/40 transform -translate-x-1/2 rounded-t-md"></div>
-            <div className="absolute bottom-0 left-1/2 w-20 h-8 border-t-2 border-x-2 border-white/40 transform -translate-x-1/2 rounded-t-sm bg-white/5"></div>
+            <div className="absolute bottom-0 left-1/2 w-20 h-8 border-t-2 border-x-2 border-white/40 transform -translate-x-1/2 rounded-t-sm bg-gray-100"></div>
 
             {/* Corner Arcs */}
             <div className="absolute top-0 left-0 w-4 h-4 border-b-2 border-r-2 border-white/40 rounded-br-full"></div>

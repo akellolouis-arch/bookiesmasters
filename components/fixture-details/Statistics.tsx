@@ -23,7 +23,7 @@ interface StatisticsProps {
 export default function Statistics({ stats }: StatisticsProps) {
     if (!stats || stats.length < 2) {
         return (
-            <div className="p-4 text-center text-gray-500 bg-[#1F1F1F] rounded-lg shadow-sm border border-white/5">
+            <div className="p-4 text-center text-gray-500 bg-white rounded-lg shadow-sm border border-gray-200">
                 <p className="text-xs">No statistics available yet.</p>
             </div>
         );
@@ -54,7 +54,7 @@ export default function Statistics({ stats }: StatisticsProps) {
     ];
 
     return (
-        <div className="bg-[#1F1F1F] rounded-xl shadow-sm p-4 max-w-2xl mx-auto border border-white/5">
+        <div className="bg-white rounded-xl shadow-sm p-4 max-w-2xl mx-auto border border-gray-200">
 
             {/* Header / Team Logos */}
 
@@ -78,7 +78,7 @@ export default function Statistics({ stats }: StatisticsProps) {
                     return (
                         <div key={type} className="flex flex-col gap-1">
                             {/* Values & Label */}
-                            <div className="flex justify-between text-[11px] font-semibold text-gray-300 px-1">
+                            <div className="flex justify-between text-[11px] font-semibold text-gray-700 px-1">
                                 <span>{val1Raw}</span>
                                 <span className="text-gray-500 font-normal">{type}</span>
                                 <span>{val2Raw}</span>

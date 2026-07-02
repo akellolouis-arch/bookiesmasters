@@ -16,7 +16,7 @@ export default async function LoginPage(props: {
 
   return (
     <div className="w-full max-w-md mx-auto px-4 py-16 md:py-24 flex flex-col items-center">
-      <div className="bg-[#1F1F1F] rounded-2xl p-8 border border-white/5 shadow-2xl w-full text-center">
+      <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-2xl w-full text-center">
         <div className="flex justify-center mb-8">
           <Image
             src={logo}
@@ -26,8 +26,8 @@ export default async function LoginPage(props: {
           />
         </div>
         
-        <h1 className="text-2xl font-bold text-white mb-2">Welcome Back</h1>
-        <p className="text-gray-400 text-sm mb-8">Sign in to access VIP predictions and manage your account.</p>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Welcome Back</h1>
+        <p className="text-gray-600 text-sm mb-8">Sign in to access VIP predictions and manage your account.</p>
         
         <form
           action={async () => {

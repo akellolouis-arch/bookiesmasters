@@ -16,14 +16,14 @@ const PredictionDisplay: React.FC<PredictionDisplayProps> = ({ advice, tip, winn
             {/* HEADER: MAIN TIP */}
             <div className="flex justify-between items-start mb-0">
                 <div>
-                    <div className="text-xs text-gray-400 uppercase tracking-widest mb-1">Our Tip</div>
+                    <div className="text-xs text-gray-600 uppercase tracking-widest mb-1">Our Tip</div>
                     <div className="text-2xl font-bold text-green-400">{tip}</div>
                     {winner?.comment && <div className="text-xs text-gray-500 mt-1">"{winner.comment}"</div>}
                 </div>
                 {advice && (
                     <div className="text-right max-w-[60%]">
-                        <div className="text-xs text-gray-400 uppercase tracking-widest mb-1">Advice</div>
-                        <div className="text-sm text-gray-200 font-medium">"{advice}"</div>
+                        <div className="text-xs text-gray-600 uppercase tracking-widest mb-1">Advice</div>
+                        <div className="text-sm text-gray-800 font-medium">"{advice}"</div>
                     </div>
                 )}
             </div>

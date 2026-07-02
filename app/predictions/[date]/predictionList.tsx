@@ -180,7 +180,7 @@ export default function PredictionsList({
       {(!safeData || safeData.length === 0) && (
         !query ? (
           <div className="flex flex-col items-center justify-center p-8 mt-10">
-            <p className="text-gray-400 text-lg font-medium">No strict predictions found for this date.</p>
+            <p className="text-gray-600 text-lg font-medium">No strict predictions found for this date.</p>
             <p className="text-gray-500 text-sm mt-2 max-w-md text-center">Our algorithm only predicts when the data is exceptionally strong. Check back tomorrow!</p>
           </div>
         ) : (
@@ -200,7 +200,7 @@ export default function PredictionsList({
         let globalIdx = 0;
         return safeData.map((league, idx) => (
           <div key={league.id || idx}>
-            <div className="flex items-center gap-1 bg-gradient-to-r from-emerald-900/40 to-[#121212] py-0.5 px-0.5 shadow-md border border-white/5 border-b-0">
+            <div className="flex items-center gap-1 bg-gradient-to-r from-emerald-900/40 to-[#121212] py-0.5 px-0.5 shadow-md border border-gray-200 border-b-0">
               <div className="flex items-center gap-1 w-full">
                 {league.logo && (
                   <Image
@@ -213,10 +213,10 @@ export default function PredictionsList({
                   />
                 )}
                 <div className="flex flex-col truncate w-full leading-tight">
-                  <span className="font-medium text-[11px] text-amber-100 tracking-wide truncate drop-shadow-sm">
+                  <span className="font-medium text-[11px] text-blue-800 tracking-wide truncate drop-shadow-sm">
                     {league.name}
                   </span>
-                  <span className="text-[9px] text-emerald-200/70 font-normal capitalize tracking-wider truncate">{league.country.toLowerCase()}</span>
+                  <span className="text-[9px] text-gray-600 font-normal capitalize tracking-wider truncate">{league.country.toLowerCase()}</span>
                 </div>
               </div>
             </div>

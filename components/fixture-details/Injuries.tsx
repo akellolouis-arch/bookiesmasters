@@ -70,10 +70,10 @@ export default function Injuries({ injuries }: InjuriesProps) {
 
                 return (
                     <div key={teamName} className="w-full">
-                        <div className="flex flex-col items-start mb-2 border-b border-white/10 pb-1">
+                        <div className="flex flex-col items-start mb-2 border-b border-gray-300 pb-1">
                             <div className="flex items-center justify-start gap-2">
                                 <img src={teamLogo} alt={teamName} className="w-6 h-6 object-contain shrink-0" />
-                                <h4 className="text-[10px] sm:text-[11px] font-bold text-emerald-200/70 tracking-wide capitalize truncate">{teamName}</h4>
+                                <h4 className="text-[10px] sm:text-[11px] font-bold text-gray-600 tracking-wide capitalize truncate">{teamName}</h4>
                             </div>
                         </div>
 
@@ -84,10 +84,10 @@ export default function Injuries({ injuries }: InjuriesProps) {
                                     <img
                                         src={injury.player.photo}
                                         alt={injury.player.name}
-                                        className="w-7 h-7 sm:w-10 sm:h-10 rounded-full bg-gray-800 object-cover border border-white/10 shrink-0"
+                                        className="w-7 h-7 sm:w-10 sm:h-10 rounded-full bg-gray-800 object-cover border border-gray-300 shrink-0"
                                     />
                                     <div className="flex items-center justify-between min-w-0 w-full">
-                                        <p className="text-[10px] sm:text-[11px] font-medium text-gray-200 leading-tight truncate">{injury.player.name}</p>
+                                        <p className="text-[10px] sm:text-[11px] font-medium text-gray-800 leading-tight truncate">{injury.player.name}</p>
                                         <div className="flex items-center gap-1.5 w-28 sm:w-36 shrink-0 ml-2 justify-start">
                                             {getInjuryIcon(injury.player.reason)}
                                             <p className="text-[9px] sm:text-[10px] text-gray-500 capitalize text-left truncate">{injury.player.reason}</p>

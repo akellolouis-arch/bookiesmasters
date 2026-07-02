@@ -146,7 +146,7 @@ export default async function FixturesPage({
 
   return (
     <>
-      <Suspense fallback={<div className="h-10 w-full bg-[#1F1F1F] animate-pulse border-y border-white/5" />}>
+      <Suspense fallback={<div className="h-10 w-full bg-white animate-pulse border-y border-gray-200" />}>
         <DateNavigator date={date} />
       </Suspense>
       

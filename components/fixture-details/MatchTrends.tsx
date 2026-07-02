@@ -22,7 +22,7 @@ export default function MatchTrends({ trends }: MatchTrendsProps) {
                     Match Insights
                 </span>
                 <div className="flex-1 h-px bg-zinc-800"></div>
-                <div className="text-xs text-xs px-2 py-0.5 rounded bg-zinc-800 text-gray-400">
+                <div className="text-xs text-xs px-2 py-0.5 rounded bg-zinc-800 text-gray-600">
                     AI generated
                 </div>
             </div>
@@ -38,7 +38,7 @@ export default function MatchTrends({ trends }: MatchTrendsProps) {
                             <span className="text-lg leading-none">{trend.icon}</span>
                         </div>
                         <div className="py-1">
-                            <p className="text-sm font-medium text-gray-200 leading-snug">
+                            <p className="text-sm font-medium text-gray-800 leading-snug">
                                 {trend.text}
                             </p>
                         </div>

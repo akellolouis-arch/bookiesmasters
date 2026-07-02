@@ -21,8 +21,8 @@ const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, onTabChange }) => {
                     key={tab.id}
                     onClick={() => onTabChange(tab.id)}
                     className={`pb-1 px-1 text-sm font-medium transition-colors whitespace-nowrap relative ${activeTab === tab.id
-                        ? "text-white"
-                        : "text-gray-400 hover:text-gray-200"
+                        ? "text-gray-900"
+                        : "text-gray-600 hover:text-gray-800"
                         }`}
                 >
                     {tab.label}

@@ -96,10 +96,10 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
     }
 
     return (
-        <div className="text-white pt-0 pb-4 px-2 sm:px-4">
+        <div className="text-gray-900 pt-0 pb-4 px-2 sm:px-4">
             <div className="max-w-5xl mx-auto">
                 {/* --- LEAGUE HEADER --- */}
-                <div className="flex items-center gap-1 bg-gradient-to-r from-emerald-900/40 to-[#121212] py-0.5 px-1.5 sm:px-0.5 shadow-md border-y sm:border-x border-white/5 sm:border-b-0 mb-2 -mx-2 sm:mx-auto sm:rounded-t max-w-4xl">
+                <div className="flex items-center gap-1 bg-gradient-to-r from-emerald-900/40 to-[#121212] py-0.5 px-1.5 sm:px-0.5 shadow-md border-y sm:border-x border-gray-200 sm:border-b-0 mb-2 -mx-2 sm:mx-auto sm:rounded-t max-w-4xl">
                     <div className="flex items-center gap-1 w-full max-w-4xl mx-auto">
                         {data.leagueLogo && (
                             <img
@@ -109,10 +109,10 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                             />
                         )}
                         <div className="flex flex-col truncate w-full leading-tight">
-                            <span className="font-medium text-[11px] text-amber-100 tracking-wide truncate drop-shadow-sm">
+                            <span className="font-medium text-[11px] text-blue-800 tracking-wide truncate drop-shadow-sm">
                                 {data.league}
                             </span>
-                            <span className="text-[9px] text-emerald-200/70 font-normal capitalize tracking-wider truncate">
+                            <span className="text-[9px] text-gray-600 font-normal capitalize tracking-wider truncate">
                                 {data.country?.toLowerCase()}
                             </span>
                         </div>
@@ -176,7 +176,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 {hasH2H && (
                     <div className="mt-2">
                         <div className="flex justify-center mb-3">
-                            <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-amber-100 rounded-lg sm:rounded-xl text-[11px] font-bold shadow-lg tracking-wide uppercase">
+                            <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-gray-100 backdrop-blur-sm border border-gray-300 text-blue-800 rounded-lg sm:rounded-xl text-[11px] font-bold shadow-lg tracking-wide uppercase">
                                 Head to Head
                             </h3>
                         </div>
@@ -188,7 +188,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 {hasAnyMatches && (
                     <div className="mt-2 space-y-4">
                         <div className="flex justify-center mb-1">
-                            <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-amber-100 rounded-lg sm:rounded-xl text-[11px] font-bold shadow-lg tracking-wide uppercase">
+                            <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-gray-100 backdrop-blur-sm border border-gray-300 text-blue-800 rounded-lg sm:rounded-xl text-[11px] font-bold shadow-lg tracking-wide uppercase">
                                 Recent Form
                             </h3>
                         </div>
@@ -199,18 +199,18 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                                 <div className="flex justify-between items-center px-1">
                                     <div className="flex items-center gap-2">
                                         {data.homeTeam.logo && <img src={data.homeTeam.logo} alt={data.homeTeam.name} className="w-5 h-5 object-contain" />}
-                                        <span className="text-[10px] sm:text-[11px] font-bold text-gray-200 uppercase truncate max-w-[150px]">{data.homeTeam.name}</span>
+                                        <span className="text-[10px] sm:text-[11px] font-bold text-gray-800 uppercase truncate max-w-[150px]">{data.homeTeam.name}</span>
                                     </div>
-                                    <div className="flex gap-1 bg-[#0F0F0F] p-0.5 rounded border border-white/10 shadow-sm">
+                                    <div className="flex gap-1 bg-[#0F0F0F] p-0.5 rounded border border-gray-300 shadow-sm">
                                         <button 
                                             onClick={() => setHomeTab("all")}
-                                            className={`px-2 py-1 rounded text-[9px] font-bold transition-colors ${homeTab === "all" ? "bg-white/10 text-white" : "text-gray-400 hover:text-gray-200"}`}
+                                            className={`px-2 py-1 rounded text-[9px] font-bold transition-colors ${homeTab === "all" ? "bg-gray-200 text-gray-900" : "text-gray-600 hover:text-gray-800"}`}
                                         >
                                             Recent Form
                                         </button>
                                         <button 
                                             onClick={() => setHomeTab("home")}
-                                            className={`px-2 py-1 rounded text-[9px] font-bold transition-colors ${homeTab === "home" ? "bg-white/10 text-white" : "text-gray-400 hover:text-gray-200"}`}
+                                            className={`px-2 py-1 rounded text-[9px] font-bold transition-colors ${homeTab === "home" ? "bg-gray-200 text-gray-900" : "text-gray-600 hover:text-gray-800"}`}
                                         >
                                             Home Form
                                         </button>
@@ -230,18 +230,18 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                                 <div className="flex justify-between items-center px-1">
                                     <div className="flex items-center gap-2">
                                         {data.awayTeam.logo && <img src={data.awayTeam.logo} alt={data.awayTeam.name} className="w-5 h-5 object-contain" />}
-                                        <span className="text-[10px] sm:text-[11px] font-bold text-gray-200 uppercase truncate max-w-[150px]">{data.awayTeam.name}</span>
+                                        <span className="text-[10px] sm:text-[11px] font-bold text-gray-800 uppercase truncate max-w-[150px]">{data.awayTeam.name}</span>
                                     </div>
-                                    <div className="flex gap-1 bg-[#0F0F0F] p-0.5 rounded border border-white/10 shadow-sm">
+                                    <div className="flex gap-1 bg-[#0F0F0F] p-0.5 rounded border border-gray-300 shadow-sm">
                                         <button 
                                             onClick={() => setAwayTab("all")}
-                                            className={`px-2 py-1 rounded text-[9px] font-bold transition-colors ${awayTab === "all" ? "bg-white/10 text-white" : "text-gray-400 hover:text-gray-200"}`}
+                                            className={`px-2 py-1 rounded text-[9px] font-bold transition-colors ${awayTab === "all" ? "bg-gray-200 text-gray-900" : "text-gray-600 hover:text-gray-800"}`}
                                         >
                                             Recent Form
                                         </button>
                                         <button 
                                             onClick={() => setAwayTab("away")}
-                                            className={`px-2 py-1 rounded text-[9px] font-bold transition-colors ${awayTab === "away" ? "bg-white/10 text-white" : "text-gray-400 hover:text-gray-200"}`}
+                                            className={`px-2 py-1 rounded text-[9px] font-bold transition-colors ${awayTab === "away" ? "bg-gray-200 text-gray-900" : "text-gray-600 hover:text-gray-800"}`}
                                         >
                                             Away Form
                                         </button>
@@ -263,7 +263,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 {data.standings && data.standings.length > 0 && (
                     <div className="mt-2">
                         <div className="flex justify-center mb-3">
-                            <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-amber-100 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold shadow-lg tracking-wide uppercase">
+                            <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-gray-100 backdrop-blur-sm border border-gray-300 text-blue-800 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold shadow-lg tracking-wide uppercase">
                                 League Table
                             </h3>
                         </div>
@@ -277,7 +277,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 {displayInjuries && displayInjuries.length > 0 && (
                     <div className="mt-2">
                         <div className="flex justify-center mb-3">
-                            <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-white/5 backdrop-blur-sm border border-white/10 text-amber-100 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold shadow-lg tracking-wide uppercase">
+                            <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-gray-100 backdrop-blur-sm border border-gray-300 text-blue-800 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold shadow-lg tracking-wide uppercase">
                                 Injuries & Suspensions
                             </h3>
                         </div>

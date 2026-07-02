@@ -36,8 +36,8 @@ export default function Comparison({ data, homeTeamName, awayTeamName }: Compari
         const hVal = parseFloat(String(homeValue));
         const aVal = parseFloat(String(awayValue));
 
-        const homeActive = hVal > aVal ? 'text-green-400 font-bold' : 'text-gray-400';
-        const awayActive = aVal > hVal ? 'text-green-400 font-bold' : 'text-gray-400';
+        const homeActive = hVal > aVal ? 'text-green-400 font-bold' : 'text-gray-600';
+        const awayActive = aVal > hVal ? 'text-green-400 font-bold' : 'text-gray-600';
 
         // For Bar: total = 100% usually, or max of the two
         const max = Math.max(hVal, aVal) || 1;
@@ -87,7 +87,7 @@ export default function Comparison({ data, homeTeamName, awayTeamName }: Compari
 
     return (
         <div className="bg-zinc-900/50 rounded-xl overflow-hidden mb-6 border border-zinc-800 p-4">
-            <h3 className="text-sm font-bold text-center text-gray-200 mb-6 uppercase tracking-widest border-b border-zinc-800 pb-2">
+            <h3 className="text-sm font-bold text-center text-gray-800 mb-6 uppercase tracking-widest border-b border-zinc-800 pb-2">
                 Statistical Comparison
             </h3>
 

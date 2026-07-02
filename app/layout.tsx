@@ -52,7 +52,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${montserrat.variable} antialiased bg-black flex flex-col min-h-screen`}
+        className={`${montserrat.variable} antialiased bg-gray-50 flex flex-col min-h-screen`}
       >
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-N2MSB811W7"

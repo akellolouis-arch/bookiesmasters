@@ -82,8 +82,8 @@ export default function FixtureCard({
   const href = `/prediction/${fixtureId}`;
 
   const isEven = index !== undefined ? index % 2 === 0 : true;
-  const bgClass = isEven ? "bg-[#0A0A0A]" : "bg-[#1E1E1E]";
-  const tipBgClass = isEven ? "bg-[#1E1E1E]" : "bg-[#0A0A0A]";
+  const bgClass = isEven ? "bg-gray-50" : "bg-white";
+  const tipBgClass = isEven ? "bg-white" : "bg-gray-50";
   const hoverClass = isEven ? "hover:bg-[#151515]" : "hover:bg-[#282828]";
 
   return (
@@ -101,13 +101,13 @@ export default function FixtureCard({
             });
           }
         }}
-        className="cursor-pointer block bg-[#121212] border border-white/5 rounded-none py-1 px-1.5 sm:py-1.5 sm:px-2 hover:border-white/10 transition-all duration-300 flex flex-col no-underline text-inherit"
+        className="cursor-pointer block bg-white border border-gray-200 rounded-none py-1 px-1.5 sm:py-1.5 sm:px-2 hover:border-gray-300 transition-all duration-300 flex flex-col no-underline text-inherit"
       >
         {/* Matchup Header */}
         <div className="grid grid-cols-[1fr_auto_1fr] items-center w-full mb-1 gap-1">
           {/* HOME TEAM */}
           <div className="flex items-center justify-end gap-1.5 min-w-0">
-            <span className="font-medium text-[11px] sm:text-[12px] truncate text-gray-200 capitalize text-right">{homeTeam.name}</span>
+            <span className="font-medium text-[11px] sm:text-[12px] truncate text-gray-800 capitalize text-right">{homeTeam.name}</span>
             <Image src={homeTeam.logo} alt={homeTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
           </div>
 
@@ -119,7 +119,7 @@ export default function FixtureCard({
           {/* AWAY TEAM */}
           <div className="flex items-center justify-start gap-1.5 min-w-0">
             <Image src={awayTeam.logo} alt={awayTeam.name} width={14} height={14} className="w-3.5 h-3.5 object-contain shrink-0" unoptimized />
-            <span className="font-medium text-[11px] sm:text-[12px] truncate text-gray-200 capitalize text-left">{awayTeam.name}</span>
+            <span className="font-medium text-[11px] sm:text-[12px] truncate text-gray-800 capitalize text-left">{awayTeam.name}</span>
           </div>
         </div>
 
@@ -127,21 +127,21 @@ export default function FixtureCard({
         <div className="w-full flex items-center justify-between mt-1">
           {/* LEFT: STATUS CONTAINER */}
           <div className="flex-1 flex justify-start">
-            <div className={`px-2 py-0.5 bg-white/5 rounded-lg text-[10px] font-bold uppercase leading-none tracking-widest ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
+            <div className={`px-2 py-0.5 bg-gray-100 rounded-lg text-[10px] font-bold uppercase leading-none tracking-widest ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
               {status}
             </div>
           </div>
 
           {/* MIDDLE: SCORE CONTAINER */}
           <div className="flex shrink-0 justify-center px-2">
-            <div className={`px-2 py-0.5 bg-white/5 rounded-lg text-[10px] font-bold leading-none tracking-widest ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
+            <div className={`px-2 py-0.5 bg-gray-100 rounded-lg text-[10px] font-bold leading-none tracking-widest ${isLive ? "text-red-500 animate-pulse" : "text-gray-500"}`}>
               {score ? score.replace(" - ", "-") : "-"}
             </div>
           </div>
 
           {/* RIGHT: PREDICTION CONTAINER */}
           <div className="flex-1 flex justify-end">
-            <div className="px-2 py-0.5 bg-white/5 rounded-lg text-[10px] font-bold uppercase tracking-widest leading-none">
+            <div className="px-2 py-0.5 bg-gray-100 rounded-lg text-[10px] font-bold uppercase tracking-widest leading-none">
               {prediction ? (
                 <span className={predictionColorClass}>
                   {prediction}

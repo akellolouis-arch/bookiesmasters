@@ -63,7 +63,7 @@ export default async function TopTrends() {
       {/* Title */}
       <div className="flex items-center justify-center gap-2 mb-1.5 px-1 sm:px-0">
         <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent to-white/10" />
-        <span className="text-[11px] font-bold text-amber-100/90 tracking-wider uppercase whitespace-nowrap">
+        <span className="text-[11px] font-bold text-blue-800/90 tracking-wider uppercase whitespace-nowrap">
           top trends
         </span>
         <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent" />
@@ -77,7 +77,7 @@ export default async function TopTrends() {
           return (
             <div
               key={match.fixtureId}
-              className="bg-[#121212] border border-white/5 rounded-none p-1.5 sm:p-2 hover:border-white/10 transition-all duration-300"
+              className="bg-white border border-gray-200 rounded-none p-1.5 sm:p-2 hover:border-gray-300 transition-all duration-300"
             >
               {/* League Header */}
               <div className="flex items-center gap-1 mb-1">
@@ -97,7 +97,7 @@ export default async function TopTrends() {
               <div className="grid grid-cols-[1fr_auto_1fr] items-center w-full mb-1 gap-1">
                 {/* HOME TEAM */}
                 <div className="flex items-center justify-end gap-1.5 min-w-0">
-                  <span className="text-[9px] sm:text-[10px] font-semibold text-gray-200 truncate capitalize text-right">
+                  <span className="text-[9px] sm:text-[10px] font-semibold text-gray-800 truncate capitalize text-right">
                     {match.homeTeam.name}
                   </span>
                   {match.homeTeam.logo && (
@@ -121,13 +121,13 @@ export default async function TopTrends() {
                       className="w-3.5 h-3.5 object-contain shrink-0"
                     />
                   )}
-                  <span className="text-[9px] sm:text-[10px] font-semibold text-gray-200 truncate capitalize text-left">
+                  <span className="text-[9px] sm:text-[10px] font-semibold text-gray-800 truncate capitalize text-left">
                     {match.awayTeam.name}
                   </span>
                 </div>
               </div>
 
-              {/* Match Introduction Narrative (Housed in bg-white/5 block) */}
+              {/* Match Introduction Narrative (Housed in bg-gray-100 block) */}
               <MatchIntroduction
                 homeTeamName={match.homeTeam.name}
                 awayTeamName={match.awayTeam.name}
@@ -138,7 +138,7 @@ export default async function TopTrends() {
                 status={match.status}
                 score={match.score}
                 computedTip={formattedTip}
-                bg="bg-white/5"
+                bg="bg-gray-100"
                 rounded="rounded-lg"
                 padding="py-0.5 px-1 sm:py-1 sm:px-1.5"
                 margin="mb-0 mt-0.5"
@@ -148,7 +148,7 @@ export default async function TopTrends() {
               <div className="flex justify-end mt-0.5">
                 <Link
                   href={`/prediction/${match.fixtureId}`}
-                  className="inline-flex items-center gap-0.5 text-[8px] font-bold text-amber-100/70 hover:text-amber-100 transition-colors uppercase tracking-wider bg-white/5 hover:bg-white/10 px-2 py-0.5 rounded-lg"
+                  className="inline-flex items-center gap-0.5 text-[8px] font-bold text-blue-800/70 hover:text-blue-800 transition-colors uppercase tracking-wider bg-gray-100 hover:bg-gray-200 px-2 py-0.5 rounded-lg"
                 >
                   View Details →
                 </Link>

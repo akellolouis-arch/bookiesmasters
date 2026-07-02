@@ -36,7 +36,7 @@ const PieChart: React.FC<PieChartProps> = ({ val1, color1, val2, color2 }) => {
     return (
         <div className="relative w-14 h-14 sm:w-16 sm:h-16 filter drop-shadow-md">
             {/* The actual Pie Chart SVG */}
-            <svg viewBox="0 0 42 42" className="w-full h-full rounded-full border border-white/5" style={{ transform: 'rotate(-90deg)' }}>
+            <svg viewBox="0 0 42 42" className="w-full h-full rounded-full border border-gray-200" style={{ transform: 'rotate(-90deg)' }}>
                 {p1 > 0 && (
                     <circle 
                         cx={center} 

@@ -17,7 +17,7 @@ const LeagueHeader: React.FC<LeagueHeaderProps> = ({ league, logo, country }) =>
                 />
             )}
             <div className="flex flex-col items-start leading-none gap-0.5">
-                <span className="text-sm font-bold text-gray-200 tracking-widest">
+                <span className="text-sm font-bold text-gray-800 tracking-widest">
                     {league}
                 </span>
                 {country && (

@@ -31,10 +31,10 @@ export default function PredictionStructurePage() {
 
     return (
         <div className="min-h-screen bg-gray-900 text-green-400 p-8 font-mono">
-            <h1 className="text-2xl mb-4 font-bold text-white">Prediction Object Structure</h1>
-            <p className="mb-4 text-gray-400">Below is the <code>prediction</code> object from MongoDB for fixture {data?.fixtureId}:</p>
+            <h1 className="text-2xl mb-4 font-bold text-gray-900">Prediction Object Structure</h1>
+            <p className="mb-4 text-gray-600">Below is the <code>prediction</code> object from MongoDB for fixture {data?.fixtureId}:</p>
 
-            <div className="bg-black border border-yellow-500 rounded-lg p-6 mb-8 overflow-auto">
+            <div className="bg-gray-50 border border-yellow-500 rounded-lg p-6 mb-8 overflow-auto">
                 <h2 className="text-yellow-500 text-xl mb-2 font-bold">Prediction Data</h2>
                 <pre className="text-lg">
                     {JSON.stringify(data?.prediction, null, 2)}
@@ -42,7 +42,7 @@ export default function PredictionStructurePage() {
             </div>
 
             <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 overflow-auto max-h-[50vh] opacity-50">
-                <h3 className="text-gray-400 text-sm mb-2">Full Fixture Context</h3>
+                <h3 className="text-gray-600 text-sm mb-2">Full Fixture Context</h3>
                 <pre className="text-xs">
                     {JSON.stringify(data, null, 2)}
                 </pre>

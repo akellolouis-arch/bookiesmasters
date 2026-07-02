@@ -36,7 +36,7 @@ interface H2HSectionProps {
 
 const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
     if (!h2h || h2h.length === 0)
-        return <p className="text-center text-gray-400 mb-6">No H2H data available</p>;
+        return <p className="text-center text-gray-600 mb-6">No H2H data available</p>;
 
     const visibleMatches = h2h.slice(0, 5);
 
@@ -95,7 +95,7 @@ const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
                     const year = matchDateObj.getFullYear();
 
                     const isEven = i % 2 === 0;
-                    const bgClass = isEven ? "bg-[#0A0A0A]" : "bg-[#1E1E1E]";
+                    const bgClass = isEven ? "bg-gray-50" : "bg-white";
                     const hoverClass = isEven ? "hover:bg-[#151515]" : "hover:bg-[#282828]";
 
                     return (
@@ -110,13 +110,13 @@ const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
                             </div>
 
                             {/* 2️⃣ Home Team */}
-                            <div className={`font-medium text-[11px] sm:text-[12px] truncate text-right px-1 pr-3 flex-1 min-w-0 ${match.teams.home.winner ? 'text-white drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`}>
+                            <div className={`font-medium text-[11px] sm:text-[12px] truncate text-right px-1 pr-3 flex-1 min-w-0 ${match.teams.home.winner ? 'text-gray-900 drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-800'}`}>
                                 {match.teams.home.name}
                             </div>
 
                             {/* 3️⃣ Score */}
                             <div className="flex flex-col items-center justify-center shrink-0 w-14">
-                                <div className="flex justify-center w-full font-bold text-white bg-black/40 px-2 py-0.5 rounded text-[10px] sm:text-[11px]">
+                                <div className="flex justify-center w-full font-bold text-gray-900 bg-gray-50/40 px-2 py-0.5 rounded text-[10px] sm:text-[11px]">
                                     {match.goals.home} - {match.goals.away}
                                 </div>
                                 {match.score?.halftime && match.score.halftime.home !== null && match.score.halftime.away !== null && (
@@ -127,7 +127,7 @@ const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
                             </div>
 
                             {/* 4️⃣ Away Team */}
-                            <div className={`font-medium text-[11px] sm:text-[12px] truncate text-left px-1 pl-3 flex-1 min-w-0 ${match.teams.away.winner ? 'text-white drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`}>
+                            <div className={`font-medium text-[11px] sm:text-[12px] truncate text-left px-1 pl-3 flex-1 min-w-0 ${match.teams.away.winner ? 'text-gray-900 drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-800'}`}>
                                 {match.teams.away.name}
                             </div>
                         </div>
@@ -146,18 +146,18 @@ const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
                     
                     <div className="flex justify-between text-center px-1 md:px-4">
                         <div className="flex flex-col items-center">
-                            <span className="text-gray-200 text-[10px] sm:text-xs font-bold mb-1 max-w-[80px] sm:max-w-[100px] truncate">{teamA} {teamAWins}</span>
-                            <span className="text-gray-400 text-xs mb-1">{teamAPct}%</span>
+                            <span className="text-gray-800 text-[10px] sm:text-xs font-bold mb-1 max-w-[80px] sm:max-w-[100px] truncate">{teamA} {teamAWins}</span>
+                            <span className="text-gray-600 text-xs mb-1">{teamAPct}%</span>
                             <div className="w-8 h-1 bg-green-500 rounded-full" />
                         </div>
                         <div className="flex flex-col items-center">
-                            <span className="text-gray-200 text-[10px] sm:text-xs font-bold mb-1">Draw {draws}</span>
-                            <span className="text-gray-400 text-xs mb-1">{drawPct}%</span>
+                            <span className="text-gray-800 text-[10px] sm:text-xs font-bold mb-1">Draw {draws}</span>
+                            <span className="text-gray-600 text-xs mb-1">{drawPct}%</span>
                             <div className="w-8 h-1 bg-yellow-500 rounded-full" />
                         </div>
                         <div className="flex flex-col items-center">
-                            <span className="text-gray-200 text-[10px] sm:text-xs font-bold mb-1 max-w-[80px] sm:max-w-[100px] truncate">{teamB} {teamBWins}</span>
-                            <span className="text-gray-400 text-xs mb-1">{teamBPct}%</span>
+                            <span className="text-gray-800 text-[10px] sm:text-xs font-bold mb-1 max-w-[80px] sm:max-w-[100px] truncate">{teamB} {teamBWins}</span>
+                            <span className="text-gray-600 text-xs mb-1">{teamBPct}%</span>
                             <div className="w-8 h-1 bg-blue-500 rounded-full" />
                         </div>
                     </div>
@@ -167,8 +167,8 @@ const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
 
             {/* Expert Insight Story 
             {storyText && (
-                <div className="mt-2 bg-white/5 rounded-xl p-1 sm:p-1.5 shadow-sm flex items-start gap-2">
-                    <p className="text-[11px] sm:text-xs font-medium text-gray-300 leading-relaxed text-justify">
+                <div className="mt-2 bg-gray-100 rounded-xl p-1 sm:p-1.5 shadow-sm flex items-start gap-2">
+                    <p className="text-[11px] sm:text-xs font-medium text-gray-700 leading-relaxed text-justify">
                         {storyText}
                     </p>
                 </div>

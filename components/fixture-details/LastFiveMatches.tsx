@@ -26,7 +26,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
         return (
             <div className="mb-4 w-full text-center">
                 <div className="text-gray-500 text-xs uppercase tracking-widest mb-2">{teamName}</div>
-                <div className="text-sm text-gray-400">No match history available</div>
+                <div className="text-sm text-gray-600">No match history available</div>
             </div>
         );
     }
@@ -65,7 +65,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
     return (
         <div className="mb-2 w-full animate-in fade-in duration-500">
             {/* 🏆 Title + Team Logo (Handled by Parent)
-            <div className={`flex flex-col mb-2 border-b border-white/10 pb-1 items-center`}>
+            <div className={`flex flex-col mb-2 border-b border-gray-300 pb-1 items-center`}>
                 <div className={`flex items-center gap-2 justify-center`}>
                     {teamLogo && (
                         <img
@@ -74,8 +74,8 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                             className="w-6 h-6 object-contain"
                         />
                     )}
-                    <h4 className="text-xs font-bold text-emerald-200/70 tracking-wide capitalize">
-                        {teamName} {subTitle && <span className="text-gray-400 font-normal ml-1">({subTitle})</span>}
+                    <h4 className="text-xs font-bold text-gray-600 tracking-wide capitalize">
+                        {teamName} {subTitle && <span className="text-gray-600 font-normal ml-1">({subTitle})</span>}
                     </h4>
                 </div>
             </div>
@@ -88,8 +88,8 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                         onClick={() => { setActiveLeagueId("All"); setShowAll(false); }}
                         className={`px-1 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
                             activeLeagueId === "All"
-                                ? "bg-white/20 text-white shadow-sm"
-                                : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-gray-200"
+                                ? "bg-gray-300 text-gray-900 shadow-sm"
+                                : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800"
                         }`}
                     >
                         All
@@ -100,8 +100,8 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                             onClick={() => { setActiveLeagueId(league.id); setShowAll(false); }}
                             className={`px-1 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
                                 activeLeagueId === league.id
-                                    ? "bg-white/20 text-white shadow-sm"
-                                    : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-gray-200"
+                                    ? "bg-gray-300 text-gray-900 shadow-sm"
+                                    : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800"
                             }`}
                         >
                             {league.name}
@@ -121,7 +121,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                     const year = matchDateObj.getFullYear();
 
                     const isEven = i % 2 === 0;
-                    const bgClass = isEven ? "bg-[#0A0A0A]" : "bg-[#1E1E1E]";
+                    const bgClass = isEven ? "bg-gray-50" : "bg-white";
                     const hoverClass = isEven ? "hover:bg-[#151515]" : "hover:bg-[#282828]";
 
                     const homeWinner = m.score.home > m.score.away;
@@ -140,7 +140,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
 
                             {/* 2️⃣ Home Team */}
                             <div className="flex items-center justify-end gap-1.5 flex-1 min-w-0 pr-3">
-                                <span className={`font-medium text-[11px] sm:text-[12px] truncate text-right px-1 ${homeWinner ? 'text-white drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`}>{m.homeTeam.name}</span>
+                                <span className={`font-medium text-[11px] sm:text-[12px] truncate text-right px-1 ${homeWinner ? 'text-gray-900 drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-800'}`}>{m.homeTeam.name}</span>
                                 {m.homeTeam.logo && (
                                     <img src={m.homeTeam.logo} alt={m.homeTeam.name} className="w-4 h-4 object-contain flex-shrink-0" />
                                 )}
@@ -165,7 +165,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                                 {m.awayTeam.logo && (
                                     <img src={m.awayTeam.logo} alt={m.awayTeam.name} className="w-4 h-4 object-contain flex-shrink-0" />
                                 )}
-                                <span className={`font-medium text-[11px] sm:text-[12px] truncate text-left px-1 ${awayWinner ? 'text-white drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`}>{m.awayTeam.name}</span>
+                                <span className={`font-medium text-[11px] sm:text-[12px] truncate text-left px-1 ${awayWinner ? 'text-gray-900 drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-800'}`}>{m.awayTeam.name}</span>
                             </div>
 
                             {/* 5️⃣ League Short Name (Optional visual flair based on user reference) */}
@@ -192,18 +192,18 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                     
                     <div className="flex justify-between text-center px-4 md:px-8">
                         <div className="flex flex-col items-center">
-                            <span className="text-gray-200 text-xs font-bold mb-1">Win {wins}</span>
-                            <span className="text-gray-400 text-xs mb-1">{winPct}%</span>
+                            <span className="text-gray-800 text-xs font-bold mb-1">Win {wins}</span>
+                            <span className="text-gray-600 text-xs mb-1">{winPct}%</span>
                             <div className="w-8 h-1 bg-green-500 rounded-full" />
                         </div>
                         <div className="flex flex-col items-center">
-                            <span className="text-gray-200 text-xs font-bold mb-1">Draw {draws}</span>
-                            <span className="text-gray-400 text-xs mb-1">{drawPct}%</span>
+                            <span className="text-gray-800 text-xs font-bold mb-1">Draw {draws}</span>
+                            <span className="text-gray-600 text-xs mb-1">{drawPct}%</span>
                             <div className="w-8 h-1 bg-yellow-500 rounded-full" />
                         </div>
                         <div className="flex flex-col items-center">
-                            <span className="text-gray-200 text-xs font-bold mb-1">Lost {losses}</span>
-                            <span className="text-gray-400 text-xs mb-1">{lossPct}%</span>
+                            <span className="text-gray-800 text-xs font-bold mb-1">Lost {losses}</span>
+                            <span className="text-gray-600 text-xs mb-1">{lossPct}%</span>
                             <div className="w-8 h-1 bg-red-500 rounded-full" />
                         </div>
                     </div>
@@ -216,7 +216,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                 <div className="flex justify-center mt-3 mb-1">
                     <button
                         onClick={() => setShowAll(!showAll)}
-                        className="px-4 py-1.5 text-[10px] sm:text-xs font-bold text-gray-400 bg-white/5 hover:bg-white/10 hover:text-white rounded-full transition-all"
+                        className="px-4 py-1.5 text-[10px] sm:text-xs font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 hover:text-gray-900 rounded-full transition-all"
                     >
                         {showAll ? "View less" : "View all"}
                     </button>

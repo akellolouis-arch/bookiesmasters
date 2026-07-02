@@ -53,14 +53,14 @@ export default function Lineups({ lineups }: LineupsProps) {
             <div className="flex justify-between items-center px-4">
                 <div className="text-center">
                     <p className="font-bold text-main-accent">{home.formation}</p>
-                    <p className="text-xs text-gray-400">{home.team.name}</p>
+                    <p className="text-xs text-gray-600">{home.team.name}</p>
                 </div>
                 <div className="text-center">
                     <span className="text-xs text-gray-500 px-2 py-1 bg-gray-900 rounded">FORMATION</span>
                 </div>
                 <div className="text-center">
                     <p className="font-bold text-main-accent">{away.formation}</p>
-                    <p className="text-xs text-gray-400">{away.team.name}</p>
+                    <p className="text-xs text-gray-600">{away.team.name}</p>
                 </div>
             </div>
 
@@ -86,12 +86,12 @@ export default function Lineups({ lineups }: LineupsProps) {
                 <div className="grid grid-cols-2 gap-4">
                     {/* Home XI */}
                     <div>
-                        <h4 className="text-xs uppercase tracking-wider text-gray-500 mb-3 border-b border-gray-800 pb-2">Starting XI</h4>
+                        <h4 className="text-xs uppercase tracking-wider text-gray-500 mb-3 border-b border-gray-200 pb-2">Starting XI</h4>
                         <ul className="space-y-2">
                             {home.startXI.map((item, idx) => (
                                 <li key={idx} className="flex items-center gap-2 text-sm">
                                     <span className="w-5 text-gray-500 text-xs">{item.player.number}</span>
-                                    <span className="text-white truncate">{item.player.name}</span>
+                                    <span className="text-gray-900 truncate">{item.player.name}</span>
                                 </li>
                             ))}
                         </ul>
@@ -99,11 +99,11 @@ export default function Lineups({ lineups }: LineupsProps) {
 
                     {/* Away XI */}
                     <div>
-                        <h4 className="text-xs uppercase tracking-wider text-gray-500 mb-3 border-b border-gray-800 pb-2 text-right">Starting XI</h4>
+                        <h4 className="text-xs uppercase tracking-wider text-gray-500 mb-3 border-b border-gray-200 pb-2 text-right">Starting XI</h4>
                         <ul className="space-y-2">
                             {away.startXI.map((item, idx) => (
                                 <li key={idx} className="flex items-center justify-end gap-2 text-sm">
-                                    <span className="text-white truncate text-right">{item.player.name}</span>
+                                    <span className="text-gray-900 truncate text-right">{item.player.name}</span>
                                     <span className="w-5 text-gray-500 text-xs text-right">{item.player.number}</span>
                                 </li>
                             ))}
@@ -113,13 +113,13 @@ export default function Lineups({ lineups }: LineupsProps) {
             )}
 
             {/* Substitutes Lists Comparison */}
-            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-800">
+            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
                 {/* Home Subs */}
                 <div>
                     <h4 className="text-xs uppercase tracking-wider text-gray-500 mb-3">Substitutes</h4>
                     <ul className="space-y-2">
                         {home.substitutes.map((item, idx) => (
-                            <li key={idx} className="flex items-center gap-2 text-xs text-gray-300">
+                            <li key={idx} className="flex items-center gap-2 text-xs text-gray-700">
                                 <span className="w-5 text-gray-600">{item.player.number}</span>
                                 <span className="truncate">{item.player.name}</span>
                             </li>
@@ -132,7 +132,7 @@ export default function Lineups({ lineups }: LineupsProps) {
                     <h4 className="text-xs uppercase tracking-wider text-gray-500 mb-3 text-right">Substitutes</h4>
                     <ul className="space-y-2">
                         {away.substitutes.map((item, idx) => (
-                            <li key={idx} className="flex items-center justify-end gap-2 text-xs text-gray-300">
+                            <li key={idx} className="flex items-center justify-end gap-2 text-xs text-gray-700">
                                 <span className="truncate text-right">{item.player.name}</span>
                                 <span className="w-5 text-gray-600 text-right">{item.player.number}</span>
                             </li>
@@ -142,12 +142,12 @@ export default function Lineups({ lineups }: LineupsProps) {
             </div>
 
             {/* Coaches */}
-            <div className="flex justify-between items-center pt-4 border-t border-gray-800">
+            <div className="flex justify-between items-center pt-4 border-t border-gray-200">
                 <div className="text-xs">
-                    <span className="text-gray-500">Coach:</span> <span className="text-white">{home.coach.name}</span>
+                    <span className="text-gray-500">Coach:</span> <span className="text-gray-900">{home.coach.name}</span>
                 </div>
                 <div className="text-xs">
-                    <span className="text-gray-500">Coach:</span> <span className="text-white">{away.coach.name}</span>
+                    <span className="text-gray-500">Coach:</span> <span className="text-gray-900">{away.coach.name}</span>
                 </div>
             </div>
         </div>

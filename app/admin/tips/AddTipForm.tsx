@@ -52,39 +52,39 @@ export default function AddTipForm() {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs text-gray-400 mb-1">Home Team</label>
-          <input required name="homeTeam" value={formData.homeTeam} onChange={handleChange} className="w-full bg-[#121212] border border-white/10 rounded p-2 text-sm text-white" />
+          <label className="block text-xs text-gray-600 mb-1">Home Team</label>
+          <input required name="homeTeam" value={formData.homeTeam} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-sm text-gray-900" />
         </div>
         <div>
-          <label className="block text-xs text-gray-400 mb-1">Away Team</label>
-          <input required name="awayTeam" value={formData.awayTeam} onChange={handleChange} className="w-full bg-[#121212] border border-white/10 rounded p-2 text-sm text-white" />
+          <label className="block text-xs text-gray-600 mb-1">Away Team</label>
+          <input required name="awayTeam" value={formData.awayTeam} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-sm text-gray-900" />
         </div>
       </div>
       
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs text-gray-400 mb-1">Country</label>
-          <input required name="country" value={formData.country} onChange={handleChange} className="w-full bg-[#121212] border border-white/10 rounded p-2 text-sm text-white" />
+          <label className="block text-xs text-gray-600 mb-1">Country</label>
+          <input required name="country" value={formData.country} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-sm text-gray-900" />
         </div>
         <div>
-          <label className="block text-xs text-gray-400 mb-1">League</label>
-          <input required name="league" value={formData.league} onChange={handleChange} className="w-full bg-[#121212] border border-white/10 rounded p-2 text-sm text-white" />
+          <label className="block text-xs text-gray-600 mb-1">League</label>
+          <input required name="league" value={formData.league} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-sm text-gray-900" />
         </div>
       </div>
 
       <div>
-        <label className="block text-xs text-gray-400 mb-1">Match Date & Time</label>
-        <input required type="datetime-local" name="matchDate" value={formData.matchDate} onChange={handleChange} className="w-full bg-[#121212] border border-white/10 rounded p-2 text-sm text-white" />
+        <label className="block text-xs text-gray-600 mb-1">Match Date & Time</label>
+        <input required type="datetime-local" name="matchDate" value={formData.matchDate} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-sm text-gray-900" />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs text-gray-400 mb-1">Prediction (e.g. Home Win)</label>
-          <input required name="prediction" value={formData.prediction} onChange={handleChange} className="w-full bg-[#121212] border border-white/10 rounded p-2 text-sm text-white" />
+          <label className="block text-xs text-gray-600 mb-1">Prediction (e.g. Home Win)</label>
+          <input required name="prediction" value={formData.prediction} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-sm text-gray-900" />
         </div>
         <div>
-          <label className="block text-xs text-gray-400 mb-1">Odds</label>
-          <input required name="odds" value={formData.odds} onChange={handleChange} className="w-full bg-[#121212] border border-white/10 rounded p-2 text-sm text-white" />
+          <label className="block text-xs text-gray-600 mb-1">Odds</label>
+          <input required name="odds" value={formData.odds} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-sm text-gray-900" />
         </div>
       </div>
 

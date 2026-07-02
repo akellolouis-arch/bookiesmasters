@@ -93,13 +93,13 @@ export default function DateNavigator({ date }: Props) {
   };
 
   return (
-    <div className="max-w-[100vw] bg-black border-y border-white/5 mx-auto">
+    <div className="max-w-[100vw] bg-gray-50 border-y border-gray-200 mx-auto">
       <div className="max-w-3xl mx-auto w-full">
-        <div className="flex items-stretch w-full h-8 overflow-hidden bg-[#0A0A0A] divide-x divide-white/5 shadow-sm">
+        <div className="flex items-stretch w-full h-8 overflow-hidden bg-gray-50 divide-x divide-white/5 shadow-sm">
 
           <Link
             href="/live"
-            className="shrink-0 w-10 flex flex-col items-center justify-center text-[10px] font-bold transition-colors text-white bg-[#1F1F1F] hover:bg-[#2F2F2F]"
+            className="shrink-0 w-10 flex flex-col items-center justify-center text-[10px] font-bold transition-colors text-gray-900 bg-white hover:bg-[#2F2F2F]"
           >
             LIVE
           </Link>
@@ -127,8 +127,8 @@ export default function DateNavigator({ date }: Props) {
                   onClick={() => handleDateClick(d)}
                   data-active={isActive}
                   className={`flex-1 flex flex-col items-center justify-center min-w-[40px] transition-all ${isActive
-                    ? "bg-white/20 text-amber-100 shadow-inner"
-                    : "text-gray-500 hover:bg-[#252525] hover:text-gray-300"
+                    ? "bg-gray-300 text-blue-800 shadow-inner"
+                    : "text-gray-500 hover:bg-gray-200 hover:text-gray-700"
                     }`}
                 >
                   <span className="text-[10px] font-bold uppercase leading-tight">{dayName}</span>
@@ -139,17 +139,17 @@ export default function DateNavigator({ date }: Props) {
           </div>
 
           {isSearchOpen ? (
-            <form onSubmit={handleSearchSubmit} className="shrink-0 flex items-stretch divide-x divide-white/5 bg-[#1F1F1F]">
+            <form onSubmit={handleSearchSubmit} className="shrink-0 flex items-stretch divide-x divide-white/5 bg-white">
               <input
                 type="text"
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
                 placeholder="Team"
-                className="w-24 sm:w-28 bg-transparent text-white text-xs px-2 outline-none"
+                className="w-24 sm:w-28 bg-transparent text-gray-900 text-xs px-2 outline-none"
               />
               <button
                 type="submit"
-                className="w-9 flex items-center justify-center text-white hover:bg-[#2F2F2F] transition-colors"
+                className="w-9 flex items-center justify-center text-gray-900 hover:bg-[#2F2F2F] transition-colors"
                 aria-label="Search fixtures"
               >
                 <Search size={14} strokeWidth={2.5} />
@@ -160,7 +160,7 @@ export default function DateNavigator({ date }: Props) {
                   clearSearch();
                   setIsSearchOpen(false);
                 }}
-                className="w-9 flex items-center justify-center text-gray-300 hover:bg-[#2F2F2F] transition-colors text-xs font-bold"
+                className="w-9 flex items-center justify-center text-gray-700 hover:bg-[#2F2F2F] transition-colors text-xs font-bold"
                 aria-label="Close search"
               >
                 ×
@@ -170,7 +170,7 @@ export default function DateNavigator({ date }: Props) {
             <button
               type="button"
               onClick={() => setIsSearchOpen(true)}
-              className="shrink-0 w-10 flex items-center justify-center text-white hover:bg-[#2F2F2F] transition-colors bg-[#1F1F1F]"
+              className="shrink-0 w-10 flex items-center justify-center text-gray-900 hover:bg-[#2F2F2F] transition-colors bg-white"
               aria-label="Open fixture search"
             >
               <Search size={14} strokeWidth={2.5} />
