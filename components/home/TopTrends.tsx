@@ -63,7 +63,7 @@ export default async function TopTrends() {
       {/* Title */}
       <div className="flex items-center justify-center gap-2 mb-1.5 px-1 sm:px-0">
         <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent to-white/10" />
-        <span className="text-[11px] font-bold text-blue-800/90 tracking-wider uppercase whitespace-nowrap">
+        <span className="text-[11px] font-bold text-teal-700/90 tracking-wider uppercase whitespace-nowrap">
           top trends
         </span>
         <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent" />
@@ -148,7 +148,7 @@ export default async function TopTrends() {
               <div className="flex justify-end mt-0.5">
                 <Link
                   href={`/prediction/${match.fixtureId}`}
-                  className="inline-flex items-center gap-0.5 text-[8px] font-bold text-blue-800/70 hover:text-blue-800 transition-colors uppercase tracking-wider bg-gray-100 hover:bg-gray-200 px-2 py-0.5 rounded-lg"
+                  className="inline-flex items-center gap-0.5 text-[8px] font-bold text-teal-700/70 hover:text-teal-700 transition-colors uppercase tracking-wider bg-gray-100 hover:bg-gray-200 px-2 py-0.5 rounded-lg"
                 >
                   View Details →
                 </Link>

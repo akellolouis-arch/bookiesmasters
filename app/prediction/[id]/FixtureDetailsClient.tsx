@@ -109,7 +109,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                             />
                         )}
                         <div className="flex flex-col truncate w-full leading-tight">
-                            <span className="font-medium text-[11px] text-blue-800 tracking-wide truncate drop-shadow-sm">
+                            <span className="font-medium text-[11px] text-teal-700 tracking-wide truncate drop-shadow-sm">
                                 {data.league}
                             </span>
                             <span className="text-[9px] text-gray-600 font-normal capitalize tracking-wider truncate">
@@ -176,7 +176,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 {hasH2H && (
                     <div className="mt-2">
                         <div className="flex justify-center mb-3">
-                            <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-gray-100 backdrop-blur-sm border border-gray-300 text-blue-800 rounded-lg sm:rounded-xl text-[11px] font-bold shadow-lg tracking-wide uppercase">
+                            <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-gray-100 backdrop-blur-sm border border-gray-300 text-teal-700 rounded-lg sm:rounded-xl text-[11px] font-bold shadow-lg tracking-wide uppercase">
                                 Head to Head
                             </h3>
                         </div>
@@ -188,7 +188,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 {hasAnyMatches && (
                     <div className="mt-2 space-y-4">
                         <div className="flex justify-center mb-1">
-                            <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-gray-100 backdrop-blur-sm border border-gray-300 text-blue-800 rounded-lg sm:rounded-xl text-[11px] font-bold shadow-lg tracking-wide uppercase">
+                            <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-gray-100 backdrop-blur-sm border border-gray-300 text-teal-700 rounded-lg sm:rounded-xl text-[11px] font-bold shadow-lg tracking-wide uppercase">
                                 Recent Form
                             </h3>
                         </div>
@@ -263,7 +263,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 {data.standings && data.standings.length > 0 && (
                     <div className="mt-2">
                         <div className="flex justify-center mb-3">
-                            <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-gray-100 backdrop-blur-sm border border-gray-300 text-blue-800 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold shadow-lg tracking-wide uppercase">
+                            <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-gray-100 backdrop-blur-sm border border-gray-300 text-teal-700 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold shadow-lg tracking-wide uppercase">
                                 League Table
                             </h3>
                         </div>
@@ -277,7 +277,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 {displayInjuries && displayInjuries.length > 0 && (
                     <div className="mt-2">
                         <div className="flex justify-center mb-3">
-                            <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-gray-100 backdrop-blur-sm border border-gray-300 text-blue-800 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold shadow-lg tracking-wide uppercase">
+                            <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-gray-100 backdrop-blur-sm border border-gray-300 text-teal-700 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold shadow-lg tracking-wide uppercase">
                                 Injuries & Suspensions
                             </h3>
                         </div>

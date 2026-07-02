@@ -33,7 +33,7 @@ export default function MatchTrends({ trends }: MatchTrendsProps) {
                     <div key={idx} className="flex items-start gap-3">
                         <div className={`p-2 rounded-full shrink-0 ${trend.type === 'positive' ? 'bg-green-500/10 text-green-400' :
                                 trend.type === 'negative' ? 'bg-red-500/10 text-red-400' :
-                                    'bg-blue-500/10 text-blue-400'
+                                    'bg-teal-500/10 text-teal-700'
                             }`}>
                             <span className="text-lg leading-none">{trend.icon}</span>
                         </div>

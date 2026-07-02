@@ -128,7 +128,7 @@ const OverallStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => 
     return (
         <div className="w-full mt-1 animate-in fade-in duration-500">
             <div className="flex justify-center mb-3">
-                <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-gray-100 backdrop-blur-sm border border-gray-300 text-blue-800 rounded-lg sm:rounded-xl text-[11px] font-bold shadow-lg tracking-wide uppercase">
+                <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-gray-100 backdrop-blur-sm border border-gray-300 text-teal-700 rounded-lg sm:rounded-xl text-[11px] font-bold shadow-lg tracking-wide uppercase">
                     Overall Statistics
                 </h3>
             </div>
@@ -138,13 +138,13 @@ const OverallStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) => 
                 <div className="flex bg-gray-100 rounded-full p-1 border border-gray-300">
                     <button
                         onClick={() => setLocationMode("overall")}
-                        className={`px-4 py-1.5 rounded-full text-[10px] sm:text-[11px] font-bold transition-all ${locationMode === "overall" ? "bg-gray-300 text-blue-800 shadow-inner" : "text-gray-600 hover:text-gray-900"}`}
+                        className={`px-4 py-1.5 rounded-full text-[10px] sm:text-[11px] font-bold transition-all ${locationMode === "overall" ? "bg-gray-300 text-teal-700 shadow-inner" : "text-gray-600 hover:text-gray-900"}`}
                     >
                         Overall
                     </button>
                     <button
                         onClick={() => setLocationMode("home_away")}
-                        className={`px-4 py-1.5 rounded-full text-[10px] sm:text-[11px] font-bold transition-all ${locationMode === "home_away" ? "bg-gray-300 text-blue-800 shadow-inner" : "text-gray-600 hover:text-gray-900"}`}
+                        className={`px-4 py-1.5 rounded-full text-[10px] sm:text-[11px] font-bold transition-all ${locationMode === "home_away" ? "bg-gray-300 text-teal-700 shadow-inner" : "text-gray-600 hover:text-gray-900"}`}
                     >
                         Home/Away
                     </button>

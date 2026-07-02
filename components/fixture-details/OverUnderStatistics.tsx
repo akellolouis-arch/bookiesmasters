@@ -100,7 +100,7 @@ const OverUnderStatistics: React.FC<TeamStatsProps> = ({ homeTeam, awayTeam }) =
                         <Image src={homeTeam.logo} alt={homeTeam.name} fill className="object-contain" unoptimized />
                     </div>
                 </div>
-                <div className="text-xs sm:text-sm font-bold text-blue-800/80 tracking-wide uppercase">
+                <div className="text-xs sm:text-sm font-bold text-teal-700/80 tracking-wide uppercase">
                     
                 </div>
                 <div className="flex items-center gap-2 flex-row-reverse">

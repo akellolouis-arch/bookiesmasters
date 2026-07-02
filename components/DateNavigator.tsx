@@ -127,7 +127,7 @@ export default function DateNavigator({ date }: Props) {
                   onClick={() => handleDateClick(d)}
                   data-active={isActive}
                   className={`flex-1 flex flex-col items-center justify-center min-w-[40px] transition-all ${isActive
-                    ? "bg-gray-300 text-blue-800 shadow-inner"
+                    ? "bg-gray-300 text-teal-700 shadow-inner"
                     : "text-gray-500 hover:bg-gray-200 hover:text-gray-700"
                     }`}
                 >
