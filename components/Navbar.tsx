@@ -19,7 +19,7 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-gray-100 text-gray-900 shadow-md">
+    <nav className="sticky top-0 z-50 w-full bg-gray-200 text-gray-900 shadow-md">
       {/*
         Avoid justify-between: when the logo image hasn’t painted yet, the left slot can
         collapse and the hamburger reads as “first”. Logo → flex spacer → links / toggler.
@@ -51,7 +51,7 @@ export default function Navbar() {
           ))}
           <Link
             href="/pro"
-            className="px-4 py-1.5 bg-gray-100 border border-[#63FF79]/30 text-[#63FF79] font-bold rounded-full text-xs hover:scale-105 transition-transform shadow-sm"
+            className="px-4 py-1.5 bg-gray-200 border border-[#63FF79]/30 text-[#63FF79] font-bold rounded-full text-xs hover:scale-105 transition-transform shadow-sm"
           >
             GO PRO
           </Link>
@@ -59,7 +59,7 @@ export default function Navbar() {
 
         <Link
           href="/pro"
-          className="flex md:hidden items-center justify-center shrink-0 px-3 py-1 bg-gray-100 border border-[#63FF79]/30 text-[#63FF79] font-bold tracking-wide rounded-full text-[10px] shadow-sm"
+          className="flex md:hidden items-center justify-center shrink-0 px-3 py-1 bg-gray-200 border border-[#63FF79]/30 text-[#63FF79] font-bold tracking-wide rounded-full text-[10px] shadow-sm"
         >
           GO PRO
         </Link>
