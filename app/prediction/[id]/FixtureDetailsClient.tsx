@@ -201,16 +201,16 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                                         {data.homeTeam.logo && <img src={data.homeTeam.logo} alt={data.homeTeam.name} className="w-5 h-5 object-contain" />}
                                         <span className="text-[10px] sm:text-[11px] font-bold text-gray-800 uppercase truncate max-w-[150px]">{data.homeTeam.name}</span>
                                     </div>
-                                    <div className="flex gap-1 bg-[#0F0F0F] p-0.5 rounded border border-gray-300 shadow-sm">
+                                    <div className="flex gap-1 bg-gray-100 p-0.5 rounded border border-gray-300 shadow-sm">
                                         <button 
                                             onClick={() => setHomeTab("all")}
-                                            className={`px-2 py-1 rounded text-[9px] font-bold transition-colors ${homeTab === "all" ? "bg-gray-200 text-gray-900" : "text-gray-600 hover:text-gray-800"}`}
+                                            className={`px-2 py-1 rounded text-[9px] font-bold transition-colors ${homeTab === "all" ? "bg-white text-gray-900 shadow-sm" : "text-gray-600 hover:text-gray-800"}`}
                                         >
                                             Recent Form
                                         </button>
                                         <button 
                                             onClick={() => setHomeTab("home")}
-                                            className={`px-2 py-1 rounded text-[9px] font-bold transition-colors ${homeTab === "home" ? "bg-gray-200 text-gray-900" : "text-gray-600 hover:text-gray-800"}`}
+                                            className={`px-2 py-1 rounded text-[9px] font-bold transition-colors ${homeTab === "home" ? "bg-white text-gray-900 shadow-sm" : "text-gray-600 hover:text-gray-800"}`}
                                         >
                                             Home Form
                                         </button>
@@ -232,16 +232,16 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                                         {data.awayTeam.logo && <img src={data.awayTeam.logo} alt={data.awayTeam.name} className="w-5 h-5 object-contain" />}
                                         <span className="text-[10px] sm:text-[11px] font-bold text-gray-800 uppercase truncate max-w-[150px]">{data.awayTeam.name}</span>
                                     </div>
-                                    <div className="flex gap-1 bg-[#0F0F0F] p-0.5 rounded border border-gray-300 shadow-sm">
+                                    <div className="flex gap-1 bg-gray-100 p-0.5 rounded border border-gray-300 shadow-sm">
                                         <button 
                                             onClick={() => setAwayTab("all")}
-                                            className={`px-2 py-1 rounded text-[9px] font-bold transition-colors ${awayTab === "all" ? "bg-gray-200 text-gray-900" : "text-gray-600 hover:text-gray-800"}`}
+                                            className={`px-2 py-1 rounded text-[9px] font-bold transition-colors ${awayTab === "all" ? "bg-white text-gray-900 shadow-sm" : "text-gray-600 hover:text-gray-800"}`}
                                         >
                                             Recent Form
                                         </button>
                                         <button 
                                             onClick={() => setAwayTab("away")}
-                                            className={`px-2 py-1 rounded text-[9px] font-bold transition-colors ${awayTab === "away" ? "bg-gray-200 text-gray-900" : "text-gray-600 hover:text-gray-800"}`}
+                                            className={`px-2 py-1 rounded text-[9px] font-bold transition-colors ${awayTab === "away" ? "bg-white text-gray-900 shadow-sm" : "text-gray-600 hover:text-gray-800"}`}
                                         >
                                             Away Form
                                         </button>
