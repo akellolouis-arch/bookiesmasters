@@ -200,7 +200,7 @@ export default function PredictionsList({
         let globalIdx = 0;
         return safeData.map((league, idx) => (
           <div key={league.id || idx}>
-            <div className="flex items-center gap-1 bg-gradient-to-r from-emerald-900/40 to-[#121212] py-0.5 px-0.5 shadow-md border border-gray-200 border-b-0">
+            <div className="flex items-center gap-1 bg-gray-100 py-0.5 px-0.5 shadow-md border border-gray-200 border-b-0">
               <div className="flex items-center gap-1 w-full">
                 {league.logo && (
                   <Image
