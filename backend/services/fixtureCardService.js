@@ -120,10 +120,19 @@ export async function getFixturesGroupedByLeague(date) {
   ]);
   console.timeEnd(fetchLabel);
 
-  // Filter out friendlies
+  // Filter out friendlies and stuck NS matches
   const validFixtures = fixtures.filter((f) => {
     if (f.fixture?.league?.name?.toLowerCase().includes("friendlies")) {
       return false;
+    }
+    // Drop NS matches that are 30+ mins past scheduled kickoff
+    if (f.fixture?.fixture?.status?.short === "NS" && f.fixture?.fixture?.date) {
+      const kickoff = new Date(f.fixture.fixture.date).getTime();
+      const now = new Date().getTime();
+      const diffMins = (now - kickoff) / (1000 * 60);
+      if (diffMins > 30) {
+        return false;
+      }
     }
     return true;
   });
@@ -416,6 +425,15 @@ export async function getPredictedFixturesGroupedByLeague(date) {
   const validFixtures = fixtures.filter((f) => {
     if (f.fixture?.league?.name?.toLowerCase().includes("friendlies")) {
       return false;
+    }
+    // Drop NS matches that are 30+ mins past scheduled kickoff
+    if (f.fixture?.fixture?.status?.short === "NS" && f.fixture?.fixture?.date) {
+      const kickoff = new Date(f.fixture.fixture.date).getTime();
+      const now = new Date().getTime();
+      const diffMins = (now - kickoff) / (1000 * 60);
+      if (diffMins > 30) {
+        return false;
+      }
     }
     return true;
   });
