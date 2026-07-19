@@ -28,80 +28,80 @@ export default async function ProPage() {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 py-8 md:py-12 relative">
+    <div className="w-full max-w-3xl mx-auto px-4 py-4 md:py-6 relative">
       {session?.user && (
-        <div className="absolute top-4 right-4 md:top-8 md:right-4">
+        <div className="absolute top-2 right-4 md:top-4 md:right-4">
           <form action={async () => {
             "use server";
             await signOut({ redirectTo: "/pro" });
           }}>
-            <button type="submit" className="text-xs text-gray-600 hover:text-gray-900 border border-gray-600 hover:border-white px-3 py-1 rounded transition-colors">
+            <button type="submit" className="text-xs text-gray-600 hover:text-gray-900 border border-gray-600 hover:border-gray-900 px-2 py-1 rounded transition-colors">
               Log out
             </button>
           </form>
         </div>
       )}
 
-      <div className="text-center mb-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 tracking-tight mt-6 md:mt-0">
+      <div className="text-center mb-5">
+        <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-2 tracking-tight mt-6 md:mt-0">
           Upgrade to <span className="text-teal-600">VIP</span>
         </h1>
-        <p className="text-gray-600 text-sm max-w-2xl mx-auto">
-          Get exclusive access to our premium predictions, high-confidence picks, and expert insights for just <strong className="text-gray-900">$19 per week</strong>.
+        <p className="text-gray-600 text-[13px] max-w-xl mx-auto">
+          Get premium predictions and expert insights for just <strong className="text-gray-900">$19 / week</strong>.
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-8 items-start">
+      <div className="grid md:grid-cols-2 gap-6 items-start">
         {/* Payment Details Column */}
-        <div className="bg-white rounded-xl p-4 md:p-6 border border-gray-200 shadow-lg">
-          <h2 className="text-lg font-bold text-gray-900 mb-4 border-b border-gray-300 pb-2">Payment Methods</h2>
+        <div className="p-2 md:p-4">
+          <h2 className="text-base font-bold text-gray-900 mb-3 border-b border-gray-200 pb-2">Payment Methods</h2>
           
-          <div className="space-y-6">
+          <div className="space-y-4">
             {/* M-Pesa */}
-            <div className="bg-white p-4 rounded-lg border border-teal-500/20 relative overflow-hidden">
-              <h3 className="text-teal-600 font-bold mb-2 flex items-center gap-2 text-sm">
-                <span className="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></span>
+            <div className="p-3 rounded border border-teal-500/20 bg-teal-50/30">
+              <h3 className="text-teal-700 font-semibold mb-1 flex items-center gap-1.5 text-xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse"></span>
                 M-Pesa
               </h3>
-              <div className="text-gray-700 text-xs sm:text-sm space-y-2">
+              <div className="text-gray-700 text-[11px] sm:text-xs space-y-1.5">
                 <p>Send exactly <strong className="text-gray-900">Ksh 2,500</strong> to:</p>
-                <div className="bg-gray-50/50 p-2 sm:p-3 rounded font-mono text-center text-sm sm:text-base tracking-widest border border-gray-300">
+                <div className="bg-white p-2 rounded font-mono text-center text-[13px] tracking-wider border border-gray-200">
                   +254745676267
                 </div>
               </div>
             </div>
 
             {/* Crypto Wallet */}
-            <div className="bg-white p-4 rounded-lg border border-yellow-500/20 relative overflow-hidden">
-              <h3 className="text-yellow-600 font-bold mb-2 flex items-center gap-2 text-sm">
-                <span className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span>
+            <div className="p-3 rounded border border-yellow-500/20 bg-yellow-50/30">
+              <h3 className="text-yellow-700 font-semibold mb-1 flex items-center gap-1.5 text-xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse"></span>
                 Crypto Wallet (USDT / BNB)
               </h3>
-              <div className="text-gray-700 text-xs sm:text-sm space-y-2">
+              <div className="text-gray-700 text-[11px] sm:text-xs space-y-1.5">
                 <p>Send exactly <strong className="text-gray-900">19 USDT</strong> on the <strong className="text-gray-900">BEP-20 Network</strong> to:</p>
-                <div className="bg-gray-50/50 p-2 sm:p-3 rounded font-mono text-center text-xs sm:text-sm border border-gray-300 break-all">
+                <div className="bg-white p-2 rounded font-mono text-center text-[10px] sm:text-[11px] border border-gray-200 break-all">
                   0x84Cb45E605722EFFa9896d689C53972ccAC50242
                 </div>
-                <p className="text-[10px] sm:text-xs text-gray-500 mt-2">* Ensure you select the BNB Smart Chain (BEP-20) network to avoid losing funds.</p>
+                <p className="text-[9px] text-gray-500 leading-tight">* Ensure you select the BNB Smart Chain (BEP-20) network to avoid losing funds.</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Upload Form Column */}
-        <div className="bg-white rounded-xl p-4 md:p-6 border border-gray-200 shadow-lg flex flex-col items-center justify-center text-center">
-          <h2 className="text-lg font-bold text-gray-900 mb-2">Verify Payment</h2>
-          <p className="text-xs sm:text-sm text-gray-600 mb-6">Have you already made your payment? Upload your screenshot to gain access to premium tips.</p>
+        <div className="p-4 flex flex-col items-center justify-center text-center">
+          <h2 className="text-base font-bold text-gray-900 mb-1 border-b border-gray-200 pb-2 w-full">Verify Payment</h2>
+          <p className="text-xs text-gray-600 mb-4 mt-3">Already paid? Upload screenshot to get access.</p>
           
           {session?.user ? (
             <Link href="/submit-payment" className="w-full">
-              <button className="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-lg shadow-teal-600/30 text-sm">
+              <button className="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-2.5 px-3 rounded shadow-sm transition-colors text-[13px]">
                 Submit Payment Proof
               </button>
             </Link>
           ) : (
             <Link href="/api/auth/signin?callbackUrl=/submit-payment" className="w-full">
-              <button className="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-lg shadow-teal-600/30 text-sm">
+              <button className="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-2.5 px-3 rounded shadow-sm transition-colors text-[13px]">
                 Login to Submit Payment
               </button>
             </Link>
