@@ -43,29 +43,29 @@ export default async function ProPage() {
       )}
 
       <div className="text-center mb-8">
-        <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight mt-6 md:mt-0">
-          Upgrade to <span className="text-[#63FF79]">VIP</span>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 tracking-tight mt-6 md:mt-0">
+          Upgrade to <span className="text-teal-600">VIP</span>
         </h1>
-        <p className="text-gray-600 text-sm md:text-base max-w-2xl mx-auto">
+        <p className="text-gray-600 text-sm max-w-2xl mx-auto">
           Get exclusive access to our premium predictions, high-confidence picks, and expert insights for just <strong className="text-gray-900">$19 per week</strong>.
         </p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-8 items-start">
         {/* Payment Details Column */}
-        <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-xl">
-          <h2 className="text-xl font-bold text-gray-900 mb-6 border-b border-gray-300 pb-3">Payment Methods</h2>
+        <div className="bg-white rounded-xl p-4 md:p-6 border border-gray-200 shadow-lg">
+          <h2 className="text-lg font-bold text-gray-900 mb-4 border-b border-gray-300 pb-2">Payment Methods</h2>
           
           <div className="space-y-6">
             {/* M-Pesa */}
-            <div className="bg-white p-4 rounded-lg border border-[#63FF79]/20 relative overflow-hidden">
-              <h3 className="text-[#63FF79] font-bold mb-2 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#63FF79] animate-pulse"></span>
+            <div className="bg-white p-4 rounded-lg border border-teal-500/20 relative overflow-hidden">
+              <h3 className="text-teal-600 font-bold mb-2 flex items-center gap-2 text-sm">
+                <span className="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></span>
                 M-Pesa
               </h3>
-              <div className="text-gray-700 text-sm space-y-2">
+              <div className="text-gray-700 text-xs sm:text-sm space-y-2">
                 <p>Send exactly <strong className="text-gray-900">Ksh 2,500</strong> to:</p>
-                <div className="bg-gray-50/50 p-3 rounded font-mono text-center text-lg tracking-widest border border-gray-300">
+                <div className="bg-gray-50/50 p-2 sm:p-3 rounded font-mono text-center text-sm sm:text-base tracking-widest border border-gray-300">
                   +254745676267
                 </div>
               </div>
@@ -73,35 +73,35 @@ export default async function ProPage() {
 
             {/* Crypto Wallet */}
             <div className="bg-white p-4 rounded-lg border border-yellow-500/20 relative overflow-hidden">
-              <h3 className="text-yellow-500 font-bold mb-2 flex items-center gap-2">
+              <h3 className="text-yellow-600 font-bold mb-2 flex items-center gap-2 text-sm">
                 <span className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span>
                 Crypto Wallet (USDT / BNB)
               </h3>
-              <div className="text-gray-700 text-sm space-y-2">
+              <div className="text-gray-700 text-xs sm:text-sm space-y-2">
                 <p>Send exactly <strong className="text-gray-900">19 USDT</strong> on the <strong className="text-gray-900">BEP-20 Network</strong> to:</p>
-                <div className="bg-gray-50/50 p-3 rounded font-mono text-center text-xs sm:text-sm border border-gray-300 break-all">
+                <div className="bg-gray-50/50 p-2 sm:p-3 rounded font-mono text-center text-xs sm:text-sm border border-gray-300 break-all">
                   0x84Cb45E605722EFFa9896d689C53972ccAC50242
                 </div>
-                <p className="text-xs text-gray-500 mt-2">* Ensure you select the BNB Smart Chain (BEP-20) network to avoid losing funds.</p>
+                <p className="text-[10px] sm:text-xs text-gray-500 mt-2">* Ensure you select the BNB Smart Chain (BEP-20) network to avoid losing funds.</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Upload Form Column */}
-        <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-xl flex flex-col items-center justify-center text-center">
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Verify Payment</h2>
-          <p className="text-sm text-gray-600 mb-6">Have you already made your payment? Upload your screenshot to gain access to premium tips.</p>
+        <div className="bg-white rounded-xl p-4 md:p-6 border border-gray-200 shadow-lg flex flex-col items-center justify-center text-center">
+          <h2 className="text-lg font-bold text-gray-900 mb-2">Verify Payment</h2>
+          <p className="text-xs sm:text-sm text-gray-600 mb-6">Have you already made your payment? Upload your screenshot to gain access to premium tips.</p>
           
           {session?.user ? (
             <Link href="/submit-payment" className="w-full">
-              <button className="w-full bg-[#63FF79] hover:bg-[#4ade80] text-black font-bold py-4 px-6 rounded-lg transition-colors shadow-[0_0_20px_rgba(99,255,121,0.2)]">
+              <button className="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-lg shadow-teal-600/30 text-sm">
                 Submit Payment Proof
               </button>
             </Link>
           ) : (
             <Link href="/api/auth/signin?callbackUrl=/submit-payment" className="w-full">
-              <button className="w-full bg-[#63FF79] hover:bg-[#4ade80] text-black font-bold py-4 px-6 rounded-lg transition-colors shadow-[0_0_20px_rgba(99,255,121,0.2)]">
+              <button className="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-lg shadow-teal-600/30 text-sm">
                 Login to Submit Payment
               </button>
             </Link>

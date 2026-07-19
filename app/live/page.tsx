@@ -2,7 +2,7 @@ import PredictionsList from "../predictions/[date]/predictionList";
 import DateNavigator from "@/components/DateNavigator";
 import { Suspense } from "react";
 
-export const revalidate = 86400;
+export const dynamic = 'force-dynamic';
 
 interface BackendLeague {
   id: number;

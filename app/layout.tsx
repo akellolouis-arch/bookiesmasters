@@ -14,6 +14,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://bookiesmasters.com"),
   title: "BookiesMasters",
   description: "Free football predictions, fixtures, events, odds, livescores & insights",
   icons: {

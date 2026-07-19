@@ -2,8 +2,7 @@ import { notFound } from "next/navigation";
 import { cache } from "react";
 import FixtureDetailsClient from "./FixtureDetailsClient";
 
-/** Avoid hammering Render; still fresh enough for match pages */
-export const revalidate = 86400;
+export const dynamic = 'force-dynamic';
 
 /** Fail fast so Vercel never sits 300s on a stuck upstream (504 in your logs) */
 const FETCH_TIMEOUT_MS = 15_000;
@@ -23,15 +22,6 @@ interface FixtureDetailData {
     h2h: any[];
 }
 
-// --------------------------------------------------------------------------
-// Do NOT pre-render prediction URLs at build time.
-// Pre-building 50× pages each calling Render twice (page + metadata) caused
-// 5+ minute builds and 300s timeouts when Render was slow or resetting (ECONNRESET).
-// All /prediction/[id] pages are generated on-demand with a hard fetch timeout.
-// --------------------------------------------------------------------------
-export async function generateStaticParams() {
-    return [];
-}
 
 function fetchWithTimeout(url: string, revalidateSeconds: number): Promise<Response> {
     return fetch(url, {

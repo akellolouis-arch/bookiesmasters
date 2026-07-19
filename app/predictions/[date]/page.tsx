@@ -4,8 +4,7 @@ import TopTrends from "@/components/home/TopTrends";
 import { Suspense } from "react";
 
 
-export const revalidate = 86400; // Cache for 1 day (ISR)
-export const dynamicParams = true; // Allow generating pages for new dates
+export const dynamic = 'force-dynamic';
 
 // ---------------------
 // Backend Types
@@ -60,25 +59,6 @@ export interface LeagueGroup {
   matches: BackendMatch[];
 }
 
-// ---------------------
-// STATIC PARAMS GENERATION (SSG/ISR)
-// ---------------------
-export async function generateStaticParams() {
-  const dates = [];
-  const now = new Date();
-
-  // Pre-build: Yesterday, Today, Tomorrow
-  for (let i = -1; i <= 1; i++) {
-    const d = new Date(now);
-    d.setDate(d.getDate() + i);
-    dates.push(d.toLocaleDateString("en-CA", { timeZone: "Africa/Nairobi" }));
-  }
-
-  // Returns array of params: [{ date: '2025-12-26' }, { date: '2025-12-27' }, ...]
-  return dates.map((date) => ({
-    date: date,
-  }));
-}
 
 // ---------------------
 // DYNAMIC METADATA
