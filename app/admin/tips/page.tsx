@@ -3,6 +3,7 @@ import PremiumTip from "@/backend/models/PremiumTip";
 import AddTipForm from "./AddTipForm";
 import DeleteTipButton from "./DeleteTipButton";
 import UpdateTipStatus from "./UpdateTipStatus";
+import EditTipModal from "./EditTipModal";
 
 export const metadata = {
   title: "Manage Premium Tips",
@@ -57,7 +58,10 @@ export default async function AdminTipsPage() {
                   
                   <div className="flex flex-col items-end gap-2">
                     <UpdateTipStatus tipId={tip._id.toString()} currentStatus={tip.status} />
-                    <DeleteTipButton tipId={tip._id.toString()} />
+                    <div className="flex items-center gap-1">
+                      <EditTipModal tip={tip} />
+                      <DeleteTipButton tipId={tip._id.toString()} />
+                    </div>
                   </div>
                 </div>
               ))

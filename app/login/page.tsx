@@ -37,7 +37,7 @@ export default async function LoginPage(props: {
         >
           <button
             type="submit"
-            className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-100 text-black font-bold py-3 px-4 rounded-xl transition-colors"
+            className="w-full flex items-center justify-center gap-3 bg-white border-2 border-gray-200 hover:border-gray-300 shadow-sm text-gray-800 font-bold py-3 px-4 rounded-xl transition-all"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
