@@ -3,6 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth, signOut } from "@/auth";
+import mongoose from "mongoose";
+import PremiumTip from "@/backend/models/PremiumTip";
+import { CheckCircle2 } from "lucide-react";
 
 export const metadata = {
   title: "Go Pro | BookiesMasters",
@@ -11,6 +14,19 @@ export const metadata = {
 
 export default async function ProPage() {
   const session = await auth();
+
+  if (mongoose.connection.readyState !== 1) {
+    await mongoose.connect(process.env.MONGO_URI || "");
+  }
+
+  // Fetch winning tips from the last 7 days
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  
+  const winningTips = await PremiumTip.find({
+    status: 'won',
+    matchDate: { $gte: sevenDaysAgo }
+  }).sort({ matchDate: -1 }).limit(10).lean();
 
   if (session?.user) {
     // @ts-ignore
@@ -50,6 +66,27 @@ export default async function ProPage() {
           Get premium predictions and expert insights for just <strong className="text-gray-900">$19 / week</strong>.
         </p>
       </div>
+
+      {winningTips.length > 0 && (
+        <div className="mb-6">
+          <h2 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-1.5 justify-center">
+            <CheckCircle2 className="w-4 h-4 text-teal-500" /> 
+            Recent VIP Wins
+          </h2>
+          <div className="flex overflow-x-auto pb-2 gap-3 snap-x [&::-webkit-scrollbar]:hidden">
+            {winningTips.map((tip: any) => (
+              <div key={tip._id.toString()} className="min-w-[200px] sm:min-w-[240px] flex-shrink-0 bg-teal-50/40 p-3 rounded-lg border border-teal-500/20 snap-start">
+                <div className="text-[10px] text-teal-600 font-bold mb-1 uppercase tracking-wider">{tip.country} - {tip.league}</div>
+                <div className="font-bold text-gray-900 text-[13px] mb-2 leading-tight">{tip.homeTeam} vs {tip.awayTeam}</div>
+                <div className="flex justify-between items-center text-[11px]">
+                  <span className="font-medium text-gray-700 bg-white px-2 py-0.5 rounded border border-gray-200">Pick: {tip.prediction}</span>
+                  <span className="font-bold text-teal-600 bg-white px-2 py-0.5 rounded border border-gray-200">Odds: {tip.odds}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="grid md:grid-cols-2 gap-6 items-start">
         {/* Payment Details Column */}

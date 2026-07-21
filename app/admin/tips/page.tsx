@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import PremiumTip from "@/backend/models/PremiumTip";
 import AddTipForm from "./AddTipForm";
 import DeleteTipButton from "./DeleteTipButton";
+import UpdateTipStatus from "./UpdateTipStatus";
 
 export const metadata = {
   title: "Manage Premium Tips",
@@ -55,9 +56,7 @@ export default async function AdminTipsPage() {
                   </div>
                   
                   <div className="flex flex-col items-end gap-2">
-                    <span className={`text-xs px-2 py-1 rounded font-bold uppercase ${tip.status === 'won' ? 'bg-green-500/20 text-green-500' : tip.status === 'lost' ? 'bg-red-500/20 text-red-500' : 'bg-gray-500/20 text-gray-600'}`}>
-                      {tip.status}
-                    </span>
+                    <UpdateTipStatus tipId={tip._id.toString()} currentStatus={tip.status} />
                     <DeleteTipButton tipId={tip._id.toString()} />
                   </div>
                 </div>
