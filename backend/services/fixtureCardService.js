@@ -338,30 +338,31 @@ async function applyPredictionFilter(orderedDocs) {
 
       let passHomeWin = false, passAwayWin = false, passOV25 = false, passBTTS = false, passUN25 = false;
       let passOV15 = false, passUN35 = false;
+      let tip = null;
 
-      // League specific logic
+      // Only predict if they have enough matches in the same competition
       if (homeStatsLeague.total >= 4 && awayStatsLeague.total >= 4) {
+          // League specific logic
           passHomeWin = homeFormLeague.wins >= 4 && awayFormLeague.losses >= 4;
           passAwayWin = awayFormLeague.wins >= 4 && homeFormLeague.losses >= 4;
           passOV25 = homeStatsLeague.over35 >= 4 && awayStatsLeague.over35 >= 4;
           passBTTS = homeStatsLeague.btts >= 4 && awayStatsLeague.btts >= 4 && homeStatsLeague.over25 >= 4 && awayStatsLeague.over25 >= 4;
           passUN25 = homeStatsLeague.under15 >= 4 && awayStatsLeague.under15 >= 4;
-      }
 
-      // All competitions logic
-      if (homeStatsAll.total >= 4 && awayStatsAll.total >= 4) {
-          passOV15 = homeStatsAll.over25 >= 4 && awayStatsAll.over25 >= 4;
-          passUN35 = homeStatsAll.under25 >= 4 && awayStatsAll.under25 >= 4;
-      }
+          // All competitions logic (only evaluated if they qualify for predictions via league matches)
+          if (homeStatsAll.total >= 4 && awayStatsAll.total >= 4) {
+              passOV15 = homeStatsAll.over25 >= 4 && awayStatsAll.over25 >= 4;
+              passUN35 = homeStatsAll.under25 >= 4 && awayStatsAll.under25 >= 4;
+          }
 
-      let tip = null;
-      if (passHomeWin) tip = "1";
-      else if (passAwayWin) tip = "2";
-      else if (passUN25) tip = "UN2.5";
-      else if (passOV25) tip = "OV2.5";
-      else if (passUN35) tip = "UN3.5";
-      else if (passBTTS) tip = "BTTS";
-      else if (passOV15) tip = "OV1.5";
+          if (passHomeWin) tip = "1";
+          else if (passAwayWin) tip = "2";
+          else if (passUN25) tip = "UN2.5";
+          else if (passOV25) tip = "OV2.5";
+          else if (passUN35) tip = "UN3.5";
+          else if (passBTTS) tip = "BTTS";
+          else if (passOV15) tip = "OV1.5";
+      }
 
           if (tip) {
               doc.tip = tip;
