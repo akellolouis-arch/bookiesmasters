@@ -301,8 +301,9 @@ async function applyPredictionFilter(orderedDocs) {
       const matchDate = doc.fixture.fixture.date;
       const homeId = doc.fixture.teams.home.id;
       const awayId = doc.fixture.teams.away.id;
+      const leagueId = doc.fixture.league.id;
 
-      const [homeMatches, awayMatches, h2hMatches] = await Promise.all([
+      const [homeMatchesAll, awayMatchesAll, homeMatchesLeague, awayMatchesLeague] = await Promise.all([
           Fixture.find({
               $or: [{ "fixture.teams.home.id": homeId }, { "fixture.teams.away.id": homeId }],
               "fixture.fixture.date": { $lt: matchDate },
@@ -314,41 +315,55 @@ async function applyPredictionFilter(orderedDocs) {
               "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
           }).sort({ "fixture.fixture.date": -1 }).limit(5),
           Fixture.find({
-              $or: [
-                  { "fixture.teams.home.id": homeId, "fixture.teams.away.id": awayId },
-                  { "fixture.teams.home.id": awayId, "fixture.teams.away.id": homeId }
-              ],
+              "fixture.league.id": leagueId,
+              $or: [{ "fixture.teams.home.id": homeId }, { "fixture.teams.away.id": homeId }],
+              "fixture.fixture.date": { $lt: matchDate },
+              "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
+          }).sort({ "fixture.fixture.date": -1 }).limit(5),
+          Fixture.find({
+              "fixture.league.id": leagueId,
+              $or: [{ "fixture.teams.home.id": awayId }, { "fixture.teams.away.id": awayId }],
               "fixture.fixture.date": { $lt: matchDate },
               "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
           }).sort({ "fixture.fixture.date": -1 }).limit(5)
       ]);
 
-      const homeStats = calculateStats(homeMatches, 5);
-      const awayStats = calculateStats(awayMatches, 5);
-      const h2hStats = calculateStats(h2hMatches, 5);
+      const homeStatsAll = calculateStats(homeMatchesAll, 5);
+      const awayStatsAll = calculateStats(awayMatchesAll, 5);
       
-      const homeForm = calculateWDL(homeMatches, homeId);
-      const awayForm = calculateWDL(awayMatches, awayId);
+      const homeStatsLeague = calculateStats(homeMatchesLeague, 5);
+      const awayStatsLeague = calculateStats(awayMatchesLeague, 5);
+      const homeFormLeague = calculateWDL(homeMatchesLeague, homeId);
+      const awayFormLeague = calculateWDL(awayMatchesLeague, awayId);
 
-      if (homeStats.total >= 4 && awayStats.total >= 4) {
-          const passHomeWin = homeForm.wins >= 4 && awayForm.losses >= 4;
-          const passAwayWin = awayForm.wins >= 4 && homeForm.losses >= 4;
-          const passOV25 = homeStats.over35 >= 4 && awayStats.over35 >= 4;
-          const passBTTS = homeStats.btts >= 4 && awayStats.btts >= 4 && homeStats.over25 >= 4 && awayStats.over25 >= 4;
-          const passOV15 = homeStats.over25 >= 4 && awayStats.over25 >= 4;
-          const passUN25 = homeStats.under15 >= 4 && awayStats.under15 >= 4;
-          const passUN35 = homeStats.under25 >= 4 && awayStats.under25 >= 4;
-          
-          let tip = null;
-          if (passHomeWin) tip = "1";
-          else if (passAwayWin) tip = "2";
-          else if (passUN25) tip = "UN2.5";
-          else if (passOV25) tip = "OV2.5";
-          else if (passUN35) tip = "UN3.5";
-          else if (passBTTS) tip = "BTTS";
-          else if (passOV15) tip = "OV1.5";
+      let passHomeWin = false, passAwayWin = false, passOV25 = false, passBTTS = false, passUN25 = false;
+      let passOV15 = false, passUN35 = false;
 
-          if (tip) {
+      // League specific logic
+      if (homeStatsLeague.total >= 4 && awayStatsLeague.total >= 4) {
+          passHomeWin = homeFormLeague.wins >= 4 && awayFormLeague.losses >= 4;
+          passAwayWin = awayFormLeague.wins >= 4 && homeFormLeague.losses >= 4;
+          passOV25 = homeStatsLeague.over35 >= 4 && awayStatsLeague.over35 >= 4;
+          passBTTS = homeStatsLeague.btts >= 4 && awayStatsLeague.btts >= 4 && homeStatsLeague.over25 >= 4 && awayStatsLeague.over25 >= 4;
+          passUN25 = homeStatsLeague.under15 >= 4 && awayStatsLeague.under15 >= 4;
+      }
+
+      // All competitions logic
+      if (homeStatsAll.total >= 4 && awayStatsAll.total >= 4) {
+          passOV15 = homeStatsAll.over25 >= 4 && awayStatsAll.over25 >= 4;
+          passUN35 = homeStatsAll.under25 >= 4 && awayStatsAll.under25 >= 4;
+      }
+
+      let tip = null;
+      if (passHomeWin) tip = "1";
+      else if (passAwayWin) tip = "2";
+      else if (passUN25) tip = "UN2.5";
+      else if (passOV25) tip = "OV2.5";
+      else if (passUN35) tip = "UN3.5";
+      else if (passBTTS) tip = "BTTS";
+      else if (passOV15) tip = "OV1.5";
+
+      if (tip) {
               doc.tip = tip;
               predictionTipCache.set(fixtureId, tip);
               predictedDocs.push(doc);
