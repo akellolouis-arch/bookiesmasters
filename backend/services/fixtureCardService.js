@@ -330,6 +330,8 @@ async function applyPredictionFilter(orderedDocs) {
 
       const homeStatsAll = calculateStats(homeMatchesAll, 5);
       const awayStatsAll = calculateStats(awayMatchesAll, 5);
+      const homeFormAll = calculateWDL(homeMatchesAll, homeId);
+      const awayFormAll = calculateWDL(awayMatchesAll, awayId);
       
       const homeStatsLeague = calculateStats(homeMatchesLeague, 5);
       const awayStatsLeague = calculateStats(awayMatchesLeague, 5);
@@ -340,29 +342,42 @@ async function applyPredictionFilter(orderedDocs) {
       let passOV15 = false, passUN35 = false;
       let tip = null;
 
-      // Only predict if they have enough matches in the same competition
+      // League specific logic
       if (homeStatsLeague.total >= 4 && awayStatsLeague.total >= 4) {
-          // League specific logic
           passHomeWin = homeFormLeague.wins >= 4 && awayFormLeague.losses >= 4;
           passAwayWin = awayFormLeague.wins >= 4 && homeFormLeague.losses >= 4;
           passOV25 = homeStatsLeague.over35 >= 4 && awayStatsLeague.over35 >= 4;
           passBTTS = homeStatsLeague.btts >= 4 && awayStatsLeague.btts >= 4 && homeStatsLeague.over25 >= 4 && awayStatsLeague.over25 >= 4;
           passUN25 = homeStatsLeague.under15 >= 4 && awayStatsLeague.under15 >= 4;
-
-          // All competitions logic (only evaluated if they qualify for predictions via league matches)
-          if (homeStatsAll.total >= 4 && awayStatsAll.total >= 4) {
-              passOV15 = homeStatsAll.over25 >= 4 && awayStatsAll.over25 >= 4;
-              passUN35 = homeStatsAll.under25 >= 4 && awayStatsAll.under25 >= 4;
-          }
-
-          if (passHomeWin) tip = "1";
-          else if (passAwayWin) tip = "2";
-          else if (passUN25) tip = "UN2.5";
-          else if (passOV25) tip = "OV2.5";
-          else if (passUN35) tip = "UN3.5";
-          else if (passBTTS) tip = "BTTS";
-          else if (passOV15) tip = "OV1.5";
       }
+
+      // All competitions logic
+      if (homeStatsAll.total >= 4 && awayStatsAll.total >= 4) {
+          const isHomeWinAll = homeFormAll.wins >= 4 && awayFormAll.losses >= 4;
+          const isAwayWinAll = awayFormAll.wins >= 4 && homeFormAll.losses >= 4;
+          const isUN25All = homeStatsAll.under15 >= 4 && awayStatsAll.under15 >= 4;
+          const isOV25All = homeStatsAll.over35 >= 4 && awayStatsAll.over35 >= 4;
+          const isUN35All = homeStatsAll.under25 >= 4 && awayStatsAll.under25 >= 4;
+          const isBTTSAll = homeStatsAll.btts >= 4 && awayStatsAll.btts >= 4 && homeStatsAll.over25 >= 4 && awayStatsAll.over25 >= 4;
+          const isOV15All = homeStatsAll.over25 >= 4 && awayStatsAll.over25 >= 4;
+
+          // Only allow UN3.5 and OV1.5 if they were genuinely the highest priority tip
+          // under the old logic. This prevents high-scoring games from incorrectly predicting UN3.5.
+          if (isUN35All && !isHomeWinAll && !isAwayWinAll && !isUN25All && !isOV25All) {
+              passUN35 = true;
+          }
+          if (isOV15All && !isHomeWinAll && !isAwayWinAll && !isUN25All && !isOV25All && !isUN35All && !isBTTSAll) {
+              passOV15 = true;
+          }
+      }
+
+      if (passHomeWin) tip = "1";
+      else if (passAwayWin) tip = "2";
+      else if (passUN25) tip = "UN2.5";
+      else if (passOV25) tip = "OV2.5";
+      else if (passUN35) tip = "UN3.5";
+      else if (passBTTS) tip = "BTTS";
+      else if (passOV15) tip = "OV1.5";
 
           if (tip) {
               doc.tip = tip;
