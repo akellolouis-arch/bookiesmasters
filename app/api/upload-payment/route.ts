@@ -5,11 +5,7 @@ import mongoose from "mongoose";
 import clientPromise from "@/lib/mongodb";
 import PaymentRequest from "@/backend/models/PaymentRequest";
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+// Config will be initialized inside POST to ensure env vars are caught
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,6 +13,18 @@ export async function POST(req: NextRequest) {
     if (!session || !session.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    console.log("Checking Cloudinary Config inside API route:", {
+      hasCloudName: !!process.env.CLOUDINARY_CLOUD_NAME,
+      hasApiKey: !!process.env.CLOUDINARY_API_KEY,
+      hasApiSecret: !!process.env.CLOUDINARY_API_SECRET,
+    });
+
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+    });
 
     const body = await req.json();
     const { image, method } = body;
