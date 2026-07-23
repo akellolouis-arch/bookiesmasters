@@ -363,7 +363,7 @@ async function applyPredictionFilter(orderedDocs) {
       else if (passBTTS) tip = "BTTS";
       else if (passOV15) tip = "OV1.5";
 
-      if (tip) {
+          if (tip) {
               doc.tip = tip;
               predictionTipCache.set(fixtureId, tip);
               predictedDocs.push(doc);
@@ -371,7 +371,6 @@ async function applyPredictionFilter(orderedDocs) {
               await Fixture.updateOne({ fixtureId: doc.fixtureId }, { $set: { predictionTip: tip } }).catch(console.error);
               return;
           }
-      }
 
       // If it failed the algorithm, cache it as "NONE" so we never query the DB for this fixture again
       predictionTipCache.set(fixtureId, "NONE");
