@@ -345,6 +345,7 @@ async function applyPredictionFilter(orderedDocs) {
           passAwayWin = awayFormLeague.wins >= 4 && homeFormLeague.losses >= 4;
           passOV25 = homeStatsLeague.over25 >= 4 && awayStatsLeague.over25 >= 4;
           passBTTS = homeStatsLeague.btts >= 4 && awayStatsLeague.btts >= 4 && homeStatsLeague.over25 >= 4 && awayStatsLeague.over25 >= 4;
+          passUN25 = homeStatsLeague.under25 >= 4 && awayStatsLeague.under25 >= 4;
       }
 
       // All competitions logic
@@ -358,6 +359,7 @@ async function applyPredictionFilter(orderedDocs) {
       else if (passAwayWin) tip = "2";
       else if (passOV25) tip = "OV2.5";
       else if (passBTTS) tip = "BTTS";
+      else if (passUN25) tip = "UN2.5";
       else if (passOV15) tip = "OV1.5";
       else if (passUN35) tip = "UN3.5";
 
