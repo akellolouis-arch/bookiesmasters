@@ -343,7 +343,7 @@ async function applyPredictionFilter(orderedDocs) {
       let tip = null;
 
       // League specific logic
-      if (homeStatsLeague.total >= 5 && awayStatsLeague.total >= 5) {
+      if (homeStatsLeague.total >= 4 && awayStatsLeague.total >= 4) {
           passHomeWin = homeFormLeague.wins >= 4 && awayFormLeague.losses >= 4;
           passAwayWin = awayFormLeague.wins >= 4 && homeFormLeague.losses >= 4;
           passOV25 = homeStatsLeague.over35 >= 4 && awayStatsLeague.over35 >= 4;
@@ -352,7 +352,7 @@ async function applyPredictionFilter(orderedDocs) {
       }
 
       // All competitions logic
-      if (homeStatsAll.total >= 5 && awayStatsAll.total >= 5) {
+      if (homeStatsAll.total >= 4 && awayStatsAll.total >= 4) {
           const isHomeWinAll = homeFormAll.wins >= 4 && awayFormAll.losses >= 4;
           const isAwayWinAll = awayFormAll.wins >= 4 && homeFormAll.losses >= 4;
           const isUN25All = homeStatsAll.under15 >= 4 && awayStatsAll.under15 >= 4;
