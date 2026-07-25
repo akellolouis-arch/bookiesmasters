@@ -16,18 +16,24 @@ export const metadata = {
 export default async function ProPage() {
   const session = await auth();
 
-  if (mongoose.connection.readyState !== 1) {
-    await mongoose.connect(process.env.MONGO_URI || "");
-  }
+  let winningTips: any[] = [];
+  try {
+    if (process.env.MONGO_URI) {
+      if (mongoose.connection.readyState !== 1) {
+        await mongoose.connect(process.env.MONGO_URI);
+      }
 
-  // Fetch winning tips from the last 7 days
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-  
-  const winningTips = await PremiumTip.find({
-    status: 'won',
-    matchDate: { $gte: sevenDaysAgo }
-  }).sort({ matchDate: -1 }).limit(10).lean();
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      
+      winningTips = await PremiumTip.find({
+        status: 'won',
+        matchDate: { $gte: sevenDaysAgo }
+      }).sort({ matchDate: -1 }).limit(10).lean();
+    }
+  } catch (err) {
+    console.error("⚠️ Pro page Mongo query error:", err);
+  }
 
   if (session?.user) {
     // @ts-ignore
