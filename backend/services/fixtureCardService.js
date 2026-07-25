@@ -281,7 +281,11 @@ const calculateWDL = (matches, teamId) => {
 
 // In-memory cache for prediction calculations.
 // Since historical matches (before kickoff) never change, the prediction tip for a specific fixture ID is mathematically immutable.
-const predictionTipCache = new Map(); // Key: fixtureId, Value: "OV1.5" | "UN3.5" | "NONE"
+export const predictionTipCache = new Map(); // Key: fixtureId, Value: "OV1.5" | "UN3.5" | "NONE"
+
+export function clearPredictionCache() {
+  predictionTipCache.clear();
+}
 
 async function applyPredictionFilter(orderedDocs) {
   const predictedDocs = [];
