@@ -44,6 +44,10 @@ app.get("/", (req, res) => {
   res.send("Backend running with CORS enabled");
 });
 
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok", timestamp: new Date() });
+});
+
 // All /api/* needs a live Mongo connection (must run BEFORE route handlers)
 app.use("/api", (req, res, next) => {
   if (mongoose.connection.readyState !== 1) {
