@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 import Fixture from "./models/Fixture.js";
-import { getPredictedFixturesGroupedByLeague } from "./services/fixtureCardService.js";
+import { getPredictedFixturesGroupedByLeague, clearPredictionCache } from "./services/fixtureCardService.js";
 import { getMongoClientOptions } from "./mongoConnectOptions.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -39,6 +39,7 @@ async function run() {
         for (let offset = -5; offset <= 1; offset++) {
             const dateStr = getKenyaDatePlus(offset);
             console.log(`\n📅 --- Processing Date: ${dateStr} ---`);
+            clearPredictionCache();
             
             // 1. Clear existing predictions for this date range
             const startOfDay = new Date(`${dateStr}T00:00:00+03:00`);

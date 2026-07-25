@@ -279,9 +279,11 @@ const calculateWDL = (matches, teamId) => {
   return stats;
 };
 
-// In-memory cache for prediction calculations.
-// Since historical matches (before kickoff) never change, the prediction tip for a specific fixture ID is mathematically immutable.
-const predictionTipCache = new Map(); // Key: fixtureId, Value: "OV1.5" | "UN3.5" | "NONE"
+export const predictionTipCache = new Map(); // Key: fixtureId, Value: tip
+
+export function clearPredictionCache() {
+  predictionTipCache.clear();
+}
 
 async function applyPredictionFilter(orderedDocs) {
   const predictedDocs = [];
@@ -289,11 +291,10 @@ async function applyPredictionFilter(orderedDocs) {
   await Promise.all(orderedDocs.map(async (doc) => {
       const fixtureId = doc.fixture.id;
       
-      // 1. Check DB or memory cache first for instant response
-      const precalculatedTip = doc.predictionTip || predictionTipCache.get(fixtureId);
-      if (precalculatedTip) {
-          if (precalculatedTip !== "NONE") {
-              doc.tip = precalculatedTip;
+      // 1. Check DB first for instant response
+      if (doc.predictionTip) {
+          if (doc.predictionTip !== "NONE") {
+              doc.tip = doc.predictionTip;
               predictedDocs.push(doc);
           }
           return; // Skip heavy DB queries
@@ -343,15 +344,15 @@ async function applyPredictionFilter(orderedDocs) {
       if (homeStatsLeague.total >= 4 && awayStatsLeague.total >= 4) {
           passHomeWin = homeFormLeague.wins >= 4 && awayFormLeague.losses >= 4;
           passAwayWin = awayFormLeague.wins >= 4 && homeFormLeague.losses >= 4;
-          passOV25 = homeStatsLeague.over35 >= 4 && awayStatsLeague.over35 >= 4;
+          passOV25 = homeStatsLeague.over25 >= 4 && awayStatsLeague.over25 >= 4;
           passBTTS = homeStatsLeague.btts >= 4 && awayStatsLeague.btts >= 4 && homeStatsLeague.over35 >= 4 && awayStatsLeague.over35 >= 4;
-          passUN25 = homeStatsLeague.under15 >= 4 && awayStatsLeague.under15 >= 4;
+          passUN25 = homeStatsLeague.under25 >= 4 && awayStatsLeague.under25 >= 4;
       }
 
       // All competitions logic
       if (homeStatsAll.total >= 4 && awayStatsAll.total >= 4) {
-          passOV15 = homeStatsAll.over25 >= 4 && awayStatsAll.over25 >= 4;
-          passUN35 = homeStatsAll.under25 >= 4 && awayStatsAll.under25 >= 4;
+          passOV15 = homeStatsAll.over15 >= 4 && awayStatsAll.over15 >= 4;
+          passUN35 = homeStatsAll.under35 >= 4 && awayStatsAll.under35 >= 4;
       }
 
       let tip = null;
