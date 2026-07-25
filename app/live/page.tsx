@@ -61,7 +61,7 @@ export default async function LivePage() {
 
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fixtures/live`, {
-      next: { revalidate: 86400 },
+      cache: 'no-store',
     });
     if (res.ok) {
       backendData = await res.json();

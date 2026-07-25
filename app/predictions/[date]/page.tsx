@@ -104,7 +104,7 @@ export default async function PredictionsPage({
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/predictions/cards?date=${date}`,
-      { next: { revalidate: 86400 } } // Cache at the Data Cache level for 1 day
+      { cache: 'no-store' }
     );
 
     if (!res.ok) {

@@ -71,6 +71,7 @@ export async function pollLiveScores() {
                     filter: { fixtureId: match.fixture.id },
                     update: {
                         $set: {
+                            "fixture.fixture.date": match.fixture.date,
                             "fixture.fixture.status": match.fixture.status,
                             "fixture.goals": match.goals,
                             "fixture.score": match.score,
@@ -123,6 +124,7 @@ export async function pollLiveScores() {
                                 filter: { fixtureId: match.fixture.id },
                                 update: {
                                     $set: {
+                                        "fixture.fixture.date": match.fixture.date,
                                         "fixture.fixture.status": match.fixture.status,
                                         "fixture.goals": match.goals,
                                         "fixture.score": match.score,
@@ -258,6 +260,7 @@ export async function pollLiveScores() {
                             filter: { fixtureId: match.fixture.id },
                             update: {
                                 $set: {
+                                    "fixture.fixture.date": match.fixture.date,
                                     "fixture.fixture.status": match.fixture.status,
                                     "fixture.goals": match.goals,
                                     "fixture.score": match.score,

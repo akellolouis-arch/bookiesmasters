@@ -100,7 +100,7 @@ export default async function FixturesPage({
     // Fetch all fixtures
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/fixtures/cards?date=${date}`,
-      { next: { revalidate: 86400 } }
+      { cache: 'no-store' }
     );
 
     if (!res.ok) {

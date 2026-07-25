@@ -343,15 +343,15 @@ async function applyPredictionFilter(orderedDocs) {
       if (homeStatsLeague.total >= 4 && awayStatsLeague.total >= 4) {
           passHomeWin = homeFormLeague.wins >= 4 && awayFormLeague.losses >= 4;
           passAwayWin = awayFormLeague.wins >= 4 && homeFormLeague.losses >= 4;
-          passOV25 = homeStatsLeague.over25 >= 4 && awayStatsLeague.over25 >= 4;
+          passOV25 = homeStatsLeague.over35 >= 4 && awayStatsLeague.over35 >= 4;
           passBTTS = homeStatsLeague.btts >= 4 && awayStatsLeague.btts >= 4 && homeStatsLeague.over25 >= 4 && awayStatsLeague.over25 >= 4;
-          passUN25 = homeStatsLeague.under25 >= 4 && awayStatsLeague.under25 >= 4;
+          passUN25 = homeStatsLeague.under15 >= 4 && awayStatsLeague.under15 >= 4;
       }
 
       // All competitions logic
       if (homeStatsAll.total >= 4 && awayStatsAll.total >= 4) {
-          passOV15 = homeStatsAll.over15 >= 4 && awayStatsAll.over15 >= 4;
-          passUN35 = homeStatsAll.under35 >= 4 && awayStatsAll.under35 >= 4;
+          passOV15 = homeStatsAll.over25 >= 4 && awayStatsAll.over25 >= 4;
+          passUN35 = homeStatsAll.under25 >= 4 && awayStatsAll.under25 >= 4;
       }
 
       let tip = null;

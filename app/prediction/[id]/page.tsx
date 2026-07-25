@@ -23,10 +23,10 @@ interface FixtureDetailData {
 }
 
 
-function fetchWithTimeout(url: string, revalidateSeconds: number): Promise<Response> {
+function fetchWithTimeout(url: string): Promise<Response> {
     return fetch(url, {
         signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-        next: { revalidate: revalidateSeconds },
+        cache: 'no-store',
     });
 }
 
@@ -40,7 +40,7 @@ const getFixture = cache(async (id: string): Promise<FixtureDetailData | null> =
     const url = `${base}/api/fixtures/${id}`;
 
     try {
-        const res = await fetchWithTimeout(url, 86400);
+        const res = await fetchWithTimeout(url);
 
         if (!res.ok) {
             console.error(`⚠️ Failed to fetch details for ${id}. Status: ${res.status}`);
