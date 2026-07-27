@@ -101,7 +101,7 @@ export default async function ProPage() {
           <p className="text-sm text-gray-600">Activate your 7-day VIP pass instantly.</p>
         </div>
         
-        <PaystackCheckout amount={2500} currency="KES" />
+        <PaystackCheckout amount={2500} currency="KES" displayText="Pay $19 to Unlock VIP" />
       </div>
     </div>
   );

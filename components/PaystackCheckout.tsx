@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { Loader2, CheckCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export default function PaystackCheckout({ amount = 2500, currency = "KES" }: { amount?: number, currency?: string }) {
+export default function PaystackCheckout({ amount = 2500, currency = "KES", displayText }: { amount?: number, currency?: string, displayText?: string }) {
   const { data: session } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -95,7 +95,7 @@ export default function PaystackCheckout({ amount = 2500, currency = "KES" }: { 
         {(loading || verifying) ? (
           <><Loader2 className="w-5 h-5 animate-spin" /> {verifying ? "Verifying..." : "Loading..."}</>
         ) : (
-          `Pay ${currency} ${amount.toLocaleString()} to Unlock VIP`
+          displayText || `Pay ${currency} ${amount.toLocaleString()} to Unlock VIP`
         )}
       </button>
       <p className="text-xs text-gray-500 mt-3 text-center">
