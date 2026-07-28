@@ -10,7 +10,7 @@ import { updateStandings } from "./fetch_standings.js";
 // Duplicate removed
 
 import { cleanupOldFixtures } from "./cleanupService.js";
-import { getPredictedFixturesGroupedByLeague } from "./fixtureCardService.js";
+import { getPredictedFixturesGroupedByLeague, clearPredictionCache } from "./fixtureCardService.js";
 import {
   applyMongoDnsHints,
   getMongoClientOptions,
@@ -386,6 +386,18 @@ export async function updateDailyFixtures(force = false, recordCompletion = true
     console.log("🧠 Pre-calculating predictions for Today and Tomorrow...");
     const todayStr = getKenyaDatePlus(0);
     const tomorrowStr = getKenyaDatePlus(1);
+    
+    // BUG FIX: Clear existing prediction tips for these dates before recalculating.
+    // If a fixture was saved days ago, it might have been permanently marked as "NONE" 
+    // because a required previous match hadn't finished yet. This forces a fresh calculation.
+    clearPredictionCache();
+    const todayStart = new Date(`${todayStr}T00:00:00+03:00`);
+    const tomorrowEnd = new Date(`${tomorrowStr}T23:59:59.999+03:00`);
+    await Fixture.updateMany(
+      { "fixture.fixture.date": { $gte: todayStart.toISOString(), $lte: tomorrowEnd.toISOString() } },
+      { $unset: { predictionTip: 1 } }
+    );
+
     await getPredictedFixturesGroupedByLeague(todayStr).catch(err => console.error("Error pre-calculating today:", err));
     await getPredictedFixturesGroupedByLeague(tomorrowStr).catch(err => console.error("Error pre-calculating tomorrow:", err));
 
