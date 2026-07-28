@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePaystackPayment } from "react-paystack";
 import { useSession } from "next-auth/react";
 import { Loader2, CheckCircle } from "lucide-react";
@@ -13,6 +13,15 @@ export default function PaystackCheckout({ amount = 2500, currency = "KES", disp
   const [verifying, setVerifying] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    // Fire InitiateCheckout when the user views the payment option
+    // @ts-ignore
+    if (typeof window !== "undefined" && window.fbq) {
+      // @ts-ignore
+      window.fbq('track', 'InitiateCheckout', { currency: currency, value: amount });
+    }
+  }, [currency, amount]);
 
   const config = {
     reference: `BM-${new Date().getTime()}`,
@@ -39,6 +48,13 @@ export default function PaystackCheckout({ amount = 2500, currency = "KES", disp
       const data = await res.json();
       
       if (res.ok && data.success) {
+        // Fire Purchase event upon successful verification
+        // @ts-ignore
+        if (typeof window !== "undefined" && window.fbq) {
+          // @ts-ignore
+          window.fbq('track', 'Purchase', { currency: currency, value: amount });
+        }
+        
         setSuccess(true);
         setTimeout(() => {
           router.push("/vip");
