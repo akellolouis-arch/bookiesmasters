@@ -50,13 +50,26 @@ export default async function VIPPage() {
     await mongoose.connect(process.env.MONGO_URI || "");
   }
 
-  // Get tips from the last 2 days and future tips
-  const twoDaysAgo = new Date();
-  twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+  // Get tips from the last 7 days and future tips
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-  const tips = await PremiumTip.find({ matchDate: { $gte: twoDaysAgo } })
+  const tips = await PremiumTip.find({ matchDate: { $gte: sevenDaysAgo } })
     .sort({ matchDate: -1 })
     .lean();
+
+  // Group tips by Date (Africa/Nairobi time)
+  const groupedTips: Record<string, any[]> = {};
+  tips.forEach((tip: any) => {
+    const dateObj = new Date(tip.matchDate);
+    const dateKey = dateObj.toLocaleDateString("en-CA", { timeZone: "Africa/Nairobi" }); // YYYY-MM-DD
+    if (!groupedTips[dateKey]) {
+      groupedTips[dateKey] = [];
+    }
+    groupedTips[dateKey].push(tip);
+  });
+
+  const sortedDates = Object.keys(groupedTips).sort((a, b) => (new Date(b)).getTime() - (new Date(a)).getTime());
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 py-8">
@@ -74,46 +87,88 @@ export default async function VIPPage() {
         </div>
       </div>
 
-      <div className="space-y-4">
-        {tips.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
+      <div className="space-y-6">
+        {sortedDates.length === 0 ? (
+          <div className="text-center py-12 bg-white rounded-xl border border-gray-200 shadow-sm">
             <p className="text-gray-600">Our experts are analyzing the next matches. New tips will be posted soon.</p>
           </div>
         ) : (
-          tips.map((tip: any) => (
-            <div key={tip._id.toString()} className="bg-white rounded-xl p-6 border border-[#63FF79]/20 shadow-lg relative overflow-hidden group">
-              {/* Status Badge */}
-              <div className="absolute top-0 right-0">
-                {tip.status === 'won' && <span className="bg-green-500 text-black text-[10px] font-bold px-3 py-1 rounded-bl-lg uppercase">Won</span>}
-                {tip.status === 'lost' && <span className="bg-red-500 text-gray-900 text-[10px] font-bold px-3 py-1 rounded-bl-lg uppercase">Lost</span>}
-                {tip.status === 'pending' && <span className="bg-gray-700 text-gray-900 text-[10px] font-bold px-3 py-1 rounded-bl-lg uppercase flex items-center gap-1"><Clock size={10} /> Pending</span>}
-              </div>
+          sortedDates.map((dateStr) => {
+            const dayTips = groupedTips[dateStr];
+            
+            let overallStatus = "won";
+            let totalOdds = 1.0;
+            
+            dayTips.forEach((t: any) => {
+               if (t.status === 'lost') overallStatus = 'lost';
+               else if (t.status === 'pending' && overallStatus !== 'lost') overallStatus = 'pending';
+               
+               totalOdds *= parseFloat(t.odds || "1");
+            });
 
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div className="flex-1">
-                  <div className="text-xs text-[#63FF79] font-bold uppercase tracking-wider mb-2">{tip.country} - {tip.league}</div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-1">{tip.homeTeam} <span className="text-gray-500 font-normal">vs</span> {tip.awayTeam}</h3>
-                  <div className="text-sm text-gray-600 flex items-center gap-2">
-                    <Clock size={14} /> {new Date(tip.matchDate).toLocaleString([], { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+            // Make the date readable
+            const d = new Date(dateStr);
+            const readableDate = !isNaN(d.getTime()) 
+              ? d.toLocaleDateString("en-US", { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
+              : dateStr;
+
+            return (
+              <div key={dateStr} className="bg-white rounded-2xl border border-[#63FF79]/30 shadow-lg overflow-hidden flex flex-col">
+                {/* Ticket Header */}
+                <div className="bg-gray-50 border-b border-gray-200 px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-900">{readableDate}</h2>
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mt-1">Daily VIP Betslip</p>
+                  </div>
+                  <div className="flex items-center gap-6">
+                    <div className="text-right">
+                       <p className="text-[10px] text-gray-500 font-bold uppercase mb-1">Total Odds</p>
+                       <p className="text-2xl font-black text-[#63FF79] drop-shadow-sm">{totalOdds.toFixed(2)}</p>
+                    </div>
+                    <div className="w-px h-8 bg-gray-300"></div>
+                    <div>
+                      {overallStatus === 'won' && <span className="bg-green-500 text-black text-xs font-bold px-4 py-2 rounded-lg uppercase shadow-sm">Won</span>}
+                      {overallStatus === 'lost' && <span className="bg-red-500 text-white text-xs font-bold px-4 py-2 rounded-lg uppercase shadow-sm">Lost</span>}
+                      {overallStatus === 'pending' && <span className="bg-gray-200 text-gray-700 text-xs font-bold px-4 py-2 rounded-lg uppercase shadow-sm flex items-center gap-1"><Clock size={12} /> Pending</span>}
+                    </div>
                   </div>
                 </div>
+                
+                {/* Ticket Body (Matches) */}
+                <div className="divide-y divide-gray-100 flex-1">
+                  {dayTips.map((tip: any) => (
+                    <div key={tip._id.toString()} className="p-5 hover:bg-gray-50 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4 group">
+                        <div className="flex-1">
+                          <div className="text-[10px] text-[#63FF79] font-bold uppercase tracking-wider mb-1">{tip.country} - {tip.league}</div>
+                          <div className="text-base font-bold text-gray-900">{tip.homeTeam} <span className="text-gray-400 font-normal text-sm mx-1">vs</span> {tip.awayTeam}</div>
+                          <div className="text-xs text-gray-500 flex items-center gap-1 mt-2">
+                            <Clock size={12} /> {new Date(tip.matchDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </div>
+                        </div>
 
-                <div className="flex items-center gap-4 bg-white p-4 rounded-lg border border-gray-200 min-w-[200px]">
-                  <div className="flex-1">
-                    <div className="text-[10px] text-gray-500 uppercase font-bold mb-1">Our Pick</div>
-                    <div className="text-gray-900 font-bold">{tip.prediction}</div>
-                  </div>
-                  <div className="w-px h-8 bg-gray-200 mx-2"></div>
-                  <div className="text-right">
-                    <div className="text-[10px] text-gray-500 uppercase font-bold mb-1">Odds</div>
-                    <div className="text-[#63FF79] font-black text-lg">{tip.odds}</div>
-                  </div>
+                        <div className="flex items-center gap-4 sm:gap-6 bg-white sm:bg-transparent p-3 sm:p-0 rounded-lg border sm:border-none border-gray-100 mt-2 sm:mt-0">
+                          <div className="text-center">
+                            <div className="text-[10px] text-gray-500 uppercase font-bold mb-1">Pick</div>
+                            <div className="text-gray-900 font-bold">{tip.prediction}</div>
+                          </div>
+                          <div className="w-px h-6 bg-gray-200"></div>
+                          <div className="text-center">
+                            <div className="text-[10px] text-gray-500 uppercase font-bold mb-1">Odds</div>
+                            <div className="text-gray-900 font-bold">{tip.odds}</div>
+                          </div>
+                          <div className="w-px h-6 bg-gray-200"></div>
+                          <div className="w-16 text-right flex items-center justify-end">
+                             {tip.status === 'won' && <span className="text-green-600 text-xs font-bold uppercase flex items-center gap-1">✔ Won</span>}
+                             {tip.status === 'lost' && <span className="text-red-600 text-xs font-bold uppercase flex items-center gap-1">✘ Lost</span>}
+                             {tip.status === 'pending' && <span className="text-gray-400 text-xs font-bold uppercase flex items-center gap-1"><Clock size={10} /> Wait</span>}
+                          </div>
+                        </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-
-
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>

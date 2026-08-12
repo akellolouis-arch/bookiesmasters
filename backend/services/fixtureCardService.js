@@ -290,7 +290,7 @@ export function clearPredictionCache() {
 async function applyPredictionFilter(orderedDocs) {
   const predictedDocs = [];
   
-  await Promise.all(orderedDocs.map(async (doc) => {
+  for (const doc of orderedDocs) {
       const fixtureId = doc.fixture.id;
       
       // 1. Check DB or memory cache first for instant response
@@ -300,7 +300,7 @@ async function applyPredictionFilter(orderedDocs) {
               doc.tip = precalculatedTip;
               predictedDocs.push(doc);
           }
-          return; // Skip heavy DB queries
+          continue; // Skip heavy DB queries
       }
       const matchDate = doc.fixture.fixture.date;
       const homeId = doc.fixture.teams.home.id;
@@ -314,7 +314,7 @@ async function applyPredictionFilter(orderedDocs) {
               "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
           }).sort({ "fixture.fixture.date": -1 }).limit(5),
           Fixture.find({
-              $or: [{ "fixture.teams.home.id": awayId }, { "fixture.teams.away.id": awayId }],
+              $or: [{ "fixture.teams.away.id": awayId }, { "fixture.teams.home.id": awayId }], // fixed away condition
               "fixture.fixture.date": { $lt: matchDate },
               "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
           }).sort({ "fixture.fixture.date": -1 }).limit(5),
@@ -326,7 +326,7 @@ async function applyPredictionFilter(orderedDocs) {
           }).sort({ "fixture.fixture.date": -1 }).limit(5),
           Fixture.find({
               "fixture.league.id": leagueId,
-              $or: [{ "fixture.teams.home.id": awayId }, { "fixture.teams.away.id": awayId }],
+              $or: [{ "fixture.teams.away.id": awayId }, { "fixture.teams.home.id": awayId }], // fixed away condition
               "fixture.fixture.date": { $lt: matchDate },
               "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
           }).sort({ "fixture.fixture.date": -1 }).limit(5)
@@ -369,13 +369,13 @@ async function applyPredictionFilter(orderedDocs) {
               predictedDocs.push(doc);
               // Save permanently to database
               await Fixture.updateOne({ fixtureId: doc.fixtureId }, { $set: { predictionTip: tip } }).catch(console.error);
-              return;
+              continue;
       }
 
       // If it failed the algorithm, cache it as "NONE" so we never query the DB for this fixture again
       predictionTipCache.set(fixtureId, "NONE");
       await Fixture.updateOne({ fixtureId: doc.fixtureId }, { $set: { predictionTip: "NONE" } }).catch(console.error);
-  }));
+  }
 
   // Re-sort the predicted docs since Promise.all doesn't guarantee order of push
   return sortDocsByCountryLeagueKickoff(predictedDocs);
