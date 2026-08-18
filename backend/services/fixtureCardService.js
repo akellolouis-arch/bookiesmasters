@@ -287,11 +287,40 @@ export function clearPredictionCache() {
   predictionTipCache.clear();
 }
 
+async function getRecentMatchesForTeam(teamId, matchDate, limit, leagueId = null) {
+  const queryBase = {
+      "fixture.fixture.date": { $lt: matchDate },
+      "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
+  };
+  
+  if (leagueId) {
+      queryBase["fixture.league.id"] = leagueId;
+  }
+  
+  const [homeMatches, awayMatches] = await Promise.all([
+      Fixture.find({ ...queryBase, "fixture.teams.home.id": teamId })
+             .sort({ "fixture.fixture.date": -1 })
+             .limit(limit)
+             .lean(),
+      Fixture.find({ ...queryBase, "fixture.teams.away.id": teamId })
+             .sort({ "fixture.fixture.date": -1 })
+             .limit(limit)
+             .lean()
+  ]);
+  
+  const merged = [...homeMatches, ...awayMatches];
+  merged.sort((a, b) => new Date(b.fixture.fixture.date) - new Date(a.fixture.fixture.date));
+  return merged.slice(0, limit);
+}
+
 async function applyPredictionFilter(orderedDocs) {
   const predictedDocs = [];
   
+  let i = 0;
   for (const doc of orderedDocs) {
-      const fixtureId = doc.fixture.id;
+      i++;
+      const fixtureId = doc.fixtureId;
+      console.log(`[Prediction] Processing ${i}/${orderedDocs.length} - FixtureID: ${fixtureId}`);
       
       // 1. Check DB or memory cache first for instant response
       const precalculatedTip = doc.predictionTip || predictionTipCache.get(fixtureId);
@@ -308,28 +337,10 @@ async function applyPredictionFilter(orderedDocs) {
       const leagueId = doc.fixture.league.id;
 
       const [homeMatchesAll, awayMatchesAll, homeMatchesLeague, awayMatchesLeague] = await Promise.all([
-          Fixture.find({
-              $or: [{ "fixture.teams.home.id": homeId }, { "fixture.teams.away.id": homeId }],
-              "fixture.fixture.date": { $lt: matchDate },
-              "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
-          }).sort({ "fixture.fixture.date": -1 }).limit(5),
-          Fixture.find({
-              $or: [{ "fixture.teams.away.id": awayId }, { "fixture.teams.home.id": awayId }], // fixed away condition
-              "fixture.fixture.date": { $lt: matchDate },
-              "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
-          }).sort({ "fixture.fixture.date": -1 }).limit(5),
-          Fixture.find({
-              "fixture.league.id": leagueId,
-              $or: [{ "fixture.teams.home.id": homeId }, { "fixture.teams.away.id": homeId }],
-              "fixture.fixture.date": { $lt: matchDate },
-              "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
-          }).sort({ "fixture.fixture.date": -1 }).limit(5),
-          Fixture.find({
-              "fixture.league.id": leagueId,
-              $or: [{ "fixture.teams.away.id": awayId }, { "fixture.teams.home.id": awayId }], // fixed away condition
-              "fixture.fixture.date": { $lt: matchDate },
-              "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
-          }).sort({ "fixture.fixture.date": -1 }).limit(5)
+          getRecentMatchesForTeam(homeId, matchDate, 5),
+          getRecentMatchesForTeam(awayId, matchDate, 5),
+          getRecentMatchesForTeam(homeId, matchDate, 5, leagueId),
+          getRecentMatchesForTeam(awayId, matchDate, 5, leagueId)
       ]);
 
       const homeStatsAll = calculateStats(homeMatchesAll, 5);
@@ -348,10 +359,15 @@ async function applyPredictionFilter(orderedDocs) {
           passHomeWin = homeFormLeague.wins >= 4 && awayFormLeague.losses >= 4;
           passAwayWin = awayFormLeague.wins >= 4 && homeFormLeague.losses >= 4;
           passOV25 = homeStatsLeague.over35 >= 4 && awayStatsLeague.over35 >= 4;
-          passBTTS = homeStatsLeague.btts >= 4 && awayStatsLeague.btts >= 4 && homeStatsLeague.over25 >= 4 && awayStatsLeague.over25 >= 4;
+          passBTTS = homeStatsLeague.btts >= 4 && awayStatsLeague.btts >= 4 && homeStatsLeague.over15 >= 4 && awayStatsLeague.over15 >= 4;
           passUN25 = homeStatsLeague.under15 >= 4 && awayStatsLeague.under15 >= 4;
-          passOV15 = homeStatsLeague.over25 >= 4 && awayStatsLeague.over25 >= 4;
-          passUN35 = homeStatsLeague.under25 >= 4 && awayStatsLeague.under25 >= 4;
+      }
+
+      // All competitions logic (fallback for safer predictions early in the season)
+      if (homeStatsAll.total >= 4 && awayStatsAll.total >= 4) {
+          // If it didn't already pass in the league, check all competitions
+          if (!passOV15) passOV15 = homeStatsAll.over25 >= 4 && awayStatsAll.over25 >= 4;
+          if (!passUN35) passUN35 = homeStatsAll.under25 >= 4 && awayStatsAll.under25 >= 4;
       }
 
       let tip = null;

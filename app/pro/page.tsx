@@ -139,6 +139,11 @@ export default async function ProPage() {
                            <span className="font-bold text-gray-700 bg-white px-3 py-1.5 rounded-md shadow-sm border border-gray-200 flex gap-2">
                              <span className="text-gray-400 uppercase text-[10px] font-bold">Pick</span> {tip.prediction}
                            </span>
+                           {tip.score && (
+                             <span className="font-black text-gray-900 bg-white px-3 py-1.5 rounded-md shadow-sm border border-gray-200 text-center tracking-wider">
+                               {tip.score}
+                             </span>
+                           )}
                            <span className="font-bold text-teal-600 bg-white px-3 py-1.5 rounded-md shadow-sm border border-gray-200 flex gap-2">
                              <span className="text-gray-400 uppercase text-[10px] font-bold">Odds</span> {tip.odds}
                            </span>

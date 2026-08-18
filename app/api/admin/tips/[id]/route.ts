@@ -75,7 +75,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
     const { id } = await params;
     const body = await req.json();
-    const { homeTeam, awayTeam, country, league, matchDate, prediction, odds } = body;
+    const { homeTeam, awayTeam, country, league, matchDate, prediction, odds, score } = body;
 
     // Validate date
     let dateObj;
@@ -88,7 +88,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
     const updatedTip = await PremiumTip.findByIdAndUpdate(
       id,
-      { homeTeam, awayTeam, country, league, matchDate: dateObj, prediction, odds },
+      { homeTeam, awayTeam, country, league, matchDate: dateObj, prediction, odds, score },
       { new: true }
     );
 

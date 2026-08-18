@@ -151,7 +151,16 @@ export default async function VIPPage() {
                             <div className="text-[10px] text-gray-500 uppercase font-bold mb-1">Pick</div>
                             <div className="text-gray-900 font-bold">{tip.prediction}</div>
                           </div>
-                          <div className="w-px h-6 bg-gray-200"></div>
+                          {tip.score && (
+                            <>
+                              <div className="w-px h-6 bg-gray-200 hidden sm:block"></div>
+                              <div className="text-center">
+                                <div className="text-[10px] text-gray-500 uppercase font-bold mb-1">FT Score</div>
+                                <div className="text-gray-900 font-black tracking-wider">{tip.score}</div>
+                              </div>
+                            </>
+                          )}
+                          <div className="w-px h-6 bg-gray-200 hidden sm:block"></div>
                           <div className="text-center">
                             <div className="text-[10px] text-gray-500 uppercase font-bold mb-1">Odds</div>
                             <div className="text-gray-900 font-bold">{tip.odds}</div>

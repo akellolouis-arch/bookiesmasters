@@ -41,8 +41,8 @@ FixtureSchema.index({ "fixture.fixture.date": 1 });
 FixtureSchema.index({ "fixture.league.id": 1 });
 
 // 5️⃣ Index on Team IDs (Critically needed for Form Calculator)
-FixtureSchema.index({ "fixture.teams.home.id": 1 });
-FixtureSchema.index({ "fixture.teams.away.id": 1 });
+FixtureSchema.index({ "fixture.teams.home.id": 1, "fixture.fixture.date": -1 });
+FixtureSchema.index({ "fixture.teams.away.id": 1, "fixture.fixture.date": -1 });
 
 // 5️⃣ Index on updatedAt to quickly fetch latest items
 FixtureSchema.index({ updatedAt: -1 });

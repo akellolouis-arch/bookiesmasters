@@ -14,7 +14,8 @@ export default function AddTipForm() {
     league: "",
     matchDate: "",
     prediction: "",
-    odds: ""
+    odds: "",
+    score: ""
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -34,7 +35,7 @@ export default function AddTipForm() {
 
       if (res.ok) {
         setFormData({
-          homeTeam: "", awayTeam: "", country: "", league: "", matchDate: "", prediction: "", odds: ""
+          homeTeam: "", awayTeam: "", country: "", league: "", matchDate: "", prediction: "", odds: "", score: ""
         });
         router.refresh();
       } else {
@@ -77,7 +78,7 @@ export default function AddTipForm() {
         <input required type="datetime-local" name="matchDate" value={formData.matchDate} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-sm text-gray-900" />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-3 gap-4">
         <div>
           <label className="block text-xs text-gray-600 mb-1">Prediction (e.g. Home Win)</label>
           <input required name="prediction" value={formData.prediction} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-sm text-gray-900" />
@@ -85,6 +86,10 @@ export default function AddTipForm() {
         <div>
           <label className="block text-xs text-gray-600 mb-1">Odds</label>
           <input required name="odds" value={formData.odds} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-sm text-gray-900" />
+        </div>
+        <div>
+          <label className="block text-xs text-gray-600 mb-1">Score (Optional, e.g. 2-1)</label>
+          <input name="score" value={formData.score} onChange={handleChange} className="w-full bg-white border border-gray-300 rounded p-2 text-sm text-gray-900" />
         </div>
       </div>
 
