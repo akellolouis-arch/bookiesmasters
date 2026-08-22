@@ -350,7 +350,6 @@ async function applyPredictionFilter(orderedDocs) {
       if (homeStatsLeague.total >= 4 && awayStatsLeague.total >= 4) {
           passOV15 = homeStatsLeague.over25 >= 4 && awayStatsLeague.over25 >= 4;
           passUN35 = homeStatsLeague.under25 >= 4 && awayStatsLeague.under25 >= 4 &&
-                     homeStatsLeague.btts === 0 && awayStatsLeague.btts === 0 &&
                      homeStatsLeague.over35 === 0 && awayStatsLeague.over35 === 0;
       }
 
