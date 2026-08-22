@@ -359,7 +359,10 @@ async function applyPredictionFilter(orderedDocs) {
           passHomeWin = homeFormLeague.wins >= 4 && awayFormLeague.losses >= 4;
           passAwayWin = awayFormLeague.wins >= 4 && homeFormLeague.losses >= 4;
           passOV25 = homeStatsLeague.over35 >= 4 && awayStatsLeague.over35 >= 4;
-          passBTTS = homeStatsLeague.btts >= 4 && awayStatsLeague.btts >= 4 && homeStatsLeague.over15 >= 4 && awayStatsLeague.over15 >= 4;
+          passBTTS = homeStatsLeague.total >= 5 && awayStatsLeague.total >= 5 && 
+                     homeStatsLeague.btts >= 4 && awayStatsLeague.btts >= 4 && 
+                     homeStatsLeague.over25 >= 4 && awayStatsLeague.over25 >= 4 && 
+                     homeStatsLeague.under15 === 0 && awayStatsLeague.under15 === 0;
           passUN25 = homeStatsLeague.under15 >= 4 && awayStatsLeague.under15 >= 4;
       }
 
