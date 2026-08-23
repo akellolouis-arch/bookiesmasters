@@ -249,9 +249,7 @@ const calculateStats = (matches, limit) => {
           if (totalGoals > 1.5) stats.over15++; else stats.under15++;
           if (totalGoals > 2.5) stats.over25++; else stats.under25++;
           if (totalGoals > 3.5) stats.over35++; else stats.under35++;
-          const isBtts = homeGoals > 0 && awayGoals > 0;
-          if (isBtts) stats.btts++;
-          if (totalGoals <= 2.5 && isBtts) stats.under25_btts = (stats.under25_btts || 0) + 1;
+          if (homeGoals > 0 && awayGoals > 0) stats.btts++;
       }
   });
 
@@ -350,16 +348,8 @@ async function applyPredictionFilter(orderedDocs) {
 
       // League specific logic
       if (homeStatsLeague.total >= 4 && awayStatsLeague.total >= 4) {
-          const checkTeamOV15 = (stats) => {
-              if (stats.over25 >= 5) return true;
-              if (stats.over25 === 4) {
-                  if (stats.total === 5) return (stats.under25_btts || 0) >= 1;
-                  if (stats.total === 4) return true; // 4/4 is 100%
-              }
-              return false;
-          };
-
-          passOV15 = checkTeamOV15(homeStatsLeague) && checkTeamOV15(awayStatsLeague);
+          passOV15 = homeStatsLeague.over25 >= 4 && awayStatsLeague.over25 >= 4 &&
+                     homeStatsLeague.under15 === 0 && awayStatsLeague.under15 === 0;
           passUN35 = homeStatsLeague.under25 >= 4 && awayStatsLeague.under25 >= 4 &&
                      homeStatsLeague.over35 === 0 && awayStatsLeague.over35 === 0;
       }
