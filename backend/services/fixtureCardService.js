@@ -336,22 +336,22 @@ async function applyPredictionFilter(orderedDocs) {
       const awayId = doc.fixture.teams.away.id;
       const leagueId = doc.fixture.league.id;
 
-      const [homeMatchesLeague, awayMatchesLeague] = await Promise.all([
-          getRecentMatchesForTeam(homeId, matchDate, 5, leagueId),
-          getRecentMatchesForTeam(awayId, matchDate, 5, leagueId)
+      const [homeMatchesAll, awayMatchesAll] = await Promise.all([
+          getRecentMatchesForTeam(homeId, matchDate, 5), // Removed leagueId
+          getRecentMatchesForTeam(awayId, matchDate, 5)  // Removed leagueId
       ]);
 
-      const homeStatsLeague = calculateStats(homeMatchesLeague, 5);
-      const awayStatsLeague = calculateStats(awayMatchesLeague, 5);
+      const homeStatsAll = calculateStats(homeMatchesAll, 5);
+      const awayStatsAll = calculateStats(awayMatchesAll, 5);
 
       let passOV15 = false, passUN35 = false;
 
-      // League specific logic
-      if (homeStatsLeague.total >= 4 && awayStatsLeague.total >= 4) {
-          passOV15 = homeStatsLeague.over25 >= 4 && awayStatsLeague.over25 >= 4 &&
-                     homeStatsLeague.under15 === 0 && awayStatsLeague.under15 === 0;
-          passUN35 = homeStatsLeague.under25 >= 4 && awayStatsLeague.under25 >= 4 &&
-                     homeStatsLeague.over35 === 0 && awayStatsLeague.over35 === 0;
+      // All-competitions logic
+      if (homeStatsAll.total >= 4 && awayStatsAll.total >= 4) {
+          passOV15 = homeStatsAll.over25 >= 4 && awayStatsAll.over25 >= 4 &&
+                     homeStatsAll.under15 === 0 && awayStatsAll.under15 === 0;
+          passUN35 = homeStatsAll.under25 >= 4 && awayStatsAll.under25 >= 4 &&
+                     homeStatsAll.over35 === 0 && awayStatsAll.over35 === 0;
       }
 
       let tip = null;

@@ -35,8 +35,8 @@ async function run() {
         await mongoose.connect(MONGO_URI, MONGO_CONNECT_OPTIONS);
         console.log("🔌 Connected to DB.");
 
-        // Loop from -5 (5 days ago) to 1 (tomorrow)
-        for (let offset = -5; offset <= 1; offset++) {
+        // Loop from -2 (2 days ago) to 7 (7 days ahead)
+        for (let offset = -2; offset <= 7; offset++) {
             const dateStr = getKenyaDatePlus(offset);
             console.log(`\n📅 --- Processing Date: ${dateStr} ---`);
             clearPredictionCache();
