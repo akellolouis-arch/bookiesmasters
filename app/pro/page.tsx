@@ -1,21 +1,47 @@
 import React from "react";
-import Image from "next/image";
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import { auth, signOut } from "@/auth";
+import { auth } from "@/auth";
 import mongoose from "mongoose";
 import PremiumTip from "@/backend/models/PremiumTip";
 import { CheckCircle2 } from "lucide-react";
 import PaystackCheckout from "@/components/PaystackCheckout";
+import VipStrip from "@/components/VipStrip";
+import VipPredictionsView from "@/components/vip/VipPredictionsView";
 
 export const metadata = {
-  title: "Go Pro | BookiesMasters",
-  description: "Get weekly VIP predictions and insights",
+  title: "VIP Predictions | BookiesMasters",
+  description: "Access curated VIP predictions and expert insights",
 };
 
 export default async function ProPage() {
   const session = await auth();
 
+  // If user is logged in:
+  if (session?.user) {
+    // @ts-ignore
+    if (session.user.role === 'admin') {
+      redirect("/admin");
+    }
+
+    // @ts-ignore
+    const vipExpiry = session.user.vipExpiry ? new Date(session.user.vipExpiry) : null;
+    // @ts-ignore
+    const isVIP = Boolean(session.user.isVip || (vipExpiry && vipExpiry > new Date()));
+
+    return (
+      <div className="w-full pb-12">
+        {/* Subscribe to VIP strip just below navbar */}
+        <VipStrip isVip={isVIP} />
+
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 py-4">
+          {/* Admin-edited Predictions View with Date Navigator */}
+          <VipPredictionsView isVip={isVIP} />
+        </div>
+      </div>
+    );
+  }
+
+  // If unauthenticated:
   let winningTips: any[] = [];
   try {
     if (process.env.MONGO_URI) {
@@ -43,7 +69,6 @@ export default async function ProPage() {
       
       const sortedDates = Object.keys(grouped).sort((a, b) => (new Date(b)).getTime() - (new Date(a)).getTime());
       
-      // Get up to 5 recent betslips
       winningTips = sortedDates.slice(0, 5).map(dateStr => {
          const dayTips = grouped[dateStr];
          let totalOdds = 1.0;
@@ -59,36 +84,8 @@ export default async function ProPage() {
     console.error("⚠️ Pro page Mongo query error:", err);
   }
 
-  if (session?.user) {
-    // @ts-ignore
-    if (session.user.role === 'admin') {
-      redirect("/admin");
-    }
-
-    // @ts-ignore
-    const vipExpiry = session.user.vipExpiry ? new Date(session.user.vipExpiry) : null;
-    const isVIP = vipExpiry && vipExpiry > new Date();
-    
-    if (isVIP) {
-      redirect("/vip");
-    }
-  }
-
   return (
     <div className="w-full max-w-3xl mx-auto px-4 py-4 md:py-6 relative">
-      {session?.user && (
-        <div className="absolute top-2 right-4 md:top-4 md:right-4">
-          <form action={async () => {
-            "use server";
-            await signOut({ redirectTo: "/pro" });
-          }}>
-            <button type="submit" className="text-xs text-gray-600 hover:text-gray-900 border border-gray-600 hover:border-gray-900 px-2 py-1 rounded transition-colors">
-              Log out
-            </button>
-          </form>
-        </div>
-      )}
-
       <div className="text-center mb-5">
         <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-2 tracking-tight mt-6 md:mt-0">
           Upgrade to <span className="text-teal-600">VIP</span>
@@ -113,7 +110,6 @@ export default async function ProPage() {
 
               return (
                 <div key={slip.dateStr} className="min-w-[300px] sm:min-w-[340px] flex-shrink-0 bg-white p-5 rounded-2xl border-2 border-[#63FF79]/40 shadow-xl snap-center relative overflow-hidden flex flex-col transform transition-transform hover:scale-[1.02]">
-                  {/* Decorative glow */}
                   <div className="absolute -top-12 -right-12 w-40 h-40 bg-[#63FF79]/20 blur-3xl rounded-full pointer-events-none"></div>
                   
                   <div className="flex justify-between items-start mb-5 relative z-10">
