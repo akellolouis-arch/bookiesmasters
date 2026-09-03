@@ -290,7 +290,7 @@ export function clearPredictionCache() {
 async function getRecentMatchesForTeam(teamId, matchDate, limit, leagueId = null) {
   const queryBase = {
       "fixture.fixture.date": { $lt: matchDate },
-      "fixture.fixture.status.short": { $in: ["FT", "AET", "PEN"] }
+      "fixture.fixture.status.short": "FT"
   };
   
   if (leagueId) {
