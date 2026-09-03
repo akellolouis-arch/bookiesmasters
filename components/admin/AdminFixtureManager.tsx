@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { Search, Edit3, Check, X, Star, Calendar, Sparkles } from "lucide-react";
+import { Search, Edit3, X, Calendar, Sparkles } from "lucide-react";
 
 const KENYA_TZ = "Africa/Nairobi";
 
@@ -29,6 +29,20 @@ function toYYYYMMDDUtc(d: Date) {
   const m = String(d.getUTCMonth() + 1).padStart(2, "0");
   const day = String(d.getUTCDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
+}
+
+function formatKickoffTime(dateIso?: string): string {
+  if (!dateIso) return "VS";
+  try {
+    const d = new Date(dateIso);
+    return d.toLocaleTimeString("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: KENYA_TZ,
+    });
+  } catch {
+    return "VS";
+  }
 }
 
 export default function AdminFixtureManager() {
@@ -113,11 +127,29 @@ export default function AdminFixtureManager() {
     }
   };
 
+  // Group fixtures per league (matching homepage grouping)
+  const groupedByLeague: Record<string, { id: number; name: string; logo: string; country: string; matches: any[] }> = {};
+  fixtures.forEach((fx) => {
+    const league = fx.fixture?.league || {};
+    const leagueId = league.id || 0;
+    const key = `${leagueId}_${league.name || "Other"}`;
+    if (!groupedByLeague[key]) {
+      groupedByLeague[key] = {
+        id: leagueId,
+        name: league.name || "Other League",
+        logo: league.logo || league.flag || "",
+        country: league.country || "World",
+        matches: [],
+      };
+    }
+    groupedByLeague[key].matches.push(fx);
+  });
+
   return (
     <div className="space-y-6">
-      {/* Date Navigator Bar */}
-      <div className="bg-white rounded-2xl p-4 border border-gray-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto scrollbar-hide">
+      {/* Date Navigator & Search Bar */}
+      <div className="bg-white rounded-2xl p-4 border border-gray-200 shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto scrollbar-hide">
           {dates.map((d, i) => {
             const dateStr = toYYYYMMDDUtc(d);
             const isActive = dateStr === selectedDate;
@@ -128,7 +160,7 @@ export default function AdminFixtureManager() {
               <button
                 key={i}
                 onClick={() => setSelectedDate(dateStr)}
-                className={`flex flex-col items-center justify-center px-4 py-2 rounded-xl text-xs font-bold transition-all min-w-[65px] ${
+                className={`flex flex-col items-center justify-center px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all min-w-[60px] ${
                   isActive
                     ? "bg-teal-700 text-white shadow-md scale-105"
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"
@@ -154,88 +186,151 @@ export default function AdminFixtureManager() {
         </div>
       </div>
 
-      {/* Fixtures List */}
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+      {/* Fixtures Grouped per League (Homepage Layout Style) */}
+      <div className="w-full md:max-w-3xl mx-auto space-y-4">
+        <div className="p-3.5 bg-white rounded-xl border border-gray-200 shadow-xs flex justify-between items-center">
           <h2 className="font-bold text-gray-900 text-sm flex items-center gap-2">
             <Calendar size={16} className="text-teal-600" />
-            Database Fixtures for {selectedDate} ({fixtures.length})
+            Database Fixtures for {selectedDate} ({fixtures.length} matches)
           </h2>
-          <span className="text-xs text-gray-500 font-medium">Click Edit to customize VIP predictions</span>
+          <span className="text-xs text-gray-500 font-medium hidden sm:inline-block">
+            Grouped per League • Click Edit to customize tips
+          </span>
         </div>
 
         {loading ? (
-          <div className="p-12 text-center text-gray-500 font-medium text-sm">
+          <div className="bg-white rounded-xl p-12 text-center text-gray-500 font-medium text-sm border border-gray-200">
             Loading database matches...
           </div>
-        ) : fixtures.length === 0 ? (
-          <div className="p-12 text-center text-gray-500 font-medium text-sm">
+        ) : Object.keys(groupedByLeague).length === 0 ? (
+          <div className="bg-white rounded-xl p-12 text-center text-gray-500 font-medium text-sm border border-gray-200">
             No matches found in database for this date.
           </div>
         ) : (
-          <div className="divide-y divide-gray-100">
-            {fixtures.map((fx) => {
-              const home = fx.fixture?.teams?.home;
-              const away = fx.fixture?.teams?.away;
-              const league = fx.fixture?.league;
-              const displayTip = fx.customPredictionTip || fx.predictionTip || "None";
-              const displayOdds = fx.customOdds || "1.85";
-
-              return (
-                <div
-                  key={fx.fixtureId}
-                  className={`p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:bg-teal-50/30 transition-colors ${
-                    fx.isAdminPick ? "bg-amber-50/20" : ""
-                  }`}
-                >
-                  {/* Match Info */}
-                  <div className="flex-1 min-w-0">
-                    <div className="text-[11px] font-bold text-teal-700 uppercase tracking-wider mb-1">
-                      {league?.country} • {league?.name}
-                    </div>
-                    <div className="flex items-center gap-4 text-sm font-bold text-gray-900">
-                      <div className="flex items-center gap-2 truncate">
-                        {home?.logo && (
-                          <Image src={home.logo} alt={home.name} width={18} height={18} className="object-contain" />
-                        )}
-                        <span>{home?.name}</span>
-                      </div>
-                      <span className="text-gray-400 text-xs font-normal">vs</span>
-                      <div className="flex items-center gap-2 truncate">
-                        {away?.logo && (
-                          <Image src={away.logo} alt={away.name} width={18} height={18} className="object-contain" />
-                        )}
-                        <span>{away?.name}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Prediction Badge & Actions */}
-                  <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end border-t sm:border-t-0 pt-2 sm:pt-0">
-                    <div className="text-right">
-                      <div className="text-[10px] text-gray-500 font-bold uppercase">VIP Tip / Odds</div>
-                      <div className="flex items-center gap-2">
-                        <span className="px-2.5 py-1 bg-teal-100 text-teal-800 font-bold text-xs rounded-md shadow-xs border border-teal-200">
-                          {displayTip}
-                        </span>
-                        <span className="px-2 py-1 bg-amber-100 text-amber-800 font-bold text-xs rounded-md shadow-xs border border-amber-200">
-                          @{displayOdds}
-                        </span>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => handleOpenEdit(fx)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-900 hover:bg-teal-700 text-white font-bold text-xs rounded-xl shadow-sm transition-all"
-                    >
-                      <Edit3 size={13} />
-                      <span>Edit</span>
-                    </button>
-                  </div>
+          Object.entries(groupedByLeague).map(([key, group]) => (
+            <div key={key} className="bg-white border border-gray-200 rounded-none overflow-hidden shadow-xs">
+              {/* Homepage Style League Header */}
+              <div className="flex items-center gap-1.5 bg-gray-100 py-1 px-2 border-b border-gray-200">
+                {group.logo && (
+                  <Image
+                    src={group.logo}
+                    alt={group.name}
+                    width={16}
+                    height={16}
+                    className="w-4 h-4 flex-shrink-0 drop-shadow-xs object-contain"
+                    unoptimized
+                  />
+                )}
+                <div className="flex flex-col truncate w-full leading-tight">
+                  <span className="font-bold text-[11px] text-teal-700 tracking-wide truncate">
+                    {group.name}
+                  </span>
+                  <span className="text-[9px] text-gray-600 font-normal capitalize tracking-wider truncate">
+                    {group.country.toLowerCase()}
+                  </span>
                 </div>
-              );
-            })}
-          </div>
+              </div>
+
+              {/* Homepage Style Match Cards */}
+              <div className="divide-y divide-gray-100">
+                {group.matches.map((fx) => {
+                  const home = fx.fixture?.teams?.home;
+                  const away = fx.fixture?.teams?.away;
+                  const rawStatus = fx.fixture?.fixture?.status?.short || "NS";
+                  const dateIso = fx.fixture?.fixture?.date;
+                  const kickoff = formatKickoffTime(dateIso);
+
+                  const score = fx.fixture?.goals?.home !== null && fx.fixture?.goals?.away !== null
+                    ? `${fx.fixture.goals.home}-${fx.fixture.goals.away}`
+                    : "-";
+                  const tip = fx.customPredictionTip || fx.predictionTip || "OV1.5";
+                  const odds = fx.customOdds || "1.85";
+
+                  return (
+                    <div
+                      key={fx.fixtureId}
+                      className={`p-2 hover:bg-gray-50 transition-colors flex flex-col gap-1.5 ${
+                        fx.isAdminPick ? "bg-amber-50/30" : ""
+                      }`}
+                    >
+                      {/* Matchup Row: Home vs Away + Kickoff Time */}
+                      <div className="grid grid-cols-[1fr_auto_1fr] items-center w-full gap-2">
+                        {/* HOME TEAM */}
+                        <div className="flex items-center justify-end gap-1.5 min-w-0">
+                          <span className="font-medium text-[11px] sm:text-[12px] truncate text-gray-800 capitalize text-right">
+                            {home?.name}
+                          </span>
+                          {home?.logo && (
+                            <Image
+                              src={home.logo}
+                              alt={home?.name || ""}
+                              width={14}
+                              height={14}
+                              className="w-3.5 h-3.5 object-contain shrink-0"
+                              unoptimized
+                            />
+                          )}
+                        </div>
+
+                        {/* KICKOFF TIME CENTER BOX */}
+                        <span className="text-[9px] sm:text-[10px] font-bold text-gray-500 px-2 shrink-0 text-center min-w-[42px] bg-gray-100 rounded py-0.5">
+                          {kickoff}
+                        </span>
+
+                        {/* AWAY TEAM */}
+                        <div className="flex items-center justify-start gap-1.5 min-w-0">
+                          {away?.logo && (
+                            <Image
+                              src={away.logo}
+                              alt={away?.name || ""}
+                              width={14}
+                              height={14}
+                              className="w-3.5 h-3.5 object-contain shrink-0"
+                              unoptimized
+                            />
+                          )}
+                          <span className="font-medium text-[11px] sm:text-[12px] truncate text-gray-800 capitalize text-left">
+                            {away?.name}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Bottom Details Strip */}
+                      <div className="w-full flex items-center justify-between pt-1 border-t border-gray-100">
+                        {/* Status */}
+                        <div className="px-2 py-0.5 bg-gray-100 rounded text-[10px] font-bold uppercase text-gray-500">
+                          {rawStatus}
+                        </div>
+
+                        {/* Score */}
+                        <div className="px-2 py-0.5 bg-gray-100 rounded text-[10px] font-bold text-gray-700">
+                          {score}
+                        </div>
+
+                        {/* VIP Prediction & Odds + Edit Action */}
+                        <div className="flex items-center gap-2">
+                          <span className="px-2 py-0.5 bg-teal-100 text-teal-800 font-bold text-[10px] rounded border border-teal-200">
+                            {tip}
+                          </span>
+                          <span className="px-1.5 py-0.5 bg-amber-100 text-amber-900 font-bold text-[10px] rounded border border-amber-200">
+                            @{odds}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleOpenEdit(fx)}
+                            className="flex items-center gap-1 px-2.5 py-1 bg-gray-900 hover:bg-teal-700 text-white font-bold text-[10px] rounded shadow-xs transition-all ml-1"
+                          >
+                            <Edit3 size={11} />
+                            <span>Edit</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))
         )}
       </div>
 
