@@ -29,17 +29,25 @@ export default function VipStrip({ isVip }: VipStripProps) {
 
   return (
     <>
-      {/* Clickable Single-Row Advert Strip */}
+      {/* Clickable Single-Row Animated Advert Strip */}
       <button
         type="button"
         onClick={() => setShowCheckoutModal(true)}
-        className="w-full bg-gradient-to-r from-teal-950 via-emerald-900 to-teal-950 hover:from-teal-900 hover:via-emerald-800 hover:to-teal-900 text-white shadow-sm border-b border-amber-400/30 transition-all duration-300 cursor-pointer group py-1.5 px-3 flex items-center justify-center gap-2.5"
+        className="w-full bg-gradient-to-r from-teal-950 via-emerald-900 to-teal-950 hover:from-teal-900 hover:via-emerald-800 hover:to-teal-900 text-white shadow-md border-b border-amber-400/40 transition-all duration-300 cursor-pointer group py-1.5 px-3 flex items-center justify-center gap-2.5 overflow-hidden relative"
       >
-        <Crown size={14} className="text-amber-400 shrink-0 group-hover:scale-110 transition-transform" />
-        <span className="text-xs sm:text-sm font-extrabold tracking-wide text-amber-300 group-hover:text-amber-200 transition-colors">
+        {/* Pulsing subtle background glow wave */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-400/10 to-transparent animate-pulse pointer-events-none" />
+
+        {/* Bouncing Crown Icon Left */}
+        <Crown size={15} className="text-amber-400 shrink-0 animate-bounce group-hover:scale-125 transition-transform" />
+
+        {/* Glowing Pulsingenticing Text */}
+        <span className="text-xs sm:text-sm font-black tracking-wide text-amber-300 animate-pulse group-hover:text-white transition-colors drop-shadow-[0_0_10px_rgba(251,191,36,0.6)]">
           Subscribe for 3-5 daily odds at $19 per week
         </span>
-        <Crown size={14} className="text-amber-400 shrink-0 group-hover:scale-110 transition-transform" />
+
+        {/* Bouncing Crown Icon Right */}
+        <Crown size={15} className="text-amber-400 shrink-0 animate-bounce group-hover:scale-125 transition-transform" />
       </button>
 
       {/* Paystack Checkout Modal */}
