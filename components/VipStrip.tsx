@@ -37,7 +37,7 @@ export default function VipStrip({ isVip }: VipStripProps) {
       >
         <Crown size={14} className="text-amber-400 shrink-0 group-hover:scale-110 transition-transform" />
         <span className="text-xs sm:text-sm font-extrabold tracking-wide text-amber-300 group-hover:text-amber-200 transition-colors">
-          Subscribe to 3-5 daily odds at $19 per week
+          Subscribe for 3-5 daily odds at $19 per week
         </span>
         <Crown size={14} className="text-amber-400 shrink-0 group-hover:scale-110 transition-transform" />
       </button>
