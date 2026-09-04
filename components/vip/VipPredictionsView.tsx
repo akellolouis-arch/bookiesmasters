@@ -66,7 +66,7 @@ export default function VipPredictionsView({
 
   const [selectedDate, setSelectedDate] = useState(todayYmd);
   const [fixtures, setFixtures] = useState<any[]>(initialFixtures);
-  const [loading, setLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
 
   const isFirstRender = useRef(true);
@@ -88,7 +88,7 @@ export default function VipPredictionsView({
     }
 
     async function fetchVipFixtures() {
-      setLoading(true);
+      setIsFetching(true);
       try {
         const res = await fetch(`/api/vip/predictions?date=${selectedDate}`);
         const data = await res.json();
@@ -98,7 +98,7 @@ export default function VipPredictionsView({
       } catch (err) {
         console.error("Failed to fetch VIP predictions:", err);
       } finally {
-        setLoading(false);
+        setIsFetching(false);
       }
     }
     fetchVipFixtures();
@@ -166,151 +166,150 @@ export default function VipPredictionsView({
 
       {/* Main Fixtures Container */}
       <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto sm:px-1 md:px-4 py-3 min-h-[50vh]">
-        {loading ? (
-          <div className="min-h-[40vh] flex flex-col items-center justify-center p-8">
-            <Loader />
-          </div>
-        ) : Object.keys(groupedByLeague).length === 0 ? (
-          <div className="bg-white rounded-none p-8 text-center border border-gray-200 space-y-2 mt-2">
-            <div className="text-gray-400 flex justify-center">
-              <Calendar size={28} />
+        {/* Seamless Predictions Container - Preserves height during date shifts */}
+        <div className={`transition-opacity duration-200 ${isFetching ? "opacity-35 pointer-events-none" : "opacity-100"}`}>
+          {Object.keys(groupedByLeague).length === 0 ? (
+            <div className="bg-white rounded-none p-8 text-center border border-gray-200 space-y-2 mt-2 min-h-[220px] flex flex-col justify-center items-center">
+              <div className="text-gray-400 flex justify-center">
+                <Calendar size={28} />
+              </div>
+              <p className="text-gray-600 text-sm font-medium">No VIP predictions available for this date.</p>
+              <p className="text-gray-500 text-xs">Our team adds high-confidence VIP picks daily. Select another date above!</p>
             </div>
-            <p className="text-gray-600 text-sm font-medium">No VIP predictions available for this date.</p>
-            <p className="text-gray-500 text-xs">Our team adds high-confidence VIP picks daily. Select another date above!</p>
-          </div>
-        ) : (
-          Object.entries(groupedByLeague).map(([key, group]) => (
-            <div key={key}>
-              {/* Homepage League Header */}
-              <div className="flex items-center gap-1 bg-gray-100 py-0.5 px-0.5 shadow-md border border-gray-200 border-b-0">
-                <div className="flex items-center gap-1 w-full">
-                  {group.logo && (
-                    <Image
-                      src={group.logo}
-                      alt={group.name}
-                      width={16}
-                      height={16}
-                      className="w-4 h-4 flex-shrink-0 drop-shadow-md object-contain"
-                      unoptimized
-                    />
-                  )}
-                  <div className="flex flex-col truncate w-full leading-tight">
-                    <span className="font-medium text-[11px] text-teal-700 tracking-wide truncate drop-shadow-sm">
-                      {group.name}
-                    </span>
-                    <span className="text-[9px] text-gray-600 font-normal capitalize tracking-wider truncate">
-                      {group.country.toLowerCase()}
-                    </span>
+          ) : (
+            Object.entries(groupedByLeague).map(([key, group]) => (
+              <div key={key}>
+                {/* Homepage League Header */}
+                <div className="flex items-center gap-1 bg-gray-100 py-0.5 px-0.5 shadow-md border border-gray-200 border-b-0">
+                  <div className="flex items-center gap-1 w-full">
+                    {group.logo && (
+                      <Image
+                        src={group.logo}
+                        alt={group.name}
+                        width={16}
+                        height={16}
+                        className="w-4 h-4 flex-shrink-0 drop-shadow-md object-contain"
+                        unoptimized
+                      />
+                    )}
+                    <div className="flex flex-col truncate w-full leading-tight">
+                      <span className="font-medium text-[11px] text-teal-700 tracking-wide truncate drop-shadow-sm">
+                        {group.name}
+                      </span>
+                      <span className="text-[9px] text-gray-600 font-normal capitalize tracking-wider truncate">
+                        {group.country.toLowerCase()}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Homepage Match Cards */}
-              <div className="flex flex-col">
-                {group.matches.map((fx) => {
-                  const home = fx.fixture?.teams?.home;
-                  const away = fx.fixture?.teams?.away;
-                  const status = fx.fixture?.fixture?.status?.short || "NS";
-                  const kickoffTime = formatKickoffTime(fx.fixture?.fixture?.date);
-                  const score = fx.fixture?.goals?.home !== null && fx.fixture?.goals?.away !== null
-                    ? `${fx.fixture.goals.home}-${fx.fixture.goals.away}`
-                    : "-";
-                  const tip = fx.customPredictionTip || fx.predictionTip || "OV1.5";
-                  const odds = fx.customOdds || "1.85";
+                {/* Homepage Match Cards */}
+                <div className="flex flex-col">
+                  {group.matches.map((fx) => {
+                    const home = fx.fixture?.teams?.home;
+                    const away = fx.fixture?.teams?.away;
+                    const status = fx.fixture?.fixture?.status?.short || "NS";
+                    const kickoffTime = formatKickoffTime(fx.fixture?.fixture?.date);
+                    const score = fx.fixture?.goals?.home !== null && fx.fixture?.goals?.away !== null
+                      ? `${fx.fixture.goals.home}-${fx.fixture.goals.away}`
+                      : "-";
+                    const tip = fx.customPredictionTip || fx.predictionTip || "OV1.5";
+                    const odds = fx.customOdds || "1.85";
 
-                  return (
-                    <div
-                      key={fx.fixtureId}
-                      className="block bg-white border border-gray-200 rounded-none py-1 px-1.5 sm:py-1.5 sm:px-2 hover:border-gray-300 transition-all duration-300 flex flex-col text-inherit"
-                    >
-                      {/* Matchup Header */}
-                      <div className="grid grid-cols-[1fr_auto_1fr] items-center w-full mb-1 gap-1">
-                        {/* HOME TEAM */}
-                        <div className="flex items-center justify-end gap-1.5 min-w-0">
-                          <span className="font-medium text-[11px] sm:text-[12px] truncate text-gray-800 capitalize text-right">
-                            {home?.name}
+                    return (
+                      <div
+                        key={fx.fixtureId}
+                        className="block bg-white border border-gray-200 rounded-none py-1 px-1.5 sm:py-1.5 sm:px-2 hover:border-gray-300 transition-all duration-300 flex flex-col text-inherit"
+                      >
+                        {/* Matchup Header */}
+                        <div className="grid grid-cols-[1fr_auto_1fr] items-center w-full mb-1 gap-1">
+                          {/* HOME TEAM */}
+                          <div className="flex items-center justify-end gap-1.5 min-w-0">
+                            <span className="font-medium text-[11px] sm:text-[12px] truncate text-gray-800 capitalize text-right">
+                              {home?.name}
+                            </span>
+                            {home?.logo && (
+                              <Image
+                                src={home.logo}
+                                alt={home?.name || ""}
+                                width={14}
+                                height={14}
+                                className="w-3.5 h-3.5 object-contain shrink-0"
+                                unoptimized
+                              />
+                            )}
+                          </div>
+
+                          {/* KICKOFF / VS CENTER BOX */}
+                          <span className="text-[9px] sm:text-[10px] font-bold text-gray-500 px-2 shrink-0 text-center min-w-[32px]">
+                            {kickoffTime}
                           </span>
-                          {home?.logo && (
-                            <Image
-                              src={home.logo}
-                              alt={home?.name || ""}
-                              width={14}
-                              height={14}
-                              className="w-3.5 h-3.5 object-contain shrink-0"
-                              unoptimized
-                            />
-                          )}
-                        </div>
 
-                        {/* KICKOFF / VS CENTER BOX */}
-                        <span className="text-[9px] sm:text-[10px] font-bold text-gray-500 px-2 shrink-0 text-center min-w-[32px]">
-                          {kickoffTime}
-                        </span>
-
-                        {/* AWAY TEAM */}
-                        <div className="flex items-center justify-start gap-1.5 min-w-0">
-                          {away?.logo && (
-                            <Image
-                              src={away.logo}
-                              alt={away?.name || ""}
-                              width={14}
-                              height={14}
-                              className="w-3.5 h-3.5 object-contain shrink-0"
-                              unoptimized
-                            />
-                          )}
-                          <span className="font-medium text-[11px] sm:text-[12px] truncate text-gray-800 capitalize text-left">
-                            {away?.name}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* BOTTOM STRIP */}
-                      <div className="w-full flex items-center justify-between mt-1">
-                        {/* LEFT: STATUS CONTAINER */}
-                        <div className="flex-1 flex justify-start">
-                          <div className="px-2 py-0.5 bg-gray-100 rounded-lg text-[10px] font-bold uppercase leading-none tracking-widest text-gray-500">
-                            {status}
+                          {/* AWAY TEAM */}
+                          <div className="flex items-center justify-start gap-1.5 min-w-0">
+                            {away?.logo && (
+                              <Image
+                                src={away.logo}
+                                alt={away?.name || ""}
+                                width={14}
+                                height={14}
+                                className="w-3.5 h-3.5 object-contain shrink-0"
+                                unoptimized
+                              />
+                            )}
+                            <span className="font-medium text-[11px] sm:text-[12px] truncate text-gray-800 capitalize text-left">
+                              {away?.name}
+                            </span>
                           </div>
                         </div>
 
-                        {/* MIDDLE: SCORE CONTAINER */}
-                        <div className="flex shrink-0 justify-center px-2">
-                          <div className="px-2 py-0.5 bg-gray-100 rounded-lg text-[10px] font-bold leading-none tracking-widest text-gray-500">
-                            {score}
-                          </div>
-                        </div>
-
-                        {/* RIGHT: PREDICTION / LOCK CONTAINER */}
-                        <div className="flex-1 flex justify-end">
-                          {isLocked ? (
-                            <button
-                              type="button"
-                              onClick={() => setShowCheckoutModal(true)}
-                              className="px-2 py-0.5 bg-amber-100 hover:bg-amber-200 border border-amber-300/80 rounded-lg flex items-center justify-center cursor-pointer transition-colors"
-                              title="Unlock VIP prediction"
-                            >
-                              <Lock size={11} className="text-amber-800" />
-                            </button>
-                          ) : (
-                            <div className="flex items-center gap-1">
-                              <div className="px-2 py-0.5 bg-gray-100 rounded-lg text-[10px] font-bold uppercase tracking-widest leading-none text-teal-700">
-                                {tip}
-                              </div>
-                              <div className="px-1.5 py-0.5 bg-orange-100 text-orange-800 border border-orange-200/80 rounded-lg text-[10px] font-bold tracking-widest leading-none">
-                                @{odds}
-                              </div>
+                        {/* BOTTOM STRIP */}
+                        <div className="w-full flex items-center justify-between mt-1">
+                          {/* LEFT: STATUS CONTAINER */}
+                          <div className="flex-1 flex justify-start">
+                            <div className="px-2 py-0.5 bg-gray-100 rounded-lg text-[10px] font-bold uppercase leading-none tracking-widest text-gray-500">
+                              {status}
                             </div>
-                          )}
+                          </div>
+
+                          {/* MIDDLE: SCORE CONTAINER */}
+                          <div className="flex shrink-0 justify-center px-2">
+                            <div className="px-2 py-0.5 bg-gray-100 rounded-lg text-[10px] font-bold leading-none tracking-widest text-gray-500">
+                              {score}
+                            </div>
+                          </div>
+
+                          {/* RIGHT: PREDICTION / LOCK CONTAINER */}
+                          <div className="flex-1 flex justify-end">
+                            {isLocked ? (
+                              <button
+                                type="button"
+                                onClick={() => setShowCheckoutModal(true)}
+                                className="px-2 py-0.5 bg-amber-100 hover:bg-amber-200 border border-amber-300/80 rounded-lg flex items-center justify-center cursor-pointer transition-colors"
+                                title="Unlock VIP prediction"
+                              >
+                                <Lock size={11} className="text-amber-800" />
+                              </button>
+                            ) : (
+                              <div className="flex items-center gap-1">
+                                <div className="px-2 py-0.5 bg-gray-100 rounded-lg text-[10px] font-bold uppercase tracking-widest leading-none text-teal-700">
+                                  {tip}
+                                </div>
+                                <div className="px-1.5 py-0.5 bg-orange-100 text-orange-800 border border-orange-200/80 rounded-lg text-[10px] font-bold tracking-widest leading-none">
+                                  @{odds}
+                                </div>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ))
-        )}
+            ))
+          )}
+        </div>
 
         {/* Children (Top Trends) & Footer rendered in flow under predictions */}
         {children}
