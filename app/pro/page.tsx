@@ -33,10 +33,8 @@ export default async function ProPage() {
         {/* Subscribe to VIP strip just below navbar */}
         <VipStrip isVip={isVIP} />
 
-        <div className="max-w-7xl mx-auto px-2 sm:px-4 py-4">
-          {/* Admin-edited Predictions View with Date Navigator */}
-          <VipPredictionsView isVip={isVIP} />
-        </div>
+        {/* Admin-edited Predictions View with Date Navigator */}
+        <VipPredictionsView isVip={isVIP} />
       </div>
     );
   }

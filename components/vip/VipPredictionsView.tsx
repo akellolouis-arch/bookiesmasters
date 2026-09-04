@@ -103,9 +103,9 @@ export default function VipPredictionsView({ isVip }: VipPredictionsViewProps) {
   });
 
   return (
-    <div className="w-full space-y-3">
-      {/* Date Navigator Bar - Exact Homepage Styling */}
-      <div className="max-w-[100vw] bg-gray-50 border-y border-gray-200 mx-auto">
+    <div className="w-full">
+      {/* Date Navigator Bar - Flush with zero top/bottom margin */}
+      <div className="max-w-[100vw] bg-gray-50 border-b border-gray-200 mx-auto">
         <div className="max-w-3xl mx-auto w-full">
           <div className="flex items-stretch w-full h-8 overflow-hidden bg-gray-50 divide-x divide-white/5 shadow-xs">
             <div className="flex-1 min-w-0 overflow-x-auto flex items-stretch scrollbar-hide no-scrollbar divide-x divide-white/5">
@@ -144,14 +144,14 @@ export default function VipPredictionsView({ isVip }: VipPredictionsViewProps) {
         </div>
       </div>
 
-      {/* Main Fixtures Container - Exact Homepage Layout */}
-      <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto sm:px-1 md:px-4">
+      {/* Main Fixtures Container */}
+      <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto sm:px-1 md:px-4 py-3">
         {loading ? (
           <div className="bg-white rounded-none p-12 text-center text-gray-500 font-medium text-xs border border-gray-200">
             Loading predictions...
           </div>
         ) : Object.keys(groupedByLeague).length === 0 ? (
-          <div className="bg-white rounded-none p-8 text-center border border-gray-200 space-y-2 mt-4">
+          <div className="bg-white rounded-none p-8 text-center border border-gray-200 space-y-2 mt-2">
             <div className="text-gray-400 flex justify-center">
               <Calendar size={28} />
             </div>
@@ -159,7 +159,7 @@ export default function VipPredictionsView({ isVip }: VipPredictionsViewProps) {
             <p className="text-gray-500 text-xs">Our team adds high-confidence VIP picks daily. Select another date above!</p>
           </div>
         ) : (
-          Object.entries(groupedByLeague).map(([key, group], idx) => (
+          Object.entries(groupedByLeague).map(([key, group]) => (
             <div key={key}>
               {/* Homepage League Header */}
               <div className="flex items-center gap-1 bg-gray-100 py-0.5 px-0.5 shadow-md border border-gray-200 border-b-0">
@@ -267,10 +267,10 @@ export default function VipPredictionsView({ isVip }: VipPredictionsViewProps) {
                             <button
                               type="button"
                               onClick={() => setShowCheckoutModal(true)}
-                              className="px-2 py-0.5 bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300/80 rounded-lg text-[10px] font-bold uppercase tracking-widest leading-none flex items-center gap-1 cursor-pointer transition-colors"
+                              className="px-2 py-0.5 bg-amber-100 hover:bg-amber-200 border border-amber-300/80 rounded-lg flex items-center justify-center cursor-pointer transition-colors"
+                              title="Unlock VIP prediction"
                             >
-                              <Lock size={10} className="text-amber-700" />
-                              <span>LOCKED (VIP)</span>
+                              <Lock size={11} className="text-amber-800" />
                             </button>
                           ) : (
                             <div className="flex items-center gap-1">
