@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Crown, ArrowRight } from "lucide-react";
+import { Crown } from "lucide-react";
 import PaystackCheckout from "@/components/PaystackCheckout";
 
 interface VipStripProps {
@@ -33,16 +33,13 @@ export default function VipStrip({ isVip }: VipStripProps) {
       <button
         type="button"
         onClick={() => setShowCheckoutModal(true)}
-        className="w-full bg-gradient-to-r from-teal-950 via-emerald-900 to-teal-950 hover:from-teal-900 hover:via-emerald-800 hover:to-teal-900 text-white shadow-sm border-b border-amber-400/30 transition-all duration-300 cursor-pointer group py-1.5 px-3 flex items-center justify-center gap-2"
+        className="w-full bg-gradient-to-r from-teal-950 via-emerald-900 to-teal-950 hover:from-teal-900 hover:via-emerald-800 hover:to-teal-900 text-white shadow-sm border-b border-amber-400/30 transition-all duration-300 cursor-pointer group py-1.5 px-3 flex items-center justify-center gap-2.5"
       >
         <Crown size={14} className="text-amber-400 shrink-0 group-hover:scale-110 transition-transform" />
         <span className="text-xs sm:text-sm font-extrabold tracking-wide text-amber-300 group-hover:text-amber-200 transition-colors">
           Subscribe to 3-5 daily odds at $19 per week
         </span>
-        <span className="bg-amber-400/20 text-amber-300 group-hover:bg-amber-400 group-hover:text-slate-950 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider flex items-center gap-1 transition-all">
-          <span>Click Here</span>
-          <ArrowRight size={11} className="group-hover:translate-x-0.5 transition-transform" />
-        </span>
+        <Crown size={14} className="text-amber-400 shrink-0 group-hover:scale-110 transition-transform" />
       </button>
 
       {/* Paystack Checkout Modal */}
