@@ -288,8 +288,8 @@ export default function VipPredictionsView({
                                 className="px-2 py-0.5 bg-amber-100 hover:bg-amber-200 border border-amber-300/80 rounded-lg flex items-center gap-1 cursor-pointer transition-colors"
                                 title="Unlock VIP prediction"
                               >
-                                <Lock size={11} className="text-amber-800" />
-                                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800 leading-none">pro</span>
+                                <Lock size={11} className="text-amber-800/80" />
+                                <span className="text-[10px] font-bold uppercase leading-none tracking-widest text-amber-800/80">pro</span>
                               </button>
                             ) : (
                               <div className="flex items-center gap-1">
