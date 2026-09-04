@@ -50,9 +50,6 @@ export interface LeagueGroup {
 // ------------------------------
 // SWR FETCHER
 // ------------------------------
-// ------------------------------
-// SWR FETCHER
-// ------------------------------
 const fetcher = (url: string) =>
   fetch(url, { cache: "no-store" }).then((res) => res.json());
 
@@ -148,9 +145,7 @@ export default function PredictionsList({
       .filter((league) => league.matches.length > 0);
   }
 
-
-
-  // FIX: Prevent "shambolic" display on initial load by waiting for mount
+  // Prevent "shambolic" display on initial load by waiting for mount
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -166,7 +161,7 @@ export default function PredictionsList({
   }
 
   // If SWR is fetching fresh data and we currently have nothing to show, display the loader instead of "No predictions"
-  const isFetchingInitial = isLoading || (!safeData || safeData.length === 0) && isValidating;
+  const isFetchingInitial = isLoading || ((!safeData || safeData.length === 0) && isValidating);
   if (isFetchingInitial) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center p-8 global-loader">
@@ -196,42 +191,45 @@ export default function PredictionsList({
         )
       )}
 
-      {(() => {
-        let globalIdx = 0;
-        return safeData.map((league, idx) => (
-          <div key={league.id || idx}>
-            <div className="flex items-center gap-1 bg-gray-100 py-0.5 px-0.5 shadow-md border border-gray-200 border-b-0">
-              <div className="flex items-center gap-1 w-full">
-                {league.logo && (
-                  <Image
-                    src={league.logo}
-                    alt={league.name}
-                    width={16}
-                    height={16}
-                    className="w-4 h-4 flex-shrink-0 drop-shadow-md"
-                    unoptimized
-                  />
-                )}
-                <div className="flex flex-col truncate w-full leading-tight">
-                  <span className="font-medium text-[11px] text-teal-700 tracking-wide truncate drop-shadow-sm">
-                    {league.name}
-                  </span>
-                  <span className="text-[9px] text-gray-600 font-normal capitalize tracking-wider truncate">{league.country.toLowerCase()}</span>
+      {/* Seamless Fixture Transition - Existing fixtures fade down during date navigation revalidation */}
+      <div className={`transition-opacity duration-200 ${isValidating ? "opacity-35 pointer-events-none" : "opacity-100"}`}>
+        {(() => {
+          let globalIdx = 0;
+          return safeData.map((league, idx) => (
+            <div key={league.id || idx}>
+              <div className="flex items-center gap-1 bg-gray-100 py-0.5 px-0.5 shadow-md border border-gray-200 border-b-0">
+                <div className="flex items-center gap-1 w-full">
+                  {league.logo && (
+                    <Image
+                      src={league.logo}
+                      alt={league.name}
+                      width={16}
+                      height={16}
+                      className="w-4 h-4 flex-shrink-0 drop-shadow-md"
+                      unoptimized
+                    />
+                  )}
+                  <div className="flex flex-col truncate w-full leading-tight">
+                    <span className="font-medium text-[11px] text-teal-700 tracking-wide truncate drop-shadow-sm">
+                      {league.name}
+                    </span>
+                    <span className="text-[9px] text-gray-600 font-normal capitalize tracking-wider truncate">{league.country.toLowerCase()}</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="flex flex-col">
-              {league.matches.map((fixture) => {
-                const currentIdx = globalIdx++;
-                return (
-                  <FixtureCard key={fixture.fixtureId} {...fixture} index={currentIdx} />
-                );
-              })}
+              <div className="flex flex-col">
+                {league.matches.map((fixture) => {
+                  const currentIdx = globalIdx++;
+                  return (
+                    <FixtureCard key={fixture.fixtureId} {...fixture} index={currentIdx} />
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        ));
-      })()}
+          ));
+        })()}
+      </div>
 
       {children}
       <Footer />

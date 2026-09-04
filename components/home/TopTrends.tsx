@@ -59,9 +59,9 @@ export default async function TopTrends() {
   }
 
   return (
-    <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto px-0 mt-2 mb-0">
+    <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto px-2.5 sm:px-4 mt-3 mb-1">
       {/* Title */}
-      <div className="flex items-center justify-center gap-2 mb-1.5 px-1 sm:px-0">
+      <div className="flex items-center justify-center gap-2 mb-2 px-1 sm:px-0">
         <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent to-white/10" />
         <span className="text-[11px] font-bold text-teal-700/90 tracking-wider uppercase whitespace-nowrap">
           top trends
@@ -69,15 +69,15 @@ export default async function TopTrends() {
         <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent" />
       </div>
 
-      {/* Cards List */}
-      <div className="space-y-0">
+      {/* Cards List - Moved inwards with left and right space */}
+      <div className="space-y-2">
         {trends.map((match) => {
           const formattedTip = match.tip || "";
           
           return (
             <div
               key={match.fixtureId}
-              className="bg-white border border-gray-200 rounded-none p-1.5 sm:p-2 hover:border-gray-300 transition-all duration-300"
+              className="bg-white border border-gray-200 rounded-xl p-2 sm:p-2.5 hover:border-gray-300 transition-all duration-300 shadow-xs"
             >
               {/* League Header */}
               <div className="flex items-center gap-1 mb-1">
