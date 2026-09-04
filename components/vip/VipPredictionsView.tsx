@@ -164,8 +164,8 @@ export default function VipPredictionsView({
         </div>
       </div>
 
-      {/* Main Fixtures Container */}
-      <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto sm:px-1 md:px-4 py-3 min-h-[50vh]">
+      {/* Main Fixtures Container (exact homepage structure) */}
+      <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto sm:px-1 md:px-4 min-h-[50vh]">
         {/* Seamless Predictions Container - Preserves height during date shifts */}
         <div className={`transition-opacity duration-200 ${isFetching ? "opacity-35 pointer-events-none" : "opacity-100"}`}>
           {Object.keys(groupedByLeague).length === 0 ? (
@@ -311,7 +311,7 @@ export default function VipPredictionsView({
           )}
         </div>
 
-        {/* Children (Top Trends) & Footer rendered in flow under predictions */}
+        {/* Children (Top Trends) & Footer rendered in exact homepage container flow */}
         {children}
         <Footer />
       </div>

@@ -9,6 +9,7 @@ import PaystackCheckout from "@/components/PaystackCheckout";
 import VipStrip from "@/components/VipStrip";
 import VipPredictionsView from "@/components/vip/VipPredictionsView";
 import TopTrends from "@/components/home/TopTrends";
+import Footer from "@/components/Footer";
 
 export const metadata = {
   title: "VIP Predictions | BookiesMasters",
@@ -70,7 +71,7 @@ export default async function ProPage() {
 
     return (
       <div className="w-full min-h-screen flex flex-col justify-between">
-        <div className="w-full pb-8">
+        <div className="w-full">
           {/* Subscribe to VIP strip just below navbar */}
           <VipStrip isVip={isVIP} />
 
@@ -80,9 +81,7 @@ export default async function ProPage() {
             initialFixtures={initialFixtures}
             initialDate={todayYmd}
           >
-            <div className="mt-4 px-2 sm:px-4">
-              <TopTrends />
-            </div>
+            <TopTrends />
           </VipPredictionsView>
         </div>
       </div>
@@ -168,7 +167,7 @@ export default async function ProPage() {
                       </div>
                       <div className="text-right bg-gray-900 px-3 py-1.5 rounded-lg shadow-inner">
                          <div className="text-[9px] text-[#63FF79] font-bold uppercase mb-0.5">Total Odds</div>
-                         <div className="text-xl font-black text-white leading-none">{slip.totalOdds.toFixed(2)}</div>
+                         <div className="text-xl font-black text-[#63FF79] leading-none">{slip.totalOdds.toFixed(2)}</div>
                       </div>
                     </div>
                     
@@ -212,6 +211,8 @@ export default async function ProPage() {
           <PaystackCheckout amount={2500} currency="KES" displayText="Pay $19 to Unlock VIP" />
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }
