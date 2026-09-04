@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { Search, Edit3, X, Calendar, Sparkles, CheckCircle2, XCircle, Clock } from "lucide-react";
+import { Search, Edit3, X, Sparkles, CheckCircle2, XCircle, Clock } from "lucide-react";
 
 const KENYA_TZ = "Africa/Nairobi";
 
@@ -202,110 +202,100 @@ export default function AdminFixtureManager() {
   });
 
   return (
-    <div className="w-full space-y-4">
-      {/* Date Navigator Bar & Search Icon (Placed right below dashboard/payments/premium tips row) */}
-      <div className="w-full bg-gray-50 border border-gray-200 rounded-lg overflow-hidden shadow-xs">
-        <div className="flex items-stretch w-full h-9 bg-gray-50 divide-x divide-gray-200">
-          {/* Date Selector Strip */}
-          <div className="flex-1 min-w-0 overflow-x-auto flex items-stretch scrollbar-hide no-scrollbar divide-x divide-gray-200">
-            {dates.map((d, i) => {
-              const dateStr = toYYYYMMDDUtc(d);
-              const isActive = dateStr === selectedDate;
-              const dayName = d.toLocaleDateString("en-GB", { weekday: "short", timeZone: KENYA_TZ });
-              const dayNum = d.toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", timeZone: KENYA_TZ });
+    <div className="w-full">
+      {/* Date Navigator Bar directly below sub navbar */}
+      <div className="max-w-[100vw] bg-gray-50 border-y border-gray-200 mx-auto">
+        <div className="max-w-3xl mx-auto w-full">
+          <div className="flex items-stretch w-full h-8 overflow-hidden bg-gray-50 divide-x divide-white/5 shadow-xs">
+            <div className="flex-1 min-w-0 overflow-x-auto flex items-stretch scrollbar-hide no-scrollbar divide-x divide-white/5">
+              {dates.map((d, i) => {
+                const dateStr = toYYYYMMDDUtc(d);
+                const isActive = dateStr === selectedDate;
+                const dayName = d.toLocaleDateString("en-GB", { weekday: "short", timeZone: KENYA_TZ });
+                const dayNum = d.toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", timeZone: KENYA_TZ });
 
-              return (
+                return (
+                  <button
+                    type="button"
+                    key={i}
+                    onClick={() => setSelectedDate(dateStr)}
+                    className={`flex-1 flex flex-col items-center justify-center min-w-[40px] transition-all ${
+                      isActive
+                        ? "bg-gray-300 text-teal-700 shadow-inner font-bold"
+                        : "text-gray-500 hover:bg-gray-200 hover:text-gray-700"
+                    }`}
+                  >
+                    <span className="text-[10px] font-bold uppercase leading-tight">{dayName}</span>
+                    <span className="text-[10px] font-bold leading-tight opacity-90">{dayNum}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {isSearchOpen ? (
+              <form onSubmit={(e) => e.preventDefault()} className="shrink-0 flex items-stretch divide-x divide-white/5 bg-white">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Team"
+                  className="w-24 sm:w-28 bg-transparent text-gray-900 text-xs px-2 outline-none font-medium"
+                  autoFocus
+                />
                 <button
                   type="button"
-                  key={i}
-                  onClick={() => setSelectedDate(dateStr)}
-                  className={`flex-1 flex flex-col items-center justify-center min-w-[46px] sm:min-w-[56px] px-1 transition-all ${
-                    isActive
-                      ? "bg-teal-700 text-white shadow-inner font-bold"
-                      : "text-gray-600 hover:bg-gray-200 hover:text-gray-900"
-                  }`}
+                  onClick={() => {
+                    setSearchQuery("");
+                    setIsSearchOpen(false);
+                  }}
+                  className="w-9 flex items-center justify-center text-gray-700 hover:bg-[#2F2F2F] transition-colors text-xs font-bold"
+                  aria-label="Close search"
                 >
-                  <span className="text-[10px] font-bold uppercase leading-tight">{dayName}</span>
-                  <span className="text-[10px] font-bold leading-tight opacity-90">{dayNum}</span>
+                  ×
                 </button>
-              );
-            })}
-          </div>
-
-          {/* Search Toggle / Form */}
-          {isSearchOpen ? (
-            <form onSubmit={(e) => e.preventDefault()} className="shrink-0 flex items-stretch divide-x divide-gray-200 bg-white">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search team or league..."
-                className="w-32 sm:w-48 bg-transparent text-gray-900 text-xs px-2.5 outline-none font-medium"
-                autoFocus
-              />
+              </form>
+            ) : (
               <button
                 type="button"
-                onClick={() => {
-                  setSearchQuery("");
-                  setIsSearchOpen(false);
-                }}
-                className="w-9 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors text-sm font-bold"
-                aria-label="Close search"
+                onClick={() => setIsSearchOpen(true)}
+                className="shrink-0 w-10 flex items-center justify-center text-gray-900 hover:bg-[#2F2F2F] transition-colors bg-white"
+                aria-label="Open search"
               >
-                ×
+                <Search size={14} strokeWidth={2.5} />
               </button>
-            </form>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setIsSearchOpen(true)}
-              className="shrink-0 w-10 flex items-center justify-center text-gray-700 hover:bg-gray-200 transition-colors bg-white"
-              aria-label="Open search"
-            >
-              <Search size={15} strokeWidth={2.5} />
-            </button>
-          )}
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Main Admin Predictions Fixtures Layout (Matches Homepage Max-Width & Styling) */}
-      <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto space-y-3">
-        <div className="p-2.5 bg-white rounded-lg border border-gray-200 shadow-xs flex justify-between items-center">
-          <h2 className="font-bold text-gray-900 text-xs sm:text-sm flex items-center gap-1.5">
-            <Calendar size={15} className="text-teal-600" />
-            Database Fixtures for {selectedDate} ({fixtures.length} matches)
-          </h2>
-          <span className="text-[11px] text-gray-500 font-medium hidden sm:inline-block">
-            Homepage Layout • Click Edit to change result/tip
-          </span>
-        </div>
-
+      {/* Main Predictions Layout Container (Cards take full width like in homepage) */}
+      <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto sm:px-1 md:px-4 min-h-[50vh]">
         {loading ? (
-          <div className="bg-white rounded-lg p-12 text-center text-gray-500 font-medium text-xs border border-gray-200">
+          <div className="bg-white rounded-none p-8 text-center text-gray-500 font-medium text-xs border border-gray-200 mt-2">
             Loading database matches...
           </div>
         ) : Object.keys(groupedByLeague).length === 0 ? (
-          <div className="bg-white rounded-lg p-12 text-center text-gray-500 font-medium text-xs border border-gray-200">
+          <div className="bg-white rounded-none p-8 text-center text-gray-500 font-medium text-xs border border-gray-200 mt-2">
             No matches found for this date.
           </div>
         ) : (
           Object.entries(groupedByLeague).map(([key, group]) => (
             <div key={key} className="w-full">
               {/* Homepage Style League Header */}
-              <div className="flex items-center gap-1 bg-gray-100 py-0.5 px-1 border border-gray-200 border-b-0">
-                <div className="flex items-center gap-1.5 w-full">
+              <div className="flex items-center gap-1 bg-gray-100 py-0.5 px-0.5 shadow-md border border-gray-200 border-b-0">
+                <div className="flex items-center gap-1 w-full">
                   {group.logo && (
                     <Image
                       src={group.logo}
                       alt={group.name}
                       width={16}
                       height={16}
-                      className="w-4 h-4 flex-shrink-0 drop-shadow-xs object-contain"
+                      className="w-4 h-4 flex-shrink-0 drop-shadow-md"
                       unoptimized
                     />
                   )}
                   <div className="flex flex-col truncate w-full leading-tight">
-                    <span className="font-bold text-[11px] text-teal-700 tracking-wide truncate">
+                    <span className="font-medium text-[11px] text-teal-700 tracking-wide truncate drop-shadow-sm">
                       {group.name}
                     </span>
                     <span className="text-[9px] text-gray-600 font-normal capitalize tracking-wider truncate">
@@ -315,7 +305,7 @@ export default function AdminFixtureManager() {
                 </div>
               </div>
 
-              {/* Homepage Style Match Cards */}
+              {/* Homepage Style Match Cards (Full Width) */}
               <div className="flex flex-col">
                 {group.matches.map((fx) => {
                   const home = fx.fixture?.teams?.home;
@@ -334,18 +324,18 @@ export default function AdminFixtureManager() {
                   const odds = fx.customOdds || "1.85";
                   const resStatus = getPredictionResultStatus(fx);
 
-                  // Color styling just like homepage
-                  let predictionBadgeColor = "text-orange-600 bg-amber-50 border-amber-200";
+                  // Dynamic result color matching homepage (won: green, lost: red, pending: orange/amber)
+                  let predictionBadgeColor = "text-orange-300";
                   if (resStatus === "won") {
-                    predictionBadgeColor = "text-[#22c55e] bg-emerald-50 border-emerald-200";
+                    predictionBadgeColor = "text-[#22c55e]";
                   } else if (resStatus === "lost") {
-                    predictionBadgeColor = "text-[#ef4444] bg-red-50 border-red-200";
+                    predictionBadgeColor = "text-[#ef4444]";
                   }
 
                   return (
                     <div
                       key={fx.fixtureId}
-                      className={`bg-white border border-gray-200 rounded-none py-1.5 px-2 hover:border-gray-300 transition-all flex flex-col ${
+                      className={`bg-white border border-gray-200 rounded-none py-1 px-1.5 sm:py-1.5 sm:px-2 hover:border-gray-300 transition-all duration-300 flex flex-col text-inherit ${
                         fx.isAdminPick ? "bg-amber-50/20" : ""
                       }`}
                     >
@@ -391,7 +381,7 @@ export default function AdminFixtureManager() {
                         </div>
                       </div>
 
-                      {/* BOTTOM STRIP (Status, Score, Prediction Badge, Odds, Edit Button) */}
+                      {/* BOTTOM STRIP (Status, Score, Prediction, Odds, Edit Button) */}
                       <div className="w-full flex items-center justify-between mt-1">
                         {/* LEFT: STATUS CONTAINER */}
                         <div className="flex-1 flex justify-start">
@@ -417,10 +407,8 @@ export default function AdminFixtureManager() {
 
                         {/* RIGHT: PREDICTION TIP, ODDS & EDIT ACTION */}
                         <div className="flex-1 flex items-center justify-end gap-1.5">
-                          <div
-                            className={`px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-widest leading-none border ${predictionBadgeColor}`}
-                          >
-                            {tip}
+                          <div className="px-2 py-0.5 bg-gray-100 rounded-lg text-[10px] font-bold uppercase tracking-widest leading-none">
+                            <span className={predictionBadgeColor}>{tip}</span>
                           </div>
 
                           <span className="px-1.5 py-0.5 bg-amber-100 text-amber-900 font-bold text-[10px] rounded-lg border border-amber-200">

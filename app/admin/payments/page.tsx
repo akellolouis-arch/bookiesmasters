@@ -16,7 +16,7 @@ export default async function AdminPaymentsPage() {
   const payments = await PaymentRequest.find({ status: "pending" }).sort({ createdAt: -1 }).lean();
 
   return (
-    <div>
+    <div className="max-w-7xl mx-auto p-4 md:p-8">
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Pending Payments</h1>
 
       {payments.length === 0 ? (
