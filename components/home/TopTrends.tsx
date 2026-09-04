@@ -59,9 +59,9 @@ export default async function TopTrends() {
   }
 
   return (
-    <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto px-2.5 sm:px-4 mt-3 mb-1">
+    <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto px-0 mt-2 mb-0">
       {/* Title */}
-      <div className="flex items-center justify-center gap-2 mb-2 px-1 sm:px-0">
+      <div className="flex items-center justify-center gap-2 mb-1.5 px-1 sm:px-0">
         <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent to-white/10" />
         <span className="text-[11px] font-bold text-teal-700/90 tracking-wider uppercase whitespace-nowrap">
           top trends
@@ -69,15 +69,15 @@ export default async function TopTrends() {
         <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent" />
       </div>
 
-      {/* Cards List - Moved inwards with left and right space */}
-      <div className="space-y-2">
+      {/* Cards List - Outer cards take full width */}
+      <div className="space-y-0">
         {trends.map((match) => {
           const formattedTip = match.tip || "";
           
           return (
             <div
               key={match.fixtureId}
-              className="bg-white border border-gray-200 rounded-xl p-2 sm:p-2.5 hover:border-gray-300 transition-all duration-300 shadow-xs"
+              className="bg-white border border-gray-200 rounded-none p-1.5 sm:p-2 hover:border-gray-300 transition-all duration-300"
             >
               {/* League Header */}
               <div className="flex items-center gap-1 mb-1">
@@ -127,7 +127,7 @@ export default async function TopTrends() {
                 </div>
               </div>
 
-              {/* Match Introduction Narrative (Housed in bg-gray-100 block) */}
+              {/* Logic Story Card Alone - Moved inwards with space to the left and right */}
               <MatchIntroduction
                 homeTeamName={match.homeTeam.name}
                 awayTeamName={match.awayTeam.name}
@@ -140,12 +140,12 @@ export default async function TopTrends() {
                 computedTip={formattedTip}
                 bg="bg-gray-100"
                 rounded="rounded-lg"
-                padding="py-0.5 px-1 sm:py-1 sm:px-1.5"
-                margin="mb-0 mt-0.5"
+                padding="py-1 px-2 sm:py-1.5 sm:px-3"
+                margin="mx-2 sm:mx-3 my-1.5"
               />
 
               {/* View Full Analysis Link */}
-              <div className="flex justify-end mt-0.5">
+              <div className="flex justify-end mt-0.5 px-2 sm:px-3">
                 <Link
                   href={`/prediction/${match.fixtureId}`}
                   className="inline-flex items-center gap-0.5 text-[8px] font-bold text-teal-700/70 hover:text-teal-700 transition-colors uppercase tracking-wider bg-gray-100 hover:bg-gray-200 px-2 py-0.5 rounded-lg"
