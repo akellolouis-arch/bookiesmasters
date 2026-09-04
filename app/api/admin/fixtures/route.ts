@@ -58,7 +58,7 @@ export async function PUT(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { fixtureId, customPredictionTip, customOdds, isAdminPick } = body;
+    const { fixtureId, customPredictionTip, customOdds, customResult, isAdminPick } = body;
 
     if (!fixtureId) {
       return NextResponse.json({ error: "fixtureId is required" }, { status: 400 });
@@ -78,6 +78,9 @@ export async function PUT(req: NextRequest) {
     }
     if (customOdds !== undefined) {
       update.customOdds = customOdds;
+    }
+    if (customResult !== undefined) {
+      update.customResult = customResult;
     }
 
     const updated = await Fixture.findOneAndUpdate(

@@ -22,6 +22,7 @@ export interface FixtureCardProps {
   score: string | null;
   index?: number;
   prediction?: string | null;
+  customResult?: string | null;
 }
 
 export default function FixtureCard({
@@ -33,13 +34,20 @@ export default function FixtureCard({
   score,
   index,
   prediction,
+  customResult,
 }: FixtureCardProps) {
   const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(status) || status.includes("'");
   const isFinished = status === "FT" || status === "AET" || status === "PEN";
 
   let predictionColorClass = "text-teal-400";
   if (prediction) {
-      if (!isFinished && !isLive) {
+      if (customResult === "won") {
+          predictionColorClass = "text-[#22c55e]";
+      } else if (customResult === "lost") {
+          predictionColorClass = "text-[#ef4444]";
+      } else if (customResult === "pending") {
+          predictionColorClass = "text-orange-300";
+      } else if (!isFinished && !isLive) {
           predictionColorClass = "text-orange-300";
       } else if (isFinished && score) {
           const parts = score.split("-").map(s => parseInt(s.trim()));

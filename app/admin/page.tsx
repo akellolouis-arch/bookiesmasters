@@ -24,7 +24,7 @@ export default async function AdminPage() {
         <p className="text-sm text-gray-500">Manage VIP payments, user subscriptions, and custom match predictions.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Link href="/admin/payments" className="block group">
           <div className="bg-white p-6 rounded-2xl border border-gray-200 hover:border-teal-500 transition-all shadow-xs flex flex-col justify-between">
             <div>
@@ -46,20 +46,6 @@ export default async function AdminPage() {
             <ShieldCheck className="w-4 h-4 mr-1 text-emerald-500" /> Active Subscribers
           </div>
         </div>
-
-        <Link href="/admin/tips" className="block group">
-          <div className="bg-white p-6 rounded-2xl border border-gray-200 hover:border-amber-500 transition-all shadow-xs flex flex-col justify-between">
-            <div>
-              <h3 className="text-gray-500 font-bold text-xs uppercase tracking-wider mb-1">Legacy Tips Manager</h3>
-              <div className="mt-2 text-gray-700">
-                <FileText className="w-7 h-7 text-amber-500" />
-              </div>
-            </div>
-            <div className="flex items-center text-amber-600 mt-4 text-xs font-bold opacity-80 group-hover:opacity-100 transition-opacity">
-              View Legacy Betslips <ArrowRight className="ml-1 w-4 h-4" />
-            </div>
-          </div>
-        </Link>
       </div>
 
       {/* Database Fixtures & VIP Prediction Editor */}

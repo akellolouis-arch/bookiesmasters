@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { Search, Edit3, X, Calendar, Sparkles } from "lucide-react";
+import { Search, Edit3, X, Calendar, Sparkles, CheckCircle2, XCircle, Clock } from "lucide-react";
 
 const KENYA_TZ = "Africa/Nairobi";
 
@@ -49,13 +49,15 @@ export default function AdminFixtureManager() {
   const [dates] = useState(() => buildKenyaDateStrip());
   const [selectedDate, setSelectedDate] = useState(() => kenyaYmdFormatter.format(new Date()));
   const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [fixtures, setFixtures] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [editingFixture, setEditingFixture] = useState<any | null>(null);
 
-  // Form State
+  // Modal Form State
   const [customTip, setCustomTip] = useState("");
   const [customOdds, setCustomOdds] = useState("");
+  const [customResult, setCustomResult] = useState<"pending" | "won" | "lost">("pending");
   const [isAdminPick, setIsAdminPick] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -78,10 +80,62 @@ export default function AdminFixtureManager() {
     fetchAdminFixtures(selectedDate, searchQuery);
   }, [selectedDate, searchQuery]);
 
+  const getPredictionResultStatus = (fx: any): "won" | "lost" | "pending" => {
+    if (fx.customResult && ["won", "lost", "pending"].includes(fx.customResult)) {
+      return fx.customResult as "won" | "lost" | "pending";
+    }
+
+    const rawStatus = fx.fixture?.fixture?.status?.short || "NS";
+    const isFinished = rawStatus === "FT" || rawStatus === "AET" || rawStatus === "PEN";
+    const goalsHome = fx.fixture?.goals?.home;
+    const goalsAway = fx.fixture?.goals?.away;
+    const tip = fx.customPredictionTip || fx.predictionTip || "OV1.5";
+
+    if (isFinished && goalsHome !== null && goalsHome !== undefined && goalsAway !== null && goalsAway !== undefined) {
+      const home = Number(goalsHome);
+      const away = Number(goalsAway);
+      const totalGoals = home + away;
+      const cleanTip = (tip || "").toUpperCase();
+
+      let isWon = false;
+      let isValidTip = false;
+
+      if (cleanTip.includes("OV1.5") || cleanTip.includes("OVER 1.5")) {
+        isWon = totalGoals > 1.5;
+        isValidTip = true;
+      } else if (cleanTip === "BTTS" || cleanTip.includes("GG")) {
+        isWon = home > 0 && away > 0;
+        isValidTip = true;
+      } else if (cleanTip.includes("OV2.5") || cleanTip.includes("OVER 2.5")) {
+        isWon = totalGoals > 2.5;
+        isValidTip = true;
+      } else if (cleanTip.includes("UN2.5") || cleanTip.includes("UNDER 2.5")) {
+        isWon = totalGoals < 2.5;
+        isValidTip = true;
+      } else if (cleanTip.includes("UN3.5") || cleanTip.includes("UNDER 3.5")) {
+        isWon = totalGoals < 3.5;
+        isValidTip = true;
+      } else if (cleanTip === "1" || cleanTip === "HOME WIN") {
+        isWon = home > away;
+        isValidTip = true;
+      } else if (cleanTip === "2" || cleanTip === "AWAY WIN") {
+        isWon = away > home;
+        isValidTip = true;
+      }
+
+      if (isValidTip) {
+        return isWon ? "won" : "lost";
+      }
+    }
+
+    return "pending";
+  };
+
   const handleOpenEdit = (fx: any) => {
     setEditingFixture(fx);
     setCustomTip(fx.customPredictionTip || fx.predictionTip || "OV1.5");
     setCustomOdds(fx.customOdds || "1.85");
+    setCustomResult(fx.customResult || getPredictionResultStatus(fx));
     setIsAdminPick(fx.isAdminPick !== undefined ? fx.isAdminPick : true);
   };
 
@@ -98,6 +152,7 @@ export default function AdminFixtureManager() {
           fixtureId: editingFixture.fixtureId,
           customPredictionTip: customTip,
           customOdds: customOdds,
+          customResult: customResult,
           isAdminPick: isAdminPick,
         }),
       });
@@ -111,6 +166,7 @@ export default function AdminFixtureManager() {
                   ...f,
                   customPredictionTip: customTip,
                   customOdds: customOdds,
+                  customResult: customResult,
                   isAdminPick: isAdminPick,
                 }
               : f
@@ -146,115 +202,155 @@ export default function AdminFixtureManager() {
   });
 
   return (
-    <div className="space-y-6">
-      {/* Date Navigator & Search Bar */}
-      <div className="bg-white rounded-2xl p-4 border border-gray-200 shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto scrollbar-hide">
-          {dates.map((d, i) => {
-            const dateStr = toYYYYMMDDUtc(d);
-            const isActive = dateStr === selectedDate;
-            const dayName = d.toLocaleDateString("en-GB", { weekday: "short", timeZone: KENYA_TZ });
-            const dayNum = d.toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", timeZone: KENYA_TZ });
+    <div className="w-full space-y-4">
+      {/* Date Navigator Bar & Search Icon (Placed right below dashboard/payments/premium tips row) */}
+      <div className="w-full bg-gray-50 border border-gray-200 rounded-lg overflow-hidden shadow-xs">
+        <div className="flex items-stretch w-full h-9 bg-gray-50 divide-x divide-gray-200">
+          {/* Date Selector Strip */}
+          <div className="flex-1 min-w-0 overflow-x-auto flex items-stretch scrollbar-hide no-scrollbar divide-x divide-gray-200">
+            {dates.map((d, i) => {
+              const dateStr = toYYYYMMDDUtc(d);
+              const isActive = dateStr === selectedDate;
+              const dayName = d.toLocaleDateString("en-GB", { weekday: "short", timeZone: KENYA_TZ });
+              const dayNum = d.toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", timeZone: KENYA_TZ });
 
-            return (
+              return (
+                <button
+                  type="button"
+                  key={i}
+                  onClick={() => setSelectedDate(dateStr)}
+                  className={`flex-1 flex flex-col items-center justify-center min-w-[46px] sm:min-w-[56px] px-1 transition-all ${
+                    isActive
+                      ? "bg-teal-700 text-white shadow-inner font-bold"
+                      : "text-gray-600 hover:bg-gray-200 hover:text-gray-900"
+                  }`}
+                >
+                  <span className="text-[10px] font-bold uppercase leading-tight">{dayName}</span>
+                  <span className="text-[10px] font-bold leading-tight opacity-90">{dayNum}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Search Toggle / Form */}
+          {isSearchOpen ? (
+            <form onSubmit={(e) => e.preventDefault()} className="shrink-0 flex items-stretch divide-x divide-gray-200 bg-white">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search team or league..."
+                className="w-32 sm:w-48 bg-transparent text-gray-900 text-xs px-2.5 outline-none font-medium"
+                autoFocus
+              />
               <button
-                key={i}
-                onClick={() => setSelectedDate(dateStr)}
-                className={`flex flex-col items-center justify-center px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all min-w-[60px] ${
-                  isActive
-                    ? "bg-teal-700 text-white shadow-md scale-105"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                }`}
+                type="button"
+                onClick={() => {
+                  setSearchQuery("");
+                  setIsSearchOpen(false);
+                }}
+                className="w-9 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors text-sm font-bold"
+                aria-label="Close search"
               >
-                <span className="uppercase text-[10px] opacity-80">{dayName}</span>
-                <span>{dayNum}</span>
+                ×
               </button>
-            );
-          })}
-        </div>
-
-        {/* Team Search Bar */}
-        <div className="relative w-full md:w-72">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search team or league..."
-            className="w-full pl-9 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-gray-900 focus:outline-none focus:border-teal-600 focus:bg-white transition-all"
-          />
+            </form>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setIsSearchOpen(true)}
+              className="shrink-0 w-10 flex items-center justify-center text-gray-700 hover:bg-gray-200 transition-colors bg-white"
+              aria-label="Open search"
+            >
+              <Search size={15} strokeWidth={2.5} />
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Fixtures Grouped per League (Homepage Layout Style) */}
-      <div className="w-full md:max-w-3xl mx-auto space-y-4">
-        <div className="p-3.5 bg-white rounded-xl border border-gray-200 shadow-xs flex justify-between items-center">
-          <h2 className="font-bold text-gray-900 text-sm flex items-center gap-2">
-            <Calendar size={16} className="text-teal-600" />
+      {/* Main Admin Predictions Fixtures Layout (Matches Homepage Max-Width & Styling) */}
+      <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto space-y-3">
+        <div className="p-2.5 bg-white rounded-lg border border-gray-200 shadow-xs flex justify-between items-center">
+          <h2 className="font-bold text-gray-900 text-xs sm:text-sm flex items-center gap-1.5">
+            <Calendar size={15} className="text-teal-600" />
             Database Fixtures for {selectedDate} ({fixtures.length} matches)
           </h2>
-          <span className="text-xs text-gray-500 font-medium hidden sm:inline-block">
-            Grouped per League • Click Edit to customize tips
+          <span className="text-[11px] text-gray-500 font-medium hidden sm:inline-block">
+            Homepage Layout • Click Edit to change result/tip
           </span>
         </div>
 
         {loading ? (
-          <div className="bg-white rounded-xl p-12 text-center text-gray-500 font-medium text-sm border border-gray-200">
+          <div className="bg-white rounded-lg p-12 text-center text-gray-500 font-medium text-xs border border-gray-200">
             Loading database matches...
           </div>
         ) : Object.keys(groupedByLeague).length === 0 ? (
-          <div className="bg-white rounded-xl p-12 text-center text-gray-500 font-medium text-sm border border-gray-200">
-            No matches found in database for this date.
+          <div className="bg-white rounded-lg p-12 text-center text-gray-500 font-medium text-xs border border-gray-200">
+            No matches found for this date.
           </div>
         ) : (
           Object.entries(groupedByLeague).map(([key, group]) => (
-            <div key={key} className="bg-white border border-gray-200 rounded-none overflow-hidden shadow-xs">
+            <div key={key} className="w-full">
               {/* Homepage Style League Header */}
-              <div className="flex items-center gap-1.5 bg-gray-100 py-1 px-2 border-b border-gray-200">
-                {group.logo && (
-                  <Image
-                    src={group.logo}
-                    alt={group.name}
-                    width={16}
-                    height={16}
-                    className="w-4 h-4 flex-shrink-0 drop-shadow-xs object-contain"
-                    unoptimized
-                  />
-                )}
-                <div className="flex flex-col truncate w-full leading-tight">
-                  <span className="font-bold text-[11px] text-teal-700 tracking-wide truncate">
-                    {group.name}
-                  </span>
-                  <span className="text-[9px] text-gray-600 font-normal capitalize tracking-wider truncate">
-                    {group.country.toLowerCase()}
-                  </span>
+              <div className="flex items-center gap-1 bg-gray-100 py-0.5 px-1 border border-gray-200 border-b-0">
+                <div className="flex items-center gap-1.5 w-full">
+                  {group.logo && (
+                    <Image
+                      src={group.logo}
+                      alt={group.name}
+                      width={16}
+                      height={16}
+                      className="w-4 h-4 flex-shrink-0 drop-shadow-xs object-contain"
+                      unoptimized
+                    />
+                  )}
+                  <div className="flex flex-col truncate w-full leading-tight">
+                    <span className="font-bold text-[11px] text-teal-700 tracking-wide truncate">
+                      {group.name}
+                    </span>
+                    <span className="text-[9px] text-gray-600 font-normal capitalize tracking-wider truncate">
+                      {group.country.toLowerCase()}
+                    </span>
+                  </div>
                 </div>
               </div>
 
               {/* Homepage Style Match Cards */}
-              <div className="divide-y divide-gray-100">
+              <div className="flex flex-col">
                 {group.matches.map((fx) => {
                   const home = fx.fixture?.teams?.home;
                   const away = fx.fixture?.teams?.away;
                   const rawStatus = fx.fixture?.fixture?.status?.short || "NS";
                   const dateIso = fx.fixture?.fixture?.date;
                   const kickoff = formatKickoffTime(dateIso);
+                  const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(rawStatus);
 
-                  const score = fx.fixture?.goals?.home !== null && fx.fixture?.goals?.away !== null
-                    ? `${fx.fixture.goals.home}-${fx.fixture.goals.away}`
-                    : "-";
+                  const score =
+                    fx.fixture?.goals?.home !== null && fx.fixture?.goals?.away !== null && fx.fixture?.goals?.home !== undefined
+                      ? `${fx.fixture.goals.home}-${fx.fixture.goals.away}`
+                      : "-";
+
                   const tip = fx.customPredictionTip || fx.predictionTip || "OV1.5";
                   const odds = fx.customOdds || "1.85";
+                  const resStatus = getPredictionResultStatus(fx);
+
+                  // Color styling just like homepage
+                  let predictionBadgeColor = "text-orange-600 bg-amber-50 border-amber-200";
+                  if (resStatus === "won") {
+                    predictionBadgeColor = "text-[#22c55e] bg-emerald-50 border-emerald-200";
+                  } else if (resStatus === "lost") {
+                    predictionBadgeColor = "text-[#ef4444] bg-red-50 border-red-200";
+                  }
 
                   return (
                     <div
                       key={fx.fixtureId}
-                      className={`p-2 hover:bg-gray-50 transition-colors flex flex-col gap-1.5 ${
-                        fx.isAdminPick ? "bg-amber-50/30" : ""
+                      className={`bg-white border border-gray-200 rounded-none py-1.5 px-2 hover:border-gray-300 transition-all flex flex-col ${
+                        fx.isAdminPick ? "bg-amber-50/20" : ""
                       }`}
                     >
-                      {/* Matchup Row: Home vs Away + Kickoff Time */}
-                      <div className="grid grid-cols-[1fr_auto_1fr] items-center w-full gap-2">
+                      {/* Matchup Header */}
+                      <div className="grid grid-cols-[1fr_auto_1fr] items-center w-full mb-1 gap-1">
                         {/* HOME TEAM */}
                         <div className="flex items-center justify-end gap-1.5 min-w-0">
                           <span className="font-medium text-[11px] sm:text-[12px] truncate text-gray-800 capitalize text-right">
@@ -272,8 +368,8 @@ export default function AdminFixtureManager() {
                           )}
                         </div>
 
-                        {/* KICKOFF TIME CENTER BOX */}
-                        <span className="text-[9px] sm:text-[10px] font-bold text-gray-500 px-2 shrink-0 text-center min-w-[42px] bg-gray-100 rounded py-0.5">
+                        {/* KICKOFF / VS CENTER BOX */}
+                        <span className="text-[9px] sm:text-[10px] font-bold text-gray-500 px-2 shrink-0 text-center min-w-[32px]">
                           {kickoff}
                         </span>
 
@@ -295,30 +391,46 @@ export default function AdminFixtureManager() {
                         </div>
                       </div>
 
-                      {/* Bottom Details Strip */}
-                      <div className="w-full flex items-center justify-between pt-1 border-t border-gray-100">
-                        {/* Status */}
-                        <div className="px-2 py-0.5 bg-gray-100 rounded text-[10px] font-bold uppercase text-gray-500">
-                          {rawStatus}
+                      {/* BOTTOM STRIP (Status, Score, Prediction Badge, Odds, Edit Button) */}
+                      <div className="w-full flex items-center justify-between mt-1">
+                        {/* LEFT: STATUS CONTAINER */}
+                        <div className="flex-1 flex justify-start">
+                          <div
+                            className={`px-2 py-0.5 bg-gray-100 rounded-lg text-[10px] font-bold uppercase leading-none tracking-widest ${
+                              isLive ? "text-red-500 animate-pulse" : "text-gray-500"
+                            }`}
+                          >
+                            {rawStatus}
+                          </div>
                         </div>
 
-                        {/* Score */}
-                        <div className="px-2 py-0.5 bg-gray-100 rounded text-[10px] font-bold text-gray-700">
-                          {score}
+                        {/* MIDDLE: SCORE CONTAINER */}
+                        <div className="flex shrink-0 justify-center px-2">
+                          <div
+                            className={`px-2 py-0.5 bg-gray-100 rounded-lg text-[10px] font-bold leading-none tracking-widest ${
+                              isLive ? "text-red-500 animate-pulse" : "text-gray-500"
+                            }`}
+                          >
+                            {score}
+                          </div>
                         </div>
 
-                        {/* VIP Prediction & Odds + Edit Action */}
-                        <div className="flex items-center gap-2">
-                          <span className="px-2 py-0.5 bg-teal-100 text-teal-800 font-bold text-[10px] rounded border border-teal-200">
+                        {/* RIGHT: PREDICTION TIP, ODDS & EDIT ACTION */}
+                        <div className="flex-1 flex items-center justify-end gap-1.5">
+                          <div
+                            className={`px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-widest leading-none border ${predictionBadgeColor}`}
+                          >
                             {tip}
-                          </span>
-                          <span className="px-1.5 py-0.5 bg-amber-100 text-amber-900 font-bold text-[10px] rounded border border-amber-200">
+                          </div>
+
+                          <span className="px-1.5 py-0.5 bg-amber-100 text-amber-900 font-bold text-[10px] rounded-lg border border-amber-200">
                             @{odds}
                           </span>
+
                           <button
                             type="button"
                             onClick={() => handleOpenEdit(fx)}
-                            className="flex items-center gap-1 px-2.5 py-1 bg-gray-900 hover:bg-teal-700 text-white font-bold text-[10px] rounded shadow-xs transition-all ml-1"
+                            className="flex items-center gap-1 px-2 py-0.5 bg-gray-900 hover:bg-teal-700 text-white font-bold text-[10px] rounded-lg transition-all"
                           >
                             <Edit3 size={11} />
                             <span>Edit</span>
@@ -347,13 +459,14 @@ export default function AdminFixtureManager() {
 
             <h3 className="text-lg font-bold text-gray-900 mb-1 flex items-center gap-2">
               <Sparkles size={18} className="text-amber-500" />
-              Edit Prediction & Odds
+              Edit Fixture Tip & Result
             </h3>
             <p className="text-xs text-gray-500 mb-4">
               {editingFixture.fixture?.teams?.home?.name} vs {editingFixture.fixture?.teams?.away?.name}
             </p>
 
             <form onSubmit={handleSave} className="space-y-4">
+              {/* Custom Prediction Tip */}
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">Custom Prediction Tip</label>
                 <input
@@ -361,11 +474,12 @@ export default function AdminFixtureManager() {
                   value={customTip}
                   onChange={(e) => setCustomTip(e.target.value)}
                   placeholder="e.g. OV1.5, BTTS, 1, 2, UN3.5"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm font-bold text-gray-900 focus:ring-2 focus:ring-teal-600 focus:outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs font-bold text-gray-900 focus:ring-2 focus:ring-teal-600 focus:outline-none"
                   required
                 />
               </div>
 
+              {/* Custom Odds */}
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">Odds</label>
                 <input
@@ -373,24 +487,71 @@ export default function AdminFixtureManager() {
                   value={customOdds}
                   onChange={(e) => setCustomOdds(e.target.value)}
                   placeholder="e.g. 1.85, 2.10"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm font-bold text-gray-900 focus:ring-2 focus:ring-teal-600 focus:outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs font-bold text-gray-900 focus:ring-2 focus:ring-teal-600 focus:outline-none"
                   required
                 />
               </div>
 
-              <div className="flex items-center gap-2 pt-2">
+              {/* Prediction Result Selector */}
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">Prediction Result Status</label>
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setCustomResult("pending")}
+                    className={`py-2 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-1 transition-all ${
+                      customResult === "pending"
+                        ? "bg-amber-500 text-white border-amber-600 shadow-xs"
+                        : "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100"
+                    }`}
+                  >
+                    <Clock size={13} />
+                    <span>Pending</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setCustomResult("won")}
+                    className={`py-2 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-1 transition-all ${
+                      customResult === "won"
+                        ? "bg-[#22c55e] text-white border-emerald-600 shadow-xs"
+                        : "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100"
+                    }`}
+                  >
+                    <CheckCircle2 size={13} />
+                    <span>Won</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setCustomResult("lost")}
+                    className={`py-2 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-1 transition-all ${
+                      customResult === "lost"
+                        ? "bg-[#ef4444] text-white border-red-600 shadow-xs"
+                        : "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100"
+                    }`}
+                  >
+                    <XCircle size={13} />
+                    <span>Lost</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* VIP Display Checkbox */}
+              <div className="flex items-center gap-2 pt-1">
                 <input
                   type="checkbox"
                   id="isAdminPick"
                   checked={isAdminPick}
                   onChange={(e) => setIsAdminPick(e.target.checked)}
-                  className="w-4 h-4 text-teal-600 rounded focus:ring-teal-500"
+                  className="w-4 h-4 text-teal-600 rounded focus:ring-teal-500 cursor-pointer"
                 />
                 <label htmlFor="isAdminPick" className="text-xs font-bold text-gray-800 cursor-pointer">
                   Display in Logged-In VIP Predictions Page
                 </label>
               </div>
 
+              {/* Actions */}
               <div className="flex gap-3 pt-4 border-t border-gray-100">
                 <button
                   type="button"
@@ -404,7 +565,7 @@ export default function AdminFixtureManager() {
                   disabled={saving}
                   className="flex-1 py-2 bg-teal-700 hover:bg-teal-800 text-white font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-2"
                 >
-                  {saving ? "Saving..." : "Save Prediction"}
+                  {saving ? "Saving..." : "Save Fixture"}
                 </button>
               </div>
             </form>
