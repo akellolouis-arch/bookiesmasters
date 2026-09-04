@@ -2,8 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { Lock, Crown, Calendar, Sparkles, CheckCircle2 } from "lucide-react";
+import { Lock, Crown, Calendar } from "lucide-react";
 import PaystackCheckout from "@/components/PaystackCheckout";
 
 const KENYA_TZ = "Africa/Nairobi";
@@ -31,6 +30,20 @@ function toYYYYMMDDUtc(d: Date) {
   const m = String(d.getUTCMonth() + 1).padStart(2, "0");
   const day = String(d.getUTCDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
+}
+
+function formatKickoffTime(dateIso?: string): string {
+  if (!dateIso) return "VS";
+  try {
+    const d = new Date(dateIso);
+    return d.toLocaleTimeString("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: KENYA_TZ,
+    });
+  } catch {
+    return "VS";
+  }
 }
 
 interface VipPredictionsViewProps {
@@ -71,16 +84,18 @@ export default function VipPredictionsView({ isVip }: VipPredictionsViewProps) {
     fetchVipFixtures();
   }, [selectedDate]);
 
-  // Group fixtures by league (similar to homepage)
-  const groupedByLeague: Record<string, { leagueName: string; flag: string; country: string; matches: any[] }> = {};
+  // Group fixtures by league (exact homepage structure)
+  const groupedByLeague: Record<string, { id: number; name: string; logo: string; country: string; matches: any[] }> = {};
   fixtures.forEach((fx) => {
-    const league = fx.fixture?.league;
-    const key = `${league?.country || "World"}_${league?.name || "Other"}`;
+    const league = fx.fixture?.league || {};
+    const leagueId = league.id || 0;
+    const key = `${leagueId}_${league.name || "Other"}`;
     if (!groupedByLeague[key]) {
       groupedByLeague[key] = {
-        leagueName: league?.name || "Other League",
-        flag: league?.flag || league?.logo || "",
-        country: league?.country || "World",
+        id: leagueId,
+        name: league.name || "Other League",
+        logo: league.logo || league.flag || "",
+        country: league.country || "World",
         matches: [],
       };
     }
@@ -88,84 +103,95 @@ export default function VipPredictionsView({ isVip }: VipPredictionsViewProps) {
   });
 
   return (
-    <div className="space-y-6">
-      {/* Date Navigator Bar */}
-      <div className="max-w-3xl mx-auto w-full bg-gray-50 border-y border-gray-200 shadow-xs">
-        <div className="flex items-center overflow-x-auto scrollbar-hide divide-x divide-gray-200">
-          {dates.map((d, i) => {
-            const dateStr = toYYYYMMDDUtc(d);
-            const isActive = dateStr === selectedDate;
-            const dayName = d.toLocaleDateString("en-GB", { weekday: "short", timeZone: KENYA_TZ });
-            const dateDisplay = d.toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", timeZone: KENYA_TZ });
+    <div className="w-full space-y-3">
+      {/* Date Navigator Bar - Exact Homepage Styling */}
+      <div className="max-w-[100vw] bg-gray-50 border-y border-gray-200 mx-auto">
+        <div className="max-w-3xl mx-auto w-full">
+          <div className="flex items-stretch w-full h-8 overflow-hidden bg-gray-50 divide-x divide-white/5 shadow-xs">
+            <div className="flex-1 min-w-0 overflow-x-auto flex items-stretch scrollbar-hide no-scrollbar divide-x divide-white/5">
+              {dates.map((d, i) => {
+                const dateStr = toYYYYMMDDUtc(d);
+                const isActive = dateStr === selectedDate;
+                const dayName = d.toLocaleDateString("en-GB", {
+                  weekday: "short",
+                  timeZone: KENYA_TZ,
+                });
+                const dateDisplay = d.toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  timeZone: KENYA_TZ,
+                });
 
-            return (
-              <button
-                type="button"
-                key={i}
-                onClick={() => setSelectedDate(dateStr)}
-                className={`flex-1 flex flex-col items-center justify-center min-w-[55px] py-2 transition-all ${
-                  isActive
-                    ? "bg-teal-700 text-white font-bold shadow-inner"
-                    : "text-gray-600 hover:bg-gray-200"
-                }`}
-              >
-                <span className="text-[10px] uppercase leading-tight font-bold">{dayName}</span>
-                <span className="text-[10px] leading-tight opacity-90">{dateDisplay}</span>
-              </button>
-            );
-          })}
+                return (
+                  <button
+                    type="button"
+                    key={`${dateStr}-${i}`}
+                    onClick={() => setSelectedDate(dateStr)}
+                    data-active={isActive}
+                    className={`flex-1 flex flex-col items-center justify-center min-w-[40px] transition-all ${
+                      isActive
+                        ? "bg-gray-300 text-teal-700 shadow-inner"
+                        : "text-gray-500 hover:bg-gray-200 hover:text-gray-700"
+                    }`}
+                  >
+                    <span className="text-[10px] font-bold uppercase leading-tight">{dayName}</span>
+                    <span className="text-[10px] font-bold leading-tight opacity-90">{dateDisplay}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Main Fixtures Container */}
-      <div className="max-w-3xl mx-auto space-y-4 px-2 sm:px-0">
-        <div className="flex justify-between items-center bg-white p-3.5 rounded-xl border border-gray-200 shadow-xs">
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-amber-500" />
-            <h2 className="font-bold text-gray-900 text-sm">
-              Admin VIP Predictions ({selectedDate})
-            </h2>
-          </div>
-          {isLocked && (
-            <span className="flex items-center gap-1 text-[11px] font-bold text-amber-700 bg-amber-100 px-2.5 py-1 rounded-full border border-amber-200">
-              <Lock size={12} /> Today & Tomorrow Locked
-            </span>
-          )}
-        </div>
-
+      {/* Main Fixtures Container - Exact Homepage Layout */}
+      <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto sm:px-1 md:px-4">
         {loading ? (
-          <div className="bg-white rounded-xl p-12 text-center text-gray-500 font-medium text-sm border border-gray-200">
-            Loading VIP predictions...
+          <div className="bg-white rounded-none p-12 text-center text-gray-500 font-medium text-xs border border-gray-200">
+            Loading predictions...
           </div>
         ) : Object.keys(groupedByLeague).length === 0 ? (
-          <div className="bg-white rounded-xl p-12 text-center border border-gray-200 space-y-2">
+          <div className="bg-white rounded-none p-8 text-center border border-gray-200 space-y-2 mt-4">
             <div className="text-gray-400 flex justify-center">
-              <Calendar size={32} />
+              <Calendar size={28} />
             </div>
-            <p className="text-gray-700 font-bold text-sm">No Admin VIP predictions posted for this date yet.</p>
-            <p className="text-xs text-gray-500">Check back shortly or select another date on the navigator above.</p>
+            <p className="text-gray-600 text-sm font-medium">No VIP predictions available for this date.</p>
+            <p className="text-gray-500 text-xs">Our team adds high-confidence VIP picks daily. Select another date above!</p>
           </div>
         ) : (
-          Object.entries(groupedByLeague).map(([key, group]) => (
-            <div key={key} className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-xs">
-              {/* League Header */}
-              <div className="bg-gray-100/90 px-3 py-1.5 border-b border-gray-200 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  {group.flag && (
-                    <Image src={group.flag} alt={group.country} width={14} height={14} className="w-3.5 h-3.5 object-contain" />
+          Object.entries(groupedByLeague).map(([key, group], idx) => (
+            <div key={key}>
+              {/* Homepage League Header */}
+              <div className="flex items-center gap-1 bg-gray-100 py-0.5 px-0.5 shadow-md border border-gray-200 border-b-0">
+                <div className="flex items-center gap-1 w-full">
+                  {group.logo && (
+                    <Image
+                      src={group.logo}
+                      alt={group.name}
+                      width={16}
+                      height={16}
+                      className="w-4 h-4 flex-shrink-0 drop-shadow-md object-contain"
+                      unoptimized
+                    />
                   )}
-                  <span className="text-xs font-bold text-gray-800 uppercase tracking-wider">
-                    {group.country} - {group.leagueName}
-                  </span>
+                  <div className="flex flex-col truncate w-full leading-tight">
+                    <span className="font-medium text-[11px] text-teal-700 tracking-wide truncate drop-shadow-sm">
+                      {group.name}
+                    </span>
+                    <span className="text-[9px] text-gray-600 font-normal capitalize tracking-wider truncate">
+                      {group.country.toLowerCase()}
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              {/* Match Cards */}
-              <div className="divide-y divide-gray-100">
+              {/* Homepage Match Cards */}
+              <div className="flex flex-col">
                 {group.matches.map((fx) => {
                   const home = fx.fixture?.teams?.home;
                   const away = fx.fixture?.teams?.away;
                   const status = fx.fixture?.fixture?.status?.short || "NS";
+                  const kickoffTime = formatKickoffTime(fx.fixture?.fixture?.date);
                   const score = fx.fixture?.goals?.home !== null && fx.fixture?.goals?.away !== null
                     ? `${fx.fixture.goals.home}-${fx.fixture.goals.away}`
                     : "-";
@@ -175,62 +201,85 @@ export default function VipPredictionsView({ isVip }: VipPredictionsViewProps) {
                   return (
                     <div
                       key={fx.fixtureId}
-                      className="py-2.5 px-3 hover:bg-gray-50 transition-colors flex flex-col gap-1.5"
+                      className="block bg-white border border-gray-200 rounded-none py-1 px-1.5 sm:py-1.5 sm:px-2 hover:border-gray-300 transition-all duration-300 flex flex-col text-inherit"
                     >
-                      {/* Teams & Kickoff */}
-                      <div className="grid grid-cols-[1fr_auto_1fr] items-center w-full gap-2">
-                        {/* Home Team */}
+                      {/* Matchup Header */}
+                      <div className="grid grid-cols-[1fr_auto_1fr] items-center w-full mb-1 gap-1">
+                        {/* HOME TEAM */}
                         <div className="flex items-center justify-end gap-1.5 min-w-0">
-                          <span className="font-bold text-xs truncate text-gray-900 text-right">{home?.name}</span>
+                          <span className="font-medium text-[11px] sm:text-[12px] truncate text-gray-800 capitalize text-right">
+                            {home?.name}
+                          </span>
                           {home?.logo && (
-                            <Image src={home.logo} alt={home.name} width={16} height={16} className="w-4 h-4 object-contain shrink-0" unoptimized />
+                            <Image
+                              src={home.logo}
+                              alt={home?.name || ""}
+                              width={14}
+                              height={14}
+                              className="w-3.5 h-3.5 object-contain shrink-0"
+                              unoptimized
+                            />
                           )}
                         </div>
 
-                        {/* VS / Score Center */}
-                        <span className="text-[10px] font-bold text-gray-400 px-2 shrink-0 text-center">
-                          VS
+                        {/* KICKOFF / VS CENTER BOX */}
+                        <span className="text-[9px] sm:text-[10px] font-bold text-gray-500 px-2 shrink-0 text-center min-w-[32px]">
+                          {kickoffTime}
                         </span>
 
-                        {/* Away Team */}
+                        {/* AWAY TEAM */}
                         <div className="flex items-center justify-start gap-1.5 min-w-0">
                           {away?.logo && (
-                            <Image src={away.logo} alt={away.name} width={16} height={16} className="w-4 h-4 object-contain shrink-0" unoptimized />
+                            <Image
+                              src={away.logo}
+                              alt={away?.name || ""}
+                              width={14}
+                              height={14}
+                              className="w-3.5 h-3.5 object-contain shrink-0"
+                              unoptimized
+                            />
                           )}
-                          <span className="font-bold text-xs truncate text-gray-900 text-left">{away?.name}</span>
+                          <span className="font-medium text-[11px] sm:text-[12px] truncate text-gray-800 capitalize text-left">
+                            {away?.name}
+                          </span>
                         </div>
                       </div>
 
-                      {/* Bottom Details Strip */}
-                      <div className="w-full flex items-center justify-between pt-1 border-t border-gray-100">
-                        {/* Status */}
-                        <div className="px-2 py-0.5 bg-gray-100 rounded text-[10px] font-bold uppercase text-gray-600">
-                          {status}
+                      {/* BOTTOM STRIP */}
+                      <div className="w-full flex items-center justify-between mt-1">
+                        {/* LEFT: STATUS CONTAINER */}
+                        <div className="flex-1 flex justify-start">
+                          <div className="px-2 py-0.5 bg-gray-100 rounded-lg text-[10px] font-bold uppercase leading-none tracking-widest text-gray-500">
+                            {status}
+                          </div>
                         </div>
 
-                        {/* Score */}
-                        <div className="px-2.5 py-0.5 bg-gray-100 rounded text-[10px] font-bold text-gray-800">
-                          {score}
+                        {/* MIDDLE: SCORE CONTAINER */}
+                        <div className="flex shrink-0 justify-center px-2">
+                          <div className="px-2 py-0.5 bg-gray-100 rounded-lg text-[10px] font-bold leading-none tracking-widest text-gray-500">
+                            {score}
+                          </div>
                         </div>
 
-                        {/* Prediction / Lock Badge */}
-                        <div>
+                        {/* RIGHT: PREDICTION / LOCK CONTAINER */}
+                        <div className="flex-1 flex justify-end">
                           {isLocked ? (
                             <button
+                              type="button"
                               onClick={() => setShowCheckoutModal(true)}
-                              className="flex items-center gap-1 px-2.5 py-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-[10px] rounded shadow-xs transition-all transform hover:scale-105"
+                              className="px-2 py-0.5 bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300/80 rounded-lg text-[10px] font-bold uppercase tracking-widest leading-none flex items-center gap-1 cursor-pointer transition-colors"
                             >
-                              <Lock size={10} />
+                              <Lock size={10} className="text-amber-700" />
                               <span>LOCKED (VIP)</span>
                             </button>
                           ) : (
-                            <div className="flex items-center gap-1.5">
-                              <span className="px-2.5 py-0.5 bg-teal-100 text-teal-800 font-bold text-[10px] rounded uppercase border border-teal-200">
+                            <div className="flex items-center gap-1">
+                              <div className="px-2 py-0.5 bg-gray-100 rounded-lg text-[10px] font-bold uppercase tracking-widest leading-none text-teal-700">
                                 {tip}
-                              </span>
-                              <span className="px-2 py-0.5 bg-amber-100 text-amber-900 font-bold text-[10px] rounded border border-amber-200">
+                              </div>
+                              <div className="px-1.5 py-0.5 bg-gray-100 rounded-lg text-[10px] font-bold tracking-widest leading-none text-amber-800">
                                 @{odds}
-                              </span>
+                              </div>
                             </div>
                           )}
                         </div>
@@ -255,17 +304,27 @@ export default function VipPredictionsView({ isVip }: VipPredictionsViewProps) {
               ✕
             </button>
             <div className="inline-flex p-3 rounded-full bg-amber-100 text-amber-600 mb-3">
-              <Crown size={32} />
+              <Crown size={28} />
             </div>
             <h3 className="text-xl font-black text-gray-900 mb-1">Unlock Today & Tomorrow Tips</h3>
             <p className="text-xs text-gray-600 mb-6">
-              Subscribe to VIP pass to instantly unlock all Admin-edited predictions.
+              Subscribe for 3-5 daily odds at $19 per week to instantly unlock all predictions.
             </p>
 
             <PaystackCheckout amount={2500} currency="KES" displayText="Pay $19 to Unlock VIP" />
           </div>
         </div>
       )}
+
+      <style jsx>{`
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </div>
   );
 }
