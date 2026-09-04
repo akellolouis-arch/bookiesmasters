@@ -277,7 +277,7 @@ export default function VipPredictionsView({ isVip }: VipPredictionsViewProps) {
                               <div className="px-2 py-0.5 bg-gray-100 rounded-lg text-[10px] font-bold uppercase tracking-widest leading-none text-teal-700">
                                 {tip}
                               </div>
-                              <div className="px-1.5 py-0.5 bg-gray-100 rounded-lg text-[10px] font-bold tracking-widest leading-none text-amber-800">
+                              <div className="px-1.5 py-0.5 bg-orange-100 text-orange-800 border border-orange-200/80 rounded-lg text-[10px] font-bold tracking-widest leading-none">
                                 @{odds}
                               </div>
                             </div>
