@@ -3,12 +3,12 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import mongoose from "mongoose";
 import PremiumTip from "@/backend/models/PremiumTip";
+import Fixture from "@/backend/models/Fixture";
 import { CheckCircle2 } from "lucide-react";
 import PaystackCheckout from "@/components/PaystackCheckout";
 import VipStrip from "@/components/VipStrip";
 import VipPredictionsView from "@/components/vip/VipPredictionsView";
 import TopTrends from "@/components/home/TopTrends";
-import Footer from "@/components/Footer";
 
 export const metadata = {
   title: "VIP Predictions | BookiesMasters",
@@ -30,23 +30,61 @@ export default async function ProPage() {
     // @ts-ignore
     const isVIP = Boolean(session.user.isVip || (vipExpiry && vipExpiry > new Date()));
 
+    // Today's Kenya YMD date string
+    const todayYmd = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Africa/Nairobi",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(new Date());
+
+    let initialFixtures: any[] = [];
+
+    try {
+      if (process.env.MONGO_URI) {
+        if (mongoose.connection.readyState !== 1) {
+          await mongoose.connect(process.env.MONGO_URI);
+        }
+
+        const startOfDay = new Date(`${todayYmd}T00:00:00+03:00`);
+        const endOfDay = new Date(`${todayYmd}T23:59:59.999+03:00`);
+
+        const raw = await Fixture.find({
+          "fixture.fixture.date": {
+            $gte: startOfDay.toISOString(),
+            $lte: endOfDay.toISOString(),
+          },
+          $or: [
+            { isAdminPick: true },
+            { customPredictionTip: { $exists: true, $ne: "" } },
+          ],
+        })
+          .sort({ "fixture.fixture.date": 1 })
+          .lean();
+
+        initialFixtures = JSON.parse(JSON.stringify(raw));
+      }
+    } catch (err) {
+      console.error("⚠️ Pro page Mongo query error for initial VIP fixtures:", err);
+    }
+
     return (
       <div className="w-full min-h-screen flex flex-col justify-between">
         <div className="w-full pb-8">
           {/* Subscribe to VIP strip just below navbar */}
           <VipStrip isVip={isVIP} />
 
-          {/* Admin-edited Predictions View with Date Navigator */}
-          <VipPredictionsView isVip={isVIP} />
-
-          {/* Top Trends Section */}
-          <div className="mt-4 px-2 sm:px-4">
-            <TopTrends />
-          </div>
+          {/* Admin-edited Predictions View with Date Navigator & Top Trends */}
+          <VipPredictionsView
+            isVip={isVIP}
+            initialFixtures={initialFixtures}
+            initialDate={todayYmd}
+          >
+            <div className="mt-4 px-2 sm:px-4">
+              <TopTrends />
+            </div>
+          </VipPredictionsView>
         </div>
-
-        {/* Footer */}
-        <Footer />
       </div>
     );
   }
@@ -174,8 +212,6 @@ export default async function ProPage() {
           <PaystackCheckout amount={2500} currency="KES" displayText="Pay $19 to Unlock VIP" />
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 }

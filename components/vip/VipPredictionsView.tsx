@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Lock, Crown, Calendar } from "lucide-react";
 import PaystackCheckout from "@/components/PaystackCheckout";
+import Loader from "@/components/Loader";
+import Footer from "@/components/Footer";
 
 const KENYA_TZ = "Africa/Nairobi";
 
@@ -48,16 +50,26 @@ function formatKickoffTime(dateIso?: string): string {
 
 interface VipPredictionsViewProps {
   isVip: boolean;
+  initialFixtures?: any[];
+  initialDate?: string;
+  children?: React.ReactNode;
 }
 
-export default function VipPredictionsView({ isVip }: VipPredictionsViewProps) {
+export default function VipPredictionsView({
+  isVip,
+  initialFixtures = [],
+  initialDate,
+  children,
+}: VipPredictionsViewProps) {
   const [dates] = useState(() => buildKenyaDateStrip());
-  const todayYmd = kenyaYmdFormatter.format(new Date());
+  const todayYmd = initialDate || kenyaYmdFormatter.format(new Date());
 
   const [selectedDate, setSelectedDate] = useState(todayYmd);
-  const [fixtures, setFixtures] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [fixtures, setFixtures] = useState<any[]>(initialFixtures);
+  const [loading, setLoading] = useState(false);
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+
+  const isFirstRender = useRef(true);
 
   // Tomorrow YMD calculation
   const tomorrowObj = new Date(new Date().getTime() + 86400000);
@@ -67,6 +79,14 @@ export default function VipPredictionsView({ isVip }: VipPredictionsViewProps) {
   const isLocked = isTodayOrTomorrow && !isVip;
 
   useEffect(() => {
+    // Skip fetching on initial mount if server provided initialFixtures
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      if (initialFixtures.length > 0) {
+        return;
+      }
+    }
+
     async function fetchVipFixtures() {
       setLoading(true);
       try {
@@ -145,10 +165,10 @@ export default function VipPredictionsView({ isVip }: VipPredictionsViewProps) {
       </div>
 
       {/* Main Fixtures Container */}
-      <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto sm:px-1 md:px-4 py-3">
+      <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto sm:px-1 md:px-4 py-3 min-h-[50vh]">
         {loading ? (
-          <div className="bg-white rounded-none p-12 text-center text-gray-500 font-medium text-xs border border-gray-200">
-            Loading predictions...
+          <div className="min-h-[40vh] flex flex-col items-center justify-center p-8">
+            <Loader />
           </div>
         ) : Object.keys(groupedByLeague).length === 0 ? (
           <div className="bg-white rounded-none p-8 text-center border border-gray-200 space-y-2 mt-2">
@@ -291,6 +311,10 @@ export default function VipPredictionsView({ isVip }: VipPredictionsViewProps) {
             </div>
           ))
         )}
+
+        {/* Children (Top Trends) & Footer rendered in flow under predictions */}
+        {children}
+        <Footer />
       </div>
 
       {/* Paystack Checkout Modal */}
