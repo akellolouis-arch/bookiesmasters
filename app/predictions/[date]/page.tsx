@@ -1,73 +1,21 @@
 import PredictionsList from "./predictionList";
-import DateNavigator from "@/components/DateNavigator";
 import TopTrends from "@/components/home/TopTrends";
 import { Suspense } from "react";
 
-
 export const dynamic = 'force-dynamic';
 
-// ---------------------
-// Backend Types
-// ---------------------
-interface BackendLeague {
-  id: number;
-  name: string;
-  logo: string;
-  country: string;
-}
-
-interface BackendMatch {
-  fixtureId: number;
-  status: string;
-  score: string | null;
-  homeTeam: {
-    id: number;
-    name: string;
-    logo: string;
-  };
-  awayTeam: {
-    id: number;
-    name: string;
-    logo: string;
-  };
-  odds: {
-    home: string | null;
-    draw: string | null;
-    away: string | null;
-  };
-  league: BackendLeague;
-
-}
-
-interface BackendFixture {
-  league: BackendLeague;
-  matches: BackendMatch[];
-}
-
-interface BackendResponse {
-  date: string;
-  totalLeagues: number;
-  fixtures: BackendFixture[];
-}
-
-// Type expected by the component
 export interface LeagueGroup {
   id: number;
   name: string;
   logo: string;
   country: string;
-  matches: BackendMatch[];
+  matches: any[];
 }
 
-
-// ---------------------
-// DYNAMIC METADATA
-// ---------------------
 export async function generateMetadata({ params }: { params: Promise<{ date?: string }> }) {
   const resolvedParams = await params;
   const date = resolvedParams.date || new Date().toLocaleDateString("en-CA", { timeZone: "Africa/Nairobi" });
 
-  // Validate date string
   const d = new Date(date);
   const isValidDate = !isNaN(d.getTime());
   const readableDate = isValidDate
@@ -80,9 +28,6 @@ export async function generateMetadata({ params }: { params: Promise<{ date?: st
   };
 }
 
-// ---------------------
-// PAGE COMPONENT
-// ---------------------
 export default async function PredictionsPage({
   params,
 }: {
@@ -91,14 +36,12 @@ export default async function PredictionsPage({
   const resolvedParams = await params;
   let date = resolvedParams.date;
 
-  // If no date is provided (e.g. homepage route) → ALWAYS use today's Kenya date
   if (!date) {
     date = new Date().toLocaleDateString("en-CA", {
       timeZone: "Africa/Nairobi",
     });
   }
 
-  let backendData: BackendResponse | null = null;
   let initialData: LeagueGroup[] = [];
 
   try {
@@ -107,43 +50,29 @@ export default async function PredictionsPage({
       { cache: 'no-store' }
     );
 
-    if (!res.ok) {
-      console.error(`❌ Backend returned status ${res.status} for date ${date}`);
-      // We do NOT want to crash the page, so we just return empty
-    } else {
-      backendData = await res.json();
+    if (res.ok) {
+      const backendData = await res.json();
+      if (backendData && backendData.fixtures) {
+        initialData = backendData.fixtures
+          .map((f: any) => ({
+            id: f.league.id,
+            name: f.league.name,
+            logo: f.league.logo,
+            country: f.league.country,
+            matches: f.matches,
+          }))
+          .filter((league: any) => league.matches.length > 0);
+      }
     }
-
   } catch (error) {
     console.error("❌ Error fetching fixtures in Server Component:", error);
   }
 
-  // If we successfully got data, map it. Otherwise initialData remains []
-  if (backendData && backendData.fixtures) {
-    initialData = backendData.fixtures
-      .map((f) => ({
-        id: f.league.id,
-        name: f.league.name,
-        logo: f.league.logo,
-        country: f.league.country,
-        matches: f.matches,
-      }))
-      .filter((league) => league.matches.length > 0);
-  }
-
   return (
-    <>
-      <Suspense fallback={<div className="h-10 w-full bg-white animate-pulse border-y border-gray-200" />}>
-        <DateNavigator date={date} />
+    <PredictionsList initialData={initialData} initialDate={date}>
+      <Suspense fallback={<div className="h-20 w-full" />}>
+        <TopTrends />
       </Suspense>
-
-      <Suspense fallback={<div className="p-4"></div>}>
-        <PredictionsList initialData={initialData} date={date}>
-          <Suspense fallback={<div className="h-20 w-full" />}>
-            <TopTrends />
-          </Suspense>
-        </PredictionsList>
-      </Suspense>
-    </>
+    </PredictionsList>
   );
 }

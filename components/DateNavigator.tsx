@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 
 interface Props {
   date: string; // yyyy-mm-dd from page params
+  onDateSelect?: (dateStr: string) => void;
 }
 
 const KENYA_TZ = "Africa/Nairobi";
@@ -37,7 +38,7 @@ function toYYYYMMDDUtc(d: Date) {
   return `${y}-${m}-${day}`;
 }
 
-export default function DateNavigator({ date }: Props) {
+export default function DateNavigator({ date, onDateSelect }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -67,13 +68,18 @@ export default function DateNavigator({ date }: Props) {
     setIsSearchOpen(Boolean(q));
   }, [searchParams]);
 
-
   const handleDateClick = (d: Date) => {
     const nextDate = toYYYYMMDDUtc(d);
     const q = (searchParams.get("q") || "").trim();
     const baseRoute = "/predictions";
     const url = q ? `${baseRoute}/${nextDate}?q=${encodeURIComponent(q)}` : `${baseRoute}/${nextDate}`;
-    router.push(url);
+
+    if (onDateSelect && !isLivePage) {
+      window.history.pushState({}, "", url);
+      onDateSelect(nextDate);
+    } else {
+      router.push(url);
+    }
   };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
