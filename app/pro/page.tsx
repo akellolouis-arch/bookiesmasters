@@ -55,10 +55,7 @@ export default async function ProPage() {
             $gte: startOfDay.toISOString(),
             $lte: endOfDay.toISOString(),
           },
-          $or: [
-            { isAdminPick: true },
-            { customPredictionTip: { $exists: true, $ne: "" } },
-          ],
+          isAdminPick: true,
         })
           .sort({ "fixture.fixture.date": 1 })
           .lean();
