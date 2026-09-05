@@ -57,7 +57,7 @@ export default function PaystackCheckout({ amount = 2500, currency = "KES", disp
         
         setSuccess(true);
         setTimeout(() => {
-          router.push("/vip");
+          router.push("/pro");
           router.refresh();
         }, 2000);
       } else {

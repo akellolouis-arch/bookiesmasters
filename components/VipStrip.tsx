@@ -49,23 +49,23 @@ export default function VipStrip({ isVip }: VipStripProps) {
 
       {/* Paystack Checkout Modal */}
       {showCheckoutModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-2xl w-full max-w-md relative text-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-gray-200 shadow-xl w-full max-w-md relative text-center">
             <button
               onClick={() => setShowCheckoutModal(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-sm font-bold"
+              className="absolute top-3.5 right-4 text-gray-400 hover:text-gray-700 text-sm font-semibold cursor-pointer"
             >
               ✕
             </button>
-            <div className="inline-flex p-3 rounded-full bg-amber-100 text-amber-600 mb-3">
-              <Crown size={28} />
+            <div className="inline-flex p-2.5 rounded-full bg-amber-50 text-amber-600 mb-2.5">
+              <Crown size={24} />
             </div>
-            <h3 className="text-xl font-black text-gray-900 mb-1">Activate 7-Day VIP Pass</h3>
-            <p className="text-xs text-gray-600 mb-6">
-              Get 3-5 daily odds at $19 per week with full unlocked access.
+            <h3 className="text-base font-bold text-gray-900 mb-1">Activate One-Week VIP Pass</h3>
+            <p className="text-xs font-normal text-gray-500 mb-5">
+              Get 3-5 daily curated odds at $19 per week with instant full access.
             </p>
 
-            <PaystackCheckout amount={2500} currency="KES" displayText="Pay $19 to Unlock VIP" />
+            <PaystackCheckout amount={2500} currency="KES" displayText="Activate One-Week VIP Pass ($19)" />
           </div>
         </div>
       )}
