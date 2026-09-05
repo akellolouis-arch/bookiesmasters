@@ -42,7 +42,8 @@ export default function DateNavigator({ date, onDateSelect }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const isLivePage = pathname === "/live";
+  const isFixturesPage = pathname.startsWith("/fixtures");
+  const isLivePage = pathname === "/live" || pathname === "/fixtures/live" || date === "live";
   const initialQuery = searchParams.get("q") || "";
   const [isSearchOpen, setIsSearchOpen] = useState(Boolean(initialQuery));
   const [searchText, setSearchText] = useState(initialQuery);
@@ -68,13 +69,24 @@ export default function DateNavigator({ date, onDateSelect }: Props) {
     setIsSearchOpen(Boolean(q));
   }, [searchParams]);
 
+  const handleLiveClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const targetPath = isFixturesPage ? "/fixtures/live" : "/live";
+    if (onDateSelect) {
+      window.history.pushState({}, "", targetPath);
+      onDateSelect("live");
+    } else {
+      router.push(targetPath);
+    }
+  };
+
   const handleDateClick = (d: Date) => {
     const nextDate = toYYYYMMDDUtc(d);
     const q = (searchParams.get("q") || "").trim();
-    const baseRoute = "/predictions";
+    const baseRoute = isFixturesPage ? "/fixtures" : "/predictions";
     const url = q ? `${baseRoute}/${nextDate}?q=${encodeURIComponent(q)}` : `${baseRoute}/${nextDate}`;
 
-    if (onDateSelect && !isLivePage) {
+    if (onDateSelect) {
       window.history.pushState({}, "", url);
       onDateSelect(nextDate);
     } else {
@@ -85,16 +97,16 @@ export default function DateNavigator({ date, onDateSelect }: Props) {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = searchText.trim();
-    const baseRoute = "/predictions";
-    const basePath = isLivePage ? "/live" : `${baseRoute}/${date}`;
+    const baseRoute = isFixturesPage ? "/fixtures" : "/predictions";
+    const basePath = isLivePage ? (isFixturesPage ? "/fixtures/live" : "/live") : `${baseRoute}/${date}`;
     const url = trimmed ? `${basePath}?q=${encodeURIComponent(trimmed)}` : basePath;
     router.push(url);
   };
 
   const clearSearch = () => {
     setSearchText("");
-    const baseRoute = "/predictions";
-    const basePath = isLivePage ? "/live" : `${baseRoute}/${date}`;
+    const baseRoute = isFixturesPage ? "/fixtures" : "/predictions";
+    const basePath = isLivePage ? (isFixturesPage ? "/fixtures/live" : "/live") : `${baseRoute}/${date}`;
     router.push(basePath);
   };
 
@@ -103,12 +115,17 @@ export default function DateNavigator({ date, onDateSelect }: Props) {
       <div className="max-w-3xl mx-auto w-full">
         <div className="flex items-stretch w-full h-8 overflow-hidden bg-gray-50 divide-x divide-white/5 shadow-sm">
 
-          <Link
-            href="/live"
-            className="shrink-0 w-10 flex flex-col items-center justify-center text-[10px] font-bold transition-colors text-gray-900 bg-white hover:bg-[#2F2F2F]"
+          <button
+            type="button"
+            onClick={handleLiveClick}
+            className={`shrink-0 w-10 flex flex-col items-center justify-center text-[10px] font-bold transition-all cursor-pointer ${
+              isLivePage
+                ? "bg-red-600 text-white font-black shadow-inner animate-pulse"
+                : "text-gray-900 bg-white hover:bg-gray-200"
+            }`}
           >
             LIVE
-          </Link>
+          </button>
 
           <div
             ref={scrollContainerRef}

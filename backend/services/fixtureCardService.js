@@ -163,7 +163,8 @@ export async function getFixturesGroupedByLeague(date) {
   return sortLeagueGroups(Object.values(grouped));
 }
 
-export async function getLiveFixturesGroupedByLeague() {
+export async function getLiveFixturesGroupedByLeague(options = {}) {
+  const { allFixtures = false } = options;
   const LIVE_STATUSES = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"];
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 2);
@@ -171,7 +172,10 @@ export async function getLiveFixturesGroupedByLeague() {
   const liveFixtures = await Fixture.aggregate([
     {
       $match: {
-        "fixture.fixture.status.short": { $in: LIVE_STATUSES },
+        $or: [
+          { "fixture.fixture.status.short": { $in: LIVE_STATUSES } },
+          { "fixture.fixture.status.short": { $regex: /'/ } }
+        ],
         "fixture.fixture.date": { $gte: yesterday.toISOString() }
       }
     },
@@ -201,10 +205,10 @@ export async function getLiveFixturesGroupedByLeague() {
     liveFixtures.filter(f => !f.fixture?.league?.name?.toLowerCase().includes("friendlies"))
   );
 
-  const sortedPredictedLiveDocs = await applyPredictionFilter(orderedLive);
+  const targetDocs = allFixtures ? orderedLive : await applyPredictionFilter(orderedLive);
 
   const grouped = {};
-  sortedPredictedLiveDocs.forEach((doc) => {
+  targetDocs.forEach((doc) => {
     const league = doc.fixture.league;
     const leagueId = league.id;
 

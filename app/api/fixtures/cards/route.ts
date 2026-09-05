@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getFixturesGroupedByLeague } from '@/backend/services/fixtureCardService';
+import { getFixturesGroupedByLeague, getLiveFixturesGroupedByLeague } from '@/backend/services/fixtureCardService';
 import dbConnect from '@/lib/mongoose';
 
 export const dynamic = 'force-dynamic';
@@ -11,7 +11,12 @@ export async function GET(req: Request) {
 
     await dbConnect();
 
-    const fixtures = await getFixturesGroupedByLeague(date);
+    let fixtures = [];
+    if (date === 'live') {
+      fixtures = await getLiveFixturesGroupedByLeague({ allFixtures: true });
+    } else {
+      fixtures = await getFixturesGroupedByLeague(date);
+    }
 
     return NextResponse.json({
       date,
