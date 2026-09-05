@@ -76,9 +76,9 @@ export default function FixturesList({
     async function fetchFixtures() {
       setIsFetching(true);
       try {
-        let apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/fixtures/cards?date=${selectedDate}`;
+        let apiUrl = `/api/fixtures/cards?date=${selectedDate}`;
         if (selectedDate === "live") {
-          apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/fixtures/live`;
+          apiUrl = `/api/fixtures/live`;
         }
 
         const res = await fetch(apiUrl);
