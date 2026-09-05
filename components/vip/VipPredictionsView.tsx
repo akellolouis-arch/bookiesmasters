@@ -259,8 +259,16 @@ export default function VipPredictionsView({
                   {group.matches.map((fx) => {
                     const home = fx.fixture?.teams?.home;
                     const away = fx.fixture?.teams?.away;
-                    const status = fx.fixture?.fixture?.status?.short || "NS";
+                    const statusObj = fx.fixture?.fixture?.status;
+                    const rawStatus = statusObj?.short || "NS";
+                    const elapsed = statusObj?.elapsed;
                     const kickoffTime = formatKickoffTime(fx.fixture?.fixture?.date);
+                    const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(rawStatus);
+
+                    const displayStatus = (["1H", "2H", "ET", "LIVE", "INT"].includes(rawStatus) && elapsed !== null && elapsed !== undefined && elapsed > 0)
+                      ? `${elapsed}'`
+                      : rawStatus;
+
                     const score = fx.fixture?.goals?.home !== null && fx.fixture?.goals?.away !== null
                       ? `${fx.fixture.goals.home}-${fx.fixture.goals.away}`
                       : "-";
@@ -326,8 +334,10 @@ export default function VipPredictionsView({
                         <div className="w-full flex items-center justify-between mt-1">
                           {/* LEFT: STATUS CONTAINER */}
                           <div className="flex-1 flex justify-start">
-                            <div className="px-2 py-0.5 bg-gray-100 rounded-lg text-[10px] font-bold uppercase leading-none tracking-widest text-gray-500">
-                              {status}
+                            <div className={`px-2 py-0.5 bg-gray-100 rounded-lg text-[10px] font-bold uppercase leading-none tracking-widest ${
+                              isLive ? "text-red-500 animate-pulse" : "text-gray-500"
+                            }`}>
+                              {displayStatus}
                             </div>
                           </div>
 

@@ -99,7 +99,7 @@ export default async function FixturesPage({
   try {
     // Fetch all fixtures
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/fixtures/cards?date=${date}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/predictions/cards?date=${date}`,
       { cache: 'no-store' }
     );
 
@@ -126,14 +126,6 @@ export default async function FixturesPage({
   }
 
   return (
-    <>
-      <Suspense fallback={<div className="h-10 w-full bg-white animate-pulse border-y border-gray-200" />}>
-        <DateNavigator date={date} />
-      </Suspense>
-      
-      <Suspense fallback={<div className="p-4"></div>}>
-        <PredictionsList initialData={initialData} date={date} />
-      </Suspense>
-    </>
+    <PredictionsList initialData={initialData} initialDate={date} />
   );
 }

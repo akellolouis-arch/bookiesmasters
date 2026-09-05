@@ -314,10 +314,16 @@ export default function AdminFixtureManager({ onlyVip = false }: AdminFixtureMan
                 {group.matches.map((fx) => {
                   const home = fx.fixture?.teams?.home;
                   const away = fx.fixture?.teams?.away;
-                  const rawStatus = fx.fixture?.fixture?.status?.short || "NS";
+                  const statusObj = fx.fixture?.fixture?.status;
+                  const rawStatus = statusObj?.short || "NS";
+                  const elapsed = statusObj?.elapsed;
                   const dateIso = fx.fixture?.fixture?.date;
                   const kickoff = formatKickoffTime(dateIso);
                   const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(rawStatus);
+
+                  const displayStatus = (["1H", "2H", "ET", "LIVE", "INT"].includes(rawStatus) && elapsed !== null && elapsed !== undefined && elapsed > 0)
+                    ? `${elapsed}'`
+                    : rawStatus;
 
                   const score =
                     fx.fixture?.goals?.home !== null && fx.fixture?.goals?.away !== null && fx.fixture?.goals?.home !== undefined
@@ -394,7 +400,7 @@ export default function AdminFixtureManager({ onlyVip = false }: AdminFixtureMan
                               isLive ? "text-red-500 animate-pulse" : "text-gray-500"
                             }`}
                           >
-                            {rawStatus}
+                            {displayStatus}
                           </div>
                         </div>
 

@@ -68,7 +68,11 @@ export default function Footer() {
         <div>
           <h5 className="text-[11px] font-semibold text-gray-800 tracking-wider">Quick links</h5>
           <ul className="text-[11px] space-y-0.5">
-
+            <li>
+              <Link href="/fixtures" className="hover:text-teal-400 transition-colors">
+                All Fixtures
+              </Link>
+            </li>
             <li>
               <Link href="/terms-of-service" className="hover:text-teal-400 transition-colors">
                 Terms of Service
