@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { Search, Edit3, X, Sparkles, CheckCircle2, XCircle, Clock } from "lucide-react";
+import { Search, Edit3, X, Sparkles, CheckCircle2, XCircle, Clock, Trash2 } from "lucide-react";
 
 const KENYA_TZ = "Africa/Nairobi";
 
@@ -184,6 +184,31 @@ export default function AdminFixtureManager({ onlyVip = false }: AdminFixtureMan
       alert("Error saving: " + err.message);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleRemoveFromVip = async (fixtureId: number) => {
+    try {
+      const res = await fetch("/api/admin/fixtures", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fixtureId,
+          isAdminPick: false,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        if (editingFixture?.fixtureId === fixtureId) {
+          setEditingFixture(null);
+        }
+        fetchAdminFixtures(selectedDate, searchQuery);
+      } else {
+        alert("Error removing fixture from VIP: " + data.error);
+      }
+    } catch (err: any) {
+      alert("Error removing fixture: " + err.message);
     }
   };
 
@@ -428,11 +453,23 @@ export default function AdminFixtureManager({ onlyVip = false }: AdminFixtureMan
                           <button
                             type="button"
                             onClick={() => handleOpenEdit(fx)}
-                            className="flex items-center gap-1 px-2 py-0.5 bg-gray-900 hover:bg-teal-700 text-white font-bold text-[10px] rounded-lg transition-all"
+                            className="flex items-center gap-1 px-2 py-0.5 bg-gray-900 hover:bg-teal-700 text-white font-bold text-[10px] rounded-lg transition-all cursor-pointer"
                           >
                             <Edit3 size={11} />
                             <span>Edit</span>
                           </button>
+
+                          {(fx.isAdminPick || onlyVip) && (
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveFromVip(fx.fixtureId)}
+                              title="Remove from Premium Tips"
+                              className="flex items-center gap-1 px-2 py-0.5 bg-red-100 hover:bg-red-600 text-red-700 hover:text-white font-bold text-[10px] rounded-lg transition-all cursor-pointer"
+                            >
+                              <Trash2 size={11} />
+                              <span>Remove</span>
+                            </button>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -535,18 +572,29 @@ export default function AdminFixtureManager({ onlyVip = false }: AdminFixtureMan
                 </div>
               </div>
 
-              {/* VIP Display Checkbox */}
-              <div className="flex items-center gap-2 pt-1">
-                <input
-                  type="checkbox"
-                  id="isAdminPick"
-                  checked={isAdminPick}
-                  onChange={(e) => setIsAdminPick(e.target.checked)}
-                  className="w-4 h-4 text-teal-600 rounded focus:ring-teal-500 cursor-pointer"
-                />
-                <label htmlFor="isAdminPick" className="text-xs font-bold text-gray-800 cursor-pointer">
-                  Display in Logged-In VIP Predictions Page
-                </label>
+              {/* VIP Display Checkbox & Remove Action */}
+              <div className="flex items-center justify-between pt-1 border-t border-gray-100 mt-2">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="isAdminPick"
+                    checked={isAdminPick}
+                    onChange={(e) => setIsAdminPick(e.target.checked)}
+                    className="w-4 h-4 text-teal-600 rounded focus:ring-teal-500 cursor-pointer"
+                  />
+                  <label htmlFor="isAdminPick" className="text-xs font-bold text-gray-800 cursor-pointer">
+                    Display in Premium Tips
+                  </label>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => handleRemoveFromVip(editingFixture.fixtureId)}
+                  className="flex items-center gap-1 px-2.5 py-1 bg-red-100 hover:bg-red-600 text-red-700 hover:text-white font-bold text-xs rounded-xl transition-all cursor-pointer"
+                >
+                  <Trash2 size={13} />
+                  <span>Delete Pick</span>
+                </button>
               </div>
 
               {/* Actions */}
@@ -554,14 +602,14 @@ export default function AdminFixtureManager({ onlyVip = false }: AdminFixtureMan
                 <button
                   type="button"
                   onClick={() => setEditingFixture(null)}
-                  className="flex-1 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl"
+                  className="flex-1 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 py-2 bg-teal-700 hover:bg-teal-800 text-white font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-2"
+                  className="flex-1 py-2 bg-teal-700 hover:bg-teal-800 text-white font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-2 cursor-pointer"
                 >
                   {saving ? "Saving..." : "Save Fixture"}
                 </button>

@@ -31,10 +31,7 @@ export async function GET(req: NextRequest) {
     };
 
     if (onlyVip) {
-      filter.$or = [
-        { isAdminPick: true },
-        { customPredictionTip: { $exists: true, $ne: "" } }
-      ];
+      filter.isAdminPick = true;
     }
 
     if (query.trim()) {
@@ -46,16 +43,8 @@ export async function GET(req: NextRequest) {
       ];
 
       if (onlyVip) {
-        filter.$and = [
-          {
-            $or: [
-              { isAdminPick: true },
-              { customPredictionTip: { $exists: true, $ne: "" } }
-            ]
-          },
-          { $or: searchConditions }
-        ];
-        delete filter.$or;
+        filter.isAdminPick = true;
+        filter.$or = searchConditions;
       } else {
         filter.$or = searchConditions;
       }

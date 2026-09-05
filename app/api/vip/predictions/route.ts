@@ -14,16 +14,12 @@ export async function GET(req: NextRequest) {
     const startOfDay = new Date(`${dateParam}T00:00:00+03:00`);
     const endOfDay = new Date(`${dateParam}T23:59:59.999+03:00`);
 
-    // Fetch fixtures where admin has set a pick (isAdminPick: true or customPredictionTip exists)
     const fixtures = await Fixture.find({
       "fixture.fixture.date": {
         $gte: startOfDay.toISOString(),
         $lte: endOfDay.toISOString()
       },
-      $or: [
-        { isAdminPick: true },
-        { customPredictionTip: { $exists: true, $ne: "" } }
-      ]
+      isAdminPick: true
     })
       .sort({ "fixture.fixture.date": 1 })
       .lean();
