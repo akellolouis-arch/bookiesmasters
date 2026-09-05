@@ -7,5 +7,5 @@ export const metadata = {
 export const revalidate = 0;
 
 export default async function AdminTipsPage() {
-  return <AdminFixtureManager />;
+  return <AdminFixtureManager onlyVip={true} />;
 }

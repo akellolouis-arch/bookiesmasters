@@ -104,6 +104,57 @@ export default function VipPredictionsView({
     fetchVipFixtures();
   }, [selectedDate]);
 
+  const getPredictionResultStatus = (fx: any): "won" | "lost" | "pending" => {
+    if (fx.customResult && ["won", "lost", "pending"].includes(fx.customResult)) {
+      return fx.customResult as "won" | "lost" | "pending";
+    }
+
+    const rawStatus = fx.fixture?.fixture?.status?.short || "NS";
+    const isFinished = rawStatus === "FT" || rawStatus === "AET" || rawStatus === "PEN";
+    const goalsHome = fx.fixture?.goals?.home;
+    const goalsAway = fx.fixture?.goals?.away;
+    const tip = fx.customPredictionTip || fx.predictionTip || "OV1.5";
+
+    if (isFinished && goalsHome !== null && goalsHome !== undefined && goalsAway !== null && goalsAway !== undefined) {
+      const home = Number(goalsHome);
+      const away = Number(goalsAway);
+      const totalGoals = home + away;
+      const cleanTip = (tip || "").toUpperCase();
+
+      let isWon = false;
+      let isValidTip = false;
+
+      if (cleanTip.includes("OV1.5") || cleanTip.includes("OVER 1.5")) {
+        isWon = totalGoals > 1.5;
+        isValidTip = true;
+      } else if (cleanTip === "BTTS" || cleanTip.includes("GG")) {
+        isWon = home > 0 && away > 0;
+        isValidTip = true;
+      } else if (cleanTip.includes("OV2.5") || cleanTip.includes("OVER 2.5")) {
+        isWon = totalGoals > 2.5;
+        isValidTip = true;
+      } else if (cleanTip.includes("UN2.5") || cleanTip.includes("UNDER 2.5")) {
+        isWon = totalGoals < 2.5;
+        isValidTip = true;
+      } else if (cleanTip.includes("UN3.5") || cleanTip.includes("UNDER 3.5")) {
+        isWon = totalGoals < 3.5;
+        isValidTip = true;
+      } else if (cleanTip === "1" || cleanTip === "HOME WIN") {
+        isWon = home > away;
+        isValidTip = true;
+      } else if (cleanTip === "2" || cleanTip === "AWAY WIN") {
+        isWon = away > home;
+        isValidTip = true;
+      }
+
+      if (isValidTip) {
+        return isWon ? "won" : "lost";
+      }
+    }
+
+    return "pending";
+  };
+
   // Group fixtures by league (exact homepage structure)
   const groupedByLeague: Record<string, { id: number; name: string; logo: string; country: string; matches: any[] }> = {};
   fixtures.forEach((fx) => {
@@ -216,6 +267,14 @@ export default function VipPredictionsView({
                     const tip = fx.customPredictionTip || fx.predictionTip || "OV1.5";
                     const odds = fx.customOdds || "1.85";
 
+                    const resStatus = getPredictionResultStatus(fx);
+                    let predictionColorClass = "text-orange-300";
+                    if (resStatus === "won") {
+                      predictionColorClass = "text-[#22c55e]";
+                    } else if (resStatus === "lost") {
+                      predictionColorClass = "text-[#ef4444]";
+                    }
+
                     return (
                       <div
                         key={fx.fixtureId}
@@ -293,8 +352,8 @@ export default function VipPredictionsView({
                               </button>
                             ) : (
                               <div className="flex items-center gap-1">
-                                <div className="px-2 py-0.5 bg-gray-100 rounded-lg text-[10px] font-bold uppercase tracking-widest leading-none text-teal-700">
-                                  {tip}
+                                <div className="px-2 py-0.5 bg-gray-100 rounded-lg text-[10px] font-bold uppercase tracking-widest leading-none">
+                                  <span className={predictionColorClass}>{tip}</span>
                                 </div>
                                 <div className="px-1.5 py-0.5 bg-orange-100 text-orange-800 border border-orange-200/80 rounded-lg text-[10px] font-bold tracking-widest leading-none">
                                   @{odds}

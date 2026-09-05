@@ -45,7 +45,11 @@ function formatKickoffTime(dateIso?: string): string {
   }
 }
 
-export default function AdminFixtureManager() {
+interface AdminFixtureManagerProps {
+  onlyVip?: boolean;
+}
+
+export default function AdminFixtureManager({ onlyVip = false }: AdminFixtureManagerProps) {
   const [dates] = useState(() => buildKenyaDateStrip());
   const [selectedDate, setSelectedDate] = useState(() => kenyaYmdFormatter.format(new Date()));
   const [searchQuery, setSearchQuery] = useState("");
@@ -64,7 +68,7 @@ export default function AdminFixtureManager() {
   const fetchAdminFixtures = async (dateStr: string, query: string) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/admin/fixtures?date=${dateStr}&q=${encodeURIComponent(query)}`);
+      const res = await fetch(`/api/admin/fixtures?date=${dateStr}&q=${encodeURIComponent(query)}&onlyVip=${onlyVip ? "true" : "false"}`);
       const data = await res.json();
       if (data.fixtures) {
         setFixtures(data.fixtures);
@@ -78,7 +82,7 @@ export default function AdminFixtureManager() {
 
   useEffect(() => {
     fetchAdminFixtures(selectedDate, searchQuery);
-  }, [selectedDate, searchQuery]);
+  }, [selectedDate, searchQuery, onlyVip]);
 
   const getPredictionResultStatus = (fx: any): "won" | "lost" | "pending" => {
     if (fx.customResult && ["won", "lost", "pending"].includes(fx.customResult)) {

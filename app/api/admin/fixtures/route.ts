@@ -14,6 +14,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const dateParam = searchParams.get("date") || new Date().toISOString().split("T")[0];
     const query = searchParams.get("q") || "";
+    const onlyVip = searchParams.get("onlyVip") === "true";
 
     if (mongoose.connection.readyState !== 1) {
       await mongoose.connect(process.env.MONGO_URI || "");
@@ -29,13 +30,35 @@ export async function GET(req: NextRequest) {
       }
     };
 
+    if (onlyVip) {
+      filter.$or = [
+        { isAdminPick: true },
+        { customPredictionTip: { $exists: true, $ne: "" } }
+      ];
+    }
+
     if (query.trim()) {
       const regex = new RegExp(query.trim(), "i");
-      filter.$or = [
+      const searchConditions = [
         { "fixture.teams.home.name": regex },
         { "fixture.teams.away.name": regex },
         { "fixture.league.name": regex }
       ];
+
+      if (onlyVip) {
+        filter.$and = [
+          {
+            $or: [
+              { isAdminPick: true },
+              { customPredictionTip: { $exists: true, $ne: "" } }
+            ]
+          },
+          { $or: searchConditions }
+        ];
+        delete filter.$or;
+      } else {
+        filter.$or = searchConditions;
+      }
     }
 
     const fixtures = await Fixture.find(filter)
