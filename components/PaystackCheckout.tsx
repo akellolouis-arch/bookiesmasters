@@ -72,6 +72,7 @@ export default function PaystackCheckout({ amount = 2500, currency = "KES", disp
 
   const onClose = () => {
     setLoading(false);
+    setVerifying(false);
   };
 
   const handlePayment = () => {
@@ -80,13 +81,20 @@ export default function PaystackCheckout({ amount = 2500, currency = "KES", disp
       return;
     }
     if (!process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY) {
-       setError("Payment configuration missing.");
+       setError("Payment configuration missing. Please check API keys.");
        return;
     }
     setLoading(true);
     setError("");
-    // @ts-ignore
-    initializePayment(onSuccess, onClose);
+
+    try {
+      // @ts-ignore
+      initializePayment(onSuccess, onClose);
+    } catch (err) {
+      console.error("Failed to initialize Paystack:", err);
+      setError("Unable to open payment modal. Please try again.");
+      setLoading(false);
+    }
   };
 
   if (success) {
