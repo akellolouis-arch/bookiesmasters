@@ -71,12 +71,8 @@ export default function VipPredictionsView({
 
   const isFirstRender = useRef(true);
 
-  // Tomorrow YMD calculation
-  const tomorrowObj = new Date(new Date().getTime() + 86400000);
-  const tomorrowYmd = kenyaYmdFormatter.format(tomorrowObj);
-
-  const isTodayOrTomorrow = selectedDate === todayYmd || selectedDate === tomorrowYmd;
-  const isLocked = isTodayOrTomorrow && !isVip;
+  // Kenya Today YMD for lock evaluation
+  const realTodayYmd = kenyaYmdFormatter.format(new Date());
 
   useEffect(() => {
     // Skip fetching on initial mount if server provided initialFixtures
@@ -283,6 +279,18 @@ export default function VipPredictionsView({
                       predictionColorClass = "text-[#ef4444]";
                     }
 
+                    // Compute lock state specifically for this fixture's date
+                    let matchDateYmd = selectedDate;
+                    if (fx.fixture?.fixture?.date) {
+                      try {
+                        matchDateYmd = kenyaYmdFormatter.format(new Date(fx.fixture.fixture.date));
+                      } catch {
+                        matchDateYmd = selectedDate;
+                      }
+                    }
+                    const isMatchTodayOrFuture = matchDateYmd >= realTodayYmd;
+                    const isFixtureLocked = !isVip && isMatchTodayOrFuture;
+
                     return (
                       <div
                         key={fx.fixtureId}
@@ -350,7 +358,7 @@ export default function VipPredictionsView({
 
                           {/* RIGHT: PREDICTION / LOCK CONTAINER */}
                           <div className="flex-1 flex justify-end">
-                            {isLocked ? (
+                            {isFixtureLocked ? (
                               <button
                                 type="button"
                                 onClick={() => setShowCheckoutModal(true)}
