@@ -54,7 +54,7 @@ export default function Navbar() {
                   href="/pro"
                   className="px-3 py-1 bg-teal-800/60 border border-[#63FF79]/40 text-[#63FF79] font-bold rounded-full text-xs hover:bg-teal-800 transition"
                 >
-                  VIP TIPS
+                  PRO
                 </Link>
                 {isAdmin && (
                   <Link
@@ -89,7 +89,7 @@ export default function Navbar() {
                   href="/pro"
                   className="px-2.5 py-1 bg-teal-800/60 border border-[#63FF79]/40 text-[#63FF79] font-bold rounded-full text-[10px]"
                 >
-                  VIP
+                  PRO
                 </Link>
                 {isAdmin && (
                   <Link
