@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-export const dynamic = "force-dynamic"; // ensure fresh render
+export const revalidate = 3600; // Cache redirect for 1 hour at Edge (updates date hourly)
 
 export default function Home() {
   // Force Kenya timezone reliably using robust calculation

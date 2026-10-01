@@ -45,21 +45,19 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
     const isMatchLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(initialData.status) || initialData.status.includes("'");
 
     const { data: swrData } = useSWR(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/fixtures/${initialData.fixtureId}`,
+        isMatchLive ? `${process.env.NEXT_PUBLIC_API_URL}/api/fixtures/${initialData.fixtureId}` : null,
         fetcher,
         {
-            refreshInterval: isMatchLive ? 15000 : 0,
-            revalidateOnMount: true,
-            revalidateOnFocus: true,
+            refreshInterval: isMatchLive ? 30000 : 0,
+            revalidateOnMount: false,
+            revalidateOnFocus: false,
         }
     );
 
     const data = swrData?.data ? { ...initialData, ...swrData.data } : initialData;
 
-    const isFinishedCache = ["FT", "AET", "PEN"].includes(initialData.status);
-    const hideStaleData = !isFinishedCache && !swrData;
-
-    const displayInjuries = hideStaleData ? [] : data.injuries;
+    const displayInjuries = data.injuries;
+    const isLoading = isMatchLive && !swrData;
 
     const filteredH2H = data.h2h ? data.h2h.filter((m: any) => ["FT", "AET", "PEN", "AWD", "WO"].includes(m.fixture?.status?.short)) : [];
     const hasH2H = filteredH2H.length > 0;
@@ -128,7 +126,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                     date={data.date}
                     score={data.score}
                     league={data.league}
-                    isLoading={hideStaleData}
+                    isLoading={isLoading}
                     tip={computedTip}
                 />
 

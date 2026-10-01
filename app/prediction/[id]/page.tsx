@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { cache } from "react";
 import FixtureDetailsClient from "./FixtureDetailsClient";
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60; // ISR: cache match pages for 60 seconds at Edge
 
 /** Fail fast so Vercel never sits 300s on a stuck upstream (504 in your logs) */
 const FETCH_TIMEOUT_MS = 15_000;
@@ -12,6 +12,7 @@ interface FixtureDetailData {
     leagueId: number;
     league: string;
     leagueLogo: string;
+    country: string;
     date: string;
     displayDate: string;
     status: string;
@@ -26,7 +27,7 @@ interface FixtureDetailData {
 function fetchWithTimeout(url: string): Promise<Response> {
     return fetch(url, {
         signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-        cache: 'no-store',
+        next: { revalidate: 60 },
     });
 }
 

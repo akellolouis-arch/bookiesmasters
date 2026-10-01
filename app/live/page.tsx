@@ -2,7 +2,7 @@ import PredictionsList from "../predictions/[date]/predictionList";
 import DateNavigator from "@/components/DateNavigator";
 import { Suspense } from "react";
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 15; // Cache live predictions for 15s at Edge
 
 interface BackendLeague {
   id: number;
@@ -61,7 +61,7 @@ export default async function LivePage() {
 
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fixtures/live`, {
-      cache: 'no-store',
+      next: { revalidate: 15 },
     });
     if (res.ok) {
       backendData = await res.json();
@@ -88,7 +88,7 @@ export default async function LivePage() {
         <DateNavigator date={today} />
       </Suspense>
       <Suspense fallback={null}>
-        <PredictionsList initialData={initialData} date="live" />
+        <PredictionsList initialData={initialData} initialDate="live" />
       </Suspense>
     </>
   );

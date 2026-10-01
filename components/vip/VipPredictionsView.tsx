@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Lock, Crown, Calendar } from "lucide-react";
-import PaystackCheckout from "@/components/PaystackCheckout";
+import VipUpgradeModal from "@/components/VipUpgradeModal";
 import Loader from "@/components/Loader";
 import Footer from "@/components/Footer";
 
@@ -394,28 +394,11 @@ export default function VipPredictionsView({
         <Footer />
       </div>
 
-      {/* Paystack Checkout Modal */}
-      {showCheckoutModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-gray-200 shadow-xl w-full max-w-md relative text-center">
-            <button
-              onClick={() => setShowCheckoutModal(false)}
-              className="absolute top-3.5 right-4 text-gray-400 hover:text-gray-700 text-sm font-semibold cursor-pointer"
-            >
-              ✕
-            </button>
-            <div className="inline-flex p-2.5 rounded-full bg-amber-50 text-amber-600 mb-2.5">
-              <Crown size={24} />
-            </div>
-            <h3 className="text-base font-bold text-gray-900 mb-1">Activate One-Week VIP Pass</h3>
-            <p className="text-xs font-normal text-gray-500 mb-5">
-              Get 3-5 daily curated odds at $19 per week to instantly unlock all predictions.
-            </p>
-
-            <PaystackCheckout amount={2500} currency="KES" displayText="Activate One-Week VIP Pass ($19)" />
-          </div>
-        </div>
-      )}
+      {/* VIP Upgrade Modal */}
+      <VipUpgradeModal
+        isOpen={showCheckoutModal}
+        onClose={() => setShowCheckoutModal(false)}
+      />
 
       <style jsx>{`
         .no-scrollbar::-webkit-scrollbar {

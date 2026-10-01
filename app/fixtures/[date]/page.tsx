@@ -1,8 +1,9 @@
 import FixturesList from "@/components/fixtures/FixturesList";
 import { getFixturesGroupedByLeague } from "@/backend/services/fixtureCardService";
 import dbConnect from "@/lib/mongoose";
+import { Suspense } from "react";
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60; // Cache fixtures for 60 seconds at Edge
 
 export async function generateMetadata({ params }: { params: Promise<{ date?: string }> }) {
   const resolvedParams = await params;
@@ -56,6 +57,8 @@ export default async function FixturesPage({
   }
 
   return (
-    <FixturesList initialData={initialData} initialDate={date} />
+    <Suspense fallback={null}>
+      <FixturesList initialData={initialData} initialDate={date} />
+    </Suspense>
   );
 }

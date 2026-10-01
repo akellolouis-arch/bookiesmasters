@@ -6,7 +6,19 @@ import { useSession } from "next-auth/react";
 import { Loader2, CheckCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export default function PaystackCheckout({ amount = 2500, currency = "KES", displayText }: { amount?: number, currency?: string, displayText?: string }) {
+interface PaystackCheckoutProps {
+  amount?: number;
+  currency?: string;
+  displayText?: string;
+  variant?: "default" | "white";
+}
+
+export default function PaystackCheckout({
+  amount = 2500,
+  currency = "KES",
+  displayText,
+  variant = "default",
+}: PaystackCheckoutProps) {
   const { data: session } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -114,15 +126,19 @@ export default function PaystackCheckout({ amount = 2500, currency = "KES", disp
       <button
         onClick={handlePayment}
         disabled={loading || verifying}
-        className="w-full bg-[#09A5A3] hover:bg-[#078C8A] text-white font-bold py-3.5 px-6 rounded-lg flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg hover:shadow-teal-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+        className={
+          variant === "white"
+            ? "w-full flex items-center justify-center gap-2 bg-white border border-gray-300 hover:border-teal-600 hover:bg-teal-50/50 shadow-xs text-gray-800 font-bold text-xs py-2.5 px-3 rounded-lg transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            : "w-full bg-[#09A5A3] hover:bg-[#078C8A] text-white font-bold py-3.5 px-6 rounded-lg flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg hover:shadow-teal-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+        }
       >
         {(loading || verifying) ? (
-          <><Loader2 className="w-5 h-5 animate-spin" /> {verifying ? "Verifying..." : "Loading..."}</>
+          <><Loader2 className={`w-4 h-4 animate-spin ${variant === "white" ? "text-teal-600" : "text-white"}`} /> {verifying ? "Verifying..." : "Loading..."}</>
         ) : (
           displayText || `Pay ${currency} ${amount.toLocaleString()} to Unlock VIP`
         )}
       </button>
-      <p className="text-xs text-gray-500 mt-3 text-center">
+      <p className={`text-center ${variant === "white" ? "text-[10px] text-gray-400 mt-3" : "text-xs text-gray-500 mt-3"}`}>
         Secure payment processed by Paystack. Mobile Money and Cards supported.
       </p>
     </div>

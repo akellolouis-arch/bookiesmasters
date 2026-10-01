@@ -3,13 +3,15 @@ import { formatFixtureCard } from "../helpers/fixtureFormatter.js";
 
 /** Country A→Z, then league name A→Z (e.g. all England leagues together, ordered). */
 function compareCountryThenLeagueName(a, b) {
-  const countryA = (a?.country ?? "").toString();
-  const countryB = (b?.country ?? "").toString();
-  const c = countryA.localeCompare(countryB, "en", { sensitivity: "base" });
-  if (c !== 0) return c;
-  const nameA = (a?.name ?? "").toString();
-  const nameB = (b?.name ?? "").toString();
-  return nameA.localeCompare(nameB, "en", { sensitivity: "base" });
+  const countryA = (a?.country ?? "").toString().toLowerCase();
+  const countryB = (b?.country ?? "").toString().toLowerCase();
+  if (countryA < countryB) return -1;
+  if (countryA > countryB) return 1;
+  const nameA = (a?.name ?? "").toString().toLowerCase();
+  const nameB = (b?.name ?? "").toString().toLowerCase();
+  if (nameA < nameB) return -1;
+  if (nameA > nameB) return 1;
+  return 0;
 }
 
 function sortDocsByCountryLeagueKickoff(docs) {

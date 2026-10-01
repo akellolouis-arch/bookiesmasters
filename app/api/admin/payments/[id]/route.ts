@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import PaymentRequest from "@/backend/models/PaymentRequest";
 import User from "@/backend/models/User";
 
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth();
     // @ts-ignore

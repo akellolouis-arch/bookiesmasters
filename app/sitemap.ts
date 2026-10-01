@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import dbConnect from '@/lib/mongoose';
 import Fixture from '@/backend/models/Fixture';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 86400; // Cache sitemap for 24 hours at the Edge
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = 'https://bookiesmasters.com';
@@ -66,7 +66,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         past.setHours(past.getHours() - 24); // Keep recent results for 24h
 
         const fixtures = await Fixture.find({
-            "fixture.date": { $gte: past.toISOString(), $lte: future.toISOString() }
+            "fixture.fixture.date": { $gte: past.toISOString(), $lte: future.toISOString() }
         })
             .select("fixtureId updatedAt")
             .limit(2000) // Safety limit
