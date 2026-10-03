@@ -119,7 +119,7 @@ export default function AdminPaymentsClient({ initialPayments }: { initialPaymen
             <Clock className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-xs text-gray-500 font-medium uppercase tracking-wider">Pending Review</div>
+            <div className="text-xs text-gray-500 font-medium uppercase tracking-wider">Pending Payments</div>
             <div className="text-xl font-black text-gray-900">{pendingPayments.length}</div>
           </div>
         </div>
@@ -149,7 +149,7 @@ export default function AdminPaymentsClient({ initialPayments }: { initialPaymen
             filter === "pending" ? "bg-amber-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
           }`}
         >
-          Pending Review ({pendingPayments.length})
+          Pending ({pendingPayments.length})
         </button>
         <button
           onClick={() => setFilter("rejected")}

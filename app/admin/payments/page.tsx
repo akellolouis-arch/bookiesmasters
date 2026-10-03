@@ -40,7 +40,7 @@ export default async function AdminPaymentsPage() {
       <div className="mb-6">
         <h1 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tight">Payments Dashboard</h1>
         <p className="text-xs text-gray-500 mt-1">
-          Monitor automated Paystack payments, card origins, and review manual M-PESA subscriptions.
+          Monitor automated Paystack payments, card & mobile money origins, and customer VIP subscriptions.
         </p>
       </div>
 
