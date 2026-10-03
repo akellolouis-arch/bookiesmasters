@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import PaymentRequest from "@/backend/models/PaymentRequest";
+import User from "@/backend/models/User";
 import AdminPaymentsClient from "./AdminPaymentsClient";
 
 export const metadata = {
@@ -14,7 +15,25 @@ export default async function AdminPaymentsPage() {
   }
 
   const rawPayments = await PaymentRequest.find({}).sort({ createdAt: -1 }).lean();
-  const payments = JSON.parse(JSON.stringify(rawPayments));
+
+  // Lookup the corresponding User documents to check live VIP access
+  const userEmails = [...new Set(rawPayments.map((p: any) => p.userEmail?.toLowerCase()).filter(Boolean))];
+  const users = await User.find({ email: { $in: userEmails } }).select("email vipExpiry isVip").lean();
+  const userMap = new Map(users.map((u: any) => [u.email?.toLowerCase(), u]));
+
+  const now = new Date();
+  const enrichedPayments = rawPayments.map((p: any) => {
+    const user = userMap.get(p.userEmail?.toLowerCase());
+    const expiry = user?.vipExpiry ? new Date(user.vipExpiry) : null;
+    const hasActiveVip = Boolean(user?.isVip || (expiry && expiry > now));
+    return {
+      ...p,
+      hasActiveVip,
+      vipExpiry: expiry ? expiry.toISOString() : null,
+    };
+  });
+
+  const payments = JSON.parse(JSON.stringify(enrichedPayments));
 
   return (
     <div className="max-w-7xl mx-auto p-4 md:p-8">

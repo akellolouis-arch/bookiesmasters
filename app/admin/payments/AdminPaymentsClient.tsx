@@ -1,8 +1,20 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import PaymentActions from "./PaymentActions";
-import { CheckCircle2, Clock, XCircle, CreditCard, DollarSign, Globe, Building } from "lucide-react";
+import {
+  CheckCircle2,
+  Clock,
+  XCircle,
+  DollarSign,
+  Globe,
+  Building,
+  Trash2,
+  Loader2,
+  ShieldCheck,
+  AlertCircle,
+} from "lucide-react";
 
 const COUNTRY_FLAGS: Record<string, { name: string; flag: string }> = {
   ZA: { name: "South Africa", flag: "🇿🇦" },
@@ -32,21 +44,51 @@ interface PaymentItem {
   screenshotUrl?: string;
   paidAt?: string;
   createdAt: string;
+  hasActiveVip?: boolean;
+  vipExpiry?: string | null;
 }
 
 export default function AdminPaymentsClient({ initialPayments }: { initialPayments: PaymentItem[] }) {
+  const router = useRouter();
+  const [payments, setPayments] = useState<PaymentItem[]>(initialPayments);
   const [filter, setFilter] = useState<"all" | "approved" | "pending" | "rejected">("all");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const approvedPayments = initialPayments.filter((p) => p.status === "approved");
-  const pendingPayments = initialPayments.filter((p) => p.status === "pending");
-  const rejectedPayments = initialPayments.filter((p) => p.status === "rejected");
+  const approvedPayments = payments.filter((p) => p.status === "approved");
+  const pendingPayments = payments.filter((p) => p.status === "pending");
+  const rejectedPayments = payments.filter((p) => p.status === "rejected");
 
   const totalRevenue = approvedPayments.reduce((acc, p) => acc + (p.amount || 2500), 0);
 
-  const displayedPayments = initialPayments.filter((p) => {
+  const displayedPayments = payments.filter((p) => {
     if (filter === "all") return true;
     return p.status === filter;
   });
+
+  const handleDelete = async (paymentId: string, email: string) => {
+    if (!confirm(`Are you sure you want to delete this payment record for ${email} from the display?`)) {
+      return;
+    }
+
+    setDeletingId(paymentId);
+    try {
+      const res = await fetch(`/api/admin/payments/${paymentId}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        setPayments((prev) => prev.filter((p) => p._id !== paymentId));
+        router.refresh();
+      } else {
+        const data = await res.json();
+        alert(`Error: ${data.error || "Failed to delete"}`);
+      }
+    } catch (err) {
+      alert("Network error: Failed to delete payment record");
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -91,7 +133,7 @@ export default function AdminPaymentsClient({ initialPayments }: { initialPaymen
             filter === "all" ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
           }`}
         >
-          All ({initialPayments.length})
+          All ({payments.length})
         </button>
         <button
           onClick={() => setFilter("approved")}
@@ -130,14 +172,54 @@ export default function AdminPaymentsClient({ initialPayments }: { initialPaymen
             const countryMeta = p.country ? COUNTRY_FLAGS[p.country.toUpperCase()] : null;
 
             return (
-              <div key={p._id} className="bg-white p-5 rounded-xl border border-gray-200 shadow-xs flex flex-col justify-between gap-3">
+              <div
+                key={p._id}
+                className="bg-white p-5 rounded-xl border border-gray-200 shadow-xs flex flex-col justify-between gap-3 relative"
+              >
                 {/* Header */}
                 <div className="flex justify-between items-start gap-2">
-                  <div>
+                  <div className="space-y-0.5">
                     <h3 className="font-bold text-gray-900 text-base">{p.userName}</h3>
                     <p className="text-xs text-gray-500">{p.userEmail}</p>
+
+                    {/* LIVE VIP ACCESS STATUS BADGE */}
+                    <div className="pt-1">
+                      {p.hasActiveVip ? (
+                        <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-300/80 px-2.5 py-0.5 rounded-full">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                          <ShieldCheck size={13} className="text-emerald-600" />
+                          <span>
+                            VIP Active (Expires:{" "}
+                            {new Date(p.vipExpiry!).toLocaleDateString("en-GB", {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            })}
+                            )
+                          </span>
+                        </span>
+                      ) : p.vipExpiry ? (
+                        <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-gray-600 bg-gray-100 border border-gray-200 px-2.5 py-0.5 rounded-full">
+                          <AlertCircle size={13} className="text-gray-400" />
+                          <span>
+                            VIP Expired (
+                            {new Date(p.vipExpiry).toLocaleDateString("en-GB", {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            })}
+                            )
+                          </span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 text-[11px] text-gray-400 bg-gray-50 border border-gray-200 px-2 py-0.5 rounded-full">
+                          No VIP pass currently active
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1.5">
+
+                  <div className="flex items-center gap-2">
                     {p.status === "approved" && (
                       <span className="inline-flex items-center gap-1 bg-green-50 text-green-700 border border-green-200 text-[11px] font-bold px-2.5 py-0.5 rounded-full">
                         <CheckCircle2 size={12} /> Approved
@@ -153,6 +235,21 @@ export default function AdminPaymentsClient({ initialPayments }: { initialPaymen
                         <XCircle size={12} /> Rejected
                       </span>
                     )}
+
+                    {/* DELETE BUTTON */}
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(p._id, p.userEmail)}
+                      disabled={deletingId === p._id}
+                      className="text-gray-400 hover:text-red-600 hover:bg-red-50 p-1.5 rounded-lg transition-colors cursor-pointer"
+                      title="Delete this payment record from the display"
+                    >
+                      {deletingId === p._id ? (
+                        <Loader2 size={15} className="animate-spin text-red-500" />
+                      ) : (
+                        <Trash2 size={15} />
+                      )}
+                    </button>
                   </div>
                 </div>
 
@@ -162,11 +259,13 @@ export default function AdminPaymentsClient({ initialPayments }: { initialPaymen
                     <span className="text-lg font-black text-gray-900">
                       {p.currency || "KES"} {(p.amount || 2500).toLocaleString()}
                     </span>
-                    <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-md ${
-                      p.paymentMethod === "paystack"
-                        ? "bg-teal-50 text-teal-700 border border-teal-200"
-                        : "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                    }`}>
+                    <span
+                      className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-md ${
+                        p.paymentMethod === "paystack"
+                          ? "bg-teal-50 text-teal-700 border border-teal-200"
+                          : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                      }`}
+                    >
                       {p.paymentMethod}
                     </span>
                   </div>
@@ -243,4 +342,3 @@ export default function AdminPaymentsClient({ initialPayments }: { initialPaymen
     </div>
   );
 }
-

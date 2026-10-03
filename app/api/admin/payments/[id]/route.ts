@@ -53,6 +53,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       payment.status = "rejected";
       await payment.save();
       return NextResponse.json({ success: true });
+    } else if (action === 'delete') {
+      await PaymentRequest.findByIdAndDelete(paymentId);
+      return NextResponse.json({ success: true, message: "Payment record deleted" });
     } else {
       return NextResponse.json({ error: "Invalid action" }, { status: 400 });
     }
@@ -60,5 +63,30 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   } catch (error: any) {
     console.error("Admin Payment Action Error:", error);
     return NextResponse.json({ error: error.message || "Failed to process payment" }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const session = await auth();
+    // @ts-ignore
+    if (!session || !session.user || session.user.role !== 'admin') {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { id } = await params;
+    if (mongoose.connection.readyState !== 1) {
+      await mongoose.connect(process.env.MONGO_URI || "");
+    }
+
+    const deleted = await PaymentRequest.findByIdAndDelete(id);
+    if (!deleted) {
+      return NextResponse.json({ error: "Payment request not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, message: "Payment record deleted" });
+  } catch (error: any) {
+    console.error("Admin Payment Delete Error:", error);
+    return NextResponse.json({ error: error.message || "Failed to delete payment" }, { status: 500 });
   }
 }
