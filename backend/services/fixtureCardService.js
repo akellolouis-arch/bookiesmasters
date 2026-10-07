@@ -32,6 +32,13 @@ function sortLeagueGroups(groups) {
   );
 }
 
+export const isFriendlyLeague = (league) => {
+  if (!league) return false;
+  if (league.id === 10 || league.id === 667) return true;
+  const name = league.name || "";
+  return /friendl/i.test(name);
+};
+
 export async function getFixturesGroupedByLeague(date) {
   if (!date) throw new Error("Date parameter is required");
 
@@ -124,7 +131,7 @@ export async function getFixturesGroupedByLeague(date) {
 
   // Filter out friendlies and stuck NS matches
   const validFixtures = fixtures.filter((f) => {
-    if (f.fixture?.league?.name?.toLowerCase().includes("friendlies")) {
+    if (isFriendlyLeague(f.fixture?.league)) {
       return false;
     }
     // Drop NS matches that are 30+ mins past scheduled kickoff
@@ -204,7 +211,7 @@ export async function getLiveFixturesGroupedByLeague(options = {}) {
   ]);
 
   const orderedLive = sortDocsByCountryLeagueKickoff(
-    liveFixtures.filter(f => !f.fixture?.league?.name?.toLowerCase().includes("friendlies"))
+    liveFixtures.filter(f => !isFriendlyLeague(f.fixture?.league))
   );
 
   const targetDocs = allFixtures ? orderedLive : await applyPredictionFilter(orderedLive);
@@ -296,27 +303,32 @@ export function clearPredictionCache() {
 async function getRecentMatchesForTeam(teamId, matchDate, limit, leagueId = null) {
   const queryBase = {
       "fixture.fixture.date": { $lt: matchDate },
-      "fixture.fixture.status.short": "FT"
+      "fixture.fixture.status.short": "FT",
+      "fixture.league.name": { $not: /friendl/i }
   };
   
   if (leagueId) {
       queryBase["fixture.league.id"] = leagueId;
+  } else {
+      queryBase["fixture.league.id"] = { $nin: [10, 667] };
   }
   
+  const fetchLimit = Math.max(limit * 2, 10);
   const [homeMatches, awayMatches] = await Promise.all([
       Fixture.find({ ...queryBase, "fixture.teams.home.id": teamId })
              .sort({ "fixture.fixture.date": -1 })
-             .limit(limit)
+             .limit(fetchLimit)
              .lean(),
       Fixture.find({ ...queryBase, "fixture.teams.away.id": teamId })
              .sort({ "fixture.fixture.date": -1 })
-             .limit(limit)
+             .limit(fetchLimit)
              .lean()
   ]);
   
   const merged = [...homeMatches, ...awayMatches];
-  merged.sort((a, b) => new Date(b.fixture.fixture.date) - new Date(a.fixture.fixture.date));
-  return merged.slice(0, limit);
+  const competitiveMatches = merged.filter(m => !isFriendlyLeague(m.fixture?.league));
+  competitiveMatches.sort((a, b) => new Date(b.fixture.fixture.date) - new Date(a.fixture.fixture.date));
+  return competitiveMatches.slice(0, limit);
 }
 
 async function applyPredictionFilter(orderedDocs) {
@@ -438,7 +450,7 @@ export async function getPredictedFixturesGroupedByLeague(date) {
   ]);
 
   const validFixtures = fixtures.filter((f) => {
-    if (f.fixture?.league?.name?.toLowerCase().includes("friendlies")) {
+    if (isFriendlyLeague(f.fixture?.league)) {
       return false;
     }
     // Drop NS matches that are 30+ mins past scheduled kickoff

@@ -1,14 +1,24 @@
 
 import Fixture from "../models/Fixture.js";
 
+const isFriendlyLeague = (league) => {
+    if (!league) return false;
+    if (league.id === 10 || league.id === 667) return true;
+    const name = league.name || "";
+    return /friendl/i.test(name);
+};
+
 export const calculateTeamForm = async (teamId) => {
     // Queries adapted for nested 'fixture' object in current schema
+    // Exclude Friendlies (ID 10, 667, and leagues matching /friendl/i)
     const fixtures = await Fixture.find({
         $or: [
             { "fixture.teams.home.id": teamId },
             { "fixture.teams.away.id": teamId },
         ],
         "fixture.fixture.status.short": "FT", // Only completed matches
+        "fixture.league.id": { $nin: [10, 667] },
+        "fixture.league.name": { $not: /friendl/i }
     })
         .sort({ "fixture.fixture.date": -1 }) // Sort by nested date
         .limit(150); // Fetch up to 150 to ensure extremely deep history for cup filters
@@ -18,12 +28,15 @@ export const calculateTeamForm = async (teamId) => {
     const form = [];
     const allMatches = [];
 
-    fixtures.forEach((doc, index) => {
+    fixtures.forEach((doc) => {
         // Access nested data
         const match = doc.fixture;
 
         // In current schema, 'match' contains { fixture, league, teams, goals, score, ... }
         if (!match || !match.teams || !match.teams.home || !match.teams.away || !match.goals) return;
+
+        // Extra defensive check to guarantee no friendlies slip through
+        if (isFriendlyLeague(match.league)) return;
 
         const isHome = match.teams.home.id === teamId;
         const teamGoals = isHome ? match.goals.home : match.goals.away;
@@ -42,8 +55,8 @@ export const calculateTeamForm = async (teamId) => {
             color = "#eab308"; // yellow-500
         }
 
-        // Store result for form summary (ONLY for first 5)
-        if (index < 5) {
+        // Store result for form summary (ONLY for first 5 competitive matches)
+        if (form.length < 5) {
             form.push({ result, color });
         }
 
