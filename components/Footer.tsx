@@ -44,7 +44,7 @@ export default function Footer() {
               <Facebook size={14} strokeWidth={1.5} />
             </a>
             <a
-              href="https://wa.me/254745676267"
+              href="https://wa.me/254755785362"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-600 hover:text-gray-900 transition-colors"
