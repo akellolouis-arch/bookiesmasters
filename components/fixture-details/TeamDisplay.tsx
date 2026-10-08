@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import { ExternalLink } from "lucide-react";
+import { AFFILIATE_PARTNERS, AffiliatePartner } from "@/lib/affiliatePartners";
 
 interface Team {
     id: number;
@@ -34,6 +36,15 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
     isLoading,
     tip,
 }) => {
+    const [partner, setPartner] = useState<AffiliatePartner>(AFFILIATE_PARTNERS[0]);
+
+    useEffect(() => {
+        if (AFFILIATE_PARTNERS.length > 1) {
+            const randomIndex = Math.floor(Math.random() * AFFILIATE_PARTNERS.length);
+            setPartner(AFFILIATE_PARTNERS[randomIndex]);
+        }
+    }, []);
+
     const isLive = status ? ["1H", "HT", "2H", "ET", "BT", "P", "LIVE"].includes(status) : false;
     const isFinished = status ? ["FT", "AET", "PEN"].includes(status) : false;
     
@@ -92,6 +103,60 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                 scoreColorClass = isWon ? "text-[#22c55e]" : "text-[#ef4444]";
                 dashColorClass = scoreColorClass;
             }
+        }
+    }
+
+    const getFormattedTip = (rawTip?: string) => {
+        if (!rawTip || rawTip === "NONE") return null;
+        if (rawTip === "OV1.5" || rawTip === "Over 1.5") return "Over 1.5 Goals";
+        if (rawTip === "UN3.5" || rawTip === "Under 3.5") return "Under 3.5 Goals";
+        if (rawTip === "OV2.5" || rawTip === "Over 2.5") return "Over 2.5 Goals";
+        if (rawTip === "UN2.5" || rawTip === "Under 2.5") return "Under 2.5 Goals";
+        if (rawTip === "BTTS" || rawTip === "GG") return "Both Teams to Score";
+        if (rawTip === "1" || rawTip === "HOME WIN") return "Home Win";
+        if (rawTip === "2" || rawTip === "AWAY WIN") return "Away Win";
+        return rawTip;
+    };
+
+    const formattedTipText = getFormattedTip(tip);
+
+    let tipBadgeColor = "bg-teal-50 text-teal-800 border-teal-300";
+    if (tip) {
+        if (isFinished && score && score.home !== null && score.away !== null) {
+            const totalGoals = score.home + score.away;
+            let isWon = false;
+            let isValid = false;
+
+            if (tip.includes("Over 1.5") || tip.includes("OV1.5")) {
+                isWon = totalGoals > 1.5;
+                isValid = true;
+            } else if (tip === "BTTS" || tip.includes("GG")) {
+                isWon = score.home > 0 && score.away > 0;
+                isValid = true;
+            } else if (tip.includes("Over 2.5") || tip.includes("OV2.5")) {
+                isWon = totalGoals > 2.5;
+                isValid = true;
+            } else if (tip.includes("Under 2.5") || tip.includes("UN2.5")) {
+                isWon = totalGoals < 2.5;
+                isValid = true;
+            } else if (tip.includes("Under 3.5") || tip.includes("UN3.5")) {
+                isWon = totalGoals < 3.5;
+                isValid = true;
+            } else if (tip === "1" || tip === "HOME WIN") {
+                isWon = score.home > score.away;
+                isValid = true;
+            } else if (tip === "2" || tip === "AWAY WIN") {
+                isWon = score.away > score.home;
+                isValid = true;
+            }
+
+            if (isValid) {
+                tipBadgeColor = isWon 
+                    ? "bg-emerald-50 text-emerald-700 border-emerald-300"
+                    : "bg-rose-50 text-rose-700 border-rose-300";
+            }
+        } else if (isLive) {
+            tipBadgeColor = "bg-amber-50 text-amber-800 border-amber-300 animate-pulse";
         }
     }
 
@@ -184,6 +249,30 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                                 </div>
                             </div>
                         )}
+
+                        {/* PREDICTION & AFFILIATE AREA BELOW SCORE */}
+                        <div className="mt-2.5 flex flex-col items-center gap-1.5 w-full">
+                            {/* Prediction Badge */}
+                            {formattedTipText && (
+                                <div className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full border text-[10px] sm:text-[11px] font-bold shadow-xs whitespace-nowrap ${tipBadgeColor}`}>
+                                    <span className="text-[9px] uppercase tracking-wider font-semibold opacity-75">Tip:</span>
+                                    <span>{formattedTipText}</span>
+                                </div>
+                            )}
+
+                            {/* Affiliate Partner CTA Button (Randomly Displays on Load) */}
+                            <a
+                                href={partner.url}
+                                target="_blank"
+                                rel="noopener noreferrer sponsored"
+                                className="inline-flex items-center justify-center gap-1 px-2.5 sm:px-3 py-1 rounded-md text-[10px] sm:text-[11px] font-bold shadow-xs hover:opacity-95 transition-all transform hover:scale-[1.02] active:scale-95 whitespace-nowrap"
+                                style={{ backgroundColor: partner.bgColor, color: partner.textColor }}
+                            >
+                                <span>{partner.name}</span>
+                                <span className="text-[9px] font-normal opacity-90 hidden sm:inline">• {partner.ctaText}</span>
+                                <ExternalLink size={10} className="shrink-0 ml-0.5" />
+                            </a>
+                        </div>
                     </div>
 
                     {/* AWAY TEAM */}

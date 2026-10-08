@@ -163,11 +163,6 @@ const MatchIntroduction: React.FC<MatchIntroductionProps> = ({
         <div className={`${bg} ${rounded} ${padding} ${margin} shadow-sm flex items-start gap-2 animate-in fade-in duration-500`}>
             <p className="text-[11px] sm:text-[12px] font-medium text-gray-700 leading-relaxed text-justify">
                 {fullNarrative}
-                {formattedTip && (
-                    <span className={`${predictionColorClass} font-bold ml-1`}>
-                        {formattedTip}
-                    </span>
-                )}
             </p>
         </div>
     );
