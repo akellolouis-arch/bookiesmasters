@@ -125,8 +125,8 @@ export default function Footer() {
             </div>
             
             <div className="text-[10px] leading-tight text-gray-500 max-w-xl text-justify sm:text-left">
-              <span className="font-bold text-gray-700">Gamble Aware: </span>
-              Gambling involves risk and may be addictive. Please gamble responsibly and only bet what you can afford to lose. All statistical analyses and predictions on Bookiesmasters are strictly for informational and entertainment purposes.
+              <span className="font-bold text-gray-700">Play Responsibly: </span>
+              Gambling can be addictive. Always bet within your limits and only wager what you can afford to lose.
             </div>
           </div>
 
