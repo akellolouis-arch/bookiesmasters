@@ -115,6 +115,44 @@ export default function Footer() {
         */}
       </div>
 
+      {/* Responsible Gambling / 18+ Banner */}
+      <div className="max-w-5xl mx-auto mt-3 pt-3 border-t border-gray-200">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-2.5 text-center sm:text-left">
+          <div className="flex items-center gap-2.5">
+            {/* 18+ Badge */}
+            <div className="flex-shrink-0 w-7 h-7 rounded-full border-2 border-red-600 bg-red-50 flex items-center justify-center shadow-xs">
+              <span className="text-red-700 font-extrabold text-[11px] tracking-tight">18+</span>
+            </div>
+            
+            <div className="text-[10px] leading-tight text-gray-500 max-w-xl text-justify sm:text-left">
+              <span className="font-bold text-gray-700">Gamble Aware: </span>
+              Gambling involves risk and may be addictive. Please gamble responsibly and only bet what you can afford to lose. All statistical analyses and predictions on Bookiesmasters are strictly for informational and entertainment purposes.
+            </div>
+          </div>
+
+          {/* Responsible Gambling Links */}
+          <div className="flex items-center gap-3 text-[10px] text-gray-500 font-semibold flex-shrink-0">
+            <a
+              href="https://www.begambleaware.org"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-red-600 transition-colors flex items-center gap-1 underline underline-offset-2"
+            >
+              begambleaware.org
+            </a>
+            <span>•</span>
+            <a
+              href="https://www.gamcare.org.uk"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-red-600 transition-colors flex items-center gap-1 underline underline-offset-2"
+            >
+              GamCare
+            </a>
+          </div>
+        </div>
+      </div>
+
       {/* Footer bottom */}
       <div className="text-center text-gray-600 text-[11px] mt-2 tracking-widest">
         © {new Date().getFullYear()} Bookiesmasters. All rights reserved.
