@@ -6,6 +6,7 @@ const UserSchema = new mongoose.Schema({
   image: { type: String },
   emailVerified: { type: Date, default: null },
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
+  isVip: { type: Boolean, default: false },
   vipExpiry: { type: Date, default: null },
 }, { timestamps: true, strict: false });
 

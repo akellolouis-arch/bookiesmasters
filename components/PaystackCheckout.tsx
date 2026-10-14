@@ -19,7 +19,7 @@ export default function PaystackCheckout({
   displayText,
   variant = "default",
 }: PaystackCheckoutProps) {
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [verifying, setVerifying] = useState(false);
@@ -67,11 +67,20 @@ export default function PaystackCheckout({
           window.fbq('track', 'Purchase', { currency: currency, value: amount });
         }
         
+        // Trigger NextAuth session refresh
+        if (update) {
+          try {
+            await update();
+          } catch (e) {
+            console.error("Failed to update session:", e);
+          }
+        }
+
         setSuccess(true);
         setTimeout(() => {
           router.push("/pro");
           router.refresh();
-        }, 2000);
+        }, 1500);
       } else {
         setError(data.error || "Payment verification failed. Please contact support.");
       }

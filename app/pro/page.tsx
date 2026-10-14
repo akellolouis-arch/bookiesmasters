@@ -2,6 +2,7 @@ import React from "react";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import mongoose from "mongoose";
+import User from "@/backend/models/User";
 import PremiumTip from "@/backend/models/PremiumTip";
 import Fixture from "@/backend/models/Fixture";
 import { CheckCircle2 } from "lucide-react";
@@ -26,10 +27,35 @@ export default async function ProPage() {
       redirect("/admin");
     }
 
+    // Check live VIP status directly from database to prevent stale NextAuth JWT cookie cache
+    let isVIP = false;
     // @ts-ignore
-    const vipExpiry = session.user.vipExpiry ? new Date(session.user.vipExpiry) : null;
-    // @ts-ignore
-    const isVIP = Boolean(session.user.isVip || (vipExpiry && vipExpiry > new Date()));
+    let vipExpiry: Date | null = session.user.vipExpiry ? new Date(session.user.vipExpiry) : null;
+    const now = new Date();
+
+    if (process.env.MONGO_URI) {
+      try {
+        if (mongoose.connection.readyState !== 1) {
+          await mongoose.connect(process.env.MONGO_URI);
+        }
+        if (session.user.email) {
+          const dbUser = await User.findOne({ email: session.user.email.toLowerCase().trim() }).lean();
+          if (dbUser) {
+            const dbVipExpiry = dbUser.vipExpiry ? new Date(dbUser.vipExpiry) : null;
+            if (dbVipExpiry) vipExpiry = dbVipExpiry;
+            isVIP = Boolean(dbUser.isVip || (dbVipExpiry && dbVipExpiry > now));
+          }
+        }
+      } catch (err) {
+        console.error("⚠️ Error checking live VIP status in /pro:", err);
+      }
+    }
+
+    if (!isVIP) {
+      // Fallback to session token
+      // @ts-ignore
+      isVIP = Boolean(session.user.isVip || (vipExpiry && vipExpiry > now));
+    }
 
     // Today's Kenya YMD date string
     const todayYmd = new Intl.DateTimeFormat("en-CA", {

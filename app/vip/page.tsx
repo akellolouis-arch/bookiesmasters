@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import mongoose from "mongoose";
 import PremiumTip from "@/backend/models/PremiumTip";
+import User from "@/backend/models/User";
 import { Lock, Crown, Clock } from "lucide-react";
 
 export const metadata = {
@@ -20,9 +21,29 @@ export default async function VIPPage() {
   }
 
   // @ts-ignore
-  const vipExpiry = session.user.vipExpiry ? new Date(session.user.vipExpiry) : null;
+  let vipExpiry = session.user.vipExpiry ? new Date(session.user.vipExpiry) : null;
   const now = new Date();
-  const isVIP = vipExpiry && vipExpiry > now;
+  let isVIP = false;
+
+  if (process.env.MONGO_URI && session.user.email) {
+    try {
+      if (mongoose.connection.readyState !== 1) {
+        await mongoose.connect(process.env.MONGO_URI);
+      }
+      const dbUser = await User.findOne({ email: session.user.email.toLowerCase().trim() }).lean();
+      if (dbUser) {
+        const dbVipExpiry = dbUser.vipExpiry ? new Date(dbUser.vipExpiry) : null;
+        if (dbVipExpiry) vipExpiry = dbVipExpiry;
+        isVIP = Boolean(dbUser.isVip || (dbVipExpiry && dbVipExpiry > now));
+      }
+    } catch (err) {
+      console.error("⚠️ Error checking live VIP status in /vip:", err);
+    }
+  }
+
+  if (!isVIP) {
+    isVIP = Boolean(session.user.isVip || (vipExpiry && vipExpiry > now));
+  }
   // @ts-ignore
   const isAdmin = session.user.role === 'admin';
 
