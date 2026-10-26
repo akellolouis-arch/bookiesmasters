@@ -230,7 +230,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 {/* ========================================================================= */}
                 {activeTab === "lineups" && (
                     <div className="bg-white rounded-xl shadow-xs p-3 border border-gray-200 max-w-3xl mx-auto my-3 animate-in fade-in duration-300">
-                        <Lineups lineups={lineupsList} />
+                        <Lineups lineups={lineupsList} injuries={displayInjuries} />
                     </div>
                 )}
 
