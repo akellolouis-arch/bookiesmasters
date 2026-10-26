@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import Footer from "@/components/Footer";
 import DateNavigator from "@/components/DateNavigator";
 import { useState, useEffect, useRef } from "react";
@@ -194,9 +195,10 @@ export default function FixturesList({
                     const scoreStr = match.score ? match.score.replace(" - ", "-") : "-";
 
                     return (
-                      <div
+                      <Link
                         key={match.fixtureId}
-                        className="block bg-white border border-gray-200 rounded-none py-1 px-1.5 sm:py-1.5 sm:px-2 hover:border-gray-300 transition-all duration-300 flex flex-col text-inherit"
+                        href={`/prediction/${match.fixtureId}`}
+                        className="block bg-white border border-gray-200 rounded-none py-1 px-1.5 sm:py-1.5 sm:px-2 hover:border-teal-400 hover:bg-gray-50/70 transition-all duration-300 flex flex-col text-inherit cursor-pointer"
                       >
                         {/* Matchup Header */}
                         <div className="grid grid-cols-[1fr_auto_1fr] items-center w-full mb-1 gap-1">
@@ -267,7 +269,7 @@ export default function FixturesList({
                           {/* RIGHT: EMPTY SPACER (No Prediction) */}
                           <div className="flex-1 flex justify-end" />
                         </div>
-                      </div>
+                      </Link>
                     );
                   })}
                 </div>

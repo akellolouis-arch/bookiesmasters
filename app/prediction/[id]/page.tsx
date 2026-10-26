@@ -21,6 +21,9 @@ interface FixtureDetailData {
     homeTeam: any;
     awayTeam: any;
     h2h: any[];
+    events?: any[];
+    statistics?: any[];
+    lineups?: any[];
 }
 
 

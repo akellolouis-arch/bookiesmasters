@@ -1,17 +1,15 @@
 import Fixture from "../models/Fixture.js";
 import Standing from "../models/Standing.js";
 import { calculateTeamForm } from "../helpers/formCalculator.js";
+import axios from "axios";
 
-
-
-console.log("✅ FixtureService Loaded with AllMatches Logic");
+console.log("✅ FixtureService Loaded with AllMatches & Live Events/Stats Logic");
 
 export const getFixtureById = async (fixtureId) => {
     try {
         const fixtureIdNum = Number(fixtureId);
 
         // Find custom Fixture document
-        // console.log(`🔎 Querying DB for ID: ${fixtureIdNum}`);
         const fixtureDoc = await Fixture.findOne({
             $or: [
                 { fixtureId: fixtureIdNum },
@@ -40,21 +38,13 @@ export const getFixtureById = async (fixtureId) => {
         let awayData = { form: [], last5Matches: [] };
 
         try {
-            // Parallel execution for improvements
             [homeData, awayData] = await Promise.all([
                 calculateTeamForm(matchData.teams.home.id).catch((e) => { console.error("Home Form Error:", e); return homeData; }),
                 calculateTeamForm(matchData.teams.away.id).catch((e) => { console.error("Away Form Error:", e); return awayData; })
             ]);
-
         } catch (err) {
-            // Continue with empty form data
             console.error("Error fetching ancillary stats:", err);
         }
-
-        // Prepare Response Object matching frontend expectations
-        // Logic adapted from prev/helpers/predictionMerger.js
-
-        // 🧠 PREDICTION LOGIC DELETED (Per user request)
 
         // 🔥 LIVE DATA CHECK
         const live = fixtureDoc.livescore;
@@ -64,7 +54,6 @@ export const getFixtureById = async (fixtureId) => {
         let currentGoals = live?.goals || matchData.goals || { home: null, away: null };
 
         // 🛡️ SAFETY FIX: If main status is "NS" (Not Started) or "TBD", IGNORE any stale livescore data
-        // This prevents future games from showing as "HT" or "FT" due to bad caching
         if (matchData.fixture?.status?.short === "NS" || matchData.fixture?.status?.short === "TBD") {
             currentStatus = matchData.fixture.status;
             currentGoals = { home: null, away: null };
@@ -101,6 +90,55 @@ export const getFixtureById = async (fixtureId) => {
             };
         }
 
+        let events = fixtureDoc.events || matchData.events || fixtureDoc.fixture?.events || [];
+        let statistics = fixtureDoc.statistics || matchData.statistics || [];
+        let lineups = fixtureDoc.lineups || matchData.lineups || [];
+
+        // ⚡ ON-DEMAND LIVE / FINISHED STATS & EVENTS (Cached per fixture to protect API limit)
+        const now = new Date();
+        const lastStatsTime = fixtureDoc.lastStatsFetch ? new Date(fixtureDoc.lastStatsFetch).getTime() : 0;
+        const isStatsStale = (now.getTime() - lastStatsTime) > 120_000; // 2 minutes cache
+        const shouldFetchLiveStats = isLive && (events.length === 0 || isStatsStale);
+        const shouldFetchFinishedStats = isFinished && (events.length === 0 || statistics.length === 0);
+
+        if ((shouldFetchLiveStats || shouldFetchFinishedStats) && process.env.API_KEY) {
+            try {
+                const apiRes = await axios.get(`https://v3.football.api-sports.io/fixtures?id=${fixtureIdNum}`, {
+                    headers: { "x-apisports-key": process.env.API_KEY },
+                    timeout: 4000,
+                });
+                const fetchedMatch = apiRes.data?.response?.[0];
+                if (fetchedMatch) {
+                    if (fetchedMatch.events && fetchedMatch.events.length > 0) events = fetchedMatch.events;
+                    if (fetchedMatch.statistics && fetchedMatch.statistics.length > 0) statistics = fetchedMatch.statistics;
+                    if (fetchedMatch.lineups && fetchedMatch.lineups.length > 0) lineups = fetchedMatch.lineups;
+
+                    // Asynchronously persist in Mongo
+                    Fixture.updateOne(
+                        { fixtureId: fixtureIdNum },
+                        {
+                            $set: {
+                                "fixture.events": events,
+                                "events": events,
+                                "statistics": statistics,
+                                "lineups": lineups,
+                                "lastStatsFetch": new Date(),
+                                ...(isLive && fetchedMatch.fixture?.status ? {
+                                    "fixture.fixture.status": fetchedMatch.fixture.status,
+                                    "fixture.goals": fetchedMatch.goals,
+                                    "fixture.score": fetchedMatch.score,
+                                    "livescore": fetchedMatch.score,
+                                    "lastLiveUpdate": new Date(),
+                                } : {})
+                            }
+                        }
+                    ).catch(e => console.error("Async fixture enrichment update error:", e.message));
+                }
+            } catch (err) {
+                console.warn(`⚠️ On-demand stats fetch skipped for fixture ${fixtureIdNum}:`, err.message);
+            }
+        }
+
         const response = {
             fixtureId: matchData.fixture.id,
             leagueId: matchData.league.id,
@@ -114,9 +152,6 @@ export const getFixtureById = async (fixtureId) => {
             venue: matchData.fixture.venue?.name || "Unknown venue",
 
             tip: fixtureDoc.predictionTip !== "NONE" ? fixtureDoc.predictionTip : null,
-
-            // DEBUG: Log counts
-            // console.log(`[FixtureService] Home Matches: ${homeData.allMatches?.length}, Away Matches: ${awayData.allMatches?.length}`);
 
             homeTeam: {
                 id: matchData.teams.home.id,
@@ -136,19 +171,14 @@ export const getFixtureById = async (fixtureId) => {
                 allMatches: awayData.allMatches || [], // Full history (20)
             },
 
-
-
             h2h: h2hData,
 
-            // Odds removed per user request
-
-            // Rich Data
-            lineups: fixtureDoc.lineups || matchData.lineups || [],
+            // Rich Live & Match Data
+            events: events,
+            lineups: lineups,
             injuries: fixtureDoc.injuries || [],
-            statistics: fixtureDoc.statistics || [],
+            statistics: statistics,
         };
-
-
 
         // Fetch Standings
         const standingsDoc = await Standing.findOne({
@@ -159,7 +189,6 @@ export const getFixtureById = async (fixtureId) => {
         // Add standings to response
         response.standings = standingsDoc ? standingsDoc.standings : [];
 
-        // No VIP logic anymore
         response.isVip = false;
 
         return response;
@@ -198,4 +227,3 @@ export const getTopTrends = async () => {
         throw error;
     }
 };
-

@@ -11,6 +11,7 @@ const FixtureSchema = new mongoose.Schema(
     h2h: { type: Array, default: [] },
 
     // Rich Data
+    events: { type: Array, default: [] },
     lineups: { type: Array, default: [] },
     injuries: { type: Array, default: [] },
     statistics: { type: Array, default: [] },
@@ -18,6 +19,7 @@ const FixtureSchema = new mongoose.Schema(
     // Live-only data
     livescore: { type: Object, default: null },
     lastLiveUpdate: { type: Date, default: null },
+    lastStatsFetch: { type: Date, default: null },
 
   },
   { timestamps: true, strict: false }
@@ -27,9 +29,7 @@ const FixtureSchema = new mongoose.Schema(
     🔥 ESSENTIAL INDEXES FOR PERFORMANCE
 -------------------------------------------------- */
 
-// 1️⃣ Unique lookup for updates
-// 1️⃣ Unique lookup for updates
-// FixtureSchema.index({ fixtureId: 1 }, { unique: true });  <-- Handled by schema definition
+// 1️⃣ Unique lookup for updates handled by schema definition
 
 // 2️⃣ Index on API-Football's nested fixture.id
 FixtureSchema.index({ "fixture.fixture.id": 1 });
@@ -44,7 +44,7 @@ FixtureSchema.index({ "fixture.league.id": 1 });
 FixtureSchema.index({ "fixture.teams.home.id": 1, "fixture.fixture.date": -1 });
 FixtureSchema.index({ "fixture.teams.away.id": 1, "fixture.fixture.date": -1 });
 
-// 5️⃣ Index on updatedAt to quickly fetch latest items
+// 6️⃣ Index on updatedAt to quickly fetch latest items
 FixtureSchema.index({ updatedAt: -1 });
 
 export default mongoose.models.Fixture || mongoose.model("Fixture", FixtureSchema);

@@ -75,6 +75,8 @@ export async function pollLiveScores() {
                             "fixture.fixture.status": match.fixture.status,
                             "fixture.goals": match.goals,
                             "fixture.score": match.score,
+                            "fixture.events": match.events || [],
+                            "events": match.events || [],
                             "status": match.fixture.status.short, // redundant cache field
                             "livescore": match.score,
                             "lastLiveUpdate": new Date()
@@ -128,6 +130,8 @@ export async function pollLiveScores() {
                                         "fixture.fixture.status": match.fixture.status,
                                         "fixture.goals": match.goals,
                                         "fixture.score": match.score,
+                                        "fixture.events": match.events || [],
+                                        "events": match.events || [],
                                         "status": match.fixture.status.short,
                                         "livescore": match.score,
                                         "lastLiveUpdate": new Date()
@@ -264,6 +268,10 @@ export async function pollLiveScores() {
                                     "fixture.fixture.status": match.fixture.status,
                                     "fixture.goals": match.goals,
                                     "fixture.score": match.score,
+                                    "fixture.events": match.events || [],
+                                    "events": match.events || [],
+                                    "statistics": match.statistics || [],
+                                    "lineups": match.lineups || [],
                                     "status": match.fixture.status.short,
                                     "livescore": match.score,
                                     "lastLiveUpdate": new Date()
