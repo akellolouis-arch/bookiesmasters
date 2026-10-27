@@ -1,13 +1,14 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import FixtureCard from "@/components/FixtureCard";
 import Loader from "@/components/Loader";
 import Footer from "@/components/Footer";
 import DateNavigator from "@/components/DateNavigator";
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
-import { Calendar } from "lucide-react";
+import { Calendar, ChevronRight } from "lucide-react";
 
 export interface Team {
   id: number;
@@ -172,28 +173,34 @@ export default function PredictionsList({
               let globalIdx = 0;
               return safeData.map((league, idx) => (
                 <div key={league.id || idx}>
-                  <div className="flex items-center gap-1 bg-gray-100 py-0.5 px-0.5 shadow-md border border-gray-200 border-b-0">
-                    <div className="flex items-center gap-1 w-full">
+                  {/* League Header */}
+                  <Link
+                    href={league.id ? `/league/${league.id}` : "#"}
+                    className="flex items-center justify-between gap-1 bg-gray-100 hover:bg-gray-200/80 py-1 px-1 shadow-xs border border-gray-200 border-b-0 transition-colors group cursor-pointer"
+                    title={`View ${league.name} standings, fixtures & top scorers`}
+                  >
+                    <div className="flex items-center gap-1.5 w-full min-w-0">
                       {league.logo && (
                         <Image
                           src={league.logo}
                           alt={league.name}
                           width={16}
                           height={16}
-                          className="w-4 h-4 flex-shrink-0 drop-shadow-md"
+                          className="w-4 h-4 flex-shrink-0 drop-shadow-xs"
                           unoptimized
                         />
                       )}
                       <div className="flex flex-col truncate w-full leading-tight">
-                        <span className="font-medium text-[11px] text-teal-700 tracking-wide truncate drop-shadow-sm">
+                        <span className="font-bold text-[11px] text-teal-800 tracking-wide truncate group-hover:text-teal-900 transition-colors">
                           {league.name}
                         </span>
-                        <span className="text-[9px] text-gray-600 font-normal capitalize tracking-wider truncate">
-                          {league.country.toLowerCase()}
+                        <span className="text-[9px] text-gray-500 font-normal capitalize tracking-wider truncate">
+                          {league.country?.toLowerCase()}
                         </span>
                       </div>
                     </div>
-                  </div>
+                    <ChevronRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-teal-700 transition-colors flex-shrink-0 mr-0.5" />
+                  </Link>
 
                   <div className="flex flex-col">
                     {league.matches.map((fixture) => {

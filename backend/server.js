@@ -9,6 +9,7 @@ import {
 import cors from "cors";         // ⭐ IMPORTANT
 import fixtureRoutes from "./routes/fixtureRoutes.js";
 import predictionsRoutes from "./routes/predictionsRoutes.js";
+import leagueRoutes from "./routes/leagueRoutes.js";
 import { startDailyScheduler } from "./services/dailyUpdateService.js";
 import { startLiveService } from "./services/liveScoreService.js";
 // import { startStandingsPoller } from "./services/standingsPollingService.js";
@@ -61,6 +62,7 @@ app.use("/api", (req, res, next) => {
 // ---------------------------------------------
 app.use("/api/fixtures", fixtureRoutes);
 app.use("/api/predictions", predictionsRoutes);
+app.use("/api/leagues", leagueRoutes);
 // app.use("/api/webhooks", webhookRoutes); // Webhooks disabled due to payment removal
 
 // ---------------------------------------------

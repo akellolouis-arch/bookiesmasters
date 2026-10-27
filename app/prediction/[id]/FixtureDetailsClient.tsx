@@ -15,7 +15,7 @@ import MatchEvents from "@/components/fixture-details/MatchEvents";
 import Statistics from "@/components/fixture-details/Statistics";
 import Lineups from "@/components/fixture-details/Lineups";
 import Footer from "@/components/Footer";
-import { Activity, BarChart2, Users, FileText, Trophy } from "lucide-react";
+import { Activity, BarChart2, Users, FileText, Trophy, ChevronRight } from "lucide-react";
 
 type FixtureDetailsData = {
     fixtureId: number;
@@ -102,8 +102,12 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
         <div className="text-gray-900 pt-0 pb-4 px-2 sm:px-4">
             <div className="max-w-5xl mx-auto">
                 {/* --- LEAGUE HEADER --- */}
-                <div className="flex items-center gap-1 bg-gray-100 py-0.5 px-0.5 shadow-xs border border-gray-200 border-b-0 max-w-4xl mx-auto mb-2">
-                    <div className="flex items-center gap-1 w-full max-w-4xl mx-auto">
+                <Link
+                    href={data.leagueId ? `/league/${data.leagueId}` : "#"}
+                    className="flex items-center justify-between gap-1 bg-gray-100 hover:bg-gray-200/80 py-1 px-1.5 shadow-xs border border-gray-200 border-b-0 max-w-4xl mx-auto mb-2 transition-colors group cursor-pointer"
+                    title={`View ${data.league} standings, fixtures & top scorers`}
+                >
+                    <div className="flex items-center gap-1.5 w-full max-w-4xl min-w-0">
                         {data.leagueLogo && (
                             <img
                                 src={data.leagueLogo}
@@ -112,15 +116,16 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                             />
                         )}
                         <div className="flex flex-col truncate w-full leading-tight">
-                            <span className="font-medium text-[11px] text-teal-700 tracking-wide truncate">
+                            <span className="font-bold text-[11px] text-teal-800 tracking-wide truncate group-hover:text-teal-900 transition-colors">
                                 {data.league}
                             </span>
-                            <span className="text-[9px] text-gray-600 font-normal capitalize tracking-wider truncate">
+                            <span className="text-[9px] text-gray-500 font-normal capitalize tracking-wider truncate">
                                 {data.country?.toLowerCase()}
                             </span>
                         </div>
                     </div>
-                </div>
+                    <ChevronRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-teal-700 transition-colors flex-shrink-0 mr-0.5" />
+                </Link>
 
                 {/* --- TEAM DISPLAY & SCORE --- */}
                 <TeamDisplay
