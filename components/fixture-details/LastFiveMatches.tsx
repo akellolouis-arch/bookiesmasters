@@ -1,20 +1,21 @@
+"use client";
 
 import React, { useState } from "react";
 
 interface LastMatch {
-    date: string;
-    homeTeam: { name: string; logo?: string };
-    awayTeam: { name: string; logo?: string };
-    score: { home: number; away: number };
-    result: "W" | "L" | "D";
-    color: string;
-    league?: { id: number; name: string; logo?: string };
+    date?: string;
+    homeTeam?: { name?: string; logo?: string };
+    awayTeam?: { name?: string; logo?: string };
+    score?: { home?: number | null; away?: number | null };
+    result?: "W" | "L" | "D" | string;
+    color?: string;
+    league?: { id?: number; name?: string; logo?: string };
 }
 
 interface LastFiveMatchesProps {
     teamLogo?: string;
     teamName: string;
-    matches: LastMatch[]; // Now contains 20 matches
+    matches: LastMatch[];
     subTitle?: string;
 }
 
@@ -22,7 +23,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
     const [showAll, setShowAll] = useState(false);
     const [activeLeagueId, setActiveLeagueId] = useState<number | "All">("All");
 
-    if (!matches || matches.length === 0) {
+    if (!matches || !Array.isArray(matches) || matches.length === 0) {
         return (
             <div className="mb-4 w-full text-center">
                 <div className="text-gray-500 text-xs uppercase tracking-widest mb-2">{teamName}</div>
@@ -31,56 +32,28 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
         );
     }
 
-    // Extract unique leagues
+    const safeMatches = matches.filter(Boolean);
+
+    // Extract unique leagues safely
     const uniqueLeagues = Array.from(
         new Map(
-            matches
-                .filter(m => m.league)
+            safeMatches
+                .filter(m => m?.league?.id && m?.league?.name)
                 .map(m => [m.league!.id, m.league])
         ).values()
     ) as { id: number; name: string; logo?: string }[];
 
     // Filter matches by selected league
     const filteredMatches = activeLeagueId === "All" 
-        ? matches 
-        : matches.filter(m => m.league && m.league.id === activeLeagueId);
+        ? safeMatches 
+        : safeMatches.filter(m => m?.league && m.league.id === activeLeagueId);
 
     // Determine matches to show: first 5 or all
     const visibleMatches = showAll ? filteredMatches : filteredMatches.slice(0, 5);
     const hasMore = filteredMatches.length > 5;
 
-    // Calculate Form Summary
-    const totalMatches = visibleMatches.length;
-    let wins = 0, draws = 0, losses = 0;
-    visibleMatches.forEach(m => {
-        if (m.result === "W") wins++;
-        else if (m.result === "D") draws++;
-        else if (m.result === "L") losses++;
-    });
-
-    const winPct = totalMatches ? Math.round((wins / totalMatches) * 100) : 0;
-    const drawPct = totalMatches ? Math.round((draws / totalMatches) * 100) : 0;
-    const lossPct = totalMatches ? Math.round((losses / totalMatches) * 100) : 0;
-
     return (
         <div className="mb-2 w-full animate-in fade-in duration-500">
-            {/* 🏆 Title + Team Logo (Handled by Parent)
-            <div className={`flex flex-col mb-2 border-b border-gray-300 pb-1 items-center`}>
-                <div className={`flex items-center gap-2 justify-center`}>
-                    {teamLogo && (
-                        <img
-                            src={teamLogo}
-                            alt={`${teamName} Logo`}
-                            className="w-6 h-6 object-contain"
-                        />
-                    )}
-                    <h4 className="text-xs font-bold text-gray-600 tracking-wide capitalize">
-                        {teamName} {subTitle && <span className="text-gray-600 font-normal ml-1">({subTitle})</span>}
-                    </h4>
-                </div>
-            </div>
-            */}
-
             {/* 🏷️ League Filter Tabs */}
             {uniqueLeagues.length > 0 && (
                 <div className="flex items-center justify-start gap-1 mb-3 overflow-x-auto no-scrollbar pb-1 px-1">
@@ -98,7 +71,7 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                         <button
                             key={league.id}
                             onClick={() => { setActiveLeagueId(league.id); setShowAll(false); }}
-                            className={`px-1 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+                            className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors flex items-center gap-1 ${
                                 activeLeagueId === league.id
                                     ? "bg-gray-300 text-gray-900 shadow-sm"
                                     : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800"
@@ -113,19 +86,33 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
             {/* 🏟️ Matches List */}
             <div className="flex flex-col">
                 {visibleMatches.map((m, i) => {
-                    const matchDateObj = new Date(m.date);
-                    const monthDay = matchDateObj.toLocaleDateString("en-US", {
-                        month: "2-digit",
-                        day: "2-digit",
-                    });
-                    const year = matchDateObj.getFullYear();
+                    let monthDay = "";
+                    let year = "";
+                    try {
+                        if (m?.date) {
+                            const matchDateObj = new Date(m.date);
+                            if (!isNaN(matchDateObj.getTime())) {
+                                monthDay = matchDateObj.toLocaleDateString("en-US", {
+                                    month: "2-digit",
+                                    day: "2-digit",
+                                });
+                                year = String(matchDateObj.getFullYear());
+                            }
+                        }
+                    } catch {
+                        // ignore
+                    }
 
                     const isEven = i % 2 === 0;
                     const bgClass = isEven ? "bg-gray-50" : "bg-white";
                     const hoverClass = isEven ? "hover:bg-[#151515]" : "hover:bg-[#282828]";
 
-                    const homeWinner = m.score.home > m.score.away;
-                    const awayWinner = m.score.away > m.score.home;
+                    const homeScore = m?.score?.home ?? "-";
+                    const awayScore = m?.score?.away ?? "-";
+                    const homeWinner = typeof homeScore === "number" && typeof awayScore === "number" && homeScore > awayScore;
+                    const awayWinner = typeof homeScore === "number" && typeof awayScore === "number" && awayScore > homeScore;
+                    const homeName = m?.homeTeam?.name || "Home";
+                    const awayName = m?.awayTeam?.name || "Away";
 
                     return (
                         <div
@@ -140,9 +127,9 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
 
                             {/* 2️⃣ Home Team */}
                             <div className="flex items-center justify-end gap-1.5 flex-1 min-w-0 pr-3">
-                                <span className={`font-medium text-[11px] sm:text-[12px] truncate text-right px-1 ${homeWinner ? 'text-gray-900 drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-800'}`}>{m.homeTeam.name}</span>
-                                {m.homeTeam.logo && (
-                                    <img src={m.homeTeam.logo} alt={m.homeTeam.name} className="w-4 h-4 object-contain flex-shrink-0" />
+                                <span className={`font-medium text-[11px] sm:text-[12px] truncate text-right px-1 ${homeWinner ? 'text-gray-900 drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-800'}`}>{homeName}</span>
+                                {m?.homeTeam?.logo && (
+                                    <img src={m.homeTeam.logo} alt={homeName} className="w-4 h-4 object-contain flex-shrink-0" />
                                 )}
                             </div>
 
@@ -150,11 +137,11 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                             <div className="flex flex-col items-center justify-center shrink-0 w-14">
                                 <span
                                     className="w-full text-center px-1.5 py-0.5 rounded font-bold text-[10px] sm:text-[11px]"
-                                    style={{ backgroundColor: m.color, color: m.result === "D" ? "#7c2d12" : (m.result === "W" ? "#14532d" : "#7f1d1d") }}
+                                    style={{ backgroundColor: m?.color || "#e5e7eb", color: m?.result === "D" ? "#7c2d12" : (m?.result === "W" ? "#14532d" : "#7f1d1d") }}
                                 >
-                                    {m.score.home} - {m.score.away}
+                                    {homeScore} - {awayScore}
                                 </span>
-                                {(m as any).score?.halftime && (m as any).score.halftime.home !== null && (m as any).score.halftime.away !== null && (
+                                {(m as any)?.score?.halftime && (m as any).score.halftime.home !== null && (m as any).score.halftime.away !== null && (
                                     <span className="text-[11px] text-gray-500 mt-0.5 font-medium tracking-wide">
                                         {(m as any).score.halftime.home}-{(m as any).score.halftime.away}
                                     </span>
@@ -162,14 +149,14 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                             </div>
 
                             <div className="flex items-center justify-start gap-1.5 min-w-0 pl-3 pr-1 flex-1">
-                                {m.awayTeam.logo && (
-                                    <img src={m.awayTeam.logo} alt={m.awayTeam.name} className="w-4 h-4 object-contain flex-shrink-0" />
+                                {m?.awayTeam?.logo && (
+                                    <img src={m.awayTeam.logo} alt={awayName} className="w-4 h-4 object-contain flex-shrink-0" />
                                 )}
-                                <span className={`font-medium text-[11px] sm:text-[12px] truncate text-left px-1 ${awayWinner ? 'text-gray-900 drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-800'}`}>{m.awayTeam.name}</span>
+                                <span className={`font-medium text-[11px] sm:text-[12px] truncate text-left px-1 ${awayWinner ? 'text-gray-900 drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-800'}`}>{awayName}</span>
                             </div>
 
-                            {/* 5️⃣ League Short Name (Optional visual flair based on user reference) */}
-                            {m.league && (
+                            {/* 5️⃣ League Short Name */}
+                            {m?.league?.name && (
                                 <div className="hidden sm:flex flex-col items-end justify-center w-8 shrink-0 opacity-40 ml-auto">
                                     <span className="text-[10px] font-bold tracking-wider uppercase whitespace-nowrap overflow-hidden text-ellipsis max-w-[40px]" title={m.league.name}>
                                         {m.league.name.substring(0, 3)}
@@ -181,42 +168,12 @@ const LastFiveMatches: React.FC<LastFiveMatchesProps> = ({ teamLogo, teamName, m
                 })}
             </div>
 
-            {/* 📊 Form Summary 
-            {totalMatches > 0 && (
-                <div className="mt-3 px-2 mb-2">
-                    <div className="w-full h-1.5 flex rounded-full overflow-hidden mb-3">
-                        <div className="flex-1 bg-green-500 h-full" />
-                        <div className="flex-1 bg-yellow-500 h-full" />
-                        <div className="flex-1 bg-red-500 h-full" />
-                    </div>
-                    
-                    <div className="flex justify-between text-center px-4 md:px-8">
-                        <div className="flex flex-col items-center">
-                            <span className="text-gray-800 text-xs font-bold mb-1">Win {wins}</span>
-                            <span className="text-gray-600 text-xs mb-1">{winPct}%</span>
-                            <div className="w-8 h-1 bg-green-500 rounded-full" />
-                        </div>
-                        <div className="flex flex-col items-center">
-                            <span className="text-gray-800 text-xs font-bold mb-1">Draw {draws}</span>
-                            <span className="text-gray-600 text-xs mb-1">{drawPct}%</span>
-                            <div className="w-8 h-1 bg-yellow-500 rounded-full" />
-                        </div>
-                        <div className="flex flex-col items-center">
-                            <span className="text-gray-800 text-xs font-bold mb-1">Lost {losses}</span>
-                            <span className="text-gray-600 text-xs mb-1">{lossPct}%</span>
-                            <div className="w-8 h-1 bg-red-500 rounded-full" />
-                        </div>
-                    </div>
-                </div>
-            )}
-            */}
-
             {/* Show More Button */}
             {(hasMore || showAll) && (
                 <div className="flex justify-center mt-3 mb-1">
                     <button
                         onClick={() => setShowAll(!showAll)}
-                        className="px-4 py-1.5 text-[10px] sm:text-xs font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 hover:text-gray-900 rounded-full transition-all"
+                        className="px-4 py-1.5 text-[10px] sm:text-xs font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 hover:text-gray-900 rounded-full transition-all cursor-pointer"
                     >
                         {showAll ? "View less" : "View all"}
                     </button>

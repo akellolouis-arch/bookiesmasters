@@ -333,7 +333,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                         )}
 
                         {/* --- BTTS STATISTICS SECTION --- */}
-                        {hasAnyMatches && (
+                        {hasAnyMatches && data?.homeTeam && data?.awayTeam && (
                             <div className="mt-2">
                                 <BTTSStatistics homeTeam={data.homeTeam} awayTeam={data.awayTeam} />
                             </div>
@@ -365,15 +365,15 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                                     <div className="space-y-2">
                                         <div className="flex justify-between items-center px-1">
                                             <div className="flex items-center gap-2">
-                                                {data.homeTeam.logo && (
+                                                {data?.homeTeam?.logo && (
                                                     <img
                                                         src={data.homeTeam.logo}
-                                                        alt={data.homeTeam.name}
+                                                        alt={data?.homeTeam?.name || "Home"}
                                                         className="w-5 h-5 object-contain"
                                                     />
                                                 )}
                                                 <span className="text-[10px] sm:text-[11px] font-bold text-gray-800 uppercase truncate max-w-[150px]">
-                                                    {data.homeTeam.name}
+                                                    {data?.homeTeam?.name || "Home"}
                                                 </span>
                                             </div>
                                             <div className="flex gap-1 bg-gray-100 p-0.5 rounded border border-gray-300 shadow-xs">
@@ -400,8 +400,8 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                                             </div>
                                         </div>
                                         <LastFiveMatches
-                                            teamName={data.homeTeam.name}
-                                            teamLogo={data.homeTeam.logo}
+                                            teamName={data?.homeTeam?.name || "Home"}
+                                            teamLogo={data?.homeTeam?.logo}
                                             matches={homeTab === "all" ? homeMatches : homeHomeMatches}
                                         />
                                     </div>
@@ -412,15 +412,15 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                                     <div className="space-y-2 mt-4">
                                         <div className="flex justify-between items-center px-1">
                                             <div className="flex items-center gap-2">
-                                                {data.awayTeam.logo && (
+                                                {data?.awayTeam?.logo && (
                                                     <img
                                                         src={data.awayTeam.logo}
-                                                        alt={data.awayTeam.name}
+                                                        alt={data?.awayTeam?.name || "Away"}
                                                         className="w-5 h-5 object-contain"
                                                     />
                                                 )}
                                                 <span className="text-[10px] sm:text-[11px] font-bold text-gray-800 uppercase truncate max-w-[150px]">
-                                                    {data.awayTeam.name}
+                                                    {data?.awayTeam?.name || "Away"}
                                                 </span>
                                             </div>
                                             <div className="flex gap-1 bg-gray-100 p-0.5 rounded border border-gray-300 shadow-xs">
@@ -447,8 +447,8 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                                             </div>
                                         </div>
                                         <LastFiveMatches
-                                            teamName={data.awayTeam.name}
-                                            teamLogo={data.awayTeam.logo}
+                                            teamName={data?.awayTeam?.name || "Away"}
+                                            teamLogo={data?.awayTeam?.logo}
                                             matches={awayTab === "all" ? awayMatches : awayAwayMatches}
                                         />
                                     </div>
@@ -457,7 +457,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                         )}
 
                         {/* --- STANDINGS SECTION --- */}
-                        {data.standings && data.standings.length > 0 && (
+                        {data?.standings && data.standings.length > 0 && (
                             <div className="mt-2">
                                 <div className="flex justify-center mb-3">
                                     <h3 className="inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-1 bg-gray-100 backdrop-blur-sm border border-gray-300 text-teal-700 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-bold shadow-xs tracking-wide uppercase">
@@ -467,8 +467,8 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                                 <div>
                                     <Standings
                                         standings={data.standings || []}
-                                        homeTeamId={data.homeTeam.id}
-                                        awayTeamId={data.awayTeam.id}
+                                        homeTeamId={data?.homeTeam?.id}
+                                        awayTeamId={data?.awayTeam?.id}
                                     />
                                 </div>
                             </div>

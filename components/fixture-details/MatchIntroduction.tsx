@@ -1,10 +1,10 @@
 import React from 'react';
 
 interface MatchData {
-    homeTeam?: { name: string; id: number };
-    awayTeam?: { name: string; id: number };
-    score?: { home: number | null; away: number | null };
-    goals?: { home: number | null; away: number | null };
+    homeTeam?: { name?: string; id?: number };
+    awayTeam?: { name?: string; id?: number };
+    score?: { home?: number | null; away?: number | null };
+    goals?: { home?: number | null; away?: number | null };
 }
 
 interface MatchIntroductionProps {
@@ -38,7 +38,10 @@ const MatchIntroduction: React.FC<MatchIntroductionProps> = ({
     padding = "p-2 sm:p-3",
     margin = "mb-2"
 }) => {
-    const calculateFormAndStats = (matches: MatchData[], limit: number, teamName: string) => {
+    const calculateFormAndStats = (matches: MatchData[] = [], limit: number, teamName: string) => {
+        if (!Array.isArray(matches)) {
+            return { total: 0, wins: 0, losses: 0, draws: 0, over15: 0, under15: 0, over25: 0, under25: 0, over35: 0, under35: 0, btts: 0 };
+        }
         const recent = matches.slice(0, limit);
         let total = 0;
         let wins = 0, losses = 0, draws = 0;
@@ -48,6 +51,7 @@ const MatchIntroduction: React.FC<MatchIntroductionProps> = ({
         let btts = 0;
 
         recent.forEach((m) => {
+            if (!m) return;
             const hGoals = m.score?.home ?? m.goals?.home;
             const aGoals = m.score?.away ?? m.goals?.away;
             
@@ -59,7 +63,6 @@ const MatchIntroduction: React.FC<MatchIntroductionProps> = ({
                 if (tg > 3.5) over35++; else under35++;
                 if (hGoals > 0 && aGoals > 0) btts++;
 
-                // If m.homeTeam is undefined, it might be an older/simpler data format where we can't reliably determine wins/losses.
                 if (m.homeTeam?.name === teamName) {
                     if (hGoals > aGoals) wins++;
                     else if (hGoals < aGoals) losses++;
@@ -85,7 +88,8 @@ const MatchIntroduction: React.FC<MatchIntroductionProps> = ({
 
     // 2. Logic-Driven Narrative
     let narrative = "";
-    const displayTip = computedTip.replace(" Goals", "");
+    const safeTip = (computedTip || "").toString();
+    const displayTip = safeTip.replace(" Goals", "");
 
     if (displayTip === "1" || displayTip === "HOME WIN") {
         narrative = `${homeTeamName} has won ${homeStats.wins} of their last ${homeStats.total} matches, while ${awayTeamName} has lost ${awayStats.losses} of their last ${awayStats.total} matches.`;
@@ -98,71 +102,43 @@ const MatchIntroduction: React.FC<MatchIntroductionProps> = ({
     } else if (displayTip === "BTTS" || displayTip === "GG") {
         narrative = `${homeTeamName} has seen both teams score and over 2.5 goals in ${Math.min(homeStats.btts, homeStats.over25)} of their last ${homeStats.total} matches, while ${awayTeamName} has seen both teams score and over 2.5 goals in ${Math.min(awayStats.btts, awayStats.over25)} of their last ${awayStats.total} matches.`;
     } else if (displayTip === "UN3.5" || displayTip === "Under 3.5") {
-        narrative = `${homeTeamName} has seen under 2.5 goals in ${homeStats.under25} of their last ${homeStats.total} matches, while ${awayTeamName} has seen under 2.5 goals in ${awayStats.under25} of their last ${awayStats.total} matches.`;
+        narrative = `${homeTeamName} has seen under 3.5 goals in ${homeStats.under35} of their last ${homeStats.total} matches, while ${awayTeamName} has seen under 3.5 goals in ${awayStats.under35} of their last ${awayStats.total} matches.`;
     } else if (displayTip === "OV1.5" || displayTip === "Over 1.5") {
-        narrative = `${homeTeamName} has seen over 2.5 goals in ${homeStats.over25} of their last ${homeStats.total} matches, while ${awayTeamName} has seen over 2.5 goals in ${awayStats.over25} of their last ${awayStats.total} matches.`;
+        narrative = `${homeTeamName} has seen over 1.5 goals in ${homeStats.over15} of their last ${homeStats.total} matches, while ${awayTeamName} has seen over 1.5 goals in ${awayStats.over15} of their last ${awayStats.total} matches.`;
     } else {
-        if (homeStats.total > 0) {
-            narrative = `This matchup will test both teams' recent form, as ${homeTeamName} and ${awayTeamName} look to establish dominance.`;
+        if (homeStats.wins > awayStats.wins && homeStats.wins >= 3) {
+            narrative = `${homeTeamName} enters in stronger recent form, picking up ${homeStats.wins} wins in their last 5 fixtures compared to ${awayTeamName}'s ${awayStats.wins}.`;
+        } else if (awayStats.wins > homeStats.wins && awayStats.wins >= 3) {
+            narrative = `${awayTeamName} heads into this clash in confident form, securing ${awayStats.wins} victories in their last 5 outings compared to ${homeTeamName}'s ${homeStats.wins}.`;
+        } else if (homeStats.btts >= 3 || awayStats.btts >= 3) {
+            narrative = `Recent patterns suggest lively goalmouth action, with both teams frequently getting on the scoresheet in their respective recent schedules.`;
+        } else {
+            narrative = `Both sides will be keen to impose their tactical style and claim vital points in this evenly balanced encounter.`;
         }
     }
 
-    let formattedTip = computedTip;
-    if (computedTip === "1") formattedTip = "HOME WIN";
-    else if (computedTip === "2") formattedTip = "AWAY WIN";
-    else if (computedTip === "UN2.5") formattedTip = "UNDER 2.5 GOALS";
-    else if (computedTip === "OV2.5") formattedTip = "OVER 2.5 GOALS";
-    else if (computedTip === "UN3.5") formattedTip = "UNDER 3.5 GOALS";
-    else if (computedTip === "OV1.5") formattedTip = "OVER 1.5 GOALS";
-
-    // 3. Color Logic for the UI
-    let predictionColorClass = "text-teal-400"; // fallback
-    if (computedTip && status) {
-        const isFinished = ["FT", "AET", "PEN"].includes(status);
-        const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE"].includes(status);
-        
-        if (!isFinished && !isLive) {
-            predictionColorClass = "text-orange-300";
-        } else if (isFinished && score && score.home !== null && score.away !== null) {
-            const totalGoals = score.home + score.away;
-            let isWon = false;
-            let isValidTip = false;
-            
-            if (displayTip === "OV1.5" || displayTip === "Over 1.5") {
-                isWon = totalGoals > 1.5;
-                isValidTip = true;
-            } else if (displayTip === "UN3.5" || displayTip === "Under 3.5") {
-                isWon = totalGoals < 3.5;
-                isValidTip = true;
-            } else if (displayTip === "OV2.5" || displayTip === "Over 2.5") {
-                isWon = totalGoals > 2.5;
-                isValidTip = true;
-            } else if (displayTip === "UN2.5" || displayTip === "Under 2.5") {
-                isWon = totalGoals < 2.5;
-                isValidTip = true;
-            } else if (displayTip === "BTTS" || displayTip === "GG") {
-                isWon = score.home > 0 && score.away > 0;
-                isValidTip = true;
-            } else if (displayTip === "1" || displayTip === "HOME WIN") {
-                isWon = score.home > score.away;
-                isValidTip = true;
-            } else if (displayTip === "2" || displayTip === "AWAY WIN") {
-                isWon = score.away > score.home;
-                isValidTip = true;
-            }
-            
-            if (isValidTip) {
-                predictionColorClass = isWon ? "text-[#22c55e]" : "text-[#ef4444]";
-            }
+    // 3. Status/Live/Finished Dynamic Hook
+    let statusHook = "";
+    if (status === "FT" || status === "AET" || status === "PEN") {
+        if (score && score.home !== null && score.away !== null) {
+            statusHook = ` This fixture concluded with a final score of ${score.home} - ${score.away}.`;
+        } else {
+            statusHook = ` This match has concluded.`;
+        }
+    } else if (["1H", "HT", "2H", "ET", "BT", "P", "LIVE"].includes(status || "")) {
+        if (score && score.home !== null && score.away !== null) {
+            statusHook = ` Match is currently live (${score.home} - ${score.away}).`;
+        } else {
+            statusHook = ` Match is currently underway.`;
         }
     }
-
-    const fullNarrative = [baseSentence, narrative].filter(Boolean).join(" ");
 
     return (
-        <div className={`${bg} ${rounded} ${padding} ${margin} shadow-sm flex items-start gap-2 animate-in fade-in duration-500`}>
-            <p className="text-[11px] sm:text-[12px] font-medium text-gray-700 leading-relaxed text-justify">
-                {fullNarrative}
+        <div className={`w-full ${bg} ${rounded} ${padding} ${margin} border border-gray-200 shadow-xs animate-in fade-in duration-300`}>
+            <p className="text-[11px] sm:text-[12px] text-gray-700 leading-relaxed font-normal">
+                <span className="font-semibold text-gray-900">{baseSentence}</span>{" "}
+                <span>{narrative}</span>
+                {statusHook && <span className="font-medium text-teal-800">{statusHook}</span>}
             </p>
         </div>
     );

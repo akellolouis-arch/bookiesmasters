@@ -1,32 +1,33 @@
+"use client";
 
 import React from "react";
 
 interface MatchTeam {
-    id: number;
-    name: string;
-    logo: string;
-    winner: boolean | null;
+    id?: number;
+    name?: string;
+    logo?: string;
+    winner?: boolean | null;
 }
 
 interface MatchGoals {
-    home: number | null;
-    away: number | null;
+    home?: number | null;
+    away?: number | null;
 }
 
 interface H2HMatch {
-    fixture: {
-        id: number;
-        date: string;
-        status: { short: string; long: string };
+    fixture?: {
+        id?: number;
+        date?: string;
+        status?: { short?: string; long?: string };
     };
-    teams: {
-        home: MatchTeam;
-        away: MatchTeam;
+    teams?: {
+        home?: MatchTeam;
+        away?: MatchTeam;
     };
-    goals: MatchGoals;
-    score: {
-        halftime: MatchGoals;
-        fulltime: MatchGoals;
+    goals?: MatchGoals;
+    score?: {
+        halftime?: MatchGoals;
+        fulltime?: MatchGoals;
     };
 }
 
@@ -35,91 +36,93 @@ interface H2HSectionProps {
 }
 
 const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
-    if (!h2h || h2h.length === 0)
+    if (!h2h || !Array.isArray(h2h) || h2h.length === 0)
         return <p className="text-center text-gray-600 mb-6">No H2H data available</p>;
 
-    const visibleMatches = h2h.slice(0, 5);
+    const validMatches = h2h.filter(Boolean);
+    if (validMatches.length === 0)
+        return <p className="text-center text-gray-600 mb-6">No H2H data available</p>;
+
+    const visibleMatches = validMatches.slice(0, 5);
 
     // Calculate Stats
-    const teamA = h2h[0].teams.home.name;
-    const teamB = h2h[0].teams.away.name;
+    const teamA = validMatches[0]?.teams?.home?.name || "Home";
+    const teamB = validMatches[0]?.teams?.away?.name || "Away";
 
     let teamAWins = 0;
     let teamBWins = 0;
     let draws = 0;
 
     visibleMatches.forEach(match => {
-        if (match.goals.home !== null && match.goals.away !== null) {
-            if (match.goals.home === match.goals.away) {
+        const homeGoals = match?.goals?.home;
+        const awayGoals = match?.goals?.away;
+        if (homeGoals !== undefined && homeGoals !== null && awayGoals !== undefined && awayGoals !== null) {
+            if (homeGoals === awayGoals) {
                 draws++;
-            } else if (match.goals.home > match.goals.away) {
-                if (match.teams.home.name === teamA) teamAWins++;
+            } else if (homeGoals > awayGoals) {
+                if (match?.teams?.home?.name === teamA) teamAWins++;
                 else teamBWins++;
-            } else if (match.goals.away > match.goals.home) {
-                if (match.teams.away.name === teamA) teamAWins++;
+            } else if (awayGoals > homeGoals) {
+                if (match?.teams?.away?.name === teamA) teamAWins++;
                 else teamBWins++;
             }
         }
     });
 
-    const totalMatches = visibleMatches.length;
-    const teamAPct = totalMatches ? Math.round((teamAWins / totalMatches) * 100) : 0;
-    const drawPct = totalMatches ? Math.round((draws / totalMatches) * 100) : 0;
-    const teamBPct = totalMatches ? Math.round((teamBWins / totalMatches) * 100) : 0;
-
-    const generateH2HStory = () => {
-        if (totalMatches === 0) return null;
-
-        if (teamAPct >= 60) {
-            return `Head-to-head dominance: ${teamA} has historically controlled this matchup, winning ${teamAPct}% of the last ${totalMatches} encounters.`;
-        } else if (teamBPct >= 60) {
-            return `Head-to-head dominance: ${teamB} has historically controlled this matchup, winning ${teamBPct}% of the last ${totalMatches} encounters.`;
-        } else if (drawPct >= 60) {
-            return `Fierce rivalry: These two teams frequently neutralize each other, with ${drawPct}% of their last ${totalMatches} meetings ending in a draw.`;
-        } else {
-            return `Evenly matched: Recent head-to-head history is highly competitive, with ${teamA} securing ${teamAWins} win${teamAWins !== 1 ? 's' : ''}, ${teamB} taking ${teamBWins} win${teamBWins !== 1 ? 's' : ''}, and ${draws} draw${draws !== 1 ? 's' : ''}.`;
-        }
-    };
-
-    const storyText = generateH2HStory();
-
     return (
         <div className="mb-2 w-full animate-in fade-in duration-500">
             <div className="flex flex-col">
                 {visibleMatches.map((match, i) => {
-                    const matchDateObj = new Date(match.fixture.date);
-                    const monthDay = matchDateObj.toLocaleDateString("en-US", {
-                        month: "2-digit",
-                        day: "2-digit",
-                    });
-                    const year = matchDateObj.getFullYear();
+                    let monthDay = "";
+                    let year = "";
+                    try {
+                        if (match?.fixture?.date) {
+                            const matchDateObj = new Date(match.fixture.date);
+                            if (!isNaN(matchDateObj.getTime())) {
+                                monthDay = matchDateObj.toLocaleDateString("en-US", {
+                                    month: "2-digit",
+                                    day: "2-digit",
+                                });
+                                year = String(matchDateObj.getFullYear());
+                            }
+                        }
+                    } catch {
+                        // ignore date format error
+                    }
 
                     const isEven = i % 2 === 0;
                     const bgClass = isEven ? "bg-gray-50" : "bg-white";
                     const hoverClass = isEven ? "hover:bg-[#151515]" : "hover:bg-[#282828]";
 
+                    const homeName = match?.teams?.home?.name || "Home";
+                    const awayName = match?.teams?.away?.name || "Away";
+                    const homeWinner = Boolean(match?.teams?.home?.winner);
+                    const awayWinner = Boolean(match?.teams?.away?.winner);
+                    const homeG = match?.goals?.home ?? "-";
+                    const awayG = match?.goals?.away ?? "-";
+
                     return (
                         <div
-                            key={match.fixture.id}
+                            key={match?.fixture?.id || i}
                             className={`grid grid-cols-[auto_1fr_auto_1fr] md:grid-cols-4 items-center py-1 px-2 text-sm transition-colors ${bgClass} ${hoverClass}`}
                         >
-                             {/* 1️⃣ Date */}
+                            {/* 1️⃣ Date */}
                             <div className="flex flex-col items-center justify-center mr-2 w-10 shrink-0">
                                 <span className="text-gray-500 text-[11px] font-medium leading-none mb-0.5">{monthDay}</span>
                                 <span className="text-gray-600 text-[10px] leading-none">{year}</span>
                             </div>
 
                             {/* 2️⃣ Home Team */}
-                            <div className={`font-medium text-[11px] sm:text-[12px] truncate text-right px-1 pr-3 flex-1 min-w-0 ${match.teams.home.winner ? 'text-gray-900 drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-800'}`}>
-                                {match.teams.home.name}
+                            <div className={`font-medium text-[11px] sm:text-[12px] truncate text-right px-1 pr-3 flex-1 min-w-0 ${homeWinner ? 'text-gray-900 drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-800'}`}>
+                                {homeName}
                             </div>
 
                             {/* 3️⃣ Score */}
                             <div className="flex flex-col items-center justify-center shrink-0 w-14">
                                 <div className="flex justify-center w-full font-bold text-gray-900 bg-gray-50/40 px-2 py-0.5 rounded text-[10px] sm:text-[11px]">
-                                    {match.goals.home} - {match.goals.away}
+                                    {homeG} - {awayG}
                                 </div>
-                                {match.score?.halftime && match.score.halftime.home !== null && match.score.halftime.away !== null && (
+                                {match?.score?.halftime && match.score.halftime.home !== null && match.score.halftime.away !== null && (
                                     <span className="text-[11px] text-gray-500 mt-0.5 font-medium tracking-wide">
                                         {match.score.halftime.home}-{match.score.halftime.away}
                                     </span>
@@ -127,54 +130,13 @@ const H2HSection: React.FC<H2HSectionProps> = ({ h2h }) => {
                             </div>
 
                             {/* 4️⃣ Away Team */}
-                            <div className={`font-medium text-[11px] sm:text-[12px] truncate text-left px-1 pl-3 flex-1 min-w-0 ${match.teams.away.winner ? 'text-gray-900 drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-800'}`}>
-                                {match.teams.away.name}
+                            <div className={`font-medium text-[11px] sm:text-[12px] truncate text-left px-1 pl-3 flex-1 min-w-0 ${awayWinner ? 'text-gray-900 drop-shadow-[0_0_2px_rgba(255,255,255,0.5)]' : 'text-gray-800'}`}>
+                                {awayName}
                             </div>
                         </div>
                     );
                 })}
             </div>
-
-            {/* 📊 Form Summary 
-            {totalMatches > 0 && (
-                <div className="mt-3 px-2 mb-2">
-                    <div className="w-full h-1.5 flex rounded-full overflow-hidden mb-3">
-                        <div className="flex-1 bg-green-500 h-full" />
-                        <div className="flex-1 bg-yellow-500 h-full" />
-                        <div className="flex-1 bg-blue-500 h-full" />
-                    </div>
-                    
-                    <div className="flex justify-between text-center px-1 md:px-4">
-                        <div className="flex flex-col items-center">
-                            <span className="text-gray-800 text-[10px] sm:text-xs font-bold mb-1 max-w-[80px] sm:max-w-[100px] truncate">{teamA} {teamAWins}</span>
-                            <span className="text-gray-600 text-xs mb-1">{teamAPct}%</span>
-                            <div className="w-8 h-1 bg-green-500 rounded-full" />
-                        </div>
-                        <div className="flex flex-col items-center">
-                            <span className="text-gray-800 text-[10px] sm:text-xs font-bold mb-1">Draw {draws}</span>
-                            <span className="text-gray-600 text-xs mb-1">{drawPct}%</span>
-                            <div className="w-8 h-1 bg-yellow-500 rounded-full" />
-                        </div>
-                        <div className="flex flex-col items-center">
-                            <span className="text-gray-800 text-[10px] sm:text-xs font-bold mb-1 max-w-[80px] sm:max-w-[100px] truncate">{teamB} {teamBWins}</span>
-                            <span className="text-gray-600 text-xs mb-1">{teamBPct}%</span>
-                            <div className="w-8 h-1 bg-blue-500 rounded-full" />
-                        </div>
-                    </div>
-                </div>
-            )}
-            */}
-
-            {/* Expert Insight Story 
-            {storyText && (
-                <div className="mt-2 bg-gray-100 rounded-xl p-1 sm:p-1.5 shadow-sm flex items-start gap-2">
-                    <p className="text-[11px] sm:text-xs font-medium text-gray-700 leading-relaxed text-justify">
-                        {storyText}
-                    </p>
-                </div>
-            )}
-            */}
-
         </div>
     );
 };

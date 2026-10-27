@@ -1,11 +1,12 @@
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import FixtureDetailsClient from "./FixtureDetailsClient";
+import { getFixtureById } from "@/backend/services/fixtureService";
+import dbConnect from "@/lib/mongoose";
 
 export const revalidate = 60; // ISR: cache match pages for 60 seconds at Edge
 
-/** Fail fast so Vercel never sits 300s on a stuck upstream (504 in your logs) */
-const FETCH_TIMEOUT_MS = 15_000;
+const FETCH_TIMEOUT_MS = 25_000;
 
 interface FixtureDetailData {
     fixtureId: number;
@@ -28,7 +29,6 @@ interface FixtureDetailData {
     standings?: any[];
 }
 
-
 function fetchWithTimeout(url: string): Promise<Response> {
     return fetch(url, {
         signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
@@ -37,34 +37,36 @@ function fetchWithTimeout(url: string): Promise<Response> {
 }
 
 const getFixture = cache(async (id: string): Promise<FixtureDetailData | null> => {
+    // 1. Try fetching via API URL if set
     const base = process.env.NEXT_PUBLIC_API_URL;
-    if (!base) {
-        console.error("NEXT_PUBLIC_API_URL is not set");
-        return null;
-    }
+    if (base) {
+        try {
+            const url = `${base}/api/fixtures/${id}`;
+            const res = await fetchWithTimeout(url);
 
-    const url = `${base}/api/fixtures/${id}`;
-
-    try {
-        const res = await fetchWithTimeout(url);
-
-        if (!res.ok) {
-            console.error(`⚠️ Failed to fetch details for ${id}. Status: ${res.status}`);
-            // Only return null for an actual 404 (fixture doesn't exist).
-            // For 500s, 502s, 504s, throw an error to prevent Next.js from caching a 404 page.
-            if (res.status === 404) return null;
-            throw new Error(`API returned ${res.status}`);
+            if (res.ok) {
+                const json = await res.json();
+                if (json?.data) return json.data as FixtureDetailData;
+            } else if (res.status === 404) {
+                return null;
+            }
+        } catch (e) {
+            console.warn(`[FixturePage] API fetch failed for ${id}, falling back to DB:`, e);
         }
-
-        const json = await res.json();
-        return json.data as FixtureDetailData;
-    } catch (e) {
-        const msg = e instanceof Error ? e.message : String(e);
-        console.error(`⚠️ Fetch failed for fixture ${id}:`, msg);
-        // Throw the error so Next.js does NOT cache a 404 page.
-        // It will trigger error.tsx (or a 500) and try again on next request.
-        throw new Error(`Fetch failed: ${msg}`);
     }
+
+    // 2. Direct database connection fallback (SSR & Local)
+    try {
+        await dbConnect();
+        const dbData = await getFixtureById(id);
+        if (dbData) {
+            return dbData as unknown as FixtureDetailData;
+        }
+    } catch (dbErr) {
+        console.error(`[FixturePage] DB fallback query failed for fixture ${id}:`, dbErr);
+    }
+
+    return null;
 });
 
 export default async function FixtureDetailPage({
