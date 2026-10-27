@@ -258,7 +258,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                             </div>
                         )}
 
-                        {/* PREDICTION & AFFILIATE AREA BELOW SCORE */}
+                        {/* PREDICTION AREA BELOW SCORE */}
                         <div className="mt-2.5 flex flex-col items-center gap-1.5 w-full">
                             {/* Prediction Badge */}
                             {formattedTipText && (
@@ -267,35 +267,6 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                                     <span>{formattedTipText}</span>
                                 </div>
                             )}
-
-                            {/* 1 X 2 Odds Row */}
-                            <div className="flex items-center gap-1 text-[10px] sm:text-[11px]">
-                                <span className="px-2 py-0.5 rounded-md bg-gray-100 border border-gray-300 text-gray-800 font-bold">
-                                    <span className="text-gray-400 font-semibold mr-1 text-[9px]">1</span>
-                                    {oddsObj.home}
-                                </span>
-                                <span className="px-2 py-0.5 rounded-md bg-gray-100 border border-gray-300 text-gray-800 font-bold">
-                                    <span className="text-gray-400 font-semibold mr-1 text-[9px]">X</span>
-                                    {oddsObj.draw}
-                                </span>
-                                <span className="px-2 py-0.5 rounded-md bg-gray-100 border border-gray-300 text-gray-800 font-bold">
-                                    <span className="text-gray-400 font-semibold mr-1 text-[9px]">2</span>
-                                    {oddsObj.away}
-                                </span>
-                            </div>
-
-                            {/* Affiliate Partner CTA Button (Randomly Displays on Load) */}
-                            <a
-                                href={partner.url}
-                                target="_blank"
-                                rel="noopener noreferrer sponsored"
-                                className="inline-flex items-center justify-center gap-1 px-2.5 sm:px-3 py-1 rounded-md text-[10px] sm:text-[11px] font-bold shadow-xs hover:opacity-95 transition-all transform hover:scale-[1.02] active:scale-95 whitespace-nowrap"
-                                style={{ backgroundColor: partner.bgColor, color: partner.textColor }}
-                            >
-                                <span>{partner.name}</span>
-                                <span className="text-[9px] font-normal opacity-90 hidden sm:inline">• {partner.ctaText}</span>
-                                <ExternalLink size={10} className="shrink-0 ml-0.5" />
-                            </a>
                         </div>
                     </div>
 
@@ -310,6 +281,42 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                             </div>
                         </div>
                         <span className="mt-1.5 text-[11px] sm:text-[12px] font-bold text-gray-900 capitalize text-center leading-tight break-words max-w-[100px] sm:max-w-[120px] tracking-wider px-1">{awayTeam.name}</span>
+                    </div>
+                </div>
+
+                {/* 1 X 2 ODDS ROW (Just below team names row with affiliate link in top right) */}
+                <div className="w-full flex items-center justify-between mt-3 px-2 sm:px-6 pt-2 border-t border-gray-200 gap-2">
+                    {/* LEFT: 1 X 2 ODDS PILLS */}
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                        <span className="text-[10px] sm:text-[11px] font-semibold text-gray-500 uppercase tracking-wider mr-0.5">1X2:</span>
+                        <div className="flex items-center gap-1 px-2 py-0.5 rounded bg-gray-100 border border-gray-300 text-gray-800 text-[10px] sm:text-[11px]">
+                            <span className="font-semibold text-gray-400">1</span>
+                            <span className="font-bold text-gray-900">{oddsObj.home}</span>
+                        </div>
+                        <div className="flex items-center gap-1 px-2 py-0.5 rounded bg-gray-100 border border-gray-300 text-gray-800 text-[10px] sm:text-[11px]">
+                            <span className="font-semibold text-gray-400">X</span>
+                            <span className="font-bold text-gray-900">{oddsObj.draw}</span>
+                        </div>
+                        <div className="flex items-center gap-1 px-2 py-0.5 rounded bg-gray-100 border border-gray-300 text-gray-800 text-[10px] sm:text-[11px]">
+                            <span className="font-semibold text-gray-400">2</span>
+                            <span className="font-bold text-gray-900">{oddsObj.away}</span>
+                        </div>
+                    </div>
+
+                    {/* TOP RIGHT CORNER: BETTING SITES AFFILIATE LINK */}
+                    <div className="flex items-center justify-end">
+                        <a
+                            href={partner.url}
+                            target="_blank"
+                            rel="noopener noreferrer sponsored"
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-[10px] sm:text-[11px] font-bold shadow-2xs hover:opacity-90 transition-transform active:scale-95 cursor-pointer"
+                            style={{ backgroundColor: partner.bgColor, color: partner.textColor }}
+                            title={`Bet on ${partner.name} - ${partner.ctaText}`}
+                        >
+                            <span>{partner.name}</span>
+                            <span className="hidden sm:inline font-normal opacity-90 text-[9px]">• {partner.ctaText}</span>
+                            <ExternalLink size={10} className="shrink-0" />
+                        </a>
                     </div>
                 </div>
 
