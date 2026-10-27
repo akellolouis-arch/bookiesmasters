@@ -164,3 +164,4 @@ const LeagueTopScorers: React.FC<LeagueTopScorersProps> = ({ scorers }) => {
 };
 
 export default LeagueTopScorers;
+

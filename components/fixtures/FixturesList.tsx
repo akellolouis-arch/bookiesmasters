@@ -6,7 +6,8 @@ import Footer from "@/components/Footer";
 import DateNavigator from "@/components/DateNavigator";
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
-import { Calendar, ChevronRight } from "lucide-react";
+import { Calendar, ChevronRight, ExternalLink } from "lucide-react";
+import { resolveOdds, getAffiliatePartner } from "@/lib/oddsHelper";
 
 export interface Team {
   id: number;
@@ -198,6 +199,8 @@ export default function FixturesList({
                       : rawStatus;
 
                     const scoreStr = match.score ? match.score.replace(" - ", "-") : "-";
+                    const oddsObj = resolveOdds(match.fixtureId, (match as any).odds);
+                    const partner = getAffiliatePartner(match.fixtureId);
 
                     return (
                       <Link
@@ -243,6 +246,50 @@ export default function FixturesList({
                             )}
                             <span className="font-medium text-[11px] sm:text-[12px] truncate text-gray-800 capitalize text-left">
                               {away?.name}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* 1 X 2 ODDS ROW (Just below team names row) */}
+                        <div className="w-full flex items-center justify-between mt-1 pt-1 border-t border-gray-100 gap-1">
+                          {/* LEFT: 1 X 2 ODDS PILLS */}
+                          <div className="flex items-center gap-1 sm:gap-1.5">
+                            {/* 1 */}
+                            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-gray-50 border border-gray-200 text-gray-700 text-[9px] sm:text-[10px]">
+                              <span className="font-semibold text-gray-400">1</span>
+                              <span className="font-bold text-gray-900">{oddsObj.home}</span>
+                            </div>
+
+                            {/* X */}
+                            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-gray-50 border border-gray-200 text-gray-700 text-[9px] sm:text-[10px]">
+                              <span className="font-semibold text-gray-400">X</span>
+                              <span className="font-bold text-gray-900">{oddsObj.draw}</span>
+                            </div>
+
+                            {/* 2 */}
+                            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-gray-50 border border-gray-200 text-gray-700 text-[9px] sm:text-[10px]">
+                              <span className="font-semibold text-gray-400">2</span>
+                              <span className="font-bold text-gray-900">{oddsObj.away}</span>
+                            </div>
+                          </div>
+
+                          {/* TOP RIGHT CORNER: BETTING SITES AFFILIATE LINK */}
+                          <div className="flex items-center justify-end">
+                            <span
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                window.open(partner.url, "_blank", "noopener,noreferrer,sponsored");
+                              }}
+                              role="button"
+                              tabIndex={0}
+                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-bold shadow-2xs hover:opacity-90 transition-transform active:scale-95 cursor-pointer"
+                              style={{ backgroundColor: partner.bgColor, color: partner.textColor }}
+                              title={`Bet on ${partner.name} - ${partner.ctaText}`}
+                            >
+                              <span>{partner.name}</span>
+                              <span className="hidden sm:inline font-normal opacity-90 text-[8px]">• {partner.ctaText}</span>
+                              <ExternalLink size={9} className="shrink-0" />
                             </span>
                           </div>
                         </div>

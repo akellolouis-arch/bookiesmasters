@@ -187,3 +187,4 @@ const LeagueDetailsClient: React.FC<LeagueDetailsClientProps> = ({ data }) => {
 };
 
 export default LeagueDetailsClient;
+

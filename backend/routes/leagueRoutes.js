@@ -6,3 +6,4 @@ const router = express.Router();
 router.get("/:id", getLeagueDetailsController);
 
 export default router;
+

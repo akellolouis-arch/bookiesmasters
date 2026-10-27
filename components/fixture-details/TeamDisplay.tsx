@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { ExternalLink } from "lucide-react";
 import { AFFILIATE_PARTNERS, AffiliatePartner } from "@/lib/affiliatePartners";
+import { resolveOdds } from "@/lib/oddsHelper";
 
 interface Team {
     id: number;
@@ -24,6 +25,8 @@ interface TeamDisplayProps {
     league?: string;
     isLoading?: boolean;
     tip?: string;
+    fixtureId?: number;
+    odds?: any;
 }
 
 const TeamDisplay: React.FC<TeamDisplayProps> = ({
@@ -37,7 +40,10 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
     league,
     isLoading,
     tip,
+    fixtureId,
+    odds,
 }) => {
+    const oddsObj = resolveOdds(fixtureId || 1, odds, tip);
     const [partner, setPartner] = useState<AffiliatePartner>(AFFILIATE_PARTNERS[0]);
 
     useEffect(() => {
@@ -261,6 +267,22 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                                     <span>{formattedTipText}</span>
                                 </div>
                             )}
+
+                            {/* 1 X 2 Odds Row */}
+                            <div className="flex items-center gap-1 text-[10px] sm:text-[11px]">
+                                <span className="px-2 py-0.5 rounded-md bg-gray-100 border border-gray-300 text-gray-800 font-bold">
+                                    <span className="text-gray-400 font-semibold mr-1 text-[9px]">1</span>
+                                    {oddsObj.home}
+                                </span>
+                                <span className="px-2 py-0.5 rounded-md bg-gray-100 border border-gray-300 text-gray-800 font-bold">
+                                    <span className="text-gray-400 font-semibold mr-1 text-[9px]">X</span>
+                                    {oddsObj.draw}
+                                </span>
+                                <span className="px-2 py-0.5 rounded-md bg-gray-100 border border-gray-300 text-gray-800 font-bold">
+                                    <span className="text-gray-400 font-semibold mr-1 text-[9px]">2</span>
+                                    {oddsObj.away}
+                                </span>
+                            </div>
 
                             {/* Affiliate Partner CTA Button (Randomly Displays on Load) */}
                             <a

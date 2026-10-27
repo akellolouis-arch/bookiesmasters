@@ -83,3 +83,4 @@ export default async function LeaguePage({
 
     return <LeagueDetailsClient data={data} />;
 }
+

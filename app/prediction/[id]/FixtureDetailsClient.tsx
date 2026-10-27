@@ -139,6 +139,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                     league={data.league}
                     isLoading={isLoading}
                     tip={computedTip}
+                    fixtureId={data.fixtureId}
                 />
 
                 {/* --- SOFASCORE-STYLE NAVIGATION TABS --- */}
