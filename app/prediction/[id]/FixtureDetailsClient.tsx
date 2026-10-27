@@ -15,7 +15,7 @@ import MatchEvents from "@/components/fixture-details/MatchEvents";
 import Statistics from "@/components/fixture-details/Statistics";
 import Lineups from "@/components/fixture-details/Lineups";
 import Footer from "@/components/Footer";
-import { Activity, BarChart2, Users, FileText } from "lucide-react";
+import { Activity, BarChart2, Users, FileText, Trophy } from "lucide-react";
 
 type FixtureDetailsData = {
     fixtureId: number;
@@ -50,7 +50,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
         ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(initialData.status) ||
         initialData.status.includes("'");
 
-    const [activeTab, setActiveTab] = useState<"overview" | "events" | "stats" | "lineups">(() => {
+    const [activeTab, setActiveTab] = useState<"overview" | "events" | "stats" | "lineups" | "table">(() => {
         if (isMatchLive) return "events";
         if (initialData.events && initialData.events.length > 0) return "overview";
         return "overview";
@@ -142,7 +142,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                         {/* 1. OVERVIEW & TIPS */}
                         <button
                             onClick={() => setActiveTab("overview")}
-                            className={`flex items-center justify-center gap-1.5 flex-1 py-1.5 px-2 rounded-lg text-[11px] font-bold transition-all ${
+                            className={`flex items-center justify-center gap-1 sm:gap-1.5 flex-1 py-1.5 px-1 sm:px-2 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all ${
                                 activeTab === "overview"
                                     ? "bg-white text-teal-700 shadow-xs"
                                     : "text-gray-600 hover:text-gray-900"
@@ -155,7 +155,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                         {/* 2. MATCH EVENTS (GOALS & CARDS) */}
                         <button
                             onClick={() => setActiveTab("events")}
-                            className={`flex items-center justify-center gap-1.5 flex-1 py-1.5 px-2 rounded-lg text-[11px] font-bold transition-all relative ${
+                            className={`flex items-center justify-center gap-1 sm:gap-1.5 flex-1 py-1.5 px-1 sm:px-2 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all relative ${
                                 activeTab === "events"
                                     ? "bg-white text-teal-700 shadow-xs"
                                     : "text-gray-600 hover:text-gray-900"
@@ -175,7 +175,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                         {/* 3. MATCH STATS */}
                         <button
                             onClick={() => setActiveTab("stats")}
-                            className={`flex items-center justify-center gap-1.5 flex-1 py-1.5 px-2 rounded-lg text-[11px] font-bold transition-all ${
+                            className={`flex items-center justify-center gap-1 sm:gap-1.5 flex-1 py-1.5 px-1 sm:px-2 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all ${
                                 activeTab === "stats"
                                     ? "bg-white text-teal-700 shadow-xs"
                                     : "text-gray-600 hover:text-gray-900"
@@ -188,14 +188,27 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                         {/* 4. LINEUPS */}
                         <button
                             onClick={() => setActiveTab("lineups")}
-                            className={`flex items-center justify-center gap-1.5 flex-1 py-1.5 px-2 rounded-lg text-[11px] font-bold transition-all ${
+                            className={`flex items-center justify-center gap-1 sm:gap-1.5 flex-1 py-1.5 px-1 sm:px-2 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all ${
                                 activeTab === "lineups"
                                     ? "bg-white text-teal-700 shadow-xs"
                                     : "text-gray-600 hover:text-gray-900"
                             }`}
                         >
-                            <Users className="w-3.5 h-3.5" />
+                            <Users className="w-3.5 h-3.5 text-blue-500" />
                             <span>Lineups</span>
+                        </button>
+
+                        {/* 5. TABLE / STANDINGS */}
+                        <button
+                            onClick={() => setActiveTab("table")}
+                            className={`flex items-center justify-center gap-1 sm:gap-1.5 flex-1 py-1.5 px-1 sm:px-2 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all ${
+                                activeTab === "table"
+                                    ? "bg-white text-teal-700 shadow-xs"
+                                    : "text-gray-600 hover:text-gray-900"
+                            }`}
+                        >
+                            <Trophy className="w-3.5 h-3.5 text-amber-500" />
+                            <span>Table</span>
                         </button>
                     </div>
                 </div>
@@ -235,7 +248,35 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 )}
 
                 {/* ========================================================================= */}
-                {/* TAB CONTENT 4: OVERVIEW & PREDICTIONS                                     */}
+                {/* TAB CONTENT 4: LEAGUE TABLE / STANDINGS                                   */}
+                {/* ========================================================================= */}
+                {activeTab === "table" && (
+                    <div className="bg-white rounded-xl shadow-xs p-3 sm:p-4 border border-gray-200 max-w-3xl mx-auto my-3 animate-in fade-in duration-300">
+                        {data.standings && data.standings.length > 0 ? (
+                            <Standings
+                                standings={data.standings || []}
+                                homeTeamId={data.homeTeam.id}
+                                awayTeamId={data.awayTeam.id}
+                                defaultShowAll={true}
+                            />
+                        ) : (
+                            <div className="text-center py-12 px-4">
+                                <div className="w-12 h-12 mx-auto rounded-full bg-teal-50 flex items-center justify-center mb-3">
+                                    <Trophy className="w-6 h-6 text-teal-600" />
+                                </div>
+                                <h4 className="text-sm font-bold text-gray-800 mb-1">
+                                    Standings Unavailable
+                                </h4>
+                                <p className="text-xs text-gray-500 max-w-sm mx-auto">
+                                    League standings are not applicable or currently unavailable for this cup, qualification round, or tournament.
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* ========================================================================= */}
+                {/* TAB CONTENT 5: OVERVIEW & PREDICTIONS                                     */}
                 {/* ========================================================================= */}
                 {activeTab === "overview" && (
                     <div className="animate-in fade-in duration-300 space-y-4">

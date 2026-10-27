@@ -27,10 +27,11 @@ interface StandingsProps {
     standings: StandingTeam[][];
     homeTeamId?: number;
     awayTeamId?: number;
+    defaultShowAll?: boolean;
 }
 
-const Standings: React.FC<StandingsProps> = ({ standings, homeTeamId, awayTeamId }) => {
-    const [showAll, setShowAll] = useState(false);
+const Standings: React.FC<StandingsProps> = ({ standings, homeTeamId, awayTeamId, defaultShowAll = false }) => {
+    const [showAll, setShowAll] = useState(defaultShowAll);
     if (!standings || standings.length === 0) {
         return (
             <div className="text-center p-4 text-gray-600 bg-white rounded-lg">

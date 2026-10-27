@@ -24,6 +24,8 @@ interface FixtureDetailData {
     events?: any[];
     statistics?: any[];
     lineups?: any[];
+    injuries?: any[];
+    standings?: any[];
 }
 
 

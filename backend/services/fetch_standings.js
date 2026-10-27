@@ -5,6 +5,7 @@ import path from "path";
 
 import League from "../models/League.js";
 import Standing from "../models/Standing.js";
+import Fixture from "../models/Fixture.js";
 
 import { fileURLToPath } from "url";
 import {
@@ -24,11 +25,44 @@ const api = axios.create({
 
 async function getSavedLeagues() {
     const leagues = await League.find({});
-    return leagues.map(l => ({
-        id: l.league.id,
-        name: l.league.name,
-        currentSeason: l.season
-    }));
+    const map = new Map();
+    leagues.forEach(l => {
+        if (l.league?.id) {
+            map.set(l.league.id, {
+                id: l.league.id,
+                name: l.league.name,
+                currentSeason: l.season
+            });
+        }
+    });
+
+    // Also include active seasons from recent and upcoming fixtures
+    try {
+        const recentFixtures = await Fixture.find(
+            { "fixture.fixture.date": { $gte: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString() } },
+            { "fixture.league.id": 1, "fixture.league.season": 1, "fixture.league.name": 1 }
+        ).lean();
+
+        for (const f of recentFixtures) {
+            const lId = f.fixture?.league?.id;
+            const lSeason = f.fixture?.league?.season;
+            const lName = f.fixture?.league?.name;
+            if (lId && lSeason) {
+                const existing = map.get(lId);
+                if (!existing || (lSeason > (existing.currentSeason || 0))) {
+                    map.set(lId, {
+                        id: lId,
+                        name: lName || existing?.name || `League ${lId}`,
+                        currentSeason: lSeason
+                    });
+                }
+            }
+        }
+    } catch (e) {
+        // Fallback to saved leagues if fixture scan fails
+    }
+
+    return Array.from(map.values());
 }
 
 async function fetchLeagueStandings(leagueId, season) {

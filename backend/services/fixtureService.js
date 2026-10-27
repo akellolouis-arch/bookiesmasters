@@ -180,14 +180,12 @@ export const getFixtureById = async (fixtureId) => {
             statistics: statistics,
         };
 
-        // Fetch Standings
-        const standingsDoc = await Standing.findOne({
-            "league.id": matchData.league.id,
-            "league.season": matchData.league.season
-        }).lean();
-
-        // Add standings to response
-        response.standings = standingsDoc ? standingsDoc.standings : [];
+        // Fetch Standings (with cache, fallback, and on-demand sync)
+        response.standings = await getLeagueStandings(
+            matchData.league.id,
+            matchData.league.season,
+            matchData.league.name
+        );
 
         response.isVip = false;
 
@@ -196,6 +194,86 @@ export const getFixtureById = async (fixtureId) => {
     } catch (error) {
         console.error("Error in getFixtureById:", error);
         throw error;
+    }
+};
+
+export const getLeagueStandings = async (leagueId, season, leagueName = "") => {
+    if (!leagueId) return [];
+
+    try {
+        // 1. Check exact league + season in Mongo
+        let doc = await Standing.findOne({
+            "league.id": leagueId,
+            "league.season": season,
+        }).lean();
+
+        if (doc && Array.isArray(doc.standings) && doc.standings.length > 0) {
+            return doc.standings;
+        }
+
+        // 2. If not in DB yet and API_KEY is available, fetch on-demand and cache
+        if (!doc && process.env.API_KEY) {
+            try {
+                const targetSeason = season || new Date().getFullYear();
+                const stdRes = await axios.get("https://v3.football.api-sports.io/standings", {
+                    params: {
+                        league: leagueId,
+                        season: targetSeason,
+                    },
+                    headers: { "x-apisports-key": process.env.API_KEY },
+                    timeout: 4000,
+                });
+
+                const lData = stdRes.data?.response?.[0]?.league;
+                if (lData && Array.isArray(lData.standings) && lData.standings.length > 0) {
+                    const newStanding = {
+                        league: {
+                            id: lData.id,
+                            name: lData.name,
+                            country: lData.country,
+                            logo: lData.logo,
+                            flag: lData.flag,
+                            season: lData.season,
+                        },
+                        standings: lData.standings,
+                    };
+
+                    await Standing.findOneAndUpdate(
+                        { "league.id": leagueId, "league.season": targetSeason },
+                        newStanding,
+                        { upsert: true }
+                    );
+                    return lData.standings;
+                } else {
+                    // Record empty array in DB so we don't query API repeatedly on every request
+                    await Standing.findOneAndUpdate(
+                        { "league.id": leagueId, "league.season": targetSeason },
+                        {
+                            league: { id: leagueId, name: leagueName, season: targetSeason },
+                            standings: [],
+                        },
+                        { upsert: true }
+                    );
+                }
+            } catch (apiErr) {
+                console.warn(`[Standings] On-demand API fetch failed for league ${leagueId} season ${season}:`, apiErr.message);
+            }
+        }
+
+        // 3. Fallback: Query latest available season with valid standings for this league
+        const fallbackDoc = await Standing.findOne({
+            "league.id": leagueId,
+            "standings.0": { $exists: true },
+        }).sort({ "league.season": -1 }).lean();
+
+        if (fallbackDoc && Array.isArray(fallbackDoc.standings) && fallbackDoc.standings.length > 0) {
+            return fallbackDoc.standings;
+        }
+
+        return [];
+    } catch (err) {
+        console.error(`[Standings] Error resolving standings for league ${leagueId}:`, err.message);
+        return [];
     }
 };
 
