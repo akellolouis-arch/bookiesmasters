@@ -63,17 +63,17 @@ export default function MatchEvents({
 
   // Sort events chronologically (1' to 90'+)
   const sortedEvents = [...events].sort((a, b) => {
-    const timeA = (a.time.elapsed || 0) + (a.time.extra || 0) * 0.1;
-    const timeB = (b.time.elapsed || 0) + (b.time.extra || 0) * 0.1;
+    const timeA = ((a?.time?.elapsed) || 0) + ((a?.time?.extra) || 0) * 0.1;
+    const timeB = ((b?.time?.elapsed) || 0) + ((b?.time?.extra) || 0) * 0.1;
     return timeA - timeB;
   });
 
   // Group events by period
-  const firstHalf = sortedEvents.filter((e) => (e.time.elapsed || 0) <= 45);
+  const firstHalf = sortedEvents.filter((e) => ((e?.time?.elapsed) || 0) <= 45);
   const secondHalf = sortedEvents.filter(
-    (e) => (e.time.elapsed || 0) > 45 && (e.time.elapsed || 0) <= 90
+    (e) => ((e?.time?.elapsed) || 0) > 45 && ((e?.time?.elapsed) || 0) <= 90
   );
-  const extraTime = sortedEvents.filter((e) => (e.time.elapsed || 0) > 90);
+  const extraTime = sortedEvents.filter((e) => ((e?.time?.elapsed) || 0) > 90);
 
   const renderEventIcon = (event: MatchEvent) => {
     const type = event.type?.toLowerCase();

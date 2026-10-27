@@ -7,20 +7,20 @@ import { AFFILIATE_PARTNERS, AffiliatePartner } from "@/lib/affiliatePartners";
 import { resolveOdds } from "@/lib/oddsHelper";
 
 interface Team {
-    id: number;
-    name: string;
-    logo: string;
+    id?: number;
+    name?: string;
+    logo?: string;
     form?: { result: string; color: string }[];
     last5Matches?: any[];
 }
 
 interface TeamDisplayProps {
-    homeTeam: Team;
-    awayTeam: Team;
-    status: string;
-    displayDate: string;
+    homeTeam?: Team;
+    awayTeam?: Team;
+    status?: string;
+    displayDate?: string;
     venue?: string;
-    date: string;
+    date?: string;
     score?: { home: number | null; away: number | null; halftime?: { home: number | null; away: number | null } } | null;
     league?: string;
     isLoading?: boolean;
@@ -32,9 +32,9 @@ interface TeamDisplayProps {
 const TeamDisplay: React.FC<TeamDisplayProps> = ({
     homeTeam,
     awayTeam,
-    status,
-    displayDate,
-    date,
+    status = "NS",
+    displayDate = "",
+    date = "",
     venue,
     score,
     league,
@@ -43,32 +43,57 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
     fixtureId,
     odds,
 }) => {
-    const oddsObj = resolveOdds(fixtureId || 1, odds, tip);
-    const [partner, setPartner] = useState<AffiliatePartner>(AFFILIATE_PARTNERS[0]);
+    let oddsObj = { home: "2.10", draw: "3.25", away: "3.30" };
+    try {
+        oddsObj = resolveOdds(fixtureId || 1, odds, tip);
+    } catch (e) {
+        // fallback defaults
+    }
+
+    const [partner, setPartner] = useState<AffiliatePartner>(AFFILIATE_PARTNERS[0] || {
+        id: "1xbet",
+        name: "1XBET",
+        ctaText: "300% Bonus",
+        url: "https://reffpa.com/L?tag=d_5148910m_97c_telegram&site=5148910&ad=97&r=registration",
+        bgColor: "#1a56db",
+        textColor: "#ffffff",
+    });
 
     useEffect(() => {
-        if (AFFILIATE_PARTNERS.length > 1) {
+        if (AFFILIATE_PARTNERS && AFFILIATE_PARTNERS.length > 1) {
             const randomIndex = Math.floor(Math.random() * AFFILIATE_PARTNERS.length);
-            setPartner(AFFILIATE_PARTNERS[randomIndex]);
+            if (AFFILIATE_PARTNERS[randomIndex]) {
+                setPartner(AFFILIATE_PARTNERS[randomIndex]);
+            }
         }
     }, []);
 
-    const isLive = status ? ["1H", "HT", "2H", "ET", "BT", "P", "LIVE"].includes(status) : false;
-    const isFinished = status ? ["FT", "AET", "PEN"].includes(status) : false;
+    const isLive = Boolean(status && ["1H", "HT", "2H", "ET", "BT", "P", "LIVE"].includes(status));
+    const isFinished = Boolean(status && ["FT", "AET", "PEN"].includes(status));
     
-    const dateObj = new Date(date);
-    const kickoffTime = dateObj.toLocaleTimeString("en-GB", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-        timeZone: "Africa/Nairobi",
-    });
-    const formattedDate = dateObj.toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        timeZone: "Africa/Nairobi",
-    });
+    let kickoffTime = displayDate || "TBD";
+    let formattedDate = "";
+    try {
+        if (date) {
+            const dateObj = new Date(date);
+            if (!isNaN(dateObj.getTime())) {
+                kickoffTime = dateObj.toLocaleTimeString("en-GB", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                    timeZone: "Africa/Nairobi",
+                });
+                formattedDate = dateObj.toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                    timeZone: "Africa/Nairobi",
+                });
+            }
+        }
+    } catch {
+        // Safe fallback
+    }
 
     let scoreColorClass = "text-gray-900";
     let dashColorClass = "text-gray-600";
@@ -170,11 +195,11 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
 
     // Form bubble renderer
     const renderForm = (last5Matches?: any[]) => {
-        if (!last5Matches || last5Matches.length === 0) return null;
+        if (!last5Matches || !Array.isArray(last5Matches) || last5Matches.length === 0) return null;
         return (
             <div className="flex flex-wrap justify-center gap-[2px] sm:gap-1 mb-1.5 px-0">
                 {last5Matches.map((m, i) => {
-                    const res = m.result || "D";
+                    const res = m?.result || "D";
                     let bgClass = "bg-[#eab308]"; // Yellow for Draw
                     if (res === "W") bgClass = "bg-[#16a34a]"; // Green for Win
                     if (res === "L") bgClass = "bg-[#dc2626]"; // Red for Loss
@@ -189,7 +214,8 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
         );
     };
 
-
+    const homeName = homeTeam?.name || "Home";
+    const awayName = awayTeam?.name || "Away";
 
     return (
         <div className="relative w-full pb-1 sm:pb-2 flex flex-col items-center bg-transparent">
@@ -203,14 +229,22 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                     {/* HOME TEAM */}
                     <div className="flex flex-col items-center min-w-0">
                         {/* Form */}
-                        {renderForm(homeTeam.last5Matches)}
+                        {renderForm(homeTeam?.last5Matches)}
                         {/* Logo Card */}
                         <div className="mx-2 w-14 h-16 sm:w-16 sm:h-20 md:w-20 md:h-24 bg-gray-100 rounded-2xl sm:rounded-[2rem] border border-gray-300 flex items-center justify-center p-1 shadow-lg backdrop-blur-sm">
                             <div className="relative w-full h-full filter drop-shadow-md">
-                                <Image src={homeTeam?.logo} alt={homeTeam?.name} fill className="object-contain" unoptimized />
+                                {homeTeam?.logo ? (
+                                    <Image src={homeTeam.logo} alt={homeName} fill className="object-contain" unoptimized />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-xs font-bold text-gray-400">
+                                        {homeName.slice(0, 2).toUpperCase()}
+                                    </div>
+                                )}
                             </div>
                         </div>
-                        <span className="mt-1.5 text-[11px] sm:text-[12px] font-bold text-gray-900 capitalize text-center leading-tight break-words max-w-[100px] sm:max-w-[120px] tracking-wider px-1">{homeTeam.name}</span>
+                        <span className="mt-1.5 text-[11px] sm:text-[12px] font-bold text-gray-900 capitalize text-center leading-tight break-words max-w-[100px] sm:max-w-[120px] tracking-wider px-1">
+                            {homeName}
+                        </span>
                     </div>
 
                     {/* CENTER INFO */}
@@ -273,14 +307,22 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
                     {/* AWAY TEAM */}
                     <div className="flex flex-col items-center min-w-0">
                         {/* Form */}
-                        {renderForm(awayTeam.last5Matches)}
+                        {renderForm(awayTeam?.last5Matches)}
                         {/* Logo Card */}
                         <div className="mx-2 w-14 h-16 sm:w-16 sm:h-20 md:w-20 md:h-24 bg-gray-100 rounded-2xl sm:rounded-[2rem] border border-gray-300 flex items-center justify-center p-1 shadow-lg backdrop-blur-sm">
                             <div className="relative w-full h-full filter drop-shadow-md">
-                                <Image src={awayTeam?.logo} alt={awayTeam?.name} fill className="object-contain" unoptimized />
+                                {awayTeam?.logo ? (
+                                    <Image src={awayTeam.logo} alt={awayName} fill className="object-contain" unoptimized />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-xs font-bold text-gray-400">
+                                        {awayName.slice(0, 2).toUpperCase()}
+                                    </div>
+                                )}
                             </div>
                         </div>
-                        <span className="mt-1.5 text-[11px] sm:text-[12px] font-bold text-gray-900 capitalize text-center leading-tight break-words max-w-[100px] sm:max-w-[120px] tracking-wider px-1">{awayTeam.name}</span>
+                        <span className="mt-1.5 text-[11px] sm:text-[12px] font-bold text-gray-900 capitalize text-center leading-tight break-words max-w-[100px] sm:max-w-[120px] tracking-wider px-1">
+                            {awayName}
+                        </span>
                     </div>
                 </div>
 
@@ -326,4 +368,3 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
 };
 
 export default TeamDisplay;
-

@@ -46,13 +46,16 @@ interface FixtureDetailsClientProps {
 const fetcher = (url: string) => fetch(url, { cache: "no-store" }).then((res) => res.json());
 
 const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initialData }) => {
-    const isMatchLive =
-        ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(initialData.status) ||
-        initialData.status.includes("'");
+    const isMatchLive = Boolean(
+        initialData?.status && (
+            ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(initialData.status) ||
+            initialData.status.includes("'")
+        )
+    );
 
     const [activeTab, setActiveTab] = useState<"overview" | "events" | "stats" | "lineups" | "table">(() => {
         if (isMatchLive) return "events";
-        if (initialData.events && initialData.events.length > 0) return "overview";
+        if (initialData?.events && initialData.events.length > 0) return "overview";
         return "overview";
     });
 
@@ -60,7 +63,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
     const [awayTab, setAwayTab] = useState<"all" | "away">("all");
 
     const { data: swrData } = useSWR(
-        isMatchLive ? `${process.env.NEXT_PUBLIC_API_URL}/api/fixtures/${initialData.fixtureId}` : null,
+        isMatchLive && initialData?.fixtureId ? `${process.env.NEXT_PUBLIC_API_URL}/api/fixtures/${initialData.fixtureId}` : null,
         fetcher,
         {
             refreshInterval: isMatchLive ? 30000 : 0,
@@ -71,28 +74,28 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
 
     const data = swrData?.data ? { ...initialData, ...swrData.data } : initialData;
 
-    const displayInjuries = data.injuries;
+    const displayInjuries = Array.isArray(data?.injuries) ? data.injuries : [];
     const isLoading = isMatchLive && !swrData;
 
-    const filteredH2H = data.h2h
-        ? data.h2h.filter((m: any) => ["FT", "AET", "PEN", "AWD", "WO"].includes(m.fixture?.status?.short))
+    const filteredH2H = Array.isArray(data?.h2h)
+        ? data.h2h.filter((m: any) => ["FT", "AET", "PEN", "AWD", "WO"].includes(m?.fixture?.status?.short))
         : [];
     const hasH2H = filteredH2H.length > 0;
-    const homeMatches = data.homeTeam.allMatches || data.homeTeam.last5Matches || [];
-    const awayMatches = data.awayTeam.allMatches || data.awayTeam.last5Matches || [];
+    const homeMatches = data?.homeTeam?.allMatches || data?.homeTeam?.last5Matches || [];
+    const awayMatches = data?.awayTeam?.allMatches || data?.awayTeam?.last5Matches || [];
     const hasAnyMatches = homeMatches.length > 0 || awayMatches.length > 0;
 
-    const homeHomeMatches = homeMatches.filter((m: any) => m.homeTeam?.name === data.homeTeam.name);
-    const awayAwayMatches = awayMatches.filter((m: any) => m.awayTeam?.name === data.awayTeam.name);
+    const homeHomeMatches = homeMatches.filter((m: any) => m?.homeTeam?.name === data?.homeTeam?.name);
+    const awayAwayMatches = awayMatches.filter((m: any) => m?.awayTeam?.name === data?.awayTeam?.name);
 
-    let computedTip = data.tip || "";
+    let computedTip = data?.tip || "";
     if (computedTip === "NONE") {
         computedTip = "";
     }
 
-    const eventsList = data.events || [];
-    const statsList = data.statistics || [];
-    const lineupsList = data.lineups || [];
+    const eventsList = Array.isArray(data?.events) ? data.events : [];
+    const statsList = Array.isArray(data?.statistics) ? data.statistics : [];
+    const lineupsList = Array.isArray(data?.lineups) ? data.lineups : [];
 
     const hasEvents = eventsList.length > 0;
     const hasStats = statsList.length > 0;
@@ -226,11 +229,11 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                     <div className="animate-in fade-in duration-300">
                         <MatchEvents
                             events={eventsList}
-                            homeTeamId={data.homeTeam.id}
-                            awayTeamId={data.awayTeam.id}
-                            homeTeamName={data.homeTeam.name}
-                            awayTeamName={data.awayTeam.name}
-                            status={data.status}
+                            homeTeamId={data?.homeTeam?.id || 0}
+                            awayTeamId={data?.awayTeam?.id || 0}
+                            homeTeamName={data?.homeTeam?.name || "Home"}
+                            awayTeamName={data?.awayTeam?.name || "Away"}
+                            status={data?.status}
                         />
                     </div>
                 )}
@@ -258,11 +261,11 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                 {/* ========================================================================= */}
                 {activeTab === "table" && (
                     <div className="bg-white rounded-xl shadow-xs p-3 sm:p-4 border border-gray-200 max-w-3xl mx-auto my-3 animate-in fade-in duration-300">
-                        {data.standings && data.standings.length > 0 ? (
+                        {data?.standings && data.standings.length > 0 ? (
                             <Standings
                                 standings={data.standings || []}
-                                homeTeamId={data.homeTeam.id}
-                                awayTeamId={data.awayTeam.id}
+                                homeTeamId={data?.homeTeam?.id || 0}
+                                awayTeamId={data?.awayTeam?.id || 0}
                                 defaultShowAll={true}
                             />
                         ) : (
@@ -291,11 +294,11 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                             <div className="mt-2">
                                 <MatchEvents
                                     events={eventsList}
-                                    homeTeamId={data.homeTeam.id}
-                                    awayTeamId={data.awayTeam.id}
-                                    homeTeamName={data.homeTeam.name}
-                                    awayTeamName={data.awayTeam.name}
-                                    status={data.status}
+                                    homeTeamId={data?.homeTeam?.id || 0}
+                                    awayTeamId={data?.awayTeam?.id || 0}
+                                    homeTeamName={data?.homeTeam?.name || "Home"}
+                                    awayTeamName={data?.awayTeam?.name || "Away"}
+                                    status={data?.status}
                                 />
                             </div>
                         )}
@@ -303,27 +306,27 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
                         {/* --- MATCH INTRODUCTION & STORY --- */}
                         <div className="max-w-3xl mx-auto">
                             <MatchIntroduction
-                                homeTeamName={data.homeTeam.name}
-                                awayTeamName={data.awayTeam.name}
-                                venue={data.venue}
-                                homeMatches={data.homeTeam.allMatches}
-                                awayMatches={data.awayTeam.allMatches}
+                                homeTeamName={data?.homeTeam?.name || "Home"}
+                                awayTeamName={data?.awayTeam?.name || "Away"}
+                                venue={data?.venue}
+                                homeMatches={data?.homeTeam?.allMatches}
+                                awayMatches={data?.awayTeam?.allMatches}
                                 h2hMatches={filteredH2H}
-                                status={data.status}
-                                score={data.score}
+                                status={data?.status}
+                                score={data?.score}
                                 computedTip={computedTip}
                             />
                         </div>
 
                         {/* --- OVERALL STATISTICS SECTION --- */}
-                        {hasAnyMatches && (
+                        {hasAnyMatches && data?.homeTeam && data?.awayTeam && (
                             <div className="mt-2">
                                 <OverallStatistics homeTeam={data.homeTeam} awayTeam={data.awayTeam} />
                             </div>
                         )}
 
                         {/* --- OVER/UNDER STATISTICS SECTION --- */}
-                        {hasAnyMatches && (
+                        {hasAnyMatches && data?.homeTeam && data?.awayTeam && (
                             <div className="mt-2">
                                 <OverUnderStatistics homeTeam={data.homeTeam} awayTeam={data.awayTeam} />
                             </div>

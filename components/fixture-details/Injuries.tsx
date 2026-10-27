@@ -2,30 +2,30 @@ import React from "react";
 
 interface Injury {
     player: {
-        id: number;
+        id?: number;
         name: string;
-        photo: string;
-        type: string; // "Missing Fixture", "Questionable"
-        reason: string; // "Groin Injury", "Suspended"
+        photo?: string;
+        type?: string; // "Missing Fixture", "Questionable"
+        reason?: string; // "Groin Injury", "Suspended"
     };
     team: {
-        id: number;
+        id?: number;
         name: string;
-        logo: string;
+        logo?: string;
     };
-    fixture: {
-        id: number;
-        timezone: string;
-        date: string;
-        timestamp: number;
+    fixture?: {
+        id?: number;
+        timezone?: string;
+        date?: string;
+        timestamp?: number;
     };
-    league: {
-        id: number;
-        season: number;
-        name: string;
-        country: string;
-        logo: string;
-        flag: string;
+    league?: {
+        id?: number;
+        season?: number;
+        name?: string;
+        country?: string;
+        logo?: string;
+        flag?: string;
     };
 }
 
@@ -33,8 +33,8 @@ interface InjuriesProps {
     injuries: Injury[];
 }
 
-const getInjuryIcon = (reason: string) => {
-    const lower = reason.toLowerCase();
+const getInjuryIcon = (reason?: string) => {
+    const lower = (reason || "").toLowerCase();
     if (lower.includes('suspend') || lower.includes('red') || lower.includes('card')) {
         return <div className="w-2.5 h-3.5 bg-red-500 rounded-sm shrink-0 border border-red-700 shadow-[0_0_4px_rgba(239,68,68,0.5)]" />;
     }
@@ -48,7 +48,7 @@ const getInjuryIcon = (reason: string) => {
 };
 
 export default function Injuries({ injuries }: InjuriesProps) {
-    if (!injuries || injuries.length === 0) {
+    if (!injuries || !Array.isArray(injuries) || injuries.length === 0) {
         return (
             <div className="p-2 text-center text-gray-500">
                 <p>No reported injuries or suspensions.</p>
@@ -56,23 +56,46 @@ export default function Injuries({ injuries }: InjuriesProps) {
         );
     }
 
-    // Deduplicate injuries (API sometimes returns same player multiple times)
-    const uniqueInjuries = Array.from(new Map(injuries.map(i => [i.player?.id || i.player?.name || "unknown", i])).values());
+    // Deduplicate injuries safely
+    const uniqueInjuries = Array.from(
+        new Map(
+            injuries.map((i, idx) => [
+                i?.player?.id || i?.player?.name || `injury-${idx}`,
+                i
+            ])
+        ).values()
+    ).filter(Boolean);
 
     // Get unique teams from deduplicated list
-    const teams = Array.from(new Set(uniqueInjuries.map(i => i.team.name)));
+    const teams = Array.from(
+        new Set(
+            uniqueInjuries
+                .map((i) => i?.team?.name)
+                .filter((name): name is string => Boolean(name))
+        )
+    );
+
+    if (teams.length === 0) {
+        return (
+            <div className="p-2 text-center text-gray-500">
+                <p>No reported injuries or suspensions.</p>
+            </div>
+        );
+    }
 
     return (
         <div className="w-full flex flex-col gap-2 sm:gap-4 animate-in fade-in duration-500">
             {teams.map(teamName => {
-                const teamInjuries = uniqueInjuries.filter(i => i.team.name === teamName);
-                const teamLogo = teamInjuries[0].team.logo;
+                const teamInjuries = uniqueInjuries.filter(i => i?.team?.name === teamName);
+                const teamLogo = teamInjuries[0]?.team?.logo;
 
                 return (
                     <div key={teamName} className="w-full">
                         <div className="flex flex-col items-start mb-2 border-b border-gray-300 pb-1">
                             <div className="flex items-center justify-start gap-2">
-                                <img src={teamLogo} alt={teamName} className="w-6 h-6 object-contain shrink-0" />
+                                {teamLogo && (
+                                    <img src={teamLogo} alt={teamName} className="w-6 h-6 object-contain shrink-0" />
+                                )}
                                 <h4 className="text-[10px] sm:text-[11px] font-bold text-gray-600 tracking-wide capitalize truncate">{teamName}</h4>
                             </div>
                         </div>
@@ -81,16 +104,26 @@ export default function Injuries({ injuries }: InjuriesProps) {
                             {teamInjuries.map((injury, idx) => (
                                 <div key={idx} className="flex items-center gap-2 sm:gap-3">
                                     <span className="text-[9px] sm:text-[10px] text-gray-500 font-bold w-3 sm:w-4 text-right shrink-0">{idx + 1}.</span>
-                                    <img
-                                        src={injury.player.photo}
-                                        alt={injury.player.name}
-                                        className="w-7 h-7 sm:w-10 sm:h-10 rounded-full bg-gray-800 object-cover border border-gray-300 shrink-0"
-                                    />
+                                    {injury?.player?.photo ? (
+                                        <img
+                                            src={injury.player.photo}
+                                            alt={injury?.player?.name || "Player"}
+                                            className="w-7 h-7 sm:w-10 sm:h-10 rounded-full bg-gray-800 object-cover border border-gray-300 shrink-0"
+                                        />
+                                    ) : (
+                                        <div className="w-7 h-7 sm:w-10 sm:h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-[10px] font-bold shrink-0">
+                                            {(injury?.player?.name || "P").slice(0, 1)}
+                                        </div>
+                                    )}
                                     <div className="flex items-center justify-between min-w-0 w-full">
-                                        <p className="text-[10px] sm:text-[11px] font-medium text-gray-800 leading-tight truncate">{injury.player.name}</p>
+                                        <p className="text-[10px] sm:text-[11px] font-medium text-gray-800 leading-tight truncate">
+                                            {injury?.player?.name || "Unknown Player"}
+                                        </p>
                                         <div className="flex items-center gap-1.5 w-28 sm:w-36 shrink-0 ml-2 justify-start">
-                                            {getInjuryIcon(injury.player.reason)}
-                                            <p className="text-[9px] sm:text-[10px] text-gray-500 capitalize text-left truncate">{injury.player.reason}</p>
+                                            {getInjuryIcon(injury?.player?.reason)}
+                                            <p className="text-[9px] sm:text-[10px] text-gray-500 capitalize text-left truncate">
+                                                {injury?.player?.reason || injury?.player?.type || "Unavailable"}
+                                            </p>
                                         </div>
                                     </div>
                                 </div>

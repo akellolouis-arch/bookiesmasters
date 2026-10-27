@@ -80,10 +80,12 @@ export default async function FixtureDetailPage({
     }
 
     // JSON-LD Structured Data for Google (SportsEvent)
+    const home = data.homeTeam?.name || "Home";
+    const away = data.awayTeam?.name || "Away";
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "SportsEvent",
-        "name": `${data.homeTeam.name} vs ${data.awayTeam.name}`,
+        "name": `${home} vs ${away}`,
         "startDate": data.date,
         "location": {
             "@type": "Place",
@@ -91,15 +93,15 @@ export default async function FixtureDetailPage({
         },
         "homeTeam": {
             "@type": "SportsTeam",
-            "name": data.homeTeam.name,
-            "logo": data.homeTeam.logo
+            "name": home,
+            "logo": data.homeTeam?.logo
         },
         "awayTeam": {
             "@type": "SportsTeam",
-            "name": data.awayTeam.name,
-            "logo": data.awayTeam.logo
+            "name": away,
+            "logo": data.awayTeam?.logo
         },
-        "description": `Prediction for ${data.homeTeam.name} vs ${data.awayTeam.name} in ${data.league}. Tip: ${data.tip || "Check analysis"}`
+        "description": `Prediction for ${home} vs ${away} in ${data.league || "League"}. Tip: ${data.tip || "Check analysis"}`
     };
 
     return (
@@ -126,8 +128,10 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
         };
     }
 
-    const title = `${data.homeTeam.name} vs ${data.awayTeam.name} Prediction | BookiesMasters`;
-    const description = `Football betting tips for ${data.homeTeam.name} vs ${data.awayTeam.name} (${data.league}). Free analysis, H2H stats, and predictions.`;
+    const home = data.homeTeam?.name || "Home";
+    const away = data.awayTeam?.name || "Away";
+    const title = `${home} vs ${away} Prediction | BookiesMasters`;
+    const description = `Football betting tips for ${home} vs ${away} (${data.league || "League"}). Free analysis, H2H stats, and predictions.`;
 
     return {
         title,
@@ -140,7 +144,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
                     url: "https://bookiesmasters.com/match_poster.png", // Fallback, could be dynamic
                     width: 1200,
                     height: 630,
-                    alt: `${data.homeTeam.name} vs ${data.awayTeam.name}`,
+                    alt: `${home} vs ${away}`,
                 },
             ],
         },
