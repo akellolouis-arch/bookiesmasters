@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import useSWR from "swr";
 import H2HSection from "@/components/fixture-details/H2HSection";
 import LastFiveMatches from "@/components/fixture-details/LastFiveMatches";
@@ -63,7 +64,7 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
     const [awayTab, setAwayTab] = useState<"all" | "away">("all");
 
     const { data: swrData } = useSWR(
-        isMatchLive && initialData?.fixtureId ? `${process.env.NEXT_PUBLIC_API_URL}/api/fixtures/${initialData.fixtureId}` : null,
+        isMatchLive && initialData?.fixtureId ? `/api/fixtures/${initialData.fixtureId}` : null,
         fetcher,
         {
             refreshInterval: isMatchLive ? 30000 : 0,

@@ -6,7 +6,7 @@ import dbConnect from "@/lib/mongoose";
 
 export const revalidate = 60; // ISR: cache match pages for 60 seconds at Edge
 
-const FETCH_TIMEOUT_MS = 25_000;
+const FETCH_TIMEOUT_MS = 3_000;
 
 interface FixtureDetailData {
     fixtureId: number;
@@ -37,7 +37,18 @@ function fetchWithTimeout(url: string): Promise<Response> {
 }
 
 const getFixture = cache(async (id: string): Promise<FixtureDetailData | null> => {
-    // 1. Try fetching via API URL if set
+    // 1. Direct database connection (Instant: ~50-100ms, immune to external cold starts)
+    try {
+        await dbConnect();
+        const dbData = await getFixtureById(id);
+        if (dbData) {
+            return dbData as unknown as FixtureDetailData;
+        }
+    } catch (dbErr) {
+        console.warn(`[FixturePage] DB direct query failed for fixture ${id}, trying API fallback:`, dbErr);
+    }
+
+    // 2. Fallback to API if DB direct query did not find it or encountered an error
     const base = process.env.NEXT_PUBLIC_API_URL;
     if (base) {
         try {
@@ -51,19 +62,8 @@ const getFixture = cache(async (id: string): Promise<FixtureDetailData | null> =
                 return null;
             }
         } catch (e) {
-            console.warn(`[FixturePage] API fetch failed for ${id}, falling back to DB:`, e);
+            console.warn(`[FixturePage] API fetch fallback failed for ${id}:`, e);
         }
-    }
-
-    // 2. Direct database connection fallback (SSR & Local)
-    try {
-        await dbConnect();
-        const dbData = await getFixtureById(id);
-        if (dbData) {
-            return dbData as unknown as FixtureDetailData;
-        }
-    } catch (dbErr) {
-        console.error(`[FixturePage] DB fallback query failed for fixture ${id}:`, dbErr);
     }
 
     return null;

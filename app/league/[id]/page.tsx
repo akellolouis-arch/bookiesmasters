@@ -7,7 +7,7 @@ import dbConnect from "@/lib/mongoose";
 
 export const revalidate = 120; // Revalidate every 2 minutes
 
-const FETCH_TIMEOUT_MS = 15_000;
+const FETCH_TIMEOUT_MS = 3_000;
 
 function fetchWithTimeout(url: string): Promise<Response> {
     return fetch(url, {
@@ -17,7 +17,18 @@ function fetchWithTimeout(url: string): Promise<Response> {
 }
 
 const getLeague = cache(async (id: string): Promise<LeagueDetailsData | null> => {
-    // 1. Try fetching via API URL if set
+    // 1. Direct database connection (Instant: ~50-100ms, immune to external cold starts)
+    try {
+        await dbConnect();
+        const data = await getLeagueDetails(id);
+        if (data) {
+            return data as LeagueDetailsData;
+        }
+    } catch (dbErr) {
+        console.warn(`[LeaguePage] DB query failed for league ${id}, trying API fallback:`, dbErr);
+    }
+
+    // 2. Fallback to API if DB direct query did not find it or encountered an error
     const base = process.env.NEXT_PUBLIC_API_URL;
     if (base) {
         try {
@@ -28,19 +39,11 @@ const getLeague = cache(async (id: string): Promise<LeagueDetailsData | null> =>
                 if (json.data) return json.data as LeagueDetailsData;
             }
         } catch (e) {
-            console.warn(`[LeaguePage] API fetch failed for ${id}, falling back to DB:`, e);
+            console.warn(`[LeaguePage] API fetch fallback failed for ${id}:`, e);
         }
     }
 
-    // 2. Direct database connection fallback (SSR & Local)
-    try {
-        await dbConnect();
-        const data = await getLeagueDetails(id);
-        return data as LeagueDetailsData | null;
-    } catch (dbErr) {
-        console.error(`[LeaguePage] DB query failed for league ${id}:`, dbErr);
-        return null;
-    }
+    return null;
 });
 
 export async function generateMetadata({
