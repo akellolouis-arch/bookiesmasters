@@ -218,8 +218,8 @@ export default function PredictionsList({
         </div>
 
         {/* Top Trends & Footer rendered in exact flow container */}
-        {children}
         <ParipesaBanner />
+        {children}
         <Footer />
       </div>
     </div>
