@@ -34,3 +34,24 @@ body {
 body:has(.global-loader) footer {
   display: none !important;
 }
+
+/* Subtle pulse animation for promotional banners */
+@keyframes pulse-subtle {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08);
+  }
+  50% {
+    transform: scale(1.015);
+    box-shadow: 0 10px 25px -4px rgba(15, 82, 186, 0.3), 0 4px 10px -2px rgba(15, 82, 186, 0.15);
+  }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 3s ease-in-out infinite;
+}
+
+.animate-pulse-subtle:hover {
+  animation-play-state: paused;
+  transform: scale(1.02);
+}

@@ -47,7 +47,7 @@ export default function ParipesaBanner() {
         href={PARIPESA_AFFILIATE_URL}
         target="_blank"
         rel="noopener noreferrer sponsored"
-        className="group block relative overflow-hidden rounded-xl border border-gray-200/90 bg-white shadow-xs hover:shadow-md transition-all duration-300 max-w-lg mx-auto cursor-pointer"
+        className="group block relative overflow-hidden rounded-xl border border-gray-200/90 bg-white shadow-xs animate-pulse-subtle transition-all duration-300 max-w-lg mx-auto cursor-pointer"
         title="Paripesa"
       >
         <div className="relative w-full aspect-square bg-slate-950 overflow-hidden">
