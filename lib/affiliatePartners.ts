@@ -10,7 +10,7 @@ export interface AffiliatePartner {
 export const PARIPESA_AFFILIATE_URL =
   process.env.NEXT_PUBLIC_PARIPESA_AFFILIATE_URL ||
   process.env.NEXT_PUBLIC_PARIPESA_URL ||
-  "https://paripesa.bet/registration/?tag=BKMS254";
+  "https://paripesa.bet/bkms254";
 
 export const AFFILIATE_PARTNERS: AffiliatePartner[] = [
   {
