@@ -7,7 +7,20 @@ export interface AffiliatePartner {
   textColor: string;
 }
 
+export const PARIPESA_AFFILIATE_URL =
+  process.env.NEXT_PUBLIC_PARIPESA_AFFILIATE_URL ||
+  process.env.NEXT_PUBLIC_PARIPESA_URL ||
+  "https://paripesa.bet/registration/?tag=BKMS254";
+
 export const AFFILIATE_PARTNERS: AffiliatePartner[] = [
+  {
+    id: "paripesa",
+    name: "PARIPESA",
+    ctaText: "Bonus BKMS254",
+    url: PARIPESA_AFFILIATE_URL,
+    bgColor: "#0f52ba", // Paripesa Blue
+    textColor: "#ffffff",
+  },
   {
     id: "1xbet",
     name: "1XBET",
@@ -25,4 +38,3 @@ export const AFFILIATE_PARTNERS: AffiliatePartner[] = [
     textColor: "#000000",
   },
 ];
-
