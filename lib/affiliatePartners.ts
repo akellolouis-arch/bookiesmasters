@@ -7,12 +7,25 @@ export interface AffiliatePartner {
   textColor: string;
 }
 
+export const MEGAPARI_AFFILIATE_URL =
+  process.env.NEXT_PUBLIC_MEGAPARI_AFFILIATE_URL ||
+  process.env.NEXT_PUBLIC_MEGAPARI_URL ||
+  "https://6258637.megapari-865414.com";
+
 export const PARIPESA_AFFILIATE_URL =
   process.env.NEXT_PUBLIC_PARIPESA_AFFILIATE_URL ||
   process.env.NEXT_PUBLIC_PARIPESA_URL ||
   "https://paripesa.bet/bkms254";
 
 export const AFFILIATE_PARTNERS: AffiliatePartner[] = [
+  {
+    id: "megapari",
+    name: "MEGAPARI",
+    ctaText: "200% Bonus",
+    url: MEGAPARI_AFFILIATE_URL,
+    bgColor: "#e11d48", // Megapari Red
+    textColor: "#ffffff",
+  },
   {
     id: "paripesa",
     name: "PARIPESA",
