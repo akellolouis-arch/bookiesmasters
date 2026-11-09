@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import MatchIntroduction from "@/components/fixture-details/MatchIntroduction";
+import MegapariBanner from "@/components/MegapariBanner";
 
 interface Team {
   id: number;
@@ -58,6 +59,8 @@ export default async function TopTrends() {
     return null;
   }
 
+  const middleIndex = Math.floor(trends.length / 2);
+
   return (
     <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto px-0 mt-2 mb-0">
       {/* Title */}
@@ -71,14 +74,19 @@ export default async function TopTrends() {
 
       {/* Cards List - Outer cards take full width */}
       <div className="space-y-0">
-        {trends.map((match) => {
+        {trends.map((match, index) => {
           const formattedTip = match.tip || "";
           
           return (
-            <div
-              key={match.fixtureId}
-              className="bg-white border border-gray-200 rounded-none p-1.5 sm:p-2 hover:border-gray-300 transition-all duration-300"
-            >
+            <React.Fragment key={match.fixtureId}>
+              {index === middleIndex && (
+                <div className="py-2.5">
+                  <MegapariBanner />
+                </div>
+              )}
+              <div
+                className="bg-white border border-gray-200 rounded-none p-1.5 sm:p-2 hover:border-gray-300 transition-all duration-300"
+              >
               {/* League Header */}
               <div className="flex items-center gap-1 mb-1">
                 {match.leagueLogo && (
@@ -154,7 +162,8 @@ export default async function TopTrends() {
                 </Link>
               </div>
             </div>
-          );
+          </React.Fragment>
+        );
         })}
       </div>
     </div>
