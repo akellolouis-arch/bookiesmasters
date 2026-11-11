@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 54" width="220" height="54">
+  <defs>
+    <style>
+      .logo-1x { font-family: 'Arial Black', 'Montserrat Black', Impact, sans-serif; font-weight: 900; font-style: italic; font-size: 38px; fill: #ffffff; letter-spacing: -1.5px; }
+      .logo-bet { font-family: 'Arial Black', 'Montserrat Black', Impact, sans-serif; font-weight: 900; font-style: italic; font-size: 38px; fill: #1ea1f2; letter-spacing: -1px; }
+    </style>
+  </defs>
+  <text x="2" y="40" class="logo-1x">1X</text>
+  <text x="68" y="40" class="logo-bet">BET</text>
+</svg>
+

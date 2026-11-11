@@ -22,6 +22,11 @@ export const MELBET_AFFILIATE_URL =
   process.env.NEXT_PUBLIC_MELBET_URL ||
   "https://refpa3665.com/L?tag=d_2790675m_45415c_&site=2790675&ad=45415";
 
+export const ONEXBET_AFFILIATE_URL =
+  process.env.NEXT_PUBLIC_1XBET_AFFILIATE_URL ||
+  process.env.NEXT_PUBLIC_ONEXBET_AFFILIATE_URL ||
+  "https://reffpa.com/L?tag=d_5148910m_97c_telegram&site=5148910&ad=97&r=registration";
+
 export const AFFILIATE_PARTNERS: AffiliatePartner[] = [
   {
     id: "megapari",
@@ -43,7 +48,7 @@ export const AFFILIATE_PARTNERS: AffiliatePartner[] = [
     id: "1xbet",
     name: "1XBET",
     ctaText: "300% Bonus",
-    url: "https://reffpa.com/L?tag=d_5148910m_97c_telegram&site=5148910&ad=97&r=registration",
+    url: ONEXBET_AFFILIATE_URL,
     bgColor: "#1a56db", // 1xBet Blue
     textColor: "#ffffff",
   },
