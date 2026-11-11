@@ -17,6 +17,11 @@ export const PARIPESA_AFFILIATE_URL =
   process.env.NEXT_PUBLIC_PARIPESA_URL ||
   "https://paripesa.bet/bkms254";
 
+export const MELBET_AFFILIATE_URL =
+  process.env.NEXT_PUBLIC_MELBET_AFFILIATE_URL ||
+  process.env.NEXT_PUBLIC_MELBET_URL ||
+  "https://refpa3665.com/L?tag=d_2790675m_45415c_&site=2790675&ad=45415";
+
 export const AFFILIATE_PARTNERS: AffiliatePartner[] = [
   {
     id: "megapari",

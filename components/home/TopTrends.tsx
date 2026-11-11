@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import MatchIntroduction from "@/components/fixture-details/MatchIntroduction";
 import MegapariBanner from "@/components/MegapariBanner";
+import MelbetBanner from "@/components/MelbetBanner";
 
 interface Team {
   id: number;
@@ -54,26 +55,26 @@ async function fetchTrends(): Promise<FixtureTrend[]> {
 
 export default async function TopTrends() {
   const trends = await fetchTrends();
-
-  if (!trends || trends.length === 0) {
-    return null;
-  }
-
-  const middleIndex = Math.floor(trends.length / 2);
+  const middleIndex = trends ? Math.floor(trends.length / 2) : 0;
 
   return (
     <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto px-0 mt-2 mb-0">
-      {/* Title */}
-      <div className="flex items-center justify-center gap-2 mb-1.5 px-1 sm:px-0">
-        <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent to-white/10" />
-        <span className="text-[11px] font-bold text-teal-700/90 tracking-wider uppercase whitespace-nowrap">
-          top trends
-        </span>
-        <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent" />
-      </div>
+      {/* Melbet Banner just above Top Trends section */}
+      <MelbetBanner />
 
-      {/* Cards List - Outer cards take full width */}
-      <div className="space-y-0">
+      {(!trends || trends.length === 0) ? null : (
+        <>
+          {/* Title */}
+          <div className="flex items-center justify-center gap-2 mb-1.5 px-1 sm:px-0">
+            <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent to-white/10" />
+            <span className="text-[11px] font-bold text-teal-700/90 tracking-wider uppercase whitespace-nowrap">
+              top trends
+            </span>
+            <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent" />
+          </div>
+
+          {/* Cards List - Outer cards take full width */}
+          <div className="space-y-0">
         {trends.map((match, index) => {
           const formattedTip = match.tip || "";
           
@@ -166,6 +167,8 @@ export default async function TopTrends() {
         );
         })}
       </div>
+      </>
+      )}
     </div>
   );
 }
