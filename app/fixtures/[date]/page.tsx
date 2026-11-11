@@ -2,6 +2,7 @@ import FixturesList from "@/components/fixtures/FixturesList";
 import TopTrends from "@/components/home/TopTrends";
 import { getFixturesGroupedByLeague } from "@/backend/services/fixtureCardService";
 import dbConnect from "@/lib/mongoose";
+import { Suspense } from "react";
 
 export const revalidate = 60; // Cache fixtures for 60 seconds at Edge
 
