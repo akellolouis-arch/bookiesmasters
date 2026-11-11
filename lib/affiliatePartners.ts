@@ -25,7 +25,7 @@ export const MELBET_AFFILIATE_URL =
 export const ONEXBET_AFFILIATE_URL =
   process.env.NEXT_PUBLIC_1XBET_AFFILIATE_URL ||
   process.env.NEXT_PUBLIC_ONEXBET_AFFILIATE_URL ||
-  "https://reffpa.com/L?tag=d_5148910m_97c_telegram&site=5148910&ad=97&r=registration";
+  "https://reffpa.com/L?tag=d_5148910m_61949c_&site=5148910&ad=61949";
 
 export const AFFILIATE_PARTNERS: AffiliatePartner[] = [
   {

@@ -10,47 +10,130 @@ export default function OneXBetBanner() {
   if (pathname?.startsWith("/admin")) return null;
 
   return (
-    <div className="w-full bg-[#0c2937] border-b border-cyan-500/20 m-0 p-0">
+    <div className="w-full bg-[#07194f] border-b border-[#14a0ff]/70 m-0 p-0 overflow-hidden">
       <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto">
         <a
           href={ONEXBET_AFFILIATE_URL}
           target="_blank"
           rel="noopener noreferrer sponsored"
-          className="group block relative overflow-hidden bg-[#0c2937] hover:bg-[#0e3142] px-3 py-2 sm:px-4 sm:py-2.5 transition-all duration-200 cursor-pointer w-full"
-          title="1xBet 200% Welcome Bonus"
+          className="group relative flex items-center justify-between w-full h-[50px] px-2 sm:px-4 bg-[#07194f] hover:brightness-110 transition-all duration-200 cursor-pointer overflow-hidden select-none"
+          title="1XBET - Register and get a 200% bonus on your first deposit"
         >
-          <div className="flex items-center justify-between gap-2">
-            {/* Left: 1XBET Logo + Offer + Responsible Gaming text */}
-            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-              <div className="relative w-14 sm:w-16 h-4 sm:h-5 flex-shrink-0">
-                <Image
-                  src="/banners/1xbet/1xbet_logo.svg"
-                  alt="1XBET Logo"
-                  fill
-                  priority={false}
-                  className="object-contain"
-                />
+          {/* Subtle Background Graphics from 1XBET Banner */}
+          <div className="absolute inset-0 pointer-events-none opacity-20 overflow-hidden">
+            <div className="absolute -left-4 top-2 w-16 h-10 bg-contain bg-no-repeat bg-[url('/banners/1xbet/bcg4.png')]" />
+            <div className="absolute right-24 top-0 w-20 h-12 bg-contain bg-no-repeat bg-[url('/banners/1xbet/bcg1.png')]" />
+          </div>
+
+          {/* Left: Official 1XBET Vector Logo */}
+          <div className="relative z-10 flex items-center shrink-0">
+            <div className="relative w-16 sm:w-20 md:w-24 h-5 sm:h-6">
+              <Image
+                src="/banners/1xbet/1xbet_logo.svg"
+                alt="1XBET"
+                fill
+                priority={false}
+                className="object-contain object-left"
+              />
+            </div>
+          </div>
+
+          {/* Center: Animated/Blinking Text with Yellowish & Whitish Capital Letters */}
+          <div className="relative z-10 flex-1 min-w-0 h-[36px] flex items-center justify-center text-center px-1">
+            <div className="relative w-full h-full flex items-center justify-center font-black italic uppercase tracking-tight">
+              {/* Slide 1 */}
+              <div className="banner-slide-1 absolute inset-0 flex items-center justify-center text-[10px] sm:text-xs md:text-sm whitespace-nowrap">
+                <span className="text-[#e8c02d] drop-shadow-xs">REGISTER</span>
+                <span className="text-white ml-1.5 drop-shadow-xs">AND GET A</span>
               </div>
 
-              <div className="flex flex-col justify-center min-w-0">
-                <span className="text-[#F6B800] font-medium text-xs sm:text-sm tracking-tight truncate">
-                  200% Welcome Bonus
-                </span>
-                <span className="text-[8.5px] sm:text-[9.5px] text-gray-300/80 font-normal truncate">
-                  Gamble Responsibly. Terms &amp; Conditions apply. 18+
-                </span>
+              {/* Slide 2 */}
+              <div className="banner-slide-2 absolute inset-0 flex items-center justify-center text-[10px] sm:text-xs md:text-sm whitespace-nowrap">
+                <span className="text-[#e8c02d] drop-shadow-xs">200% BONUS</span>
+                <span className="text-white ml-1.5 drop-shadow-xs">ON YOUR 1ST DEPOSIT</span>
               </div>
             </div>
+          </div>
 
-            {/* Right: Clean White Action Button with lighter font boldness */}
-            <div className="flex-shrink-0">
-              <span className="inline-flex items-center justify-center bg-white hover:bg-gray-100 text-[#0c2937] font-medium px-3 sm:px-4 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm tracking-wide transition-transform group-hover:scale-105 shadow-xs">
-                1xbet
+          {/* Right: 1XBET Lime Action Button & 18+ License Badge */}
+          <div className="relative z-10 flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <button
+              type="button"
+              className="btn-pulse flex items-center justify-center bg-[#a0cb32] hover:bg-[#b2df3a] text-[#10182a] font-black uppercase text-[9px] sm:text-[10px] md:text-[11px] px-2.5 sm:px-3.5 py-1 rounded-full border-2 border-[#123589] shadow-[0_0_0_1px_#97bb3a] tracking-tight transition-transform"
+            >
+              GET BONUS
+            </button>
+
+            {/* 18+ Responsible Gaming Badge */}
+            <div className="flex flex-col items-center justify-center leading-none">
+              <span className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-white text-[#000c40] font-black text-[7px] sm:text-[8px] flex items-center justify-center shadow-xs">
+                18+
+              </span>
+              <span className="text-[6px] text-gray-300 mt-0.5 font-sans font-medium hidden sm:block">
+                T&amp;C apply
               </span>
             </div>
           </div>
         </a>
       </div>
+
+      {/* Embedded Animation Styles */}
+      <style jsx>{`
+        .banner-slide-1 {
+          animation: s1-anim 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+        .banner-slide-2 {
+          animation: s2-anim 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+        .btn-pulse {
+          animation: btn-an 5s infinite;
+        }
+
+        @keyframes s1-anim {
+          0%, 47% {
+            opacity: 1;
+            transform: translateY(0);
+            visibility: visible;
+          }
+          50%, 97% {
+            opacity: 0;
+            transform: translateY(-14px);
+            visibility: hidden;
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+            visibility: visible;
+          }
+        }
+
+        @keyframes s2-anim {
+          0%, 47% {
+            opacity: 0;
+            transform: translateY(14px);
+            visibility: hidden;
+          }
+          50%, 97% {
+            opacity: 1;
+            transform: translateY(0);
+            visibility: visible;
+          }
+          100% {
+            opacity: 0;
+            transform: translateY(14px);
+            visibility: hidden;
+          }
+        }
+
+        @keyframes btn-an {
+          0%, 20%, 24%, 28%, 70%, 74%, 78%, 100% {
+            transform: scale(1);
+          }
+          22%, 26%, 72%, 76% {
+            transform: scale(0.91);
+          }
+        }
+      `}</style>
     </div>
   );
 }
