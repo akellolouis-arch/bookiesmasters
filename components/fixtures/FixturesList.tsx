@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Footer from "@/components/Footer";
 import DateNavigator from "@/components/DateNavigator";
+import ParipesaBanner from "@/components/ParipesaBanner";
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { Calendar, ChevronRight } from "lucide-react";
@@ -284,6 +285,7 @@ export default function FixturesList({
         </div>
 
         {children}
+        <ParipesaBanner />
       </div>
 
       <Footer />

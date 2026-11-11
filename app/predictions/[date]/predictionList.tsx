@@ -6,6 +6,7 @@ import FixtureCard from "@/components/FixtureCard";
 import Loader from "@/components/Loader";
 import Footer from "@/components/Footer";
 import DateNavigator from "@/components/DateNavigator";
+import ParipesaBanner from "@/components/ParipesaBanner";
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { Calendar, ChevronRight } from "lucide-react";
@@ -218,6 +219,7 @@ export default function PredictionsList({
 
         {/* Top Trends & Footer rendered in exact flow container */}
         {children}
+        <ParipesaBanner />
         <Footer />
       </div>
     </div>
