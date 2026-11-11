@@ -41,16 +41,16 @@ function BottomNavTabsContent() {
   const fixturesUrl = selectedDate === "live" ? `/fixtures/live${queryString}` : `/fixtures/${selectedDate}${queryString}`;
 
   return (
-    <div className="w-full bg-gray-100 border-b border-gray-300 m-0 p-0">
+    <div className="w-full bg-gray-100 border-b border-gray-300 m-0 py-1.5 px-1 sm:px-2">
       <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto">
-        <div className="grid grid-cols-2 w-full divide-x divide-gray-300/60">
+        <div className="grid grid-cols-2 gap-2 w-full">
           {/* Predictions Tab */}
           <Link
             href={predictionsUrl}
-            className={`flex items-center justify-center gap-1.5 sm:gap-2 py-2 sm:py-2.5 text-xs sm:text-sm font-bold tracking-wide transition-all ${
+            className={`flex items-center justify-center gap-1.5 sm:gap-2 py-1.5 sm:py-2 text-xs sm:text-sm font-bold tracking-wide rounded-md transition-all ${
               isPredictions && !isFixtures
                 ? "bg-teal-700 text-white shadow-xs"
-                : "bg-gray-100 text-gray-600 hover:text-gray-900 hover:bg-gray-200/90"
+                : "bg-white text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-200"
             }`}
             title="View expert predictions and confidence tips"
           >
@@ -61,10 +61,10 @@ function BottomNavTabsContent() {
           {/* Fixtures Tab */}
           <Link
             href={fixturesUrl}
-            className={`flex items-center justify-center gap-1.5 sm:gap-2 py-2 sm:py-2.5 text-xs sm:text-sm font-bold tracking-wide transition-all ${
+            className={`flex items-center justify-center gap-1.5 sm:gap-2 py-1.5 sm:py-2 text-xs sm:text-sm font-bold tracking-wide rounded-md transition-all ${
               isFixtures
                 ? "bg-teal-700 text-white shadow-xs"
-                : "bg-gray-100 text-gray-600 hover:text-gray-900 hover:bg-gray-200/90"
+                : "bg-white text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-200"
             }`}
             title="View all matches and fixtures"
           >

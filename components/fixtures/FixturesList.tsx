@@ -5,6 +5,7 @@ import Link from "next/link";
 import Footer from "@/components/Footer";
 import DateNavigator from "@/components/DateNavigator";
 import OneXBetBanner from "@/components/OneXBetBanner";
+import BottomNavTabs from "@/components/BottomNavTabs";
 import MelbetBanner from "@/components/MelbetBanner";
 import MegapariBanner from "@/components/MegapariBanner";
 import ParipesaBanner from "@/components/ParipesaBanner";
@@ -140,6 +141,9 @@ export default function FixturesList({
 
       {/* 1XBET Banner below Date Navigator */}
       <OneXBetBanner />
+
+      {/* Predictions and Fixtures tabs below 1XBET Banner */}
+      <BottomNavTabs />
 
       {/* Main Layout Container */}
       <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto sm:px-1 md:px-4 min-h-[50vh]">

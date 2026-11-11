@@ -5,7 +5,6 @@ import "./globals.css";
 
 
 import Navbar from "@/components/Navbar";
-import BottomNavTabs from "@/components/BottomNavTabs";
 import { Providers } from "@/components/Providers";
 
 
@@ -114,7 +113,6 @@ export default function RootLayout({
 
         <Providers>
           <Navbar />
-          <BottomNavTabs />
           <main className="flex-1">{children}</main>
         </Providers>
       </body>
