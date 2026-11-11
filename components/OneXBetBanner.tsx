@@ -2,62 +2,46 @@
 
 import React from "react";
 import Image from "next/image";
-import { ChevronUp } from "lucide-react";
 import { ONEXBET_AFFILIATE_URL } from "@/lib/affiliatePartners";
 
 export default function OneXBetBanner() {
   return (
-    <div className="w-full max-w-2xl mx-auto my-2.5 px-1 sm:px-0">
+    <div className="w-full bg-[#0c2937] border-b border-cyan-500/20 shadow-xs relative z-40">
       <a
         href={ONEXBET_AFFILIATE_URL}
         target="_blank"
         rel="noopener noreferrer sponsored"
-        className="group block relative overflow-hidden rounded-2xl bg-[#0c2937] hover:bg-[#0e3142] p-3 sm:p-3.5 shadow-md border border-cyan-500/20 transition-all duration-200 cursor-pointer"
-        title="1xBet 200% Welcome Bonus up to KSh 20,000"
+        className="group max-w-7xl mx-auto px-2 sm:px-4 md:px-8 h-10 sm:h-12 flex items-center justify-between gap-2 transition-colors hover:bg-[#0e3142] cursor-pointer"
+        title="1xBet 200% Welcome Bonus"
       >
-        {/* Top Header Row */}
-        <div className="flex items-center justify-between gap-2 mb-1">
-          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-            {/* 1XBET Logo */}
-            <div className="relative w-16 sm:w-20 h-5 sm:h-6 flex-shrink-0">
-              <Image
-                src="/banners/1xbet/1xbet_logo.svg"
-                alt="1XBET Logo"
-                fill
-                priority={false}
-                className="object-contain"
-              />
-            </div>
-
-            {/* Offer Heading */}
-            <span className="text-white font-bold text-xs sm:text-[13px] leading-tight">
-              200% Welcome Bonus up to{" "}
-              <span className="text-[#00a3e0] font-extrabold whitespace-nowrap">
-                KSh 20,000
-              </span>
-            </span>
+        {/* Left: 1XBET Logo + Offer */}
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <div className="relative w-14 sm:w-16 h-4 sm:h-5 flex-shrink-0">
+            <Image
+              src="/banners/1xbet/1xbet_logo.svg"
+              alt="1XBET Logo"
+              fill
+              priority={false}
+              className="object-contain"
+            />
           </div>
 
-          {/* Chevron Collapse Indicator (Flashscore Style) */}
-          <ChevronUp className="w-4 h-4 text-white/70 flex-shrink-0 group-hover:text-white transition-colors" />
+          <span className="text-white font-extrabold text-xs sm:text-sm tracking-tight truncate">
+            200% Welcome Bonus
+          </span>
+
+          <span className="hidden md:inline-block text-[10px] text-gray-300/80 font-normal">
+            • Gamble Responsibly 18+
+          </span>
         </div>
 
-        {/* Responsible Gaming Disclaimer */}
-        <p className="text-[9px] sm:text-[10px] text-gray-300/80 mb-2 font-normal tracking-wide">
-          Gamble Responsibly. Terms &amp; Conditions apply. 18+
-        </p>
-
-        {/* Full-Width White Action Button */}
-        <div className="w-full bg-white hover:bg-gray-100 text-[#0c2937] font-black py-2 sm:py-2.5 rounded-xl text-center text-xs sm:text-sm tracking-wide transition-colors shadow-xs group-hover:shadow-md flex items-center justify-center">
-          1xbet
+        {/* Right: White Action Button */}
+        <div className="flex-shrink-0">
+          <span className="inline-flex items-center justify-center bg-white hover:bg-gray-100 text-[#0c2937] font-black px-3 sm:px-4 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm tracking-wide transition-transform group-hover:scale-105 shadow-xs">
+            1xbet
+          </span>
         </div>
       </a>
-
-      {/* Subtle Advertisement Label */}
-      <div className="text-[8px] sm:text-[9px] text-gray-400 font-medium text-center uppercase tracking-widest mt-1">
-        Advertisement
-      </div>
     </div>
   );
 }
-

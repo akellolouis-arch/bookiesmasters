@@ -7,7 +7,6 @@ import Loader from "@/components/Loader";
 import Footer from "@/components/Footer";
 import DateNavigator from "@/components/DateNavigator";
 import ParipesaBanner from "@/components/ParipesaBanner";
-import OneXBetBanner from "@/components/OneXBetBanner";
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { Calendar, ChevronRight } from "lucide-react";
@@ -152,9 +151,6 @@ export default function PredictionsList({
 
       {/* Main Predictions Layout Container */}
       <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto sm:px-1 md:px-4 min-h-[50vh]">
-        {/* Flashscore-style 1XBET Featured Banner */}
-        <OneXBetBanner />
-
         {/* Smooth Fade & Pop Predictions Container */}
         <div className={`transition-opacity duration-200 ${isFetching ? "opacity-35 pointer-events-none" : "opacity-100"}`}>
           {(!safeData || safeData.length === 0) ? (
