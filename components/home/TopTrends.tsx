@@ -62,7 +62,9 @@ export default async function TopTrends() {
       {/* Melbet Banner just above Top Trends section */}
       <MelbetBanner />
 
-      {(!trends || trends.length === 0) ? null : (
+      {(!trends || trends.length === 0) ? (
+        <MegapariBanner />
+      ) : (
         <>
           {/* Title */}
           <div className="flex items-center justify-center gap-2 mb-1.5 px-1 sm:px-0">

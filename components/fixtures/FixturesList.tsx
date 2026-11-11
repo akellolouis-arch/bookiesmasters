@@ -4,6 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import Footer from "@/components/Footer";
 import DateNavigator from "@/components/DateNavigator";
+import OneXBetBanner from "@/components/OneXBetBanner";
+import MelbetBanner from "@/components/MelbetBanner";
+import MegapariBanner from "@/components/MegapariBanner";
 import ParipesaBanner from "@/components/ParipesaBanner";
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
@@ -134,6 +137,9 @@ export default function FixturesList({
     <div className="w-full">
       {/* Date Navigator Bar */}
       <DateNavigator date={selectedDate} onDateSelect={(newDate) => setSelectedDate(newDate)} />
+
+      {/* 1XBET Banner below Date Navigator */}
+      <OneXBetBanner />
 
       {/* Main Layout Container */}
       <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto sm:px-1 md:px-4 min-h-[50vh]">
@@ -284,7 +290,14 @@ export default function FixturesList({
           )}
         </div>
 
-        {children}
+        {children ? (
+          children
+        ) : (
+          <>
+            <MelbetBanner />
+            <MegapariBanner />
+          </>
+        )}
         <ParipesaBanner />
       </div>
 

@@ -6,6 +6,7 @@ import FixtureCard from "@/components/FixtureCard";
 import Loader from "@/components/Loader";
 import Footer from "@/components/Footer";
 import DateNavigator from "@/components/DateNavigator";
+import OneXBetBanner from "@/components/OneXBetBanner";
 import ParipesaBanner from "@/components/ParipesaBanner";
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
@@ -148,6 +149,9 @@ export default function PredictionsList({
     <div className="w-full">
       {/* Date Navigator Bar */}
       <DateNavigator date={selectedDate} onDateSelect={(newDate) => setSelectedDate(newDate)} />
+
+      {/* 1XBET Banner below Date Navigator */}
+      <OneXBetBanner />
 
       {/* Main Predictions Layout Container */}
       <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto sm:px-1 md:px-4 min-h-[50vh]">

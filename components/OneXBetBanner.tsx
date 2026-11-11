@@ -33,7 +33,7 @@ export default function OneXBetBanner() {
               </div>
 
               <div className="flex flex-col justify-center min-w-0">
-                <span className="text-cyan-400 font-medium text-xs sm:text-sm tracking-tight truncate">
+                <span className="text-[#F6B800] font-medium text-xs sm:text-sm tracking-tight truncate">
                   200% Welcome Bonus
                 </span>
                 <span className="text-[8.5px] sm:text-[9.5px] text-gray-300/80 font-normal truncate">

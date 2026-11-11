@@ -5,7 +5,6 @@ import "./globals.css";
 
 
 import Navbar from "@/components/Navbar";
-import OneXBetBanner from "@/components/OneXBetBanner";
 import BottomNavTabs from "@/components/BottomNavTabs";
 import { Providers } from "@/components/Providers";
 
@@ -115,7 +114,6 @@ export default function RootLayout({
 
         <Providers>
           <Navbar />
-          <OneXBetBanner />
           <BottomNavTabs />
           <main className="flex-1">{children}</main>
         </Providers>

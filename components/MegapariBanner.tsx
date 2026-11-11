@@ -36,12 +36,12 @@ export default function MegapariBanner() {
   }, []);
 
   return (
-    <div className="w-full my-4 px-1 sm:px-0">
+    <div className="w-full my-3 px-1 sm:px-0">
       <a
         href={MEGAPARI_AFFILIATE_URL}
         target="_blank"
         rel="noopener noreferrer sponsored"
-        className="group block relative overflow-hidden rounded-xl border border-gray-200/90 bg-slate-950 shadow-xs animate-pulse-subtle transition-all duration-300 max-w-2xl mx-auto cursor-pointer aspect-[1024/341]"
+        className="group block relative overflow-hidden rounded-xl border border-gray-200/90 bg-[#0d2a4c] shadow-xs animate-pulse-subtle transition-all duration-300 max-w-2xl mx-auto cursor-pointer aspect-[1024/180] sm:aspect-[1024/160]"
         title="Megapari 200% Welcome Bonus with Promo Code BKMS254"
       >
         <div className="relative w-full h-full overflow-hidden">
@@ -51,7 +51,7 @@ export default function MegapariBanner() {
             width={1024}
             height={341}
             priority={false}
-            className="w-full h-full object-contain group-hover:scale-[1.015] transition-transform duration-300"
+            className="w-full h-full object-cover object-center group-hover:scale-[1.015] transition-transform duration-300"
           />
         </div>
       </a>
