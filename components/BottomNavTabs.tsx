@@ -9,20 +9,21 @@ function BottomNavTabsContent() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  if (pathname?.startsWith("/admin")) return null;
+
   // Check active section
   const isFixtures = pathname?.startsWith("/fixtures");
   const isPredictions = pathname?.startsWith("/predictions") || pathname === "/";
 
   // Extract selected date from pathname if available
   let selectedDate = "";
-  if (pathname?.startsWith("/predictions/")) {
-    selectedDate = pathname.replace("/predictions/", "");
-  } else if (pathname?.startsWith("/fixtures/")) {
-    selectedDate = pathname.replace("/fixtures/", "");
+  const dateMatch = pathname?.match(/\/(?:predictions|fixtures)\/([^\/?#]+)/);
+  if (dateMatch && dateMatch[1]) {
+    selectedDate = dateMatch[1];
   }
 
   // Fallback to today in Kenya timezone
-  if (!selectedDate || selectedDate === "live") {
+  if (!selectedDate) {
     selectedDate = new Intl.DateTimeFormat("en-CA", {
       timeZone: "Africa/Nairobi",
       year: "numeric",
@@ -38,7 +39,7 @@ function BottomNavTabsContent() {
   const fixturesUrl = `/fixtures/${selectedDate}${queryString}`;
 
   return (
-    <div className="w-full max-w-md mx-auto my-3 px-2 flex justify-center">
+    <div className="w-full max-w-md mx-auto mt-1 mb-2.5 px-2 flex justify-center">
       <div className="inline-flex p-1 bg-gray-200/90 rounded-2xl shadow-inner w-full sm:w-auto">
         {/* Predictions Tab */}
         <Link

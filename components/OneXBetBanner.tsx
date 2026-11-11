@@ -2,11 +2,15 @@
 
 import React from "react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { ONEXBET_AFFILIATE_URL } from "@/lib/affiliatePartners";
 
 export default function OneXBetBanner() {
+  const pathname = usePathname();
+  if (pathname?.startsWith("/admin")) return null;
+
   return (
-    <div className="w-full max-w-2xl mx-auto my-2 px-1 sm:px-0">
+    <div className="w-full max-w-2xl mx-auto mt-2 mb-1 px-2 sm:px-0">
       <a
         href={ONEXBET_AFFILIATE_URL}
         target="_blank"
@@ -28,7 +32,7 @@ export default function OneXBetBanner() {
             </div>
 
             <div className="flex flex-col justify-center min-w-0">
-              <span className="text-white font-medium text-xs sm:text-sm tracking-tight truncate">
+              <span className="text-cyan-400 font-medium text-xs sm:text-sm tracking-tight truncate">
                 200% Welcome Bonus
               </span>
               <span className="text-[8.5px] sm:text-[9.5px] text-gray-300/80 font-normal truncate">
@@ -39,7 +43,7 @@ export default function OneXBetBanner() {
 
           {/* Right: Clean White Action Button with lighter font boldness */}
           <div className="flex-shrink-0">
-            <span className="inline-flex items-center justify-center bg-white hover:bg-gray-100 text-[#0c2937] font-semibold px-3 sm:px-4 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm tracking-wide transition-transform group-hover:scale-105 shadow-xs">
+            <span className="inline-flex items-center justify-center bg-white hover:bg-gray-100 text-[#0c2937] font-medium px-3 sm:px-4 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm tracking-wide transition-transform group-hover:scale-105 shadow-xs">
               1xbet
             </span>
           </div>
