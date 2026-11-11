@@ -2,9 +2,12 @@
 
 import { Facebook, Send, Mail } from "lucide-react";
 import Link from "next/link";
+import OneXBetBanner from "@/components/OneXBetBanner";
+import BottomNavTabs from "@/components/BottomNavTabs";
 
 export default function Footer() {
   return (
+    <>
     <footer className="bg-gray-100 text-gray-600 text-[11px] font-semibold md:justify-center px-1 pt-1 pb-3 md:pt-2 md:pb-4 border-t border-gray-200">
       {/* Main section */}
       <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-4 md:text-center">
@@ -158,5 +161,12 @@ export default function Footer() {
         © {new Date().getFullYear()} Bookiesmasters. All rights reserved.
       </div>
     </footer>
+
+    {/* Section Below the Footer: 1XBET Banner & Navigation Tabs */}
+    <div className="w-full bg-gray-50 py-3 border-t border-gray-200">
+      <OneXBetBanner />
+      <BottomNavTabs />
+    </div>
+    </>
   );
 }
