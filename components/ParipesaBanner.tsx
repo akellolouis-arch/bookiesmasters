@@ -54,23 +54,30 @@ export default function ParipesaBanner() {
   }, []);
 
   return (
-    <div className="w-full my-6 px-1 sm:px-0 flex justify-center">
+    <div className="w-full my-4 px-1 sm:px-0">
       <a
         href={PARIPESA_AFFILIATE_URL}
         target="_blank"
         rel="noopener noreferrer sponsored"
-        className="group block relative overflow-hidden rounded-xl border border-gray-200/90 bg-slate-950 shadow-xs animate-pulse-subtle transition-all duration-300 w-full max-w-[400px] h-[360px] sm:h-[400px] aspect-square mx-auto cursor-pointer"
+        className="group block relative overflow-hidden rounded-xl border border-gray-200/90 bg-[#001050] shadow-xs animate-pulse-subtle transition-all duration-300 max-w-2xl mx-auto cursor-pointer aspect-[1024/341]"
         title="Paripesa Bonus with Promo Code BKMS254"
       >
-        <div className="relative w-full h-full overflow-hidden">
-          <Image
-            src={selectedBanner.image}
-            alt={selectedBanner.alt}
-            fill
-            sizes="(max-width: 640px) 360px, 400px"
-            priority={false}
-            className="w-full h-full object-contain group-hover:scale-[1.015] transition-transform duration-300"
+        <div className="relative w-full h-full overflow-hidden flex items-center justify-center bg-slate-950">
+          {/* Subtle ambient blur of the banner to fill widescreen seamlessly */}
+          <div
+            className="absolute inset-0 bg-cover bg-center opacity-30 blur-md scale-110 pointer-events-none"
+            style={{ backgroundImage: `url(${selectedBanner.image})` }}
           />
+          <div className="relative w-full h-full flex items-center justify-center">
+            <Image
+              src={selectedBanner.image}
+              alt={selectedBanner.alt}
+              width={1024}
+              height={341}
+              priority={false}
+              className="w-full h-full object-contain group-hover:scale-[1.015] transition-transform duration-300"
+            />
+          </div>
         </div>
       </a>
     </div>
