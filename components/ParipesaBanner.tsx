@@ -15,31 +15,31 @@ const BANNERS: BannerItem[] = [
   {
     id: "spain_vs_england",
     title: "Spain vs England",
-    image: "/banners/paripesa/spain_vs_england.jpg",
+    image: "/banners/paripesa/spain_vs_england_wide.jpg",
     alt: "Paripesa Spain vs England Odds - Promo Code BKMS254",
   },
   {
     id: "belgium_vs_italy",
     title: "Belgium vs Italy",
-    image: "/banners/paripesa/belgium_vs_italy.jpg",
+    image: "/banners/paripesa/belgium_vs_italy_wide.jpg",
     alt: "Paripesa Belgium vs Italy Odds - Promo Code BKMS254",
   },
   {
     id: "serbia_vs_germany",
     title: "Serbia vs Germany",
-    image: "/banners/paripesa/serbia_vs_germany.jpg",
+    image: "/banners/paripesa/serbia_vs_germany_wide.jpg",
     alt: "Paripesa Serbia vs Germany Odds - Promo Code BKMS254",
   },
   {
     id: "portugal_vs_denmark",
     title: "Portugal vs Denmark",
-    image: "/banners/paripesa/portugal_vs_denmark.jpg",
+    image: "/banners/paripesa/portugal_vs_denmark_wide.jpg",
     alt: "Paripesa Portugal vs Denmark Odds - Promo Code BKMS254",
   },
   {
     id: "netherlands_vs_greece",
     title: "Netherlands vs Greece",
-    image: "/banners/paripesa/netherlands_vs_greece.jpg",
+    image: "/banners/paripesa/netherlands_vs_greece_wide.jpg",
     alt: "Paripesa Netherlands vs Greece Odds - Promo Code BKMS254",
   },
 ];
@@ -54,12 +54,12 @@ export default function ParipesaBanner() {
   }, []);
 
   return (
-    <div className="w-full my-4 px-0 sm:px-1 flex justify-center">
+    <div className="w-full my-4 px-1 sm:px-0">
       <a
         href={PARIPESA_AFFILIATE_URL}
         target="_blank"
         rel="noopener noreferrer sponsored"
-        className="group block relative overflow-hidden rounded-none sm:rounded-xl border-y sm:border border-gray-200/90 bg-slate-950 shadow-xs animate-pulse-subtle transition-all duration-300 w-full max-w-sm sm:max-w-md aspect-square mx-auto cursor-pointer"
+        className="group block relative overflow-hidden rounded-xl border border-gray-200/90 bg-slate-950 shadow-xs animate-pulse-subtle transition-all duration-300 max-w-2xl mx-auto cursor-pointer aspect-[1024/341]"
         title="Paripesa Bonus with Promo Code BKMS254"
       >
         <div className="relative w-full h-full overflow-hidden">
@@ -67,9 +67,9 @@ export default function ParipesaBanner() {
             src={selectedBanner.image}
             alt={selectedBanner.alt}
             width={1024}
-            height={1024}
+            height={341}
             priority={false}
-            className="w-full h-full object-cover group-hover:scale-[1.015] transition-transform duration-300"
+            className="w-full h-full object-contain group-hover:scale-[1.015] transition-transform duration-300"
           />
         </div>
       </a>
