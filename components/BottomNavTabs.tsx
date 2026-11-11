@@ -13,16 +13,18 @@ function BottomNavTabsContent() {
 
   // Check active section
   const isFixtures = pathname?.startsWith("/fixtures");
-  const isPredictions = pathname?.startsWith("/predictions") || pathname === "/";
+  const isPredictions = pathname?.startsWith("/predictions") || pathname === "/" || pathname === "/live";
 
   // Extract selected date from pathname if available
   let selectedDate = "";
   const dateMatch = pathname?.match(/\/(?:predictions|fixtures)\/([^\/?#]+)/);
   if (dateMatch && dateMatch[1]) {
     selectedDate = dateMatch[1];
+  } else if (pathname === "/live" || pathname === "/fixtures/live") {
+    selectedDate = "live";
   }
 
-  // Fallback to today in Kenya timezone
+  // Fallback to today in Kenya timezone if empty
   if (!selectedDate) {
     selectedDate = new Intl.DateTimeFormat("en-CA", {
       timeZone: "Africa/Nairobi",
@@ -35,39 +37,41 @@ function BottomNavTabsContent() {
   const query = searchParams?.get("q");
   const queryString = query ? `?q=${encodeURIComponent(query)}` : "";
 
-  const predictionsUrl = `/predictions/${selectedDate}${queryString}`;
-  const fixturesUrl = `/fixtures/${selectedDate}${queryString}`;
+  const predictionsUrl = selectedDate === "live" ? `/live${queryString}` : `/predictions/${selectedDate}${queryString}`;
+  const fixturesUrl = selectedDate === "live" ? `/fixtures/live${queryString}` : `/fixtures/${selectedDate}${queryString}`;
 
   return (
-    <div className="w-full max-w-md mx-auto mt-1 mb-2.5 px-2 flex justify-center">
-      <div className="inline-flex p-1 bg-gray-200/90 rounded-2xl shadow-inner w-full sm:w-auto">
-        {/* Predictions Tab */}
-        <Link
-          href={predictionsUrl}
-          className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-6 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 ${
-            isPredictions && !isFixtures
-              ? "bg-teal-700 text-white shadow-sm"
-              : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-          }`}
-          title="View expert predictions and confidence tips"
-        >
-          <Sparkles className="w-4 h-4 flex-shrink-0" />
-          <span>Predictions</span>
-        </Link>
+    <div className="w-full bg-gray-100 border-b border-gray-300 m-0 p-0">
+      <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto">
+        <div className="grid grid-cols-2 w-full divide-x divide-gray-300/60">
+          {/* Predictions Tab */}
+          <Link
+            href={predictionsUrl}
+            className={`flex items-center justify-center gap-1.5 sm:gap-2 py-2 sm:py-2.5 text-xs sm:text-sm font-bold tracking-wide transition-all ${
+              isPredictions && !isFixtures
+                ? "bg-teal-700 text-white shadow-xs"
+                : "bg-gray-100 text-gray-600 hover:text-gray-900 hover:bg-gray-200/90"
+            }`}
+            title="View expert predictions and confidence tips"
+          >
+            <Sparkles className="w-4 h-4 flex-shrink-0" />
+            <span>Predictions</span>
+          </Link>
 
-        {/* Fixtures Tab */}
-        <Link
-          href={fixturesUrl}
-          className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-6 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 ${
-            isFixtures
-              ? "bg-teal-700 text-white shadow-sm"
-              : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-          }`}
-          title="View all matches and fixtures"
-        >
-          <Calendar className="w-4 h-4 flex-shrink-0" />
-          <span>Fixtures</span>
-        </Link>
+          {/* Fixtures Tab */}
+          <Link
+            href={fixturesUrl}
+            className={`flex items-center justify-center gap-1.5 sm:gap-2 py-2 sm:py-2.5 text-xs sm:text-sm font-bold tracking-wide transition-all ${
+              isFixtures
+                ? "bg-teal-700 text-white shadow-xs"
+                : "bg-gray-100 text-gray-600 hover:text-gray-900 hover:bg-gray-200/90"
+            }`}
+            title="View all matches and fixtures"
+          >
+            <Calendar className="w-4 h-4 flex-shrink-0" />
+            <span>Fixtures</span>
+          </Link>
+        </div>
       </div>
     </div>
   );
@@ -75,7 +79,7 @@ function BottomNavTabsContent() {
 
 export default function BottomNavTabs() {
   return (
-    <Suspense fallback={<div className="h-10 w-full" />}>
+    <Suspense fallback={<div className="h-10 w-full bg-gray-100" />}>
       <BottomNavTabsContent />
     </Suspense>
   );
