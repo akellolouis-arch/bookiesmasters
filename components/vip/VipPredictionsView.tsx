@@ -217,7 +217,7 @@ export default function VipPredictionsView({
         <div className={`transition-opacity duration-200 ${isFetching ? "opacity-35 pointer-events-none" : "opacity-100"}`}>
           {Object.keys(groupedByLeague).length === 0 ? (
             <div className="bg-white rounded-none py-4 px-4 text-center border border-gray-200 mt-2 flex items-center justify-center">
-              <p className="text-gray-400 text-sm font-normal">No predictions found for this date.</p>
+              <p className="text-gray-400 text-xs font-normal">No predictions found for this date.</p>
             </div>
           ) : (
             Object.entries(groupedByLeague).map(([key, group]) => (
