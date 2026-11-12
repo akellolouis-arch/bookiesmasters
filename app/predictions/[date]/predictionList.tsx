@@ -164,10 +164,10 @@ export default function PredictionsList({
           {(!safeData || safeData.length === 0) ? (
             !query ? (
               <div className="bg-white rounded-none py-4 px-4 text-center border border-gray-200 mt-2 flex items-center justify-center">
-                <p className="text-gray-600 text-sm font-medium">No predictions found for this date.</p>
+                <p className="text-gray-400 text-sm font-normal">No predictions found for this date.</p>
               </div>
             ) : (
-              <p className="text-center py-4 text-gray-500 text-sm">
+              <p className="text-center py-4 text-gray-400 text-sm font-normal">
                 {selectedDate === "live"
                   ? `No live fixture for "${query}".`
                   : `No fixtures for "${query}" on this date.`}
