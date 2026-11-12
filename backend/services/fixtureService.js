@@ -151,7 +151,7 @@ export const getFixtureById = async (fixtureId) => {
             status: currentStatus.short || "NS",
             venue: matchData.fixture.venue?.name || "Unknown venue",
 
-            tip: fixtureDoc.predictionTip !== "NONE" ? fixtureDoc.predictionTip : null,
+            tip: (fixtureDoc.predictionTip === "OV1.5" || fixtureDoc.predictionTip === "UN3.5") ? fixtureDoc.predictionTip : null,
 
             homeTeam: {
                 id: matchData.teams.home.id,
@@ -282,7 +282,7 @@ export const getTopTrends = async () => {
         const now = new Date();
         const upcoming = await Fixture.find({
             "fixture.fixture.date": { $gte: now.toISOString() },
-            predictionTip: { $exists: true, $nin: ["NONE", null] }
+            predictionTip: { $in: ["OV1.5", "UN3.5"] }
         }, { fixtureId: 1 }).lean();
 
         if (!upcoming || upcoming.length === 0) {

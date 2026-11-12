@@ -237,7 +237,7 @@ export const getLeagueDetails = async (leagueId) => {
                     logo: teams.away?.logo,
                 },
                 score,
-                predictionTip: f.predictionTip && f.predictionTip !== "NONE" ? f.predictionTip : null,
+                predictionTip: (f.predictionTip === "OV1.5" || f.predictionTip === "UN3.5") ? f.predictionTip : null,
                 customPrediction: f.customPrediction || null,
             };
         };

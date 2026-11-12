@@ -342,7 +342,8 @@ async function applyPredictionFilter(orderedDocs) {
       
       // 1. Check DB or memory cache first for instant response
       const precalculatedTip = doc.predictionTip || predictionTipCache.get(fixtureId);
-      if (precalculatedTip) {
+      const isValidTip = precalculatedTip === "OV1.5" || precalculatedTip === "UN3.5" || precalculatedTip === "NONE";
+      if (precalculatedTip && isValidTip) {
           if (precalculatedTip !== "NONE") {
               doc.tip = precalculatedTip;
               predictedDocs.push(doc);
