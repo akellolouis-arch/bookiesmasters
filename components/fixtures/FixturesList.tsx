@@ -136,14 +136,14 @@ export default function FixturesList({
 
   return (
     <div className="w-full">
-      {/* Date Navigator Bar */}
-      <DateNavigator date={selectedDate} onDateSelect={(newDate) => setSelectedDate(newDate)} />
-
-      {/* 1XBET Banner below Date Navigator */}
+      {/* 1XBET Banner just after Navbar */}
       <OneXBetBanner />
 
       {/* Predictions and Fixtures tabs below 1XBET Banner */}
       <BottomNavTabs />
+
+      {/* Date Navigator Bar */}
+      <DateNavigator date={selectedDate} onDateSelect={(newDate) => setSelectedDate(newDate)} />
 
       {/* Main Layout Container */}
       <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto sm:px-1 md:px-4 min-h-[50vh]">

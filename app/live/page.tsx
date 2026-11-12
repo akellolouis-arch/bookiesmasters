@@ -1,5 +1,4 @@
 import PredictionsList from "../predictions/[date]/predictionList";
-import DateNavigator from "@/components/DateNavigator";
 import { Suspense } from "react";
 
 export const revalidate = 15; // Cache live predictions for 15s at Edge
@@ -83,14 +82,9 @@ export default async function LivePage() {
     : [];
 
   return (
-    <>
-      <Suspense fallback={null}>
-        <DateNavigator date={today} />
-      </Suspense>
-      <Suspense fallback={null}>
-        <PredictionsList initialData={initialData} initialDate="live" />
-      </Suspense>
-    </>
+    <Suspense fallback={null}>
+      <PredictionsList initialData={initialData} initialDate="live" />
+    </Suspense>
   );
 }
 
