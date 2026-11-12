@@ -3,7 +3,6 @@
 import React, { Suspense } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { Sparkles, Calendar } from "lucide-react";
 
 function BottomNavTabsContent() {
   const pathname = usePathname();
@@ -47,28 +46,26 @@ function BottomNavTabsContent() {
           {/* Predictions Tab */}
           <Link
             href={predictionsUrl}
-            className={`flex items-center justify-center gap-1.5 sm:gap-2 py-1.5 sm:py-2 text-xs sm:text-sm font-bold tracking-wide rounded-md transition-all ${
+            className={`flex items-center justify-center py-1.5 sm:py-2 text-xs sm:text-sm font-bold tracking-wide rounded-md transition-all ${
               isPredictions && !isFixtures
-                ? "bg-teal-700 text-white shadow-xs"
-                : "bg-white text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-200"
+                ? "bg-gray-300 text-teal-700 shadow-inner"
+                : "bg-white text-gray-500 hover:bg-gray-50 hover:text-gray-700 border border-gray-200"
             }`}
             title="View expert predictions and confidence tips"
           >
-            <Sparkles className="w-4 h-4 flex-shrink-0" />
             <span>Predictions</span>
           </Link>
 
           {/* Fixtures Tab */}
           <Link
             href={fixturesUrl}
-            className={`flex items-center justify-center gap-1.5 sm:gap-2 py-1.5 sm:py-2 text-xs sm:text-sm font-bold tracking-wide rounded-md transition-all ${
+            className={`flex items-center justify-center py-1.5 sm:py-2 text-xs sm:text-sm font-bold tracking-wide rounded-md transition-all ${
               isFixtures
-                ? "bg-teal-700 text-white shadow-xs"
-                : "bg-white text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-200"
+                ? "bg-gray-300 text-teal-700 shadow-inner"
+                : "bg-white text-gray-500 hover:bg-gray-50 hover:text-gray-700 border border-gray-200"
             }`}
             title="View all matches and fixtures"
           >
-            <Calendar className="w-4 h-4 flex-shrink-0" />
             <span>Fixtures</span>
           </Link>
         </div>

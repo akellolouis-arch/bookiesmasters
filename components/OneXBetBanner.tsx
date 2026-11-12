@@ -16,18 +16,18 @@ export default function OneXBetBanner() {
           href={ONEXBET_AFFILIATE_URL}
           target="_blank"
           rel="noopener noreferrer sponsored"
-          className="group relative flex items-center justify-between w-full h-[50px] px-2 sm:px-4 bg-[#07194f] hover:brightness-110 transition-all duration-200 cursor-pointer overflow-hidden select-none"
+          className="group relative flex items-center justify-between w-full h-[36px] sm:h-[38px] px-2 sm:px-3 bg-[#07194f] hover:brightness-110 transition-all duration-200 cursor-pointer overflow-hidden select-none"
           title="1XBET - Register and get a 200% bonus on your first deposit"
         >
           {/* Subtle Background Graphics from 1XBET Banner */}
           <div className="absolute inset-0 pointer-events-none opacity-20 overflow-hidden">
-            <div className="absolute -left-4 top-2 w-16 h-10 bg-contain bg-no-repeat bg-[url('/banners/1xbet/bcg4.png')]" />
-            <div className="absolute right-24 top-0 w-20 h-12 bg-contain bg-no-repeat bg-[url('/banners/1xbet/bcg1.png')]" />
+            <div className="absolute -left-4 top-1 w-14 h-8 bg-contain bg-no-repeat bg-[url('/banners/1xbet/bcg4.png')]" />
+            <div className="absolute right-24 top-0 w-16 h-10 bg-contain bg-no-repeat bg-[url('/banners/1xbet/bcg1.png')]" />
           </div>
 
           {/* Left: Official 1XBET Vector Logo */}
           <div className="relative z-10 flex items-center shrink-0">
-            <div className="relative w-16 sm:w-20 md:w-24 h-5 sm:h-6">
+            <div className="relative w-14 sm:w-16 md:w-20 h-3.5 sm:h-4">
               <Image
                 src="/banners/1xbet/1xbet_logo.svg"
                 alt="1XBET"
@@ -39,16 +39,16 @@ export default function OneXBetBanner() {
           </div>
 
           {/* Center: Animated/Blinking Text with Yellowish & Whitish Capital Letters */}
-          <div className="relative z-10 flex-1 min-w-0 h-[36px] flex items-center justify-center text-center px-1">
+          <div className="relative z-10 flex-1 min-w-0 h-[26px] flex items-center justify-center text-center px-1">
             <div className="relative w-full h-full flex items-center justify-center font-black italic uppercase tracking-tight">
               {/* Slide 1 */}
-              <div className="banner-slide-1 absolute inset-0 flex items-center justify-center text-[10px] sm:text-xs md:text-sm whitespace-nowrap">
+              <div className="banner-slide-1 absolute inset-0 flex items-center justify-center text-[9px] sm:text-[10px] md:text-[11px] whitespace-nowrap">
                 <span className="text-[#e8c02d] drop-shadow-xs">REGISTER</span>
                 <span className="text-white ml-1.5 drop-shadow-xs">AND GET A</span>
               </div>
 
               {/* Slide 2 */}
-              <div className="banner-slide-2 absolute inset-0 flex items-center justify-center text-[10px] sm:text-xs md:text-sm whitespace-nowrap">
+              <div className="banner-slide-2 absolute inset-0 flex items-center justify-center text-[9px] sm:text-[10px] md:text-[11px] whitespace-nowrap">
                 <span className="text-[#e8c02d] drop-shadow-xs">200% BONUS</span>
                 <span className="text-white ml-1.5 drop-shadow-xs">ON YOUR 1ST DEPOSIT</span>
               </div>
@@ -59,17 +59,17 @@ export default function OneXBetBanner() {
           <div className="relative z-10 flex items-center gap-1.5 sm:gap-2 shrink-0">
             <button
               type="button"
-              className="btn-pulse flex items-center justify-center bg-[#a0cb32] hover:bg-[#b2df3a] text-[#10182a] font-black uppercase text-[9px] sm:text-[10px] md:text-[11px] px-2.5 sm:px-3.5 py-1 rounded-full border-2 border-[#123589] shadow-[0_0_0_1px_#97bb3a] tracking-tight transition-transform"
+              className="btn-pulse flex items-center justify-center bg-[#a0cb32] hover:bg-[#b2df3a] text-[#10182a] font-black uppercase text-[8px] sm:text-[9px] md:text-[10px] px-2 sm:px-2.5 py-0.5 rounded-full border border-[#123589] shadow-[0_0_0_1px_#97bb3a] tracking-tight transition-transform"
             >
               GET BONUS
             </button>
 
             {/* 18+ Responsible Gaming Badge */}
             <div className="flex flex-col items-center justify-center leading-none">
-              <span className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-white text-[#000c40] font-black text-[7px] sm:text-[8px] flex items-center justify-center shadow-xs">
+              <span className="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full bg-white text-[#000c40] font-black text-[6.5px] sm:text-[7.5px] flex items-center justify-center shadow-xs">
                 18+
               </span>
-              <span className="text-[6px] text-gray-300 mt-0.5 font-sans font-medium hidden sm:block">
+              <span className="text-[5.5px] text-gray-300 mt-0.5 font-sans font-medium hidden sm:block">
                 T&amp;C apply
               </span>
             </div>
