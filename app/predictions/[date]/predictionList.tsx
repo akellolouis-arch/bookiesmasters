@@ -11,7 +11,7 @@ import BottomNavTabs from "@/components/BottomNavTabs";
 import ParipesaBanner from "@/components/ParipesaBanner";
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
-import { Calendar, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 export interface Team {
   id: number;
@@ -163,15 +163,11 @@ export default function PredictionsList({
         <div className={`transition-opacity duration-200 ${isFetching ? "opacity-35 pointer-events-none" : "opacity-100"}`}>
           {(!safeData || safeData.length === 0) ? (
             !query ? (
-              <div className="bg-white rounded-none p-8 text-center border border-gray-200 space-y-2 mt-2 min-h-[220px] flex flex-col justify-center items-center">
-                <div className="text-gray-400 flex justify-center">
-                  <Calendar size={28} />
-                </div>
+              <div className="bg-white rounded-none py-4 px-4 text-center border border-gray-200 mt-2 flex items-center justify-center">
                 <p className="text-gray-600 text-sm font-medium">No predictions found for this date.</p>
-                <p className="text-gray-500 text-xs max-w-md">Our algorithm only predicts when data confidence is exceptionally high. Check back tomorrow!</p>
               </div>
             ) : (
-              <p className="text-center py-8 text-gray-500">
+              <p className="text-center py-4 text-gray-500 text-sm">
                 {selectedDate === "live"
                   ? `No live fixture for "${query}".`
                   : `No fixtures for "${query}" on this date.`}

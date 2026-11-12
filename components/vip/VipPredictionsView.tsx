@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { Lock, Crown, Calendar } from "lucide-react";
+import { Lock, Crown } from "lucide-react";
 import VipUpgradeModal from "@/components/VipUpgradeModal";
 import Loader from "@/components/Loader";
 import Footer from "@/components/Footer";
@@ -216,12 +216,8 @@ export default function VipPredictionsView({
         {/* Seamless Predictions Container - Preserves height during date shifts */}
         <div className={`transition-opacity duration-200 ${isFetching ? "opacity-35 pointer-events-none" : "opacity-100"}`}>
           {Object.keys(groupedByLeague).length === 0 ? (
-            <div className="bg-white rounded-none p-8 text-center border border-gray-200 space-y-2 mt-2 min-h-[220px] flex flex-col justify-center items-center">
-              <div className="text-gray-400 flex justify-center">
-                <Calendar size={28} />
-              </div>
-              <p className="text-gray-600 text-sm font-medium">No VIP predictions available for this date.</p>
-              <p className="text-gray-500 text-xs">Our team adds high-confidence VIP picks daily. Select another date above!</p>
+            <div className="bg-white rounded-none py-4 px-4 text-center border border-gray-200 mt-2 flex items-center justify-center">
+              <p className="text-gray-600 text-sm font-medium">No predictions found for this date.</p>
             </div>
           ) : (
             Object.entries(groupedByLeague).map(([key, group]) => (
