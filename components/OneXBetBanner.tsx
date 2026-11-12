@@ -25,9 +25,9 @@ export default function OneXBetBanner() {
             <div className="absolute right-24 top-0 w-16 h-10 bg-contain bg-no-repeat bg-[url('/banners/1xbet/bcg1.png')]" />
           </div>
 
-          {/* Left: Official 1XBET Vector Logo */}
-          <div className="relative z-10 flex items-center shrink-0">
-            <div className="relative w-14 sm:w-16 md:w-20 h-3.5 sm:h-4">
+          {/* Left: 1XBET Logo with refined weight and subtle contrast */}
+          <div className="relative z-10 flex items-center shrink-0 opacity-85 hover:opacity-100 transition-opacity">
+            <div className="relative w-11 sm:w-13 md:w-15 h-3 sm:h-3.5">
               <Image
                 src="/banners/1xbet/1xbet_logo.svg"
                 alt="1XBET"
