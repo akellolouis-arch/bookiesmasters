@@ -99,7 +99,7 @@ export default async function TopTrends() {
                     className="w-3.5 h-3.5 object-contain opacity-70"
                   />
                 )}
-                <span className="text-[8px] text-gray-500 font-medium tracking-wide uppercase">
+                <span className="text-[8px] text-gray-500 font-bold tracking-wide uppercase">
                   {match.league} • {match.country}
                 </span>
               </div>

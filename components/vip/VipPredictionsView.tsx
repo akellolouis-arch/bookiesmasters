@@ -240,7 +240,7 @@ export default function VipPredictionsView({
                       />
                     )}
                     <div className="flex flex-col truncate w-full leading-tight">
-                      <span className="font-medium text-[11px] text-teal-700 tracking-wide truncate drop-shadow-sm">
+                      <span className="font-bold text-[11px] text-teal-700 tracking-wide truncate drop-shadow-sm">
                         {group.name}
                       </span>
                       <span className="text-[9px] text-gray-600 font-normal capitalize tracking-wider truncate">
