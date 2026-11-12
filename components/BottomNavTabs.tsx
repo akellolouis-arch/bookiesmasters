@@ -46,7 +46,7 @@ function BottomNavTabsContent() {
           {/* Predictions Tab */}
           <Link
             href={predictionsUrl}
-            className={`flex items-center justify-center py-1 text-xs font-bold tracking-wide rounded transition-all ${
+            className={`flex items-center justify-center py-1 text-xs font-medium tracking-wide rounded transition-all ${
               isPredictions && !isFixtures
                 ? "bg-gray-300 text-teal-700 shadow-inner"
                 : "bg-white text-gray-500 hover:bg-gray-50 hover:text-gray-700 border border-gray-200"
@@ -59,7 +59,7 @@ function BottomNavTabsContent() {
           {/* Fixtures Tab */}
           <Link
             href={fixturesUrl}
-            className={`flex items-center justify-center py-1 text-xs font-bold tracking-wide rounded transition-all ${
+            className={`flex items-center justify-center py-1 text-xs font-medium tracking-wide rounded transition-all ${
               isFixtures
                 ? "bg-gray-300 text-teal-700 shadow-inner"
                 : "bg-white text-gray-500 hover:bg-gray-50 hover:text-gray-700 border border-gray-200"
