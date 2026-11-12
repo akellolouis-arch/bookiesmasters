@@ -40,13 +40,13 @@ function BottomNavTabsContent() {
   const fixturesUrl = selectedDate === "live" ? `/fixtures/live${queryString}` : `/fixtures/${selectedDate}${queryString}`;
 
   return (
-    <div className="w-full bg-gray-100 border-b border-gray-300 m-0 py-1.5 px-1 sm:px-2">
-      <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto">
-        <div className="grid grid-cols-2 gap-2 w-full">
+    <div className="w-full bg-gray-100 border-b border-gray-200 m-0 p-0">
+      <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto py-0.5 px-1 sm:px-2">
+        <div className="grid grid-cols-2 gap-1.5 w-full">
           {/* Predictions Tab */}
           <Link
             href={predictionsUrl}
-            className={`flex items-center justify-center py-1.5 sm:py-2 text-xs sm:text-sm font-bold tracking-wide rounded-md transition-all ${
+            className={`flex items-center justify-center py-1 text-xs font-bold tracking-wide rounded transition-all ${
               isPredictions && !isFixtures
                 ? "bg-gray-300 text-teal-700 shadow-inner"
                 : "bg-white text-gray-500 hover:bg-gray-50 hover:text-gray-700 border border-gray-200"
@@ -59,7 +59,7 @@ function BottomNavTabsContent() {
           {/* Fixtures Tab */}
           <Link
             href={fixturesUrl}
-            className={`flex items-center justify-center py-1.5 sm:py-2 text-xs sm:text-sm font-bold tracking-wide rounded-md transition-all ${
+            className={`flex items-center justify-center py-1 text-xs font-bold tracking-wide rounded transition-all ${
               isFixtures
                 ? "bg-gray-300 text-teal-700 shadow-inner"
                 : "bg-white text-gray-500 hover:bg-gray-50 hover:text-gray-700 border border-gray-200"

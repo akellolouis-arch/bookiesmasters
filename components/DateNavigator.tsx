@@ -111,20 +111,20 @@ export default function DateNavigator({ date, onDateSelect }: Props) {
   };
 
   return (
-    <div className="max-w-[100vw] bg-gray-50 border-y border-gray-200 mx-auto">
+    <div className="max-w-[100vw] bg-gray-50 border-b border-gray-200 m-0 p-0 mx-auto">
       <div className="max-w-3xl mx-auto w-full">
-        <div className="flex items-stretch w-full h-8 overflow-hidden bg-gray-50 divide-x divide-white/5 shadow-sm">
+        <div className="flex items-stretch w-full h-7 sm:h-8 overflow-hidden bg-gray-50 divide-x divide-white/5">
 
           <button
             type="button"
             onClick={handleLiveClick}
-            className={`shrink-0 w-10 flex flex-col items-center justify-center text-[10px] font-bold transition-all cursor-pointer ${
+            className={`shrink-0 w-9 flex flex-col items-center justify-center text-[9px] font-bold lowercase transition-all cursor-pointer ${
               isLivePage
                 ? "bg-red-600 text-white font-black shadow-inner animate-pulse"
                 : "text-gray-900 bg-white hover:bg-gray-200"
             }`}
           >
-            LIVE
+            live
           </button>
 
           <div
@@ -149,13 +149,13 @@ export default function DateNavigator({ date, onDateSelect }: Props) {
                   key={`${toYYYYMMDDUtc(d)}-${i}`}
                   onClick={() => handleDateClick(d)}
                   data-active={isActive}
-                  className={`flex-1 flex flex-col items-center justify-center min-w-[40px] transition-all ${isActive
+                  className={`flex-1 flex flex-col items-center justify-center min-w-[38px] transition-all ${isActive
                     ? "bg-gray-300 text-teal-700 shadow-inner"
                     : "text-gray-500 hover:bg-gray-200 hover:text-gray-700"
                     }`}
                 >
-                  <span className="text-[10px] font-bold uppercase leading-tight">{dayName}</span>
-                  <span className="text-[10px] font-bold leading-tight opacity-90">{dateStr}</span>
+                  <span className="text-[9.5px] font-bold lowercase leading-tight">{dayName}</span>
+                  <span className="text-[8px] font-medium leading-tight opacity-90">{dateStr}</span>
                 </button>
               );
             })}
