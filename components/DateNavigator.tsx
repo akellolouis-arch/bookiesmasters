@@ -118,13 +118,13 @@ export default function DateNavigator({ date, onDateSelect }: Props) {
           <button
             type="button"
             onClick={handleLiveClick}
-            className={`shrink-0 w-9 flex flex-col items-center justify-center text-[9px] font-bold lowercase transition-all cursor-pointer ${
+            className={`shrink-0 w-9 flex flex-col items-center justify-center text-[9px] font-bold uppercase transition-all cursor-pointer ${
               isLivePage
                 ? "bg-red-600 text-white font-black shadow-inner animate-pulse"
                 : "text-gray-900 bg-white hover:bg-gray-200"
             }`}
           >
-            live
+            LIVE
           </button>
 
           <div
@@ -154,7 +154,7 @@ export default function DateNavigator({ date, onDateSelect }: Props) {
                     : "text-gray-500 hover:bg-gray-200 hover:text-gray-700"
                     }`}
                 >
-                  <span className="text-[9.5px] font-bold lowercase leading-tight">{dayName}</span>
+                  <span className="text-[9.5px] font-bold uppercase leading-tight">{dayName}</span>
                   <span className="text-[8px] font-medium leading-tight opacity-90">{dateStr}</span>
                 </button>
               );

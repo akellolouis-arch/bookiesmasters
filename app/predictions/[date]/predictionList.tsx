@@ -151,11 +151,11 @@ export default function PredictionsList({
       {/* 1XBET Banner just after Navbar */}
       <OneXBetBanner />
 
-      {/* Predictions and Fixtures tabs below 1XBET Banner */}
-      <BottomNavTabs />
-
-      {/* Date Navigator Bar */}
+      {/* Date Navigator Bar just after 1XBET Banner */}
       <DateNavigator date={selectedDate} onDateSelect={(newDate) => setSelectedDate(newDate)} />
+
+      {/* Predictions and Fixtures tabs below Date Navigator */}
+      <BottomNavTabs />
 
       {/* Main Predictions Layout Container */}
       <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto sm:px-1 md:px-4 min-h-[50vh]">
