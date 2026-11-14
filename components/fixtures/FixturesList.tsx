@@ -56,12 +56,17 @@ export default function FixturesList({
   const [isFetching, setIsFetching] = useState(false);
   const isFirstRender = useRef(true);
 
+  useEffect(() => {
+    setSelectedDate(initialDate);
+    setFixtures(initialData);
+  }, [initialDate, initialData]);
+
   // Sync browser back/forward buttons
   useEffect(() => {
     const handlePopState = () => {
       const parts = window.location.pathname.split("/");
       const dateFromPath = parts[parts.length - 1];
-      if (dateFromPath && dateFromPath.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      if (dateFromPath && (dateFromPath === "live" || dateFromPath.match(/^\d{4}-\d{2}-\d{2}$/))) {
         setSelectedDate(dateFromPath);
       }
     };
@@ -70,28 +75,28 @@ export default function FixturesList({
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
-  // Fetch all fixtures on date change without full page reloads
+  // Fetch all fixtures on date change & keep live/today scores fresh
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      if (initialData.length > 0) {
-        return;
-      }
-    }
+    let isCancelled = false;
+    const kenyaToday = new Date().toLocaleDateString("en-CA", { timeZone: "Africa/Nairobi" });
+    const kenyaYesterday = new Date(Date.now() - 86_400_000).toLocaleDateString("en-CA", { timeZone: "Africa/Nairobi" });
+    const isLiveView = selectedDate === "live";
+    const isTodayView = selectedDate === kenyaToday;
+    const isVolatileView = isLiveView || isTodayView || selectedDate === kenyaYesterday;
 
-    async function fetchFixtures() {
-      setIsFetching(true);
+    async function fetchFixtures({ silent = false, noStore = false } = {}) {
+      if (!silent) setIsFetching(true);
       try {
         let apiUrl = `/api/fixtures/cards?date=${selectedDate}`;
-        if (selectedDate === "live") {
+        if (isLiveView) {
           apiUrl = `/api/fixtures/live`;
         }
 
-        const res = await fetch(apiUrl);
+        const res = await fetch(apiUrl, noStore ? { cache: "no-store" } : undefined);
         const data = await res.json();
         const rawFixtures = data?.fixtures || [];
 
-        if (Array.isArray(rawFixtures)) {
+        if (!isCancelled && Array.isArray(rawFixtures)) {
           const mapped: LeagueGroup[] = rawFixtures
             .map((f: any) => {
               if (f.league) {
@@ -112,11 +117,34 @@ export default function FixturesList({
       } catch (err) {
         console.error("⚠️ Error fetching fixtures for date:", selectedDate, err);
       } finally {
-        setIsFetching(false);
+        if (!silent && !isCancelled) setIsFetching(false);
       }
     }
 
-    fetchFixtures();
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      if (initialData.length > 0) {
+        if (isVolatileView) {
+          fetchFixtures({ silent: true, noStore: true });
+        }
+      } else {
+        fetchFixtures();
+      }
+    } else {
+      fetchFixtures({ noStore: isVolatileView });
+    }
+
+    let intervalId: ReturnType<typeof setInterval> | null = null;
+    if (isLiveView || isTodayView) {
+      intervalId = setInterval(() => {
+        fetchFixtures({ silent: true, noStore: true });
+      }, 30000);
+    }
+
+    return () => {
+      isCancelled = true;
+      if (intervalId) clearInterval(intervalId);
+    };
   }, [selectedDate]);
 
   // Filter fixtures by searched team name

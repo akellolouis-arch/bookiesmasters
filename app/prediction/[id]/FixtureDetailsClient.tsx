@@ -46,16 +46,24 @@ interface FixtureDetailsClientProps {
 
 const fetcher = (url: string) => fetch(url, { cache: "no-store" }).then((res) => res.json());
 
+const LIVE_STATUSES = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"];
+const FINAL_STATUSES = ["FT", "AET", "PEN", "PST", "CANC", "ABD", "AWD", "WO"];
+const isStatusLive = (status?: string) =>
+    Boolean(status && (LIVE_STATUSES.includes(status) || status.includes("'")));
+
 const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initialData }) => {
-    const isMatchLive = Boolean(
-        initialData?.status && (
-            ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(initialData.status) ||
-            initialData.status.includes("'")
-        )
+    const isInitialLive = isStatusLive(initialData?.status);
+    const isInitialFinal = Boolean(initialData?.status && FINAL_STATUSES.includes(initialData.status));
+    const hasKickoffPassed = Boolean(initialData?.date && new Date(initialData.date).getTime() <= Date.now());
+    const isFinishedMissingScore = Boolean(
+        initialData?.status && ["FT", "AET", "PEN"].includes(initialData.status) && !initialData?.score
+    );
+    const shouldFetchUpdates = Boolean(
+        initialData?.fixtureId && (isInitialLive || (!isInitialFinal && hasKickoffPassed) || isFinishedMissingScore)
     );
 
     const [activeTab, setActiveTab] = useState<"overview" | "events" | "stats" | "lineups" | "table">(() => {
-        if (isMatchLive) return "events";
+        if (isInitialLive) return "events";
         if (initialData?.events && initialData.events.length > 0) return "overview";
         return "overview";
     });
@@ -64,19 +72,26 @@ const FixtureDetailsClient: React.FC<FixtureDetailsClientProps> = ({ data: initi
     const [awayTab, setAwayTab] = useState<"all" | "away">("all");
 
     const { data: swrData } = useSWR(
-        isMatchLive && initialData?.fixtureId ? `/api/fixtures/${initialData.fixtureId}` : null,
+        shouldFetchUpdates ? `/api/fixtures/${initialData.fixtureId}` : null,
         fetcher,
         {
-            refreshInterval: isMatchLive ? 30000 : 0,
-            revalidateOnMount: false,
-            revalidateOnFocus: false,
+            refreshInterval: (latestData: any) => {
+                const currentStatus = latestData?.data?.status || initialData?.status;
+                if (currentStatus && FINAL_STATUSES.includes(currentStatus)) {
+                    return 0;
+                }
+                return 30000;
+            },
+            revalidateOnMount: true,
+            revalidateOnFocus: true,
         }
     );
 
     const data = swrData?.data ? { ...initialData, ...swrData.data } : initialData;
+    const isMatchLive = isStatusLive(data?.status);
 
     const displayInjuries = Array.isArray(data?.injuries) ? data.injuries : [];
-    const isLoading = isMatchLive && !swrData;
+    const isLoading = false;
 
     const filteredH2H = Array.isArray(data?.h2h)
         ? data.h2h.filter((m: any) => ["FT", "AET", "PEN", "AWD", "WO"].includes(m?.fixture?.status?.short))

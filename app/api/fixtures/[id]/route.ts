@@ -19,11 +19,17 @@ export async function GET(
             return NextResponse.json({ error: "Fixture not found" }, { status: 404 });
         }
 
+        const isFinal = ["FT", "AET", "PEN", "PST", "CANC", "ABD", "AWD", "WO"].includes(details.status);
+        const kickoffPassed = details.date ? new Date(details.date).getTime() <= Date.now() + 120_000 : false;
+        const isVolatile = !isFinal && kickoffPassed;
+
         return NextResponse.json(
             { success: true, data: details },
             {
                 headers: {
-                    "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+                    "Cache-Control": isVolatile
+                        ? "no-store, must-revalidate"
+                        : "public, s-maxage=60, stale-while-revalidate=120",
                 },
             }
         );

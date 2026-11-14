@@ -19,11 +19,13 @@ export async function GET(req: Request) {
 
     const isLive = date === 'live';
     const todayStr = new Date().toLocaleDateString("en-CA", { timeZone: "Africa/Nairobi" });
-    const isPast = !isLive && date < todayStr;
+    const twoDaysAgoStr = new Date(Date.now() - 2 * 86_400_000).toLocaleDateString("en-CA", { timeZone: "Africa/Nairobi" });
+    const isOldPast = !isLive && date < twoDaysAgoStr;
+    const isToday = !isLive && date === todayStr;
 
-    const cacheHeader = isLive
+    const cacheHeader = (isLive || isToday)
       ? 'public, s-maxage=15, stale-while-revalidate=30'
-      : isPast
+      : isOldPast
       ? 'public, s-maxage=86400, stale-while-revalidate=86400'
       : 'public, s-maxage=60, stale-while-revalidate=120';
 

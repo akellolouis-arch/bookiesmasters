@@ -4,7 +4,7 @@ import { getFixturesGroupedByLeague } from "@/backend/services/fixtureCardServic
 import dbConnect from "@/lib/mongoose";
 import { Suspense } from "react";
 
-export const revalidate = 60; // Cache fixtures for 60 seconds at Edge
+export const revalidate = 15; // Cache fixtures for 15 seconds at Edge
 
 export async function generateMetadata({ params }: { params: Promise<{ date?: string }> }) {
   const resolvedParams = await params;

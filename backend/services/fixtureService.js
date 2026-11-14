@@ -59,36 +59,43 @@ export const getFixtureById = async (fixtureId) => {
             currentGoals = { home: null, away: null };
         }
 
-        const isFinished = ["FT", "AET", "PEN"].includes(currentStatus.short);
-        const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE"].includes(currentStatus.short);
+        let isFinished = ["FT", "AET", "PEN"].includes(currentStatus.short);
+        let isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(currentStatus.short);
 
-        // Calculate "Display Date" or "Time"
-        let displayDate = "";
-
-        if (isFinished) {
-            displayDate = "FT";
-        } else if (isLive) {
-            displayDate = currentStatus.elapsed ? `${currentStatus.elapsed}'` : "Live";
-        } else {
-            // Not started
+        const formatDisplayDate = (statusObj, liveFlag, finishedFlag) => {
+            if (finishedFlag) {
+                return "FT";
+            }
+            if (liveFlag) {
+                return statusObj.elapsed ? `${statusObj.elapsed}'` : "Live";
+            }
             const fDate = matchData.fixture?.date;
-            displayDate = fDate ? new Date(fDate).toLocaleString("en-GB", {
+            return fDate ? new Date(fDate).toLocaleString("en-GB", {
                 weekday: "short",
                 hour: "2-digit",
                 minute: "2-digit",
                 timeZone: "Africa/Nairobi",
             }) : "TBD";
-        }
+        };
+
+        const resolveScore = (goalsObj, scoreObj, liveFlag, finishedFlag) => {
+            const homeGoals = goalsObj?.home ?? scoreObj?.fulltime?.home ?? null;
+            const awayGoals = goalsObj?.away ?? scoreObj?.fulltime?.away ?? null;
+            if ((liveFlag || finishedFlag) && homeGoals !== null && awayGoals !== null) {
+                return {
+                    home: homeGoals,
+                    away: awayGoals,
+                    halftime: scoreObj?.halftime || live?.score?.halftime || matchData.score?.halftime || null
+                };
+            }
+            return null;
+        };
+
+        // Calculate "Display Date" or "Time"
+        let displayDate = formatDisplayDate(currentStatus, isLive, isFinished);
 
         // Format Score
-        let score = null;
-        if ((isLive || isFinished) && currentGoals?.home !== null) {
-            score = {
-                home: currentGoals.home,
-                away: currentGoals.away,
-                halftime: live?.score?.halftime || matchData.score?.halftime || null
-            };
-        }
+        let score = resolveScore(currentGoals, matchData.score, isLive, isFinished);
 
         let events = fixtureDoc.events || matchData.events || fixtureDoc.fixture?.events || [];
         let statistics = fixtureDoc.statistics || matchData.statistics || [];
@@ -98,10 +105,17 @@ export const getFixtureById = async (fixtureId) => {
         const now = new Date();
         const lastStatsTime = fixtureDoc.lastStatsFetch ? new Date(fixtureDoc.lastStatsFetch).getTime() : 0;
         const isStatsStale = (now.getTime() - lastStatsTime) > 120_000; // 2 minutes cache
+        const kickoffMs = matchData.fixture?.date ? new Date(matchData.fixture.date).getTime() : 0;
+        const elapsedSinceKickoffMs = kickoffMs ? (now.getTime() - kickoffMs) : -1;
+        const isPendingPastKickoff =
+            ["NS", "TBD"].includes(currentStatus.short) &&
+            elapsedSinceKickoffMs >= 0 &&
+            elapsedSinceKickoffMs < 12 * 60 * 60 * 1000 &&
+            isStatsStale;
         const shouldFetchLiveStats = isLive && (events.length === 0 || isStatsStale);
-        const shouldFetchFinishedStats = isFinished && (events.length === 0 || statistics.length === 0);
+        const shouldFetchFinishedStats = isFinished && (events.length === 0 || statistics.length === 0 || !score);
 
-        if ((shouldFetchLiveStats || shouldFetchFinishedStats) && process.env.API_KEY) {
+        if ((shouldFetchLiveStats || shouldFetchFinishedStats || isPendingPastKickoff) && process.env.API_KEY) {
             try {
                 const apiRes = await axios.get(`https://v3.football.api-sports.io/fixtures?id=${fixtureIdNum}`, {
                     headers: { "x-apisports-key": process.env.API_KEY },
@@ -113,6 +127,18 @@ export const getFixtureById = async (fixtureId) => {
                     if (fetchedMatch.statistics && fetchedMatch.statistics.length > 0) statistics = fetchedMatch.statistics;
                     if (fetchedMatch.lineups && fetchedMatch.lineups.length > 0) lineups = fetchedMatch.lineups;
 
+                    const fetchedShort = fetchedMatch.fixture?.status?.short;
+                    const fetchedFinished = ["FT", "AET", "PEN"].includes(fetchedShort);
+                    const fetchedLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(fetchedShort);
+                    if (fetchedMatch.fixture?.status && (fetchedLive || fetchedFinished)) {
+                        currentStatus = fetchedMatch.fixture.status;
+                        currentGoals = fetchedMatch.goals || currentGoals;
+                        isFinished = fetchedFinished;
+                        isLive = fetchedLive;
+                        displayDate = formatDisplayDate(currentStatus, isLive, isFinished);
+                        score = resolveScore(currentGoals, fetchedMatch.score, isLive, isFinished);
+                    }
+
                     // Asynchronously persist in Mongo
                     Fixture.updateOne(
                         { fixtureId: fixtureIdNum },
@@ -123,7 +149,7 @@ export const getFixtureById = async (fixtureId) => {
                                 "statistics": statistics,
                                 "lineups": lineups,
                                 "lastStatsFetch": new Date(),
-                                ...(isLive && fetchedMatch.fixture?.status ? {
+                                ...((fetchedLive || fetchedFinished) && fetchedMatch.fixture?.status ? {
                                     "fixture.fixture.status": fetchedMatch.fixture.status,
                                     "fixture.goals": fetchedMatch.goals,
                                     "fixture.score": fetchedMatch.score,

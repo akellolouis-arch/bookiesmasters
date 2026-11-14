@@ -24,7 +24,7 @@ export function formatFixtureCard(fixtureDoc) {
 
   // Helper: Is the match live?
   // Note: API-Football live statuses
-  const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE"].includes(shortStatus);
+  const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(shortStatus);
 
   // 1️⃣ LIVE → Show Minutes (e.g. "34'")
   if (isLive) {

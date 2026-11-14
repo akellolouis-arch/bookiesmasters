@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-export const revalidate = 3600; // Cache redirect for 1 hour at Edge
+export const dynamic = "force-dynamic";
 
 export default function FixturesIndex() {
   const now = new Date();

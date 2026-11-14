@@ -68,7 +68,7 @@ const TeamDisplay: React.FC<TeamDisplayProps> = ({
         }
     }, []);
 
-    const isLive = Boolean(status && ["1H", "HT", "2H", "ET", "BT", "P", "LIVE"].includes(status));
+    const isLive = Boolean(status && (["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(status) || status.includes("'")));
     const isFinished = Boolean(status && ["FT", "AET", "PEN"].includes(status));
     
     let kickoffTime = displayDate || "TBD";
