@@ -8,7 +8,6 @@ import Footer from "@/components/Footer";
 import DateNavigator from "@/components/DateNavigator";
 import OneXBetBanner from "@/components/OneXBetBanner";
 import BottomNavTabs from "@/components/BottomNavTabs";
-import ParipesaBanner from "@/components/ParipesaBanner";
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { ChevronRight } from "lucide-react";
@@ -223,7 +222,6 @@ export default function PredictionsList({
 
         {/* Top Trends & Footer rendered in exact flow container */}
         {children}
-        <ParipesaBanner />
         <Footer />
       </div>
     </div>

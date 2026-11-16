@@ -8,7 +8,6 @@ import OneXBetBanner from "@/components/OneXBetBanner";
 import BottomNavTabs from "@/components/BottomNavTabs";
 import MelbetBanner from "@/components/MelbetBanner";
 import MegapariBanner from "@/components/MegapariBanner";
-import ParipesaBanner from "@/components/ParipesaBanner";
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { Calendar, ChevronRight } from "lucide-react";
@@ -330,7 +329,6 @@ export default function FixturesList({
             <MegapariBanner />
           </>
         )}
-        <ParipesaBanner />
       </div>
 
       <Footer />
