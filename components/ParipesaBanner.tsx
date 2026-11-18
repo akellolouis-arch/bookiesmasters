@@ -38,15 +38,26 @@ const BANNERS: BannerItem[] = [
   },
 ];
 
-export default function ParipesaBanner({ initialIndex = 0 }: { initialIndex?: number }) {
+export default function ParipesaBanner({
+  initialIndex = 0,
+  variantId,
+}: {
+  initialIndex?: number;
+  variantId?: string;
+}) {
+  const pinnedBanner = variantId ? BANNERS.find((b) => b.id === variantId) : undefined;
   const safeInitial = ((initialIndex % BANNERS.length) + BANNERS.length) % BANNERS.length;
-  const [selectedBanner, setSelectedBanner] = useState<BannerItem>(BANNERS[safeInitial]);
+  const [selectedBanner, setSelectedBanner] = useState<BannerItem>(pinnedBanner || BANNERS[safeInitial]);
 
   useEffect(() => {
-    // Randomly pick one of the 4 Paripesa banners on client mount
+    if (pinnedBanner) {
+      setSelectedBanner(pinnedBanner);
+      return;
+    }
+    // Randomly pick one of the 4 Paripesa banners on client mount when not pinned
     const randomIndex = Math.floor(Math.random() * BANNERS.length);
     setSelectedBanner(BANNERS[randomIndex]);
-  }, []);
+  }, [pinnedBanner]);
 
   return (
     <div className="w-full my-3 px-1 sm:px-0">

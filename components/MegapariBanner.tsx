@@ -26,14 +26,19 @@ const BANNERS: BannerItem[] = [
   },
 ];
 
-export default function MegapariBanner() {
-  const [selectedBanner, setSelectedBanner] = useState<BannerItem>(BANNERS[0]);
+export default function MegapariBanner({ variantId }: { variantId?: string } = {}) {
+  const pinnedBanner = variantId ? BANNERS.find((b) => b.id === variantId) : undefined;
+  const [selectedBanner, setSelectedBanner] = useState<BannerItem>(pinnedBanner || BANNERS[0]);
 
   useEffect(() => {
-    // Randomly pick one of the 2 Megapari horizontal banners on client mount
+    if (pinnedBanner) {
+      setSelectedBanner(pinnedBanner);
+      return;
+    }
+    // Randomly pick one of the 2 Megapari horizontal banners on client mount when not pinned
     const randomIndex = Math.floor(Math.random() * BANNERS.length);
     setSelectedBanner(BANNERS[randomIndex]);
-  }, []);
+  }, [pinnedBanner]);
 
   return (
     <div className="w-full my-3 px-1 sm:px-0">

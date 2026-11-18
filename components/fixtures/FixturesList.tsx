@@ -6,10 +6,11 @@ import Footer from "@/components/Footer";
 import DateNavigator from "@/components/DateNavigator";
 import OneXBetBanner from "@/components/OneXBetBanner";
 import BottomNavTabs from "@/components/BottomNavTabs";
-import MelbetBanner from "@/components/MelbetBanner";
-import MegapariBanner from "@/components/MegapariBanner";
-import ParipesaBanner from "@/components/ParipesaBanner";
-import RandomAffiliateBanner from "@/components/RandomAffiliateBanner";
+import RandomAffiliateBanner, {
+  AFFILIATE_BANNER_POOL,
+  AffiliateBannerEntry,
+  shuffleAffiliateBanners,
+} from "@/components/RandomAffiliateBanner";
 import { Fragment, useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { Calendar, ChevronRight } from "lucide-react";
@@ -55,7 +56,12 @@ export default function FixturesList({
   const [selectedDate, setSelectedDate] = useState(initialDate);
   const [fixtures, setFixtures] = useState<LeagueGroup[]>(initialData);
   const [isFetching, setIsFetching] = useState(false);
+  const [bannerDeck, setBannerDeck] = useState<AffiliateBannerEntry[]>(AFFILIATE_BANNER_POOL);
   const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    setBannerDeck(shuffleAffiliateBanners());
+  }, [selectedDate]);
 
   useEffect(() => {
     setSelectedDate(initialDate);
@@ -229,8 +235,9 @@ export default function FixturesList({
                   <div className="flex flex-col">
                     {league.matches.map((match) => {
                       fixtureCounter += 1;
-                      const showAffiliateBanner = fixtureCounter % 15 === 0;
-                      const slotIndex = fixtureCounter / 15;
+                      const slotIdx = fixtureCounter % 15 === 0 ? fixtureCounter / 15 - 1 : -1;
+                      const slotBanner =
+                        slotIdx >= 0 && slotIdx < bannerDeck.length ? bannerDeck[slotIdx] : null;
 
                       const home = match.homeTeam;
                       const away = match.awayTeam;
@@ -322,8 +329,8 @@ export default function FixturesList({
                             </div>
                           </Link>
 
-                          {showAffiliateBanner && (
-                            <RandomAffiliateBanner key={`affiliate-${slotIndex}`} slotIndex={slotIndex} />
+                          {slotBanner && (
+                            <RandomAffiliateBanner key={`affiliate-${slotIdx}`} entry={slotBanner} />
                           )}
                         </Fragment>
                       );
@@ -338,11 +345,16 @@ export default function FixturesList({
         {children ? (
           children
         ) : (
-          <>
-            <MelbetBanner />
-            <MegapariBanner />
-            <ParipesaBanner />
-          </>
+          (() => {
+            const totalMatchesCount = safeData.reduce(
+              (acc, league) => acc + (league.matches?.length || 0),
+              0
+            );
+            const inlineBannersShown = Math.floor(totalMatchesCount / 15);
+            return inlineBannersShown === 0 && bannerDeck[0] ? (
+              <RandomAffiliateBanner entry={bannerDeck[0]} />
+            ) : null;
+          })()
         )}
       </div>
 

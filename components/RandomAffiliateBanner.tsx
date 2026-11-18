@@ -1,33 +1,40 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import ParipesaBanner from "@/components/ParipesaBanner";
 import MegapariBanner from "@/components/MegapariBanner";
 import MelbetBanner from "@/components/MelbetBanner";
 
-interface RandomAffiliateBannerProps {
-  slotIndex: number;
+export type AffiliateBannerEntry =
+  | { brand: "paripesa"; variantId: string }
+  | { brand: "megapari"; variantId: string }
+  | { brand: "melbet"; variantId: "melbet_bonus_100" };
+
+export const AFFILIATE_BANNER_POOL: AffiliateBannerEntry[] = [
+  { brand: "paripesa", variantId: "barcelona_vs_villarreal" },
+  { brand: "paripesa", variantId: "real_madrid_vs_celta" },
+  { brand: "paripesa", variantId: "liverpool_vs_man_united" },
+  { brand: "paripesa", variantId: "newcastle_vs_arsenal" },
+  { brand: "megapari", variantId: "megapari_kane" },
+  { brand: "megapari", variantId: "megapari_yamal" },
+  { brand: "melbet", variantId: "melbet_bonus_100" },
+];
+
+export function shuffleAffiliateBanners(): AffiliateBannerEntry[] {
+  const copy = [...AFFILIATE_BANNER_POOL];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
 }
 
-const AFFILIATE_BANNERS = ["paripesa", "megapari", "melbet"] as const;
-
-export default function RandomAffiliateBanner({ slotIndex }: RandomAffiliateBannerProps) {
-  const deterministicIdx =
-    (((slotIndex - 1) % AFFILIATE_BANNERS.length) + AFFILIATE_BANNERS.length) %
-    AFFILIATE_BANNERS.length;
-  const [bannerIdx, setBannerIdx] = useState<number>(deterministicIdx);
-
-  useEffect(() => {
-    setBannerIdx(Math.floor(Math.random() * AFFILIATE_BANNERS.length));
-  }, []);
-
-  const kind = AFFILIATE_BANNERS[bannerIdx];
-
-  if (kind === "paripesa") {
-    return <ParipesaBanner initialIndex={slotIndex} />;
+export default function RandomAffiliateBanner({ entry }: { entry: AffiliateBannerEntry }) {
+  if (entry.brand === "paripesa") {
+    return <ParipesaBanner variantId={entry.variantId} />;
   }
-  if (kind === "megapari") {
-    return <MegapariBanner />;
+  if (entry.brand === "megapari") {
+    return <MegapariBanner variantId={entry.variantId} />;
   }
   return <MelbetBanner />;
 }

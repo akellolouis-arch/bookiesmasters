@@ -61,7 +61,7 @@ export default async function FixturesPage({
     <Suspense fallback={null}>
       <FixturesList initialData={initialData} initialDate={date}>
         <Suspense fallback={<div className="h-20 w-full" />}>
-          <TopTrends />
+          <TopTrends showBanners={false} />
         </Suspense>
       </FixturesList>
     </Suspense>

@@ -53,17 +53,17 @@ async function fetchTrends(): Promise<FixtureTrend[]> {
   }
 }
 
-export default async function TopTrends() {
+export default async function TopTrends({ showBanners = true }: { showBanners?: boolean } = {}) {
   const trends = await fetchTrends();
   const middleIndex = trends ? Math.floor(trends.length / 2) : 0;
 
   return (
     <div className="w-full md:max-w-2xl lg:max-w-2xl mx-auto px-0 mt-2 mb-0">
       {/* Melbet Banner just above Top Trends section */}
-      <MelbetBanner />
+      {showBanners && <MelbetBanner />}
 
       {(!trends || trends.length === 0) ? (
-        <MegapariBanner />
+        showBanners ? <MegapariBanner /> : null
       ) : (
         <>
           {/* Title */}
@@ -82,7 +82,7 @@ export default async function TopTrends() {
           
           return (
             <React.Fragment key={match.fixtureId}>
-              {index === middleIndex && (
+              {showBanners && index === middleIndex && (
                 <div className="py-2.5">
                   <MegapariBanner />
                 </div>
