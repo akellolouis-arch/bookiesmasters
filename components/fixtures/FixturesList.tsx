@@ -7,9 +7,9 @@ import DateNavigator from "@/components/DateNavigator";
 import OneXBetBanner from "@/components/OneXBetBanner";
 import BottomNavTabs from "@/components/BottomNavTabs";
 import RandomAffiliateBanner, {
-  AFFILIATE_BANNER_POOL,
   AffiliateBannerEntry,
-  shuffleAffiliateBanners,
+  buildAffiliatePlacementPlan,
+  selectUniqueAffiliateBanners,
 } from "@/components/RandomAffiliateBanner";
 import { Fragment, useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
@@ -56,12 +56,14 @@ export default function FixturesList({
   const [selectedDate, setSelectedDate] = useState(initialDate);
   const [fixtures, setFixtures] = useState<LeagueGroup[]>(initialData);
   const [isFetching, setIsFetching] = useState(false);
-  const [bannerDeck, setBannerDeck] = useState<AffiliateBannerEntry[]>(AFFILIATE_BANNER_POOL);
+  const initialMatchCount = initialData.reduce(
+    (acc, league) => acc + (league.matches?.length || 0),
+    0
+  );
+  const [bannerDeck, setBannerDeck] = useState<AffiliateBannerEntry[]>(() =>
+    selectUniqueAffiliateBanners(initialMatchCount, false)
+  );
   const isFirstRender = useRef(true);
-
-  useEffect(() => {
-    setBannerDeck(shuffleAffiliateBanners());
-  }, [selectedDate]);
 
   useEffect(() => {
     setSelectedDate(initialDate);
@@ -169,6 +171,18 @@ export default function FixturesList({
       .filter((league) => league.matches.length > 0);
   }
 
+  const totalMatchesCount = safeData.reduce(
+    (acc, league) => acc + (league.matches?.length || 0),
+    0
+  );
+
+  useEffect(() => {
+    setBannerDeck(selectUniqueAffiliateBanners(totalMatchesCount, true));
+  }, [selectedDate, totalMatchesCount]);
+
+  const { inlineByMatchNumber, preChildrenBanners, footerBanners } =
+    buildAffiliatePlacementPlan(totalMatchesCount, bannerDeck, Boolean(children));
+
   return (
     <div className="w-full">
       {/* 1XBET Banner just after Navbar */}
@@ -235,9 +249,7 @@ export default function FixturesList({
                   <div className="flex flex-col">
                     {league.matches.map((match) => {
                       fixtureCounter += 1;
-                      const slotIdx = fixtureCounter % 15 === 0 ? fixtureCounter / 15 - 1 : -1;
-                      const slotBanner =
-                        slotIdx >= 0 && slotIdx < bannerDeck.length ? bannerDeck[slotIdx] : null;
+                      const slotBanner = inlineByMatchNumber.get(fixtureCounter) || null;
 
                       const home = match.homeTeam;
                       const away = match.awayTeam;
@@ -330,7 +342,10 @@ export default function FixturesList({
                           </Link>
 
                           {slotBanner && (
-                            <RandomAffiliateBanner key={`affiliate-${slotIdx}`} entry={slotBanner} />
+                            <RandomAffiliateBanner
+                              key={`affiliate-${slotBanner.brand}-${slotBanner.variantId}`}
+                              entry={slotBanner}
+                            />
                           )}
                         </Fragment>
                       );
@@ -342,20 +357,15 @@ export default function FixturesList({
           )}
         </div>
 
-        {children ? (
-          children
-        ) : (
-          (() => {
-            const totalMatchesCount = safeData.reduce(
-              (acc, league) => acc + (league.matches?.length || 0),
-              0
-            );
-            const inlineBannersShown = Math.floor(totalMatchesCount / 15);
-            return inlineBannersShown === 0 && bannerDeck[0] ? (
-              <RandomAffiliateBanner entry={bannerDeck[0]} />
-            ) : null;
-          })()
-        )}
+        {preChildrenBanners.map((banner, idx) => (
+          <RandomAffiliateBanner key={`pre-children-${banner.brand}-${banner.variantId}-${idx}`} entry={banner} />
+        ))}
+
+        {children}
+
+        {footerBanners.map((banner, idx) => (
+          <RandomAffiliateBanner key={`footer-${banner.brand}-${banner.variantId}-${idx}`} entry={banner} />
+        ))}
       </div>
 
       <Footer />

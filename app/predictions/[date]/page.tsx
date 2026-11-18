@@ -71,7 +71,7 @@ export default async function PredictionsPage({
   return (
     <PredictionsList initialData={initialData} initialDate={date}>
       <Suspense fallback={<div className="h-20 w-full" />}>
-        <TopTrends />
+        <TopTrends showBanners={false} />
       </Suspense>
     </PredictionsList>
   );

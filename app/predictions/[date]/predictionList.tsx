@@ -8,8 +8,12 @@ import Footer from "@/components/Footer";
 import DateNavigator from "@/components/DateNavigator";
 import OneXBetBanner from "@/components/OneXBetBanner";
 import BottomNavTabs from "@/components/BottomNavTabs";
-import ParipesaBanner from "@/components/ParipesaBanner";
-import { useState, useEffect, useRef } from "react";
+import RandomAffiliateBanner, {
+  AffiliateBannerEntry,
+  buildAffiliatePlacementPlan,
+  selectUniqueAffiliateBanners,
+} from "@/components/RandomAffiliateBanner";
+import { Fragment, useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 
@@ -67,6 +71,14 @@ export default function PredictionsList({
   const [fixtures, setFixtures] = useState<LeagueGroup[]>(initialData);
   const [isFetching, setIsFetching] = useState(false);
   const isFirstRender = useRef(true);
+
+  const initialMatchCount = initialData.reduce(
+    (acc, league) => acc + (league.matches?.length || 0),
+    0
+  );
+  const [bannerDeck, setBannerDeck] = useState<AffiliateBannerEntry[]>(() =>
+    selectUniqueAffiliateBanners(initialMatchCount, false)
+  );
 
   // Sync back/forward browser navigation buttons
   useEffect(() => {
@@ -146,6 +158,18 @@ export default function PredictionsList({
       .filter((league) => league.matches.length > 0);
   }
 
+  const totalMatchesCount = safeData.reduce(
+    (acc, league) => acc + (league.matches?.length || 0),
+    0
+  );
+
+  useEffect(() => {
+    setBannerDeck(selectUniqueAffiliateBanners(totalMatchesCount, true));
+  }, [selectedDate, totalMatchesCount]);
+
+  const { inlineByMatchNumber, preChildrenBanners, footerBanners } =
+    buildAffiliatePlacementPlan(totalMatchesCount, bannerDeck, Boolean(children));
+
   return (
     <div className="w-full">
       {/* 1XBET Banner just after Navbar */}
@@ -210,8 +234,13 @@ export default function PredictionsList({
                   <div className="flex flex-col">
                     {league.matches.map((fixture) => {
                       const currentIdx = globalIdx++;
+                      const matchNumber = currentIdx + 1;
+                      const inlineBanner = inlineByMatchNumber.get(matchNumber);
                       return (
-                        <FixtureCard key={fixture.fixtureId} {...fixture} index={currentIdx} />
+                        <Fragment key={fixture.fixtureId}>
+                          <FixtureCard {...fixture} index={currentIdx} />
+                          {inlineBanner && <RandomAffiliateBanner entry={inlineBanner} />}
+                        </Fragment>
                       );
                     })}
                   </div>
@@ -221,9 +250,15 @@ export default function PredictionsList({
           )}
         </div>
 
+        {preChildrenBanners.map((banner, idx) => (
+          <RandomAffiliateBanner key={`pre-children-${banner.brand}-${banner.variantId}-${idx}`} entry={banner} />
+        ))}
+
         {/* Top Trends & Footer rendered in exact flow container */}
         {children}
-        <ParipesaBanner />
+        {footerBanners.map((banner, idx) => (
+          <RandomAffiliateBanner key={`footer-${banner.brand}-${banner.variantId}-${idx}`} entry={banner} />
+        ))}
         <Footer />
       </div>
     </div>
