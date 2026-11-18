@@ -1,0 +1,73 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import { PARIPESA_AFFILIATE_URL } from "@/lib/affiliatePartners";
+
+interface BannerItem {
+  id: string;
+  title: string;
+  image: string;
+  alt: string;
+}
+
+const BANNERS: BannerItem[] = [
+  {
+    id: "barcelona_vs_villarreal",
+    title: "Barcelona vs Villarreal",
+    image: "/banners/paripesa/barcelona_vs_villarreal_wide.jpg",
+    alt: "Paripesa Barcelona vs Villarreal Odds - Promo Code BKMS254",
+  },
+  {
+    id: "real_madrid_vs_celta",
+    title: "Real Madrid vs Celta",
+    image: "/banners/paripesa/real_madrid_vs_celta_wide.jpg",
+    alt: "Paripesa Real Madrid vs Celta Odds - Promo Code BKMS254",
+  },
+  {
+    id: "liverpool_vs_man_united",
+    title: "Liverpool vs Man United",
+    image: "/banners/paripesa/liverpool_vs_man_united_wide.jpg",
+    alt: "Paripesa Liverpool vs Man United Odds - Promo Code BKMS254",
+  },
+  {
+    id: "newcastle_vs_arsenal",
+    title: "Newcastle vs Arsenal",
+    image: "/banners/paripesa/newcastle_vs_arsenal_wide.jpg",
+    alt: "Paripesa Newcastle vs Arsenal Odds - Promo Code BKMS254",
+  },
+];
+
+export default function ParipesaBanner({ initialIndex = 0 }: { initialIndex?: number }) {
+  const safeInitial = ((initialIndex % BANNERS.length) + BANNERS.length) % BANNERS.length;
+  const [selectedBanner, setSelectedBanner] = useState<BannerItem>(BANNERS[safeInitial]);
+
+  useEffect(() => {
+    // Randomly pick one of the 4 Paripesa banners on client mount
+    const randomIndex = Math.floor(Math.random() * BANNERS.length);
+    setSelectedBanner(BANNERS[randomIndex]);
+  }, []);
+
+  return (
+    <div className="w-full my-3 px-1 sm:px-0">
+      <a
+        href={PARIPESA_AFFILIATE_URL}
+        target="_blank"
+        rel="noopener noreferrer sponsored"
+        className="group block relative overflow-hidden rounded-xl border border-gray-200/90 bg-slate-950 shadow-xs animate-pulse-subtle transition-all duration-300 max-w-2xl mx-auto cursor-pointer aspect-[1024/341]"
+        title="Paripesa Bonus with Promo Code BKMS254"
+      >
+        <div className="relative w-full h-full overflow-hidden">
+          <Image
+            src={selectedBanner.image}
+            alt={selectedBanner.alt}
+            width={1024}
+            height={341}
+            priority={false}
+            className="w-full h-full object-contain group-hover:scale-[1.015] transition-transform duration-300"
+          />
+        </div>
+      </a>
+    </div>
+  );
+}

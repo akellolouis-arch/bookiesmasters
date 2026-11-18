@@ -8,7 +8,9 @@ import OneXBetBanner from "@/components/OneXBetBanner";
 import BottomNavTabs from "@/components/BottomNavTabs";
 import MelbetBanner from "@/components/MelbetBanner";
 import MegapariBanner from "@/components/MegapariBanner";
-import { useState, useEffect, useRef } from "react";
+import ParipesaBanner from "@/components/ParipesaBanner";
+import RandomAffiliateBanner from "@/components/RandomAffiliateBanner";
+import { Fragment, useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { Calendar, ChevronRight } from "lucide-react";
 
@@ -190,134 +192,146 @@ export default function FixturesList({
               </p>
             )
           ) : (
-            safeData.map((league, idx) => (
-              <div key={league.id || idx}>
-                {/* League Header */}
-                <Link
-                  href={league.id ? `/league/${league.id}` : "#"}
-                  className="flex items-center justify-between gap-1 bg-gray-100 hover:bg-gray-200/80 py-1 px-1 shadow-xs border border-gray-200 border-b-0 mt-2 transition-colors group cursor-pointer"
-                  title={`View ${league.name} standings, fixtures & top scorers`}
-                >
-                  <div className="flex items-center gap-1.5 w-full min-w-0">
-                    {league.logo && (
-                      <Image
-                        src={league.logo}
-                        alt={league.name}
-                        width={16}
-                        height={16}
-                        className="w-4 h-4 flex-shrink-0 drop-shadow-xs"
-                        unoptimized
-                      />
-                    )}
-                    <div className="flex flex-col truncate w-full leading-tight">
-                      <span className="font-bold text-[11px] text-teal-800 tracking-wide truncate group-hover:text-teal-900 transition-colors">
-                        {league.name}
-                      </span>
-                      <span className="text-[9px] text-gray-500 font-normal capitalize tracking-wider truncate">
-                        {league.country?.toLowerCase()}
-                      </span>
+            (() => {
+              let fixtureCounter = 0;
+              return safeData.map((league, idx) => (
+                <div key={league.id || idx}>
+                  {/* League Header */}
+                  <Link
+                    href={league.id ? `/league/${league.id}` : "#"}
+                    className="flex items-center justify-between gap-1 bg-gray-100 hover:bg-gray-200/80 py-1 px-1 shadow-xs border border-gray-200 border-b-0 mt-2 transition-colors group cursor-pointer"
+                    title={`View ${league.name} standings, fixtures & top scorers`}
+                  >
+                    <div className="flex items-center gap-1.5 w-full min-w-0">
+                      {league.logo && (
+                        <Image
+                          src={league.logo}
+                          alt={league.name}
+                          width={16}
+                          height={16}
+                          className="w-4 h-4 flex-shrink-0 drop-shadow-xs"
+                          unoptimized
+                        />
+                      )}
+                      <div className="flex flex-col truncate w-full leading-tight">
+                        <span className="font-bold text-[11px] text-teal-800 tracking-wide truncate group-hover:text-teal-900 transition-colors">
+                          {league.name}
+                        </span>
+                        <span className="text-[9px] text-gray-500 font-normal capitalize tracking-wider truncate">
+                          {league.country?.toLowerCase()}
+                        </span>
+                      </div>
                     </div>
+                    <ChevronRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-teal-700 transition-colors flex-shrink-0 mr-0.5" />
+                  </Link>
+
+                  {/* Match Cards List (Without Prediction Badges) */}
+                  <div className="flex flex-col">
+                    {league.matches.map((match) => {
+                      fixtureCounter += 1;
+                      const showAffiliateBanner = fixtureCounter % 15 === 0;
+                      const slotIndex = fixtureCounter / 15;
+
+                      const home = match.homeTeam;
+                      const away = match.awayTeam;
+                      const statusObj = match.fixture?.fixture?.status || match.status;
+                      const rawStatus = typeof statusObj === "string" ? statusObj : (statusObj?.short || "NS");
+                      const elapsed = typeof statusObj === "object" ? statusObj?.elapsed : null;
+                      const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(rawStatus) || (typeof rawStatus === "string" && rawStatus.includes("'"));
+
+                      const displayStatus = (["1H", "2H", "ET", "LIVE", "INT"].includes(rawStatus) && elapsed !== null && elapsed !== undefined && elapsed > 0)
+                        ? `${elapsed}'`
+                        : rawStatus;
+
+                      const scoreStr = match.score ? match.score.replace(" - ", "-") : "-";
+
+                      return (
+                        <Fragment key={match.fixtureId}>
+                          <Link
+                            href={`/prediction/${match.fixtureId}`}
+                            className="block bg-white border border-gray-200 rounded-none py-1 px-1.5 sm:py-1.5 sm:px-2 hover:border-teal-400 hover:bg-gray-50/70 transition-all duration-300 flex flex-col text-inherit cursor-pointer"
+                          >
+                            {/* Matchup Header */}
+                            <div className="grid grid-cols-[1fr_auto_1fr] items-center w-full mb-1 gap-1">
+                              {/* HOME TEAM */}
+                              <div className="flex items-center justify-end gap-1.5 min-w-0">
+                                <span className="font-medium text-[11px] sm:text-[12px] truncate text-gray-800 capitalize text-right">
+                                  {home?.name}
+                                </span>
+                                {home?.logo && (
+                                  <Image
+                                    src={home.logo}
+                                    alt={home?.name || ""}
+                                    width={14}
+                                    height={14}
+                                    className="w-3.5 h-3.5 object-contain shrink-0"
+                                    unoptimized
+                                  />
+                                )}
+                              </div>
+
+                              {/* KICKOFF / VS CENTER BOX */}
+                              <span className="text-[9px] sm:text-[10px] font-bold text-gray-500 px-2 shrink-0 text-center min-w-[32px]">
+                                {match.kickoffTime || "VS"}
+                              </span>
+
+                              {/* AWAY TEAM */}
+                              <div className="flex items-center justify-start gap-1.5 min-w-0">
+                                {away?.logo && (
+                                  <Image
+                                    src={away.logo}
+                                    alt={away?.name || ""}
+                                    width={14}
+                                    height={14}
+                                    className="w-3.5 h-3.5 object-contain shrink-0"
+                                    unoptimized
+                                  />
+                                )}
+                                <span className="font-medium text-[11px] sm:text-[12px] truncate text-gray-800 capitalize text-left">
+                                  {away?.name}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* BOTTOM STRIP (Status & Score Only, No Predictions) */}
+                            <div className="w-full flex items-center justify-between mt-1">
+                              {/* LEFT: STATUS CONTAINER */}
+                              <div className="flex-1 flex justify-start">
+                                <div
+                                  className={`px-2 py-0.5 bg-gray-100 rounded-lg text-[10px] font-bold uppercase leading-none tracking-widest ${
+                                    isLive ? "text-red-500 animate-pulse" : "text-gray-500"
+                                  }`}
+                                >
+                                  {displayStatus}
+                                </div>
+                              </div>
+
+                              {/* MIDDLE: SCORE CONTAINER */}
+                              <div className="flex shrink-0 justify-center px-2">
+                                <div
+                                  className={`px-2 py-0.5 bg-gray-100 rounded-lg text-[10px] font-bold leading-none tracking-widest ${
+                                    isLive ? "text-red-500 animate-pulse" : "text-gray-500"
+                                  }`}
+                                >
+                                  {scoreStr}
+                                </div>
+                              </div>
+
+                              {/* RIGHT: EMPTY SPACER (No Prediction) */}
+                              <div className="flex-1 flex justify-end" />
+                            </div>
+                          </Link>
+
+                          {showAffiliateBanner && (
+                            <RandomAffiliateBanner key={`affiliate-${slotIndex}`} slotIndex={slotIndex} />
+                          )}
+                        </Fragment>
+                      );
+                    })}
                   </div>
-                  <ChevronRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-teal-700 transition-colors flex-shrink-0 mr-0.5" />
-                </Link>
-
-                {/* Match Cards List (Without Prediction Badges) */}
-                <div className="flex flex-col">
-                  {league.matches.map((match) => {
-                    const home = match.homeTeam;
-                    const away = match.awayTeam;
-                    const statusObj = match.fixture?.fixture?.status || match.status;
-                    const rawStatus = typeof statusObj === "string" ? statusObj : (statusObj?.short || "NS");
-                    const elapsed = typeof statusObj === "object" ? statusObj?.elapsed : null;
-                    const isLive = ["1H", "HT", "2H", "ET", "BT", "P", "LIVE", "INT"].includes(rawStatus) || (typeof rawStatus === "string" && rawStatus.includes("'"));
-
-                    const displayStatus = (["1H", "2H", "ET", "LIVE", "INT"].includes(rawStatus) && elapsed !== null && elapsed !== undefined && elapsed > 0)
-                      ? `${elapsed}'`
-                      : rawStatus;
-
-                    const scoreStr = match.score ? match.score.replace(" - ", "-") : "-";
-
-                    return (
-                      <Link
-                        key={match.fixtureId}
-                        href={`/prediction/${match.fixtureId}`}
-                        className="block bg-white border border-gray-200 rounded-none py-1 px-1.5 sm:py-1.5 sm:px-2 hover:border-teal-400 hover:bg-gray-50/70 transition-all duration-300 flex flex-col text-inherit cursor-pointer"
-                      >
-                        {/* Matchup Header */}
-                        <div className="grid grid-cols-[1fr_auto_1fr] items-center w-full mb-1 gap-1">
-                          {/* HOME TEAM */}
-                          <div className="flex items-center justify-end gap-1.5 min-w-0">
-                            <span className="font-medium text-[11px] sm:text-[12px] truncate text-gray-800 capitalize text-right">
-                              {home?.name}
-                            </span>
-                            {home?.logo && (
-                              <Image
-                                src={home.logo}
-                                alt={home?.name || ""}
-                                width={14}
-                                height={14}
-                                className="w-3.5 h-3.5 object-contain shrink-0"
-                                unoptimized
-                              />
-                            )}
-                          </div>
-
-                          {/* KICKOFF / VS CENTER BOX */}
-                          <span className="text-[9px] sm:text-[10px] font-bold text-gray-500 px-2 shrink-0 text-center min-w-[32px]">
-                            {match.kickoffTime || "VS"}
-                          </span>
-
-                          {/* AWAY TEAM */}
-                          <div className="flex items-center justify-start gap-1.5 min-w-0">
-                            {away?.logo && (
-                              <Image
-                                src={away.logo}
-                                alt={away?.name || ""}
-                                width={14}
-                                height={14}
-                                className="w-3.5 h-3.5 object-contain shrink-0"
-                                unoptimized
-                              />
-                            )}
-                            <span className="font-medium text-[11px] sm:text-[12px] truncate text-gray-800 capitalize text-left">
-                              {away?.name}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* BOTTOM STRIP (Status & Score Only, No Predictions) */}
-                        <div className="w-full flex items-center justify-between mt-1">
-                          {/* LEFT: STATUS CONTAINER */}
-                          <div className="flex-1 flex justify-start">
-                            <div
-                              className={`px-2 py-0.5 bg-gray-100 rounded-lg text-[10px] font-bold uppercase leading-none tracking-widest ${
-                                isLive ? "text-red-500 animate-pulse" : "text-gray-500"
-                              }`}
-                            >
-                              {displayStatus}
-                            </div>
-                          </div>
-
-                          {/* MIDDLE: SCORE CONTAINER */}
-                          <div className="flex shrink-0 justify-center px-2">
-                            <div
-                              className={`px-2 py-0.5 bg-gray-100 rounded-lg text-[10px] font-bold leading-none tracking-widest ${
-                                isLive ? "text-red-500 animate-pulse" : "text-gray-500"
-                              }`}
-                            >
-                              {scoreStr}
-                            </div>
-                          </div>
-
-                          {/* RIGHT: EMPTY SPACER (No Prediction) */}
-                          <div className="flex-1 flex justify-end" />
-                        </div>
-                      </Link>
-                    );
-                  })}
                 </div>
-              </div>
-            ))
+              ));
+            })()
           )}
         </div>
 
@@ -327,6 +341,7 @@ export default function FixturesList({
           <>
             <MelbetBanner />
             <MegapariBanner />
+            <ParipesaBanner />
           </>
         )}
       </div>
