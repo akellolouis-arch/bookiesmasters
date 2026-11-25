@@ -20,10 +20,8 @@ const MEGAPARI_BANNERS: AffiliateBannerEntry[] = [
 ];
 
 const PARIPESA_BANNERS: AffiliateBannerEntry[] = [
-  { brand: "paripesa", variantId: "barcelona_vs_villarreal" },
-  { brand: "paripesa", variantId: "real_madrid_vs_celta" },
-  { brand: "paripesa", variantId: "liverpool_vs_man_united" },
-  { brand: "paripesa", variantId: "newcastle_vs_arsenal" },
+  { brand: "paripesa", variantId: "arsenal_vs_man_city" },
+  { brand: "paripesa", variantId: "everton_vs_liverpool" },
 ];
 
 export const AFFILIATE_BANNER_POOL: AffiliateBannerEntry[] = [

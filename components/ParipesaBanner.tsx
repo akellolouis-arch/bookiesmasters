@@ -13,28 +13,16 @@ interface BannerItem {
 
 const BANNERS: BannerItem[] = [
   {
-    id: "barcelona_vs_villarreal",
-    title: "Barcelona vs Villarreal",
-    image: "/banners/paripesa/barcelona_vs_villarreal_wide.jpg",
-    alt: "Paripesa Barcelona vs Villarreal Odds - Promo Code BKMS254",
+    id: "arsenal_vs_man_city",
+    title: "Arsenal vs Man City",
+    image: "/banners/paripesa/arsenal_vs_man_city_wide.jpg",
+    alt: "Paripesa Arsenal vs Man City Odds - Promo Code BKMS254",
   },
   {
-    id: "real_madrid_vs_celta",
-    title: "Real Madrid vs Celta",
-    image: "/banners/paripesa/real_madrid_vs_celta_wide.jpg",
-    alt: "Paripesa Real Madrid vs Celta Odds - Promo Code BKMS254",
-  },
-  {
-    id: "liverpool_vs_man_united",
-    title: "Liverpool vs Man United",
-    image: "/banners/paripesa/liverpool_vs_man_united_wide.jpg",
-    alt: "Paripesa Liverpool vs Man United Odds - Promo Code BKMS254",
-  },
-  {
-    id: "newcastle_vs_arsenal",
-    title: "Newcastle vs Arsenal",
-    image: "/banners/paripesa/newcastle_vs_arsenal_wide.jpg",
-    alt: "Paripesa Newcastle vs Arsenal Odds - Promo Code BKMS254",
+    id: "everton_vs_liverpool",
+    title: "Everton vs Liverpool",
+    image: "/banners/paripesa/everton_vs_liverpool_wide.jpg",
+    alt: "Paripesa Everton vs Liverpool Odds - Promo Code BKMS254",
   },
 ];
 
